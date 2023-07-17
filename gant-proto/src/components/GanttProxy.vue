@@ -1,6 +1,7 @@
 <template>
   <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDay(rows)">
   <input type="button" value="スケジュール重視で設定する" @click="setScheduleByFromTo(rows)">
+  <input type="button" value="スケジュールをスライドする" @click="slideSchedule(rows)">
   <g-gantt-chart
       :chart-start="chartStart"
       :chart-end="chartEnd"
@@ -20,6 +21,8 @@
       @drag-bar="onDragBar($event.bar, $event.e)"
       @dragend-bar="onDragendBar($event.bar, $event.e)"
       @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
+
+      :footer-labels="footerLabels"
   >
     <g-gantt-row v-for="bar in bars" :key="bar.ganttBarConfig.id" :bars="[bar]"/>
     <template #rows>
@@ -35,7 +38,6 @@
       </div>
     </template>
   </g-gantt-chart>
-  {{ rows[2] }}
 </template>
 <style scss scoped>
 .g-gantt-row > div {
@@ -54,11 +56,13 @@ const {
   chartStart,
   chartEnd,
   format,
+  footerLabels,
   updateWorkStartDate,
   updateWorkEndDate,
   setScheduleByPersonDay,
   setScheduleByFromTo,
-  adjustBar
+  adjustBar,
+  slideSchedule
 } = useGantt()
 
 

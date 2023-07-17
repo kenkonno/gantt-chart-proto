@@ -1,6 +1,6 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 
 type TaskName = string;
 type NumberOfWorkers = number;
@@ -34,6 +34,7 @@ export function useGantt() {
         newRow("id-6", "作業6", 2, 10, dayjs('2023-05-25 00:00'), dayjs('2023-06-03 23:59'))
     ])
     const bars = rows.value.map(v => v.bar)
+    const footerLabels = ref<string[]>([])
     const adjustBar = (bar: GanttBarObject) => {
         // id をもとにvuejs側のデータも更新する
         const target = rows.value.find(v => v.bar.ganttBarConfig.id === bar.ganttBarConfig.id)
@@ -44,10 +45,16 @@ export function useGantt() {
             target.workEndDate = dayjs(ganttDateToYMDDate(bar.endDate))
         }
     }
-
+    footerLabels.value.push(...calculateStuckPersons(rows.value))
+    watch(rows, () => {
+        console.log("WATCH")
+        footerLabels.value.splice(0)
+        footerLabels.value.push(...calculateStuckPersons(rows.value))
+    }, {deep: true})
     return {
         rows,
         bars,
+        footerLabels,
         chartStart,
         chartEnd,
         format,
@@ -55,7 +62,8 @@ export function useGantt() {
         updateWorkEndDate,
         setScheduleByPersonDay,
         setScheduleByFromTo,
-        adjustBar
+        adjustBar,
+        slideSchedule
     }
 }
 
@@ -83,13 +91,71 @@ const setScheduleByFromTo = (rows: Row[]) => {
         // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
         // 必要人数 = 見積人日 / 期間
         const period = (row.workEndDate.diff(row.workStartDate, 'day', false) + 1)
-        console.log("### setScheduleByFromTo ############")
-        console.log("### setScheduleByFromTo", row.estimatePersonDay)
-        console.log("### setScheduleByFromTo", period)
-        console.log("### setScheduleByFromTo", row.estimatePersonDay / period)
-        row.numberOfWorkers = Math.ceil(row.estimatePersonDay /  period)
+        row.numberOfWorkers = Math.ceil(row.estimatePersonDay / period)
     })
 }
+// スケジュールをきれいにスライドさせる（重複をなくす）
+const slideSchedule = (rows: Row[]) => {
+    let prevEndDate: Dayjs
+    rows.forEach((row, i) => {
+        // 1回目は無視
+        if (i > 0) {
+            // 期間を計算する
+            const duration = row.workEndDate.diff(row.workStartDate, 'day')
+            row.workStartDate = prevEndDate.add(1, 'day').set('hour', 0).set('minute',0)
+            row.workEndDate = row.workStartDate.add(duration, 'day').set('hour', 23).set('minute',59)
+            reflectGantt(row)
+        }
+        prevEndDate = row.workEndDate
+    })
+}
+
+// 人数の積み上げを行う
+const calculateStuckPersons = (rows: Row[]) => {
+    console.log("calculateStuckPersons start")
+
+    const result: number[] = []
+    // 開始時刻
+    let currentDate = dayjs(ganttDateToYMDDate(chartStart.value))
+    const endDate = dayjs(ganttDateToYMDDate(chartEnd.value))
+    // 結果セットの初期化
+    while (currentDate.isBefore(endDate)) {
+        currentDate = currentDate.add(1, 'day')
+        result.push(0)
+    }
+
+    let seq = 0
+    currentDate = dayjs(ganttDateToYMDDate(chartStart.value))
+    while (currentDate.isBefore(endDate)) {
+        // 開始日が同じ行を探す
+        const targets = rows.filter(v => v.workStartDate.isSame(currentDate))
+        if (targets.length > 0) {
+            targets.forEach(target => {
+                let innerSeq = seq
+                let innerCurrentDate = currentDate
+                let estimatePersonDay = target.estimatePersonDay
+                // 作業人数
+                const numberOfWorkers = target.numberOfWorkers
+
+                while (estimatePersonDay > 0) {
+                    estimatePersonDay = estimatePersonDay - numberOfWorkers
+                    if (estimatePersonDay < 0) {
+                        result[innerSeq] += numberOfWorkers + estimatePersonDay
+                    } else {
+                        result[innerSeq] += numberOfWorkers
+                    }
+                    innerCurrentDate = innerCurrentDate.add(1, 'day')
+                    innerSeq++
+                }
+            })
+        }
+        currentDate = currentDate.add(1, 'day')
+        seq++
+    }
+
+    return result.map( v => v === 0 ? '' : v.toString())
+}
+
 const reflectGantt = (row: Row) => {
     row.bar.beginDate = row.workStartDate.format(format.value)
     row.bar.endDate = row.workEndDate.format(format.value)
@@ -124,7 +190,7 @@ const updateWorkStartDate = (row: Row, newValue: string) => {
 }
 const updateWorkEndDate = (row: Row, newValue: string) => {
     console.log(row, newValue)
-    row.workEndDate = dayjs(newValue).set('minute',59).set('hour',23)
+    row.workEndDate = dayjs(newValue).set('minute', 59).set('hour', 23)
     row.bar.endDate = row.workEndDate.format(format.value)
 }
 
