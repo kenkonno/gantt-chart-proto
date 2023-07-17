@@ -1,4 +1,6 @@
 <template>
+  <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDay(rows)">
+  <input type="button" value="スケジュール重視で設定する" @click="setScheduleByFromTo(rows)">
   <g-gantt-chart
       :chart-start="chartStart"
       :chart-end="chartEnd"
@@ -23,8 +25,9 @@
     <template #rows>
       <div class="g-gantt-row" v-for="row in rows" :key="row.bar.ganttBarConfig.id"
            style="height: 40px; display:flex; align-items: center;">
-        <div style="white-space: nowrap;">{{ row.taskName }}</div>
-        <div><input type="number" v-model="row.numberOfWorkers" style="width: 2rem"/></div>
+        <div>{{ row.taskName }}</div>
+        <div><input type="number" v-model="row.numberOfWorkers" style="width: 2rem"/>人</div>
+        <div><input type="number" v-model="row.estimatePersonDay" style="width: 2rem"/>人日</div>
         <div><input type="date" :value="row.workStartDate.format('YYYY-MM-DD')"
                     @input="updateWorkStartDate(row, $event.target.value)"/></div>
         <div><input type="date" :value="row.workEndDate.format('YYYY-MM-DD')"
@@ -32,94 +35,37 @@
       </div>
     </template>
   </g-gantt-chart>
+  {{ rows[2] }}
 </template>
 <style scss scoped>
 .g-gantt-row > div {
   padding: 0.5rem;
+  white-space: nowrap;
 }
 </style>
 
 <script setup lang="ts">
-import {ref} from "vue"
+import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
+import {useGantt} from "@/composable/gantt";
 
-import dayjs, {Dayjs} from "dayjs";
-import {GanttBarObject, GGanttRow} from "@infectoone/vue-ganttastic";
+const {
+  rows,
+  bars,
+  chartStart,
+  chartEnd,
+  format,
+  updateWorkStartDate,
+  updateWorkEndDate,
+  setScheduleByPersonDay,
+  setScheduleByFromTo,
+  adjustBar
+} = useGantt()
 
-const chartStart = ref("01.05.2023 00:00")
-const chartEnd = ref("31.07.2023 00:00")
-const format = ref("DD.MM.YYYY HH:mm")
-
-type TaskName = string;
-type NumberOfWorkers = number;
-type WorkStartDate = Dayjs;
-type WorkEndDate = Dayjs;
-type RowID = string;
-
-type Row = {
-  bar: GanttBarObject
-  taskName: TaskName
-  numberOfWorkers: NumberOfWorkers
-  workStartDate: WorkStartDate
-  workEndDate: WorkEndDate
-}
-
-const newRow = (id: RowID, taskName: TaskName, numberOfWorkers: NumberOfWorkers, workStartDate: WorkStartDate, workEndDate: WorkEndDate) => {
-  const result: Row = {
-    bar: {
-      beginDate: workStartDate.format(format.value),
-      endDate: workEndDate.format(format.value),
-      ganttBarConfig: {
-        hasHandles: true,
-        id: id,
-        label: taskName,
-      }
-    },
-    taskName: taskName,
-    numberOfWorkers: numberOfWorkers,
-    workStartDate: workStartDate,
-    workEndDate: workEndDate,
-  }
-  return result
-}
-// ここからデータ更新
-const updateWorkStartDate = (row: Row, newValue: string) => {
-  console.log(row, newValue)
-  row.workStartDate = dayjs(newValue)
-  row.bar.beginDate = row.workStartDate.format(format.value)
-}
-const updateWorkEndDate = (row: Row, newValue: string) => {
-  console.log(row, newValue)
-  row.workEndDate = dayjs(newValue)
-  row.bar.endDate = row.workEndDate.format(format.value)
-}
-
-const ganttDateToYMDDate = (date: string) => {
-  const e = date.split(" ")[0].split(".")
-  return `${e[2]}-${e[1]}-${e[0]}`
-}
-
-
-// ここからダミーデータ
-const rows = ref<Row[]>([
-  newRow("id-1", "作業1", 1, dayjs('2023-05-02'), dayjs('2023-05-03')),
-  newRow("id-2", "作業2", 1, dayjs('2023-05-06'), dayjs('2023-05-12'))
-])
-const bars = rows.value.map(v => v.bar)
 
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  // １日の始まりに合わせる操作
-  bar.beginDate = bar.beginDate.substring(0, 11) + "00:00"
-  bar.endDate = bar.endDate.substring(0, 11) + "00:00"
-  // id をもとにvuejs側のデータも更新する
-  const target = rows.value.find(v => v.bar.ganttBarConfig.id === bar.ganttBarConfig.id)
-  if (!target) {
-    console.error(`ID: ${bar.ganttBarConfig.id} が現在のガントに存在しません。`, rows)
-  } else {
-    target.workStartDate = dayjs(ganttDateToYMDDate(bar.beginDate))
-    target.workEndDate = dayjs(ganttDateToYMDDate(bar.endDate))
-  }
+  adjustBar(bar)
 
 }
 
