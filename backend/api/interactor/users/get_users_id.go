@@ -1,4 +1,4 @@
-package user
+package users
 
 import (
 	"github.com/gin-gonic/gin"
@@ -17,5 +17,13 @@ func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
 
 	user := userRep.Find(int32(id))
 
-	return openapi_models.GetUsersIdResponse{}
+	return openapi_models.GetUsersIdResponse{
+		User: openapi_models.User{
+			Id:        user.ID,
+			Password:  user.Password,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: int32(user.UpdatedAt),
+		},
+	}
 }

@@ -1,12 +1,16 @@
 package sub
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type Interactor struct {
+	StructInfo []StructInfo
 }
 
 func (r *Interactor) GetPackage(structName string) string {
-	return "package " + ToSnakeCase(structName) + "\n"
+	return "package " + ToSnakeCase(structName) + "s\n"
 }
 
 func (r *Interactor) GetImports() string {
@@ -18,6 +22,25 @@ func (r *Interactor) GetImports() string {
 `
 }
 
+func (r *Interactor) GetMapping(prefix string) string {
+
+	var result string
+	for _, v := range r.StructInfo {
+		p := v.Property
+		if p == "ID" {
+			p = "Id"
+		}
+		value := prefix + "." + v.Property
+		if p == "UpdatedAt" {
+			value = "int32(" + value + ")"
+		}
+		result += fmt.Sprintf("				%s:        %s,\n", p, value)
+	}
+
+	return result
+
+}
+
 // GetIdInvoke Get With Id
 func (r *Interactor) GetInvoke(structName string) string {
 	template :=
@@ -26,11 +49,17 @@ func (r *Interactor) GetInvoke(structName string) string {
 
 	@Lower@List := @Lower@Rep.FindAll()
 
-	return openapi_models.@Method@@Upper@sResponse{}
+	return openapi_models.@Method@@Upper@sResponse{
+		List: lo.Map(@Lower@List, func(item db.@Upper@, index int) openapi_models.@Upper@ {
+			return openapi_models.@Upper@{
+` +
+			r.GetMapping("item") + `
+			}
+		}),
+	}
 }
 `
 	return strings.Replace(RewriteString(template, structName), "@Method@", "Get", -1)
-
 }
 
 // GetIdInvoke Get With Id
@@ -46,7 +75,11 @@ func (r *Interactor) GetIdInvoke(structName string) string {
 
 	@Lower@ := @Lower@Rep.Find(int32(id))
 
-	return openapi_models.@Method@@Upper@sIdResponse{}
+	return openapi_models.GetUsersIdResponse{
+		User: openapi_models.User{
+` + r.GetMapping(ToLowerCamel(structName)) + `
+		},
+	}
 }
 `
 	return strings.Replace(RewriteString(template, structName), "@Method@", "Get", -1)

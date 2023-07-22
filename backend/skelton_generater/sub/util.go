@@ -30,8 +30,12 @@ func MakeDir(dir string) {
 
 func RewriteString(template string, value string) string {
 	upper := value
-	lower := strings.ToLower(value[:1]) + value[1:]
+	lower := ToLowerCamel(value)
 	return strings.Replace(strings.Replace(template, "@Upper@", upper, -1), "@Lower@", lower, -1)
+}
+
+func ToLowerCamel(value string) string {
+	return strings.ToLower(value[:1]) + value[1:]
 }
 
 func GetStructName(body []string) string {

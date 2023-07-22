@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 func main() {
@@ -18,13 +19,15 @@ func main() {
 
 	var result string
 	var funcName string
+	var packageName string
+	var packageMap = make(map[string]string)
 	rewrite := false
 	for _, v := range s {
 		// impotの追加
 		if strings.Contains(v, "net/http") {
 			result += "\n"
 			// TODO: ディレクトリ構造を変えたのでインポートを変える
-			result += `	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor"
+			result += `@imports@
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"`
 			result += "\n"
 		}
@@ -33,9 +36,9 @@ func main() {
 		if rewrite {
 			result += fmt.Sprintf(
 				`	var r openapi_models.%sResponse
-	r = interactor.%sInvoke(c)
+	r = %s.%sInvoke(c)
 	c.JSON(http.StatusOK, r)
-`, funcName, funcName)
+`, funcName, packageName, funcName)
 			rewrite = false
 		} else {
 			result += v + "\n"
@@ -44,9 +47,18 @@ func main() {
 			assigned := regexp.MustCompile(`func ([a-zA-Z]+)\(`)
 			group := assigned.FindSubmatch([]byte(v))
 			funcName = string(group[1])
+
+			reg := regexp.MustCompile(`(Get|Put|Delete|Post|Invoke)`)
+			packageName = ToSnakeCase(reg.ReplaceAllString(funcName, ""))
+			packageMap[packageName] = packageName
 			rewrite = true
 		}
 	}
+	var imp string
+	for _, v := range packageMap {
+		imp += `	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/` + v + "\"\n"
+	}
+	result = strings.Replace(result, "@imports@", imp, -1)
 
 	create, err := os.Create("tmp_api_default.go")
 	if err != nil {
@@ -70,4 +82,26 @@ func main() {
 	}
 	fmt.Println("完了")
 
+}
+
+func ToSnakeCase(s string) string {
+	b := &strings.Builder{}
+	for i, r := range s {
+		if i == 0 {
+			b.WriteRune(unicode.ToLower(r))
+			continue
+		}
+		if unicode.IsUpper(r) {
+			b.WriteRune('_')
+			b.WriteRune(unicode.ToLower(r))
+			continue
+		}
+		b.WriteRune(r)
+	}
+	result := b.String()
+	if result == "i_d" {
+		return "id"
+	} else {
+		return b.String()
+	}
 }

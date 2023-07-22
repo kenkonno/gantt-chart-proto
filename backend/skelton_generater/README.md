@@ -27,6 +27,14 @@ interactorのスケルトンまでは作成する。
     - Response：[Method][ApiName]Response
   - 備考
     - yaml generatorはいい感じに interactorを呼び出してくれるだけ。システムでは考慮していない。
+    - がいい感じにスケルトンは作る。
+
+
+メモ
+
+残：
+delete と post の interactor 自動化まで進める
+
 
 ## How To Use
 

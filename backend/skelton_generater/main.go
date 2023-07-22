@@ -20,7 +20,7 @@ func main() {
 	// destディレクトリの作成
 	sub.MakeDir("dest")
 	sub.MakeDir("dest/repository")
-	sub.MakeDir("dest/interactor/" + sub.ToSnakeCase(structName))
+	sub.MakeDir("dest/interactor/" + sub.ToSnakeCase(structName) + "s")
 
 	r := sub.Repository{}
 
@@ -36,34 +36,41 @@ func main() {
 
 	// interactor の作成
 	// get
-	i := sub.Interactor{}
+	i := sub.Interactor{StructInfo: structInfo}
 	interactorGetResult := i.GetPackage(structName)
 	interactorGetResult += i.GetImports()
 	interactorGetResult += i.GetInvoke(structName)
-	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"/"+"get_"+sub.ToSnakeCase(structName)+"s.go", interactorGetResult)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"get_"+sub.ToSnakeCase(structName)+"s.go", interactorGetResult)
 
 	// get with id
 	interactorGetIdResult := i.GetPackage(structName)
 	interactorGetIdResult += i.GetImports()
 	interactorGetIdResult += i.GetIdInvoke(structName)
-	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"/"+"get_"+sub.ToSnakeCase(structName+"Id")+"s.go", interactorGetIdResult)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"get_"+sub.ToSnakeCase(structName+"sId")+".go", interactorGetIdResult)
 
 	// post with Id
 	interactorPostResult := i.GetPackage(structName)
 	interactorPostResult += i.GetImports()
 	interactorPostResult += i.PostInvoke(structName)
-	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"/"+"post_"+sub.ToSnakeCase(structName+"Id")+"s.go", interactorPostResult)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"post_"+sub.ToSnakeCase(structName+"sId")+".go", interactorPostResult)
 
 	// delete
 	interactorDeleteResult := i.GetPackage(structName)
 	interactorDeleteResult += i.GetImports()
 	interactorDeleteResult += i.DeleteInvoke(structName)
-	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"/"+"delete_"+sub.ToSnakeCase(structName)+"s.go", interactorDeleteResult)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"delete_"+sub.ToSnakeCase(structName)+"s.go", interactorDeleteResult)
 
 	// yaml
 	y := sub.Yaml{structInfo}
-	yamlResult := y.GetGetPaths(structName)
+	yamlResult := "########## PATHS ################### \n\n"
+	yamlResult += y.GetGetPaths(structName)
+	yamlResult += y.GetGetIdPaths(structName)
+	yamlResult += "########## MODELS(components) ################### \n\n"
 	yamlResult += y.GetComponents(structName)
+	yamlResult += y.GetGetRequest(structName) // TODO: Request周りは結局Post系しか使ってないけど一応作る
+	yamlResult += y.GetGetResponse(structName)
+	yamlResult += y.GetGetIdRequest(structName) // TODO: Request周りは結局Post系しか使ってないけど一応作る
+	yamlResult += y.GetGetIdResponse(structName)
 	sub.CreateFile("dest/yaml_info.txt", yamlResult)
 
 	fmt.Println("完了")
