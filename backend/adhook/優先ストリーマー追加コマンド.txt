@@ -1,0 +1,13 @@
+
+-- バッチコマンドだけど
+# tft
+docker-compose run batch bash -c "cd batch && ./batch AddPreferredStreamerExecute riri_lol,nakazima_ch2,ginya916,shikamemadokaaa,bestsatojp,hirokktft 513143" --rm batch
+
+# just chating
+docker-compose run batch bash -c "cd batch && ./batch AddPreferredStreamerExecute sooflower,aesoon_96,haemingwa,h_seha,sorammmm,eo0oiixy_04,mallang_peach_,winter_28270,magenta62,rabbiilovey,god_lita,plumy_ 509658" --rm batch
+
+# pool
+docker-compose run batch bash -c "cd batch && ./batch AddPreferredStreamerExecute asianbunnyx,world1104,yixiang2443,yarumichan,firefly880605 116747788" --rm batch
+
+# asmr
+docker-compose run batch bash -c "cd batch && ./batch AddPreferredStreamerExecute faith,ijenz,sharonqueen,strawberrytabby,veronika,castaway,onuri,veronika,asmr_kotya 509659" --rm batch

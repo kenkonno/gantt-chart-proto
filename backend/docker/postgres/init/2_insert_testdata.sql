@@ -1,0 +1,102 @@
+-- INSERT INTO public.stores (name, db_name, memo, created_at, updated_at)
+-- VALUES ('デモ店舗', 'demo', 'デモ用', now(), now());
+
+
+
+-- users
+-- INSERT INTO public.users (id, phone_number, password, name, interview_sheet, created_at, updated_at) VALUES (2, 'a', 'a', '今野 拳', '持病無し', null, null);
+-- INSERT INTO public.users (id, phone_number, password, name, interview_sheet, created_at, updated_at) VALUES (1, '08065939641', 'password', '今野 拳', '持病無し', null, null);
+-- INSERT INTO public.users (id, phone_number, password, name, interview_sheet, created_at, updated_at) VALUES (-1, 'dummy', 'dummy', '未登録', '未登録者', null, null);
+
+-- admin
+-- INSERT INTO public.admins ( user_id, password, name, created_at, updated_at) VALUES ('b', '92eb5ffee6ae2fec3ad71c777531578f', 'b', null, null);
+
+-- rooms
+-- INSERT INTO public.rooms
+--     (name, schema_name, start_hour, start_minute, end_hour, end_minute, duration, created_at, updated_at) VALUES
+--     ('デフォルト','wasp_default', 9,0, 18,0,10, now(), now());
+
+
+-- INSERT INTO public.rooms (id, name, schema_name, start_hour, end_hour, duration, created_at, updated_at) VALUES (2, '今野!','ken', 10,19,60, now(), now());
+-- INSERT INTO public.rooms (id, name, schema_name, start_hour, end_hour, duration, created_at, updated_at) VALUES (2, '今野!','ken', 10,19,60, now(), now());
+
+-- -- primary_filters
+-- INSERT INTO public.primary_filters (id, type, started_at, ended_at, created_at, updated_at) VALUES (1, 'B', '2020-01-22 00:00:00', '2020-01-22 12:30:00', null, null);
+-- INSERT INTO public.primary_filters (id, type, started_at, ended_at, created_at, updated_at) VALUES (2, 'A', '2020-01-23 10:00:00', '2020-01-23 15:30:00', null, null);
+--
+--
+-- -- reservations
+-- INSERT INTO public.reservations (id, started_at, ended_at, user_id, memo, created_at, updated_at) VALUES (1, '2020-01-26 15:30:00', '2020-01-26 15:35:00', 1, '誰か助けて・・・', null, null);
+-- INSERT INTO public.reservations (id, started_at, ended_at, user_id, memo, created_at, updated_at) VALUES (2, '2020-01-24 15:30:00', '2020-01-24 15:35:00', -1, null, null, null);
+--
+-- -- reservable_times
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (1, 1, '1990-06-14 09:00:00', '1990-06-14 12:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (2, 2, '1990-06-14 09:00:00', '1990-06-14 12:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (3, 3, '1990-06-14 09:00:00', '1990-06-14 12:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (4, 4, '1990-06-14 09:00:00', '1990-06-14 12:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (5, 5, '1990-06-14 09:00:00', '1990-06-14 12:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (7, 1, '1990-06-14 14:30:00', '1990-06-14 18:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (8, 2, '1990-06-14 14:30:00', '1990-06-14 18:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (9, 3, '1990-06-14 14:30:00', '1990-06-14 18:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (10, 4, '1990-06-14 14:30:00', '1990-06-14 18:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (11, 5, '1990-06-14 14:30:00', '1990-06-14 18:30:00', null, null);
+-- INSERT INTO public.reservable_times (id, dow, started_at, ended_at, created_at, updated_at) VALUES (6, 7, '1990-06-14 11:00:00', '1990-06-14 17:30:00', null, null);
+--
+-- -- holiday
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-01-01', '元日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-01-14', '成人の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-02-11', '建国記念の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-03-21', '春分の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-04-29', '昭和の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-04-30', '祝日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-05-01', '天皇の即位の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-05-02', '祝日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-05-03', '憲法記念日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-05-04', 'みどりの日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-05-05', 'こどもの日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-05-06', 'こどもの日 振替休日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-07-15', '海の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-08-11', '山の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-08-12', '山の日 振替休日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-09-16', '敬老の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-09-23', '秋分の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-10-14', '体育の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-10-22', '即位礼正殿の儀の行われる日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-11-03', '文化の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-11-04', '文化の日 振替休日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2019-11-23', '勤労感謝の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-01-01', '元日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-01-13', '成人の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-02-11', '建国記念の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-02-23', '天皇誕生日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-02-24', '天皇誕生日 振替休日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-03-20', '春分の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-04-29', '昭和の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-05-03', '憲法記念日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-05-04', 'みどりの日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-05-05', 'こどもの日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-05-06', '憲法記念日 振替休日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-07-23', '海の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-07-24', '体育の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-08-10', '山の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-09-21', '敬老の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-09-22', '秋分の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-11-03', '文化の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2020-11-23', '勤労感謝の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-01-01', '元日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-01-11', '成人の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-02-11', '建国記念の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-02-23', '天皇誕生日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-03-20', '春分の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-04-29', '昭和の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-05-03', '憲法記念日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-05-04', 'みどりの日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-05-05', 'こどもの日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-07-19', '海の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-08-11', '山の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-09-20', '敬老の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-09-23', '秋分の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-10-11', '体育の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-11-03', '文化の日');
+-- INSERT INTO public.holidays (date, memo) VALUES ('2021-11-23', '勤労感謝の日');
+--

@@ -35,6 +35,10 @@ export function useGantt() {
     ])
     const bars = rows.value.map(v => v.bar)
     const footerLabels = ref<string[]>([])
+    // 積み上げの更新
+    footerLabels.value.push(...calculateStuckPersons(rows.value))
+
+    // リアクティブな関数群
     const adjustBar = (bar: GanttBarObject) => {
         // id をもとにvuejs側のデータも更新する
         const target = rows.value.find(v => v.bar.ganttBarConfig.id === bar.ganttBarConfig.id)
@@ -45,12 +49,40 @@ export function useGantt() {
             target.workEndDate = dayjs(ganttDateToYMDDate(bar.endDate))
         }
     }
-    footerLabels.value.push(...calculateStuckPersons(rows.value))
+    const addRow = () => {
+        rows.value.push(newRow(
+            Math.random().toString(),
+            "新規タスク",
+            1,
+            1,
+            dayjs(ganttDateToYMDDate(chartStart.value)),
+            dayjs(ganttDateToYMDDate(chartStart.value)).add(3, 'day'),
+        ))
+    }
+
+    const deleteRow = (id: RowID) => {
+        console.log("#deleterow")
+        rows.value.forEach((row, i) => {
+            if (row.bar.ganttBarConfig.id === id) {
+                rows.value.splice(i, 1)
+            }
+        })
+    }
+
     watch(rows, () => {
         console.log("WATCH")
         footerLabels.value.splice(0)
         footerLabels.value.push(...calculateStuckPersons(rows.value))
+
+        // rowsの変更を barsに反映させる。色々散らばっているが、ここでは時刻関係以外とする。
+        bars.splice(0)
+        bars.push(...rows.value.map( v => {
+            v.bar.ganttBarConfig.label = v.taskName
+            return v.bar
+        }))
+
     }, {deep: true})
+
     return {
         rows,
         bars,
@@ -63,7 +95,9 @@ export function useGantt() {
         setScheduleByPersonDay,
         setScheduleByFromTo,
         adjustBar,
-        slideSchedule
+        slideSchedule,
+        addRow,
+        deleteRow
     }
 }
 
@@ -102,8 +136,8 @@ const slideSchedule = (rows: Row[]) => {
         if (i > 0) {
             // 期間を計算する
             const duration = row.workEndDate.diff(row.workStartDate, 'day')
-            row.workStartDate = prevEndDate.add(1, 'day').set('hour', 0).set('minute',0)
-            row.workEndDate = row.workStartDate.add(duration, 'day').set('hour', 23).set('minute',59)
+            row.workStartDate = prevEndDate.add(1, 'day').set('hour', 0).set('minute', 0)
+            row.workEndDate = row.workStartDate.add(duration, 'day').set('hour', 23).set('minute', 59)
             reflectGantt(row)
         }
         prevEndDate = row.workEndDate
@@ -153,7 +187,7 @@ const calculateStuckPersons = (rows: Row[]) => {
         seq++
     }
 
-    return result.map( v => v === 0 ? '' : v.toString())
+    return result.map(v => v === 0 ? '' : v.toString())
 }
 
 const reflectGantt = (row: Row) => {

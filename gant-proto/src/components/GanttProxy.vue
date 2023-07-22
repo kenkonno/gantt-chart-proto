@@ -23,26 +23,45 @@
       @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
 
       :footer-labels="footerLabels"
+      sticky
   >
     <g-gantt-row v-for="bar in bars" :key="bar.ganttBarConfig.id" :bars="[bar]"/>
+    <template #table-header>
+      table header
+    </template>
     <template #rows>
-      <div class="g-gantt-row" v-for="row in rows" :key="row.bar.ganttBarConfig.id"
-           style="height: 40px; display:flex; align-items: center;">
-        <div>{{ row.taskName }}</div>
-        <div><input type="number" v-model="row.numberOfWorkers" style="width: 2rem"/>人</div>
-        <div><input type="number" v-model="row.estimatePersonDay" style="width: 2rem"/>人日</div>
-        <div><input type="date" :value="row.workStartDate.format('YYYY-MM-DD')"
-                    @input="updateWorkStartDate(row, $event.target.value)"/></div>
-        <div><input type="date" :value="row.workEndDate.format('YYYY-MM-DD')"
-                    @input="updateWorkEndDate(row, $event.target.value)"/></div>
+      <div class="row-wrapper">
+        <div class="g-gantt-row" v-for="row in rows" :key="row.bar.ganttBarConfig.id"
+             style="height: 40px; align-items: center;">
+          <div><input type="text" v-model="row.taskName" /></div>
+          <div><input type="number" v-model="row.numberOfWorkers" style="width: 2rem"/>人</div>
+          <div><input type="number" v-model="row.estimatePersonDay" style="width: 2rem"/>人日</div>
+          <div><input type="date" :value="row.workStartDate.format('YYYY-MM-DD')"
+                      @input="updateWorkStartDate(row, $event.target.value)"/></div>
+          <div><input type="date" :value="row.workEndDate.format('YYYY-MM-DD')"
+                      @input="updateWorkEndDate(row, $event.target.value)"/></div>
+          <div><a href="#" @click="deleteRow(row.bar.ganttBarConfig.id)">削除</a></div>
+        </div>
+        <div>
+          <input type="button" value="行の追加" @click="addRow()">
+        </div>
       </div>
     </template>
   </g-gantt-chart>
 </template>
-<style scss scoped>
-.g-gantt-row > div {
-  padding: 0.5rem;
-  white-space: nowrap;
+<style lang="scss" scoped>
+.row-wrapper {
+  display: table;
+  > .g-gantt-row {
+    display: table-row;
+
+    > div {
+      padding: 0.5rem;
+      white-space: nowrap;
+      display: table-cell;
+    }
+  }
+
 }
 </style>
 
@@ -62,7 +81,9 @@ const {
   setScheduleByPersonDay,
   setScheduleByFromTo,
   adjustBar,
-  slideSchedule
+  slideSchedule,
+  addRow,
+  deleteRow
 } = useGantt()
 
 

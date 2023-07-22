@@ -1,0 +1,64 @@
+# docker-compose のバージョン
+version: '3'
+
+# 各コンテナの情報
+services:
+
+  # postgres サービス
+  postgres:
+    # コンテナの名前
+    container_name: postgres
+    # Dockerfile のディレクトリパス
+    build:
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
+    ports:
+      - 5432:5432
+    # postgres 設定
+    env_file: .env
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+  #      - ./docker/postgres/init/:/docker-entrypoint-initdb.d/
+
+    # golang アプリケーション
+  api:
+    container_name: api
+    ports:
+      - 8081:8081
+    # postgres をビルドした後に app をビルド
+#    depends_on:
+#      - postgres
+    # Dockerfile を指定
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    env_file: .env
+    # フォルダ共有（ホストOS:コンテナ）
+    volumes:
+      - ./:/go/src/github.com/kenkonno/twitch_clips_project/backend/
+    # docker-compose run 実行時に実行されるコマンド
+    tty:
+      true
+    command: CompileDaemon -command="./api" -include="*.go" -polling
+
+  # golang   batch
+  batch:
+    container_name: batch
+    # postgres をビルドした後に app をビルド
+#    depends_on:
+#      - postgres
+    # Dockerfile を指定
+    build:
+      context: .
+      dockerfile: ./docker/batch/Dockerfile
+    env_file: .env
+    # フォルダ共有（ホストOS:コンテナ）
+    volumes:
+      - ./:/go/src/github.com/kenkonno/twitch_clips_project/backend/
+    # docker-compose run 実行時に実行されるコマンド
+    tty:
+      true
+
+volumes:
+  dbdata:
+    external: true
