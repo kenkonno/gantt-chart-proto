@@ -28,14 +28,14 @@ func main() {
 			result += "\n"
 			// TODO: ディレクトリ構造を変えたのでインポートを変える
 			result += `@imports@
-	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models_models"`
+	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"`
 			result += "\n"
 		}
 
 		// 関数内部の書き換え
 		if rewrite {
 			result += fmt.Sprintf(
-				`	var r openapi_models_models.%sResponse
+				`	var r openapi_models.%sResponse
 	r = %s.%sInvoke(c)
 	c.JSON(http.StatusOK, r)
 `, funcName, packageName, funcName)

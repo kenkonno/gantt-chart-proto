@@ -10,11 +10,10 @@
 package openapi_models
 
 import (
-
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users_id"
 
-	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,15 +21,14 @@ import (
 
 // GetUsers - GetUsers
 func GetUsers(c *gin.Context) {
-	var r openapi_models_models.GetUsersResponse
+	var r openapi_models.GetUsersResponse
 	r = users.GetUsersInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 
 // GetUsersId - GetUsersId
 func GetUsersId(c *gin.Context) {
-	var r openapi_models_models.GetUsersIdResponse
+	var r openapi_models.GetUsersIdResponse
 	r = users_id.GetUsersIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
-
