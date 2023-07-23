@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetUsersIdRequest struct {
+
 	Id int32 `json:"id,omitempty"`
 }

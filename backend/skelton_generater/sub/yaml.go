@@ -14,11 +14,11 @@ type StructInfo struct {
 	Type     string
 }
 
-// GetPaths
-func (r *Yaml) GetGetPaths(structName string) string {
+// GetBasePaths Get/Postがデフォルト
+func (r *Yaml) GetBasePaths(structName string) string {
 	var result string
 	template :=
-		`paths:
+		`
   /api/@Lower@s:
     get:
       summary: Get@Upper@s
@@ -36,6 +36,18 @@ func (r *Yaml) GetGetPaths(structName string) string {
       operationId: get-@Lower@s
       description: ''
       parameters: []
+    post:
+      summary: Post@Upper@s
+      operationId: post-@Lower@s
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post@Upper@sRequest'
     parameters: []
 `
 	result += RewriteString(template, structName)
@@ -43,10 +55,10 @@ func (r *Yaml) GetGetPaths(structName string) string {
 	return result
 }
 
-func (r *Yaml) GetGetIdPaths(structName string) string {
+func (r *Yaml) GetWithIdPath(structName string) string {
 	var result string
 	template :=
-		`paths:
+		`
   /api/@Lower@s/{id}:
     parameters:
       - schema:
@@ -67,7 +79,24 @@ func (r *Yaml) GetGetIdPaths(structName string) string {
               examples: {}
       operationId: get-@Lower@s-id
       description: ''
-      parameters: []
+    delete:
+      summary: Delete@Upper@sId
+      operationId: delete-@Lower@s-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: Post@Upper@sId
+      operationId: post-@Lower@s-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post@Upper@sRequest'
 `
 	result += RewriteString(template, structName)
 
@@ -93,10 +122,11 @@ func (r *Yaml) componentProperties() string {
 	for _, v := range r.StructInfo {
 		result += fmt.Sprintf("        %s:\n", ToSnakeCase(v.Property))
 		// types
-		if isNumber(v) {
+		if isUpdatedAt(v) {
+			result += "          type: int\n"
+		} else if isNumber(v) {
 			result += "          type: integer\n"
-		}
-		if isString(v) || isDatetime(v) {
+		} else if isString(v) || isDatetime(v) {
 			result += "          type: string\n"
 		}
 
@@ -132,7 +162,7 @@ func (r *Yaml) GetGetIdResponse(structName string) string {
       title: Get@Upper@sResponse
       type: object
       properties:
-        user:
+        @Lower@:
           $ref: '#/components/schemas/@Upper@'
 `
 	return RewriteString(template, structName)
@@ -159,10 +189,10 @@ func (r *Yaml) GetGetIdRequest(structName string) string {
 	return RewriteString(template, structName)
 }
 
-func (r *Yaml) GetDeleteRequest(structName string) string {
+func (r *Yaml) GetDeleteIdRequest(structName string) string {
 	template :=
-		`    Delete@Upper@sRequest:
-      title: Delete@Upper@sRequest
+		`    Delete@Upper@sIdRequest:
+      title: Delete@Upper@sIdRequest
       type: object
       properties:
         id:
@@ -172,13 +202,57 @@ func (r *Yaml) GetDeleteRequest(structName string) string {
 	return RewriteString(template, structName)
 }
 
-func (r *Yaml) GetDeleteResponse(structName string) string {
-	template := `    Delete@Upper@sResponse:
-      title: Delete@Upper@sResponse
+func (r *Yaml) GetDeleteIdResponse(structName string) string {
+	template := `    Delete@Upper@sIdResponse:
+      title: Delete@Upper@sIdResponse
       type: object
       properties:
         msg:
           type: string
+`
+	return RewriteString(template, structName)
+}
+
+func (r *Yaml) GetPostRequest(structName string) string {
+	template := `    Post@Upper@sRequest:
+      title: Post@Upper@sRequest
+      type: object
+      properties:
+        @Lower@:
+          $ref: '#/components/schemas/@Upper@'
+`
+	return RewriteString(template, structName)
+}
+
+func (r *Yaml) GetPostResponse(structName string) string {
+	template := `    Post@Upper@sResponse:
+      title: Post@Upper@sResponse
+      type: object
+      properties:
+        @Lower@:
+          $ref: '#/components/schemas/@Upper@'
+`
+	return RewriteString(template, structName)
+}
+
+func (r *Yaml) GetPostIdRequest(structName string) string {
+	template := `    Post@Upper@sIdRequest:
+      title: Post@Upper@sIdRequest
+      type: object
+      properties:
+        @Lower@:
+          $ref: '#/components/schemas/@Upper@'
+`
+	return RewriteString(template, structName)
+}
+
+func (r *Yaml) GetPostIdResponse(structName string) string {
+	template := `    Post@Upper@sIdResponse:
+      title: Post@Upper@sIdResponse
+      type: object
+      properties:
+        @Lower@:
+          $ref: '#/components/schemas/@Upper@'
 `
 	return RewriteString(template, structName)
 }
@@ -206,6 +280,13 @@ func isString(s StructInfo) bool {
 
 func isDatetime(s StructInfo) bool {
 	if strings.Contains(s.Type, "time.Time") {
+		return true
+	}
+	return false
+}
+
+func isUpdatedAt(s StructInfo) bool {
+	if strings.Contains(s.Property, "UpdatedAt") {
 		return true
 	}
 	return false

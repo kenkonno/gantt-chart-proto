@@ -9,7 +9,7 @@
 
 package openapi_models
 
-type GetUsersResponse struct {
+type DeleteUsersIdRequest struct {
 
-	List []User `json:"list"`
+	Id int32 `json:"id,omitempty"`
 }

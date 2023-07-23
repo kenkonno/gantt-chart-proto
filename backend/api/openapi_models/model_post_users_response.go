@@ -9,7 +9,7 @@
 
 package openapi_models
 
-type GetUsersResponse struct {
+type PostUsersResponse struct {
 
-	List []User `json:"list"`
+	User User `json:"user,omitempty"`
 }

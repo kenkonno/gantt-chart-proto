@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func DeleteUsersInvoke(c *gin.Context) openapi_models.DeleteUsersResponse {
+func DeleteUsersIdInvoke(c *gin.Context) openapi_models.DeleteUsersIdResponse {
 
 	userRep := repository.NewUserRepository()
 
@@ -18,6 +18,6 @@ func DeleteUsersInvoke(c *gin.Context) openapi_models.DeleteUsersResponse {
 
 	userRep.Delete(int32(id))
 
-	return openapi_models.DeleteUsersResponse{}
+	return openapi_models.DeleteUsersIdResponse{}
 
 }

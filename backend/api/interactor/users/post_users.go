@@ -7,7 +7,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 )
 
-func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
+func PostUsersInvoke(c *gin.Context) openapi_models.PostUsersResponse {
 
 	userRep := repository.NewUserRepository()
 
@@ -15,7 +15,6 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 	if err := c.ShouldBindJSON(&userReq); err != nil {
 		panic("invalid json")
 	}
-
 	userRep.Upsert(db.User{
 		Id:        userReq.User.Id,
 		Password:  userReq.User.Password,
@@ -24,6 +23,6 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 		UpdatedAt: userReq.User.UpdatedAt,
 	})
 
-	return openapi_models.PostUsersIdResponse{}
+	return openapi_models.PostUsersResponse{}
 
 }

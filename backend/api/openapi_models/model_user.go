@@ -14,6 +14,7 @@ import (
 )
 
 type User struct {
+
 	Id int32 `json:"id,omitempty"`
 
 	Password string `json:"password,omitempty"`
@@ -22,5 +23,5 @@ type User struct {
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int `json:"updated_at,omitempty"`
 }

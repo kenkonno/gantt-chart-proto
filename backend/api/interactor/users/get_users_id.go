@@ -19,11 +19,11 @@ func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
 
 	return openapi_models.GetUsersIdResponse{
 		User: openapi_models.User{
-			Id:        user.ID,
+			Id:        user.Id,
 			Password:  user.Password,
 			Email:     user.Email,
 			CreatedAt: user.CreatedAt,
-			UpdatedAt: int32(user.UpdatedAt),
+			UpdatedAt: user.UpdatedAt,
 		},
 	}
 }

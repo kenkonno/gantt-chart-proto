@@ -31,9 +31,6 @@ func (r *Interactor) GetMapping(prefix string) string {
 			p = "Id"
 		}
 		value := prefix + "." + v.Property
-		if p == "UpdatedAt" {
-			value = "int32(" + value + ")"
-		}
 		result += fmt.Sprintf("				%s:        %s,\n", p, value)
 	}
 
@@ -86,7 +83,6 @@ func (r *Interactor) GetIdInvoke(structName string) string {
 
 }
 
-// GetIdInvoke Get With Id
 func (r *Interactor) PostInvoke(structName string) string {
 	template :=
 		`func @Method@@Upper@sInvoke(c *gin.Context) openapi_models.@Method@@Upper@sResponse {
@@ -97,15 +93,13 @@ func (r *Interactor) PostInvoke(structName string) string {
 	if err := c.ShouldBindJSON(&@Lower@Req); err != nil {
 		panic("invalid json")
 	}
-
 	@Lower@Rep.Upsert(db.@Upper@{
-		UpdatedAt:     0,
+` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName) + `
 	})
 
 	return openapi_models.@Method@@Upper@sResponse{}
 
 }
-
 `
 	return strings.Replace(RewriteString(template, structName), "@Method@", "Post", -1)
 
@@ -118,28 +112,28 @@ func (r *Interactor) PostIdInvoke(structName string) string {
 
 	@Lower@Rep := repository.New@Upper@Repository()
 
-	var @Lower@Req openapi_models.@Method@@Upper@sIdRequest
+	var @Lower@Req openapi_models.@Method@@Upper@sRequest
 	if err := c.ShouldBindJSON(&@Lower@Req); err != nil {
 		panic("invalid json")
 	}
 
 	@Lower@Rep.Upsert(db.@Upper@{
-		ID: @Lower@Req.ID,
-		UpdatedAt:     0,
+` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName) + `
 	})
 
 	return openapi_models.@Method@@Upper@sIdResponse{}
 
 }
+
 `
 	return strings.Replace(RewriteString(template, structName), "@Method@", "Post", -1)
 
 }
 
 // GetIdInvoke Get With Id
-func (r *Interactor) DeleteInvoke(structName string) string {
+func (r *Interactor) DeleteIdInvoke(structName string) string {
 	template :=
-		`func @Method@@Upper@sInvoke(c *gin.Context) openapi_models.@Method@@Upper@sResponse {
+		`func @Method@@Upper@sIdInvoke(c *gin.Context) openapi_models.@Method@@Upper@sIdResponse {
 
 	@Lower@Rep := repository.New@Upper@Repository()
 
@@ -150,7 +144,7 @@ func (r *Interactor) DeleteInvoke(structName string) string {
 
 	@Lower@Rep.Delete(int32(id))
 
-	return openapi_models.@Method@@Upper@sResponse{}
+	return openapi_models.@Method@@Upper@sIdResponse{}
 
 }
 `

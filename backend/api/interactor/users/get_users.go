@@ -16,11 +16,11 @@ func GetUsersInvoke(c *gin.Context) openapi_models.GetUsersResponse {
 	return openapi_models.GetUsersResponse{
 		List: lo.Map(userList, func(item db.User, index int) openapi_models.User {
 			return openapi_models.User{
-				Id:        item.ID,
+				Id:        item.Id,
 				Password:  item.Password,
 				Email:     item.Email,
 				CreatedAt: item.CreatedAt,
-				UpdatedAt: int32(item.UpdatedAt),
+				UpdatedAt: item.UpdatedAt,
 			}
 		}),
 	}

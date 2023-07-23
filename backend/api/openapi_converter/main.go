@@ -11,7 +11,7 @@ import (
 func main() {
 	fmt.Println("開始")
 	// ファイルの読み込み
-	file, err := os.ReadFile("openapi_models/api_default.go")
+	file, err := os.ReadFile("openapi/api_default.go")
 	if err != nil {
 		panic(err)
 	}
@@ -26,7 +26,6 @@ func main() {
 		// impotの追加
 		if strings.Contains(v, "net/http") {
 			result += "\n"
-			// TODO: ディレクトリ構造を変えたのでインポートを変える
 			result += `@imports@
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"`
 			result += "\n"
@@ -44,12 +43,15 @@ func main() {
 			result += v + "\n"
 		}
 		if strings.Contains(v, "func") {
+			fmt.Println("############## TEST")
 			assigned := regexp.MustCompile(`func ([a-zA-Z]+)\(`)
 			group := assigned.FindSubmatch([]byte(v))
 			funcName = string(group[1])
 
 			reg := regexp.MustCompile(`(Get|Put|Delete|Post|Invoke)`)
-			packageName = ToSnakeCase(reg.ReplaceAllString(funcName, ""))
+			packageName = ToSnakeCase(
+				strings.Replace(reg.ReplaceAllString(funcName, ""), "Id", "", -1),
+			)
 			packageMap[packageName] = packageName
 			rewrite = true
 		}
@@ -69,14 +71,14 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Remove("openapi_models/api_default.go")
+	err = os.Remove("openapi/api_default.go")
 	if err != nil {
 		panic(err)
 	}
 
 	create.Close()
 
-	err = os.Rename("tmp_api_default.go", "openapi_models/api_default.go")
+	err = os.Rename("tmp_api_default.go", "openapi/api_default.go")
 	if err != nil {
 		panic(err)
 	}

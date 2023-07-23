@@ -23,6 +23,18 @@ paths:
       operationId: get-users
       description: ''
       parameters: []
+    post:
+      summary: PostUsers
+      operationId: post-users
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUsersRequest'
     parameters: []
   '/api/users/{id}':
     parameters:
@@ -44,7 +56,24 @@ paths:
               examples: {}
       operationId: get-users-id
       description: ''
-      parameters: []
+    delete:
+      summary: DeleteUsersId
+      operationId: delete-users-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostUsersId
+      operationId: post-users-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUsersRequest'
 components:
   schemas:
     User:
@@ -53,7 +82,6 @@ components:
       properties:
         id:
           type: integer
-          format: int32
         password:
           type: string
         email:
@@ -62,7 +90,7 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: integer
+          type: int
       description: ''
       x-tags:
         - User
@@ -92,17 +120,41 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
-    DeleteUsersRequest:
-      title: DeleteUsersRequest
+    DeleteUsersIdRequest:
+      title: DeleteUsersIdRequest
       type: object
       properties:
         id:
           type: integer
           format: int32
-    DeleteUsersResponse:
-      title: DeleteUsersResponse
+    DeleteUsersIdResponse:
+      title: DeleteUsersIdResponse
       type: object
       properties:
         msg:
           type: string
+    PostUsersRequest:
+      title: PostUsersRequest
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    PostUsersResponse:
+      title: PostUsersResponse
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    PostUsersIdRequest:
+      title: PostUsersIdRequest
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    PostUsersIdResponse:
+      title: PostUsersIdResponse
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
   parameters: {}

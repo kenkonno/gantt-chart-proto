@@ -48,31 +48,47 @@ func main() {
 	interactorGetIdResult += i.GetIdInvoke(structName)
 	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"get_"+sub.ToSnakeCase(structName+"sId")+".go", interactorGetIdResult)
 
-	// post with Id
+	// post
 	interactorPostResult := i.GetPackage(structName)
 	interactorPostResult += i.GetImports()
 	interactorPostResult += i.PostInvoke(structName)
-	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"post_"+sub.ToSnakeCase(structName+"sId")+".go", interactorPostResult)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"post_"+sub.ToSnakeCase(structName+"s")+".go", interactorPostResult)
 
-	// delete
+	// post with Id TODO: 変える必要あるかも
+	interactorPostIdResult := i.GetPackage(structName)
+	interactorPostIdResult += i.GetImports()
+	interactorPostIdResult += i.PostIdInvoke(structName)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"post_"+sub.ToSnakeCase(structName+"sId")+".go", interactorPostIdResult)
+
+	// delete with Id
 	interactorDeleteResult := i.GetPackage(structName)
 	interactorDeleteResult += i.GetImports()
-	interactorDeleteResult += i.DeleteInvoke(structName)
-	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"delete_"+sub.ToSnakeCase(structName)+"s.go", interactorDeleteResult)
+	interactorDeleteResult += i.DeleteIdInvoke(structName)
+	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"delete_"+sub.ToSnakeCase(structName+"sId")+"s.go", interactorDeleteResult)
 
 	// yaml
 	y := sub.Yaml{structInfo}
 	yamlResult := "########## PATHS ################### \n\n"
-	yamlResult += y.GetGetPaths(structName)
-	yamlResult += y.GetGetIdPaths(structName)
+	yamlResult += y.GetBasePaths(structName)
+	yamlResult += y.GetWithIdPath(structName)
 	yamlResult += "########## MODELS(components) ################### \n\n"
+	// Get
 	yamlResult += y.GetComponents(structName)
 	yamlResult += y.GetGetRequest(structName) // TODO: Request周りは結局Post系しか使ってないけど一応作る
 	yamlResult += y.GetGetResponse(structName)
+	// GetId
 	yamlResult += y.GetGetIdRequest(structName) // TODO: Request周りは結局Post系しか使ってないけど一応作る
 	yamlResult += y.GetGetIdResponse(structName)
-	yamlResult += y.GetDeleteRequest(structName)
-	yamlResult += y.GetDeleteResponse(structName)
+	// Delete
+	yamlResult += y.GetDeleteIdRequest(structName)
+	yamlResult += y.GetDeleteIdResponse(structName)
+	// Post
+	yamlResult += y.GetPostRequest(structName)
+	yamlResult += y.GetPostResponse(structName)
+
+	// Post
+	yamlResult += y.GetPostIdRequest(structName)
+	yamlResult += y.GetPostIdResponse(structName)
 	sub.CreateFile("dest/yaml_info.txt", yamlResult)
 
 	fmt.Println("完了")
