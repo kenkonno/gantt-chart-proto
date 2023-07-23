@@ -1,10 +1,22 @@
-# gantt-chart-proto
-ガントチャートのプロトタイプ
+# Ken's All in Project set.
 
-# ( ..)φメモメモ
- - 2023-07-16 
-   - 一旦、機能以外はそれとなく実装
-   - 下記３点を実装してでもとして上げる
-     - 工数重視機能
-     - スケジュール重視機能
-     - スライド昨日
+- フロント・バックエンド・バッチ完備
+- gormモデル定義から ソースコードの自動生成
+- openapi.yamlからのソースコード自動生成
+
+# HowToUse
+
+1. dockerのvolumeの作成（この名前はユニークなものにすること）
+    1. 例）docker volume create dbdata_gantt
+2. docker-compose.yamlの編集
+    1. 20行目のvolumeと63行目のvolumeを1.iで作成したものに変更する。
+    2. recreate.shの修正
+3. パスorパッケージの修正
+    1. DockerFileの修正
+    2. openapi_generator.shの修正
+    3. openapi_converterの修正
+
+
+## メモ程度なので漏れがありそう
+
+

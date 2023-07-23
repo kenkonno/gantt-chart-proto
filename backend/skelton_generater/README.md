@@ -31,16 +31,14 @@ interactorのスケルトンまでは作成する。
 
 
 メモ
-
-残：
-delete と post の interactor 自動化まで進める
+一旦作り切ったので、今後テンプレートをエンハンスしていけばすごくよくなると思います。
 
 
 ## How To Use
 
 ## command example
 
-実行ディレクトリはbackend直下
+1. 実行ディレクトリはbackend直下
 
 ```
 go run ./main.go "../models/db/user"
@@ -50,6 +48,12 @@ go run ./main.go "../models/db/user"
 ```
 go run ./main.go "../models/db/[モデルへのパス(.goは除く)]"
 ```
+
+2. destディレクトリにあるinteractorをコピー
+3. 必要があれば dest/yaml_info.txt を api.yamlにコピペ
+   4. Apiのパス定義と モデル定義の２つに別れています。
+
+
 
 注意事項
 
