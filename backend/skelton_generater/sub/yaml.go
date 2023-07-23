@@ -159,6 +159,30 @@ func (r *Yaml) GetGetIdRequest(structName string) string {
 	return RewriteString(template, structName)
 }
 
+func (r *Yaml) GetDeleteRequest(structName string) string {
+	template :=
+		`    Delete@Upper@sRequest:
+      title: Delete@Upper@sRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+`
+	return RewriteString(template, structName)
+}
+
+func (r *Yaml) GetDeleteResponse(structName string) string {
+	template := `    Delete@Upper@sResponse:
+      title: Delete@Upper@sResponse
+      type: object
+      properties:
+        msg:
+          type: string
+`
+	return RewriteString(template, structName)
+}
+
 func isNumber(s StructInfo) bool {
 	if strings.Contains(s.Type, "int") {
 		return true

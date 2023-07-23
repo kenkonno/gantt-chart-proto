@@ -11,7 +11,7 @@ import (
 func main() {
 	fmt.Println("開始")
 	// ファイルの読み込み
-	file, err := os.ReadFile("openapi/api_default.go")
+	file, err := os.ReadFile("openapi_models/api_default.go")
 	if err != nil {
 		panic(err)
 	}
@@ -28,14 +28,14 @@ func main() {
 			result += "\n"
 			// TODO: ディレクトリ構造を変えたのでインポートを変える
 			result += `@imports@
-	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"`
+	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models_models"`
 			result += "\n"
 		}
 
 		// 関数内部の書き換え
 		if rewrite {
 			result += fmt.Sprintf(
-				`	var r openapi_models.%sResponse
+				`	var r openapi_models_models.%sResponse
 	r = %s.%sInvoke(c)
 	c.JSON(http.StatusOK, r)
 `, funcName, packageName, funcName)
@@ -69,14 +69,14 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Remove("openapi/api_default.go")
+	err = os.Remove("openapi_models/api_default.go")
 	if err != nil {
 		panic(err)
 	}
 
 	create.Close()
 
-	err = os.Rename("tmp_api_default.go", "openapi/api_default.go")
+	err = os.Rename("tmp_api_default.go", "openapi_models/api_default.go")
 	if err != nil {
 		panic(err)
 	}

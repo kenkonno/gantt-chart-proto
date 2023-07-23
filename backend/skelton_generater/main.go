@@ -71,6 +71,8 @@ func main() {
 	yamlResult += y.GetGetResponse(structName)
 	yamlResult += y.GetGetIdRequest(structName) // TODO: Request周りは結局Post系しか使ってないけど一応作る
 	yamlResult += y.GetGetIdResponse(structName)
+	yamlResult += y.GetDeleteRequest(structName)
+	yamlResult += y.GetDeleteResponse(structName)
 	sub.CreateFile("dest/yaml_info.txt", yamlResult)
 
 	fmt.Println("完了")

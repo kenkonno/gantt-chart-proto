@@ -5,7 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"os"
 )
@@ -29,7 +29,7 @@ func main() {
 	r.Use(cors.New(cfg))
 	r.Use(userInfoMiddleware())
 
-	r = openapi.NewRouter(r)
+	r = openapi_models.NewRouter(r)
 	r.LoadHTMLGlob("templates/*")
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8081")

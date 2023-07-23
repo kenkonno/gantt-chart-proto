@@ -2,12 +2,12 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
 )
 
-func DeleteUsersInvoke(c *gin.Context) openapi_models.DeleteUsersResponse {
+func DeleteUsersInvoke(c *gin.Context) openapi_models_models.DeleteUsersResponse {
 
 	userRep := repository.NewUserRepository()
 
@@ -18,6 +18,6 @@ func DeleteUsersInvoke(c *gin.Context) openapi_models.DeleteUsersResponse {
 
 	userRep.Delete(int32(id))
 
-	return openapi_models.DeleteUsersResponse{}
+	return openapi_models_models.DeleteUsersResponse{}
 
 }

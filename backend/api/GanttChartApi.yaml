@@ -79,12 +79,6 @@ components:
             $ref: '#/components/schemas/User'
       required:
         - list
-    GetUsersIdResponse:
-      title: GetUsersResponse
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/User'
     GetUsersIdRequest:
       title: GetUsersIdRequest
       type: object
@@ -92,4 +86,23 @@ components:
         id:
           type: integer
           format: int32
+    GetUsersIdResponse:
+      title: GetUsersResponse
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    DeleteUsersRequest:
+      title: DeleteUsersRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteUsersResponse:
+      title: DeleteUsersResponse
+      type: object
+      properties:
+        msg:
+          type: string
   parameters: {}

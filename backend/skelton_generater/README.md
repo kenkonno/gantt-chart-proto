@@ -6,7 +6,7 @@
 
 model定義からapi-repositoryを一通で作成する。
 
-openapi.yamlについてはシステムで吸収しない。運用で吸収する。（request, responseがややこしくなるため）
+openapi_models.yamlについてはシステムで吸収しない。運用で吸収する。（request, responseがややこしくなるため）
 
 modelとresponseの紐づけは手動で実行する。
 
@@ -19,7 +19,7 @@ interactorのスケルトンまでは作成する。
 
 ## Rules
 
-- openapi.yamlの定義
+- openapi_models.yamlの定義
   - APi名、リクエストモデル名、レスポンスモデル名が関連
     - interactorで名称を参照される
     - Api：[Method][ApiName]
