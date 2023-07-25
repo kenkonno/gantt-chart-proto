@@ -16,6 +16,7 @@ func main() {
 	// ファイルの読み込み
 	fileBody := sub.GetFileBody(args)
 	structName := sub.GetStructName(fileBody)
+	lowerName := sub.ToLowerCamel(structName)
 	structInfo := sub.GetStructInfo(fileBody)
 	// destディレクトリの作成
 	sub.MakeDir("dest")
@@ -92,6 +93,28 @@ func main() {
 	yamlResult += y.GetPostIdRequest(structName)
 	yamlResult += y.GetPostIdResponse(structName)
 	sub.CreateFile("dest/yaml_info.txt", yamlResult)
+
+	// Vuejs
+	v := sub.Vuejs{StructInfo: structInfo}
+	// View
+	viewResult := v.GetView(structName)
+	sub.MakeDir("dest/src/views")
+	sub.CreateFile("dest/src/views/"+structName+"View.vue", viewResult)
+
+	// Composable
+	composableResult := v.GetComposable(structName)
+	sub.MakeDir("dest/src/composable")
+	sub.CreateFile("dest/src/composable/"+lowerName+".ts", composableResult)
+
+	// Edit
+	asyncEditResult := v.GetAsyncEdit(structName)
+	sub.MakeDir("dest/src/components/" + lowerName)
+	sub.CreateFile("dest/src/components/"+lowerName+"/Async"+structName+"Edit.vue", asyncEditResult)
+
+	// Table
+	asyncTableResult := v.GetAsyncTable(structName)
+	sub.MakeDir("dest/src/components/" + lowerName)
+	sub.CreateFile("dest/src/components/"+lowerName+"/Async"+structName+"Table.vue", asyncTableResult)
 
 	fmt.Println("完了")
 
