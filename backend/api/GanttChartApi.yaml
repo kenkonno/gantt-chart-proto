@@ -79,26 +79,29 @@ components:
     User:
       title: User
       type: object
-      description: ''
-      x-tags:
-        - User
       properties:
         id:
           type: integer
           nullable: true
         password:
           type: string
+          x-go-custom-tag: binding:"min=1"
         email:
           type: string
+          x-go-custom-tag: binding:"min=1"
         created_at:
           type: string
           format: date-time
         updated_at:
           type: int
       required:
-        - id
         - password
         - email
+        - created_at
+        - updated_at
+      description: ''
+      x-tags:
+        - User
     GetUsersRequest:
       title: GetUsersRequest
       type: object
@@ -162,4 +165,5 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+
   parameters: {}

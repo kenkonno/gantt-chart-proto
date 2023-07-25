@@ -139,8 +139,16 @@ func (r *Yaml) componentProperties() string {
 		if isDatetime(v) {
 			result += "          format: date-time\n"
 		}
+		// Null, required関連の判定
 		if !strings.Contains(v.Type, "*") {
 			requiredProps = append(requiredProps, ToSnakeCase(v.Property))
+			if v.Property == "UpdatedAt" || v.Property == "CreatedAt" {
+			} else {
+				// カスタムはこんな感じで追加する。
+				// x-go-custom-tag: binding:"min=1"
+				// requiredの時は 1以上として簡易的にバリデーションとする。
+				result += "          x-go-custom-tag: binding:\"min=1\"\n"
+			}
 		} else {
 			result += "          nullable: true\n"
 		}

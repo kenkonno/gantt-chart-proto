@@ -16,13 +16,13 @@ import (
 // User - 
 type User struct {
 
-	Id *int32 `json:"id"`
+	Id *int32 `json:"id,omitempty"`
 
-	Password string `json:"password"`
+	Password string `json:"password" binding:"min=1"`
 
-	Email string `json:"email"`
+	Email string `json:"email" binding:"min=1"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
-	UpdatedAt int `json:"updated_at,omitempty"`
+	UpdatedAt int `json:"updated_at"`
 }
