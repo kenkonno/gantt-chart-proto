@@ -22,15 +22,26 @@ func (r *Interactor) GetImports() string {
 `
 }
 
-func (r *Interactor) GetMapping(prefix string) string {
+func (r *Interactor) GetMapping(prefix string, withoutId bool) string {
 
 	var result string
 	for _, v := range r.StructInfo {
+
+		// プロパティ定義（左側）
 		p := v.Property
-		if p == "ID" {
-			p = "Id"
+		if p == "Id" && withoutId {
+			continue
 		}
+		// value定義（右側）
 		value := prefix + "." + v.Property
+
+		if v.Property == "UpdatedAt" {
+			value = "0"
+		}
+		if v.Property == "CreatedAt" {
+			value = "time.Time{}"
+		}
+
 		result += fmt.Sprintf("				%s:        %s,\n", p, value)
 	}
 
@@ -50,7 +61,7 @@ func (r *Interactor) GetInvoke(structName string) string {
 		List: lo.Map(@Lower@List, func(item db.@Upper@, index int) openapi_models.@Upper@ {
 			return openapi_models.@Upper@{
 ` +
-			r.GetMapping("item") + `
+			r.GetMapping("item", false) + `
 			}
 		}),
 	}
@@ -74,7 +85,7 @@ func (r *Interactor) GetIdInvoke(structName string) string {
 
 	return openapi_models.GetUsersIdResponse{
 		User: openapi_models.User{
-` + r.GetMapping(ToLowerCamel(structName)) + `
+` + r.GetMapping(ToLowerCamel(structName), false) + `
 		},
 	}
 }
@@ -94,7 +105,7 @@ func (r *Interactor) PostInvoke(structName string) string {
 		panic("invalid json")
 	}
 	@Lower@Rep.Upsert(db.@Upper@{
-` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName) + `
+` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, true) + `
 	})
 
 	return openapi_models.@Method@@Upper@sResponse{}
@@ -118,7 +129,7 @@ func (r *Interactor) PostIdInvoke(structName string) string {
 	}
 
 	@Lower@Rep.Upsert(db.@Upper@{
-` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName) + `
+` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, false) + `
 	})
 
 	return openapi_models.@Method@@Upper@sIdResponse{}

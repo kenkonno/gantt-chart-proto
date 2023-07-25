@@ -79,9 +79,13 @@ components:
     User:
       title: User
       type: object
+      description: ''
+      x-tags:
+        - User
       properties:
         id:
           type: integer
+          nullable: true
         password:
           type: string
         email:
@@ -91,9 +95,10 @@ components:
           format: date-time
         updated_at:
           type: int
-      description: ''
-      x-tags:
-        - User
+      required:
+        - id
+        - password
+        - email
     GetUsersRequest:
       title: GetUsersRequest
       type: object

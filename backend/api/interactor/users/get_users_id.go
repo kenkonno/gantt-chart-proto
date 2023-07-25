@@ -5,6 +5,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
+	"time"
 )
 
 func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
@@ -22,8 +23,8 @@ func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
 			Id:        user.Id,
 			Password:  user.Password,
 			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
+			CreatedAt: time.Time{},
+			UpdatedAt: 0,
 		},
 	}
 }

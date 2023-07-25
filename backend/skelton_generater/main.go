@@ -67,13 +67,15 @@ func main() {
 	sub.CreateFile("dest/interactor/"+sub.ToSnakeCase(structName)+"s/"+"delete_"+sub.ToSnakeCase(structName+"sId")+"s.go", interactorDeleteResult)
 
 	// yaml
+	// mustache:https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/go-gin-server/model.mustache
 	y := sub.Yaml{structInfo}
 	yamlResult := "########## PATHS ################### \n\n"
 	yamlResult += y.GetBasePaths(structName)
 	yamlResult += y.GetWithIdPath(structName)
 	yamlResult += "########## MODELS(components) ################### \n\n"
-	// Get
+	// Model
 	yamlResult += y.GetComponents(structName)
+	// Get
 	yamlResult += y.GetGetRequest(structName) // TODO: Request周りは結局Post系しか使ってないけど一応作る
 	yamlResult += y.GetGetResponse(structName)
 	// GetId

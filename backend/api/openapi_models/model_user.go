@@ -13,13 +13,14 @@ import (
 	"time"
 )
 
+// User - 
 type User struct {
 
-	Id int32 `json:"id,omitempty"`
+	Id *int32 `json:"id"`
 
-	Password string `json:"password,omitempty"`
+	Password string `json:"password"`
 
-	Email string `json:"email,omitempty"`
+	Email string `json:"email"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

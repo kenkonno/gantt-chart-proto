@@ -12,6 +12,7 @@ type Yaml struct {
 type StructInfo struct {
 	Property string
 	Type     string
+	Gorm     string
 }
 
 // GetBasePaths Get/Postがデフォルト
@@ -119,6 +120,7 @@ func (r *Yaml) GetComponents(structName string) string {
 
 func (r *Yaml) componentProperties() string {
 	result := "      properties:\n"
+	var requiredProps []string
 	for _, v := range r.StructInfo {
 		result += fmt.Sprintf("        %s:\n", ToSnakeCase(v.Property))
 		// types
@@ -137,7 +139,19 @@ func (r *Yaml) componentProperties() string {
 		if isDatetime(v) {
 			result += "          format: date-time\n"
 		}
+		if !strings.Contains(v.Type, "*") {
+			requiredProps = append(requiredProps, ToSnakeCase(v.Property))
+		} else {
+			result += "          nullable: true\n"
+		}
 	}
+	if len(requiredProps) > 0 {
+		result += "      required:\n"
+		for _, v := range requiredProps {
+			result += fmt.Sprintf("        - %s\n", v)
+		}
+	}
+
 	return result
 }
 

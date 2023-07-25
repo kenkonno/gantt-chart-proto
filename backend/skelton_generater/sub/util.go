@@ -61,9 +61,14 @@ func GetStructInfo(body []string) []StructInfo {
 			row := re1.ReplaceAllString(strings.Replace(v, "\t", "", -1), " ") // tabとスペース重複の削除
 			arr := strings.Split(row, " ")
 			if len(arr) >= 2 {
+				gorm := ""
+				if len(arr) == 3 {
+					gorm = arr[2]
+				}
 				r = append(r, StructInfo{
 					Property: arr[0],
 					Type:     arr[1],
+					Gorm:     gorm,
 				})
 			}
 		}
