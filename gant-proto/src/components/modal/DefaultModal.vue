@@ -1,0 +1,88 @@
+<template>
+  <div id="overlay" class="overlay-event overlay-on">
+    <div class="flex">
+      <div id="overlay-inner">
+        <div class="modal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="$emit('closeEditModal')"></button>
+              </div>
+              <div class="modal-body">
+                <slot/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<script setup lang="ts">
+import {ref} from 'vue'
+
+interface DefaultModal {
+  title: string
+}
+
+const props = defineProps<DefaultModal>()
+defineEmits(['closeEditModal'])
+
+const open = ref(false)
+</script>
+
+<style scoped>
+.modal {
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  display: block;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  z-index: 998;
+  width: 100vw;
+  height: 100vh;
+  visibility: hidden;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.6);
+  transition: all 0.5s ease-out;
+}
+
+.modal-dialog {
+  max-width: 90%;
+}
+
+#overlay.overlay-on {
+  visibility: visible;
+  opacity: 1;
+}
+
+.flex {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#overlay-inner {
+  padding: 10px 60px;
+  background-color: #FFF;
+  text-align: center;
+}
+
+#open-btn, #close-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 30px;
+  background-color: #eee;
+  border: solid #ccc 1px;
+  cursor: pointer;
+}
+</style>

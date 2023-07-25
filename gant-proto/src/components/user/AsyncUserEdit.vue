@@ -1,46 +1,53 @@
 <template>
-    <h1>TEST</h1>
-    <!-- component with nested async dependencies -->
-    <input type="button" value="新規追加">
-
-    <label>ID<input type="text" :value="user.id"> </label>
-    <label>Password<input type="text" :value="user.password"> </label>
-    <label>Email<input type="text" :value="user.email"> </label>
-    <label>CreatedAt<input type="text" :value="user.created_at"> </label>
-    <label>UpdatedAt<input type="text" :value="user.updated_at"> </label>
-    <!-- loading state via #fallback slot -->
+  <div class="container">
+    <div class="mb-2">
+      <label class="form-label" for="id">Id</label>
+      <input class="form-control" type="text" name="id" id="id" v-model="user.id" :disabled="true">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="password">Password</label>
+      <input class="form-control" type="text" name="password" id="password" v-model="user.password">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="password">email</label>
+      <input class="form-control" type="text" name="email" id="email" v-model="user.email">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="password">created_at</label>
+      <input class="form-control" type="text" name="created_at" id="created_at" v-model="user.created_at"
+             :disabled="true">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="password">updated_at</label>
+      <input class="form-control" type="text" name="updated_at" id="updated_at" v-model="user.updated_at"
+             :disabled="true">
+    </div>
+    <template v-if="id == null">
+      <button type="submit" class="btn btn-primary" @click="postUser(user); $emit('closeEditModal')">更新</button>
+    </template>
+    <template v-else>
+      <button type="submit" class="btn btn-primary" @click="postUserById(user); $emit('closeEditModal')">更新</button>
+      <button type="submit" class="btn btn-warning" @click="deleteUserById(id); $emit('closeEditModal')">削除</button>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {useUser} from "@/composable/user";
+import {useUser, postUserById, postUser, deleteUserById} from "@/composable/user";
 
-interface UserEdit {
-  id: string | null
+interface AsyncUserEdit {
+  id: number | undefined
 }
 
-defineProps<UserEdit>()
+const props = defineProps<AsyncUserEdit>()
+defineEmits(['closeEditModal'])
 
-const {user} = await useUser()
+const {user} = await useUser(props.id)
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
+label {
+  float: left;
 }
 </style>
