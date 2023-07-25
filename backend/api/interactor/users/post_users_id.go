@@ -5,6 +5,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"net/http"
 	"time"
 )
 
@@ -14,7 +15,8 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 
 	var userReq openapi_models.PostUsersRequest
 	if err := c.ShouldBindJSON(&userReq); err != nil {
-		panic("invalid json")
+		c.JSON(http.StatusBadRequest, err.Error())
+		panic(err)
 	}
 
 	userRep.Upsert(db.User{

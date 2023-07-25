@@ -102,7 +102,8 @@ func (r *Interactor) PostInvoke(structName string) string {
 
 	var @Lower@Req openapi_models.@Method@@Upper@sRequest
 	if err := c.ShouldBindJSON(&@Lower@Req); err != nil {
-		panic("invalid json")
+		c.JSON(http.StatusBadRequest, err.Error())
+		panic(err)
 	}
 	@Lower@Rep.Upsert(db.@Upper@{
 ` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, true) + `
@@ -125,7 +126,8 @@ func (r *Interactor) PostIdInvoke(structName string) string {
 
 	var @Lower@Req openapi_models.@Method@@Upper@sRequest
 	if err := c.ShouldBindJSON(&@Lower@Req); err != nil {
-		panic("invalid json")
+		c.JSON(http.StatusBadRequest, err.Error())
+		panic(err)
 	}
 
 	@Lower@Rep.Upsert(db.@Upper@{
