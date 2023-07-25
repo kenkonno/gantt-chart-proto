@@ -38,7 +38,7 @@ func (r *Repository) GetDefaultFunctions(structName string) string {
 func (r *@Lower@Repository) FindAll() []db.@Upper@ {
 	var @Lower@s []db.@Upper@
 
-	result := r.con.Find(&@Lower@s)
+	result := r.con.Order("id DESC").Find(&@Lower@s)
 	if result.Error != nil {
 		panic(result.Error)
 	}
