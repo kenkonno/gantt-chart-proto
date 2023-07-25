@@ -4,15 +4,15 @@
     <table class="table">
       <thead>
       <tr>
-        <th>id</th>
-        <th>password</th>
-        <th>email</th>
-        <th>created_at</th>
-        <th>updated_at</th>
+        <th>Id</th>
+        <th>Password</th>
+        <th>Email</th>
+        <th>CreatedAt</th>
+        <th>UpdatedAt</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="item in users" :key="item.id">
+      <tr v-for="item in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.password }}</td>
         <td>{{ item.email }}</td>
@@ -25,30 +25,24 @@
 </template>
 
 <script setup lang="ts">
-import {useUserTable} from "@/composable/user";
+import {User} from "@/api";
 
-const users = await useUserTable()
 defineEmits(['openEditModal'])
+
+interface AsyncUserTable {
+  list: User[]
+}
+
+const props = defineProps<AsyncUserTable>()
 
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
+tr > td:nth-child(1) {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
+
+

@@ -4,30 +4,33 @@
       <label class="form-label" for="id">Id</label>
       <input class="form-control" type="text" name="id" id="id" v-model="user.id" :disabled="true">
     </div>
+
     <div class="mb-2">
-      <label class="form-label" for="password">Password</label>
-      <input class="form-control" type="text" name="password" id="password" v-model="user.password">
+      <label class="form-label" for="id">Password</label>
+      <input class="form-control" type="text" name="password" id="password" v-model="user.password" :disabled="false">
     </div>
+
     <div class="mb-2">
-      <label class="form-label" for="password">email</label>
-      <input class="form-control" type="text" name="email" id="email" v-model="user.email">
+      <label class="form-label" for="id">Email</label>
+      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false">
     </div>
+
     <div class="mb-2">
-      <label class="form-label" for="password">created_at</label>
-      <input class="form-control" type="text" name="created_at" id="created_at" v-model="user.created_at"
-             :disabled="true">
+      <label class="form-label" for="id">CreatedAt</label>
+      <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="user.created_at" :disabled="true">
     </div>
+
     <div class="mb-2">
-      <label class="form-label" for="password">updated_at</label>
-      <input class="form-control" type="text" name="updated_at" id="updated_at" v-model="user.updated_at"
-             :disabled="true">
+      <label class="form-label" for="id">UpdatedAt</label>
+      <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="user.updated_at" :disabled="true">
     </div>
+
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postUser(user); $emit('closeEditModal')">更新</button>
+      <button type="submit" class="btn btn-primary" @click="postUser(user, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postUserById(user); $emit('closeEditModal')">更新</button>
-      <button type="submit" class="btn btn-warning" @click="deleteUserById(id); $emit('closeEditModal')">削除</button>
+      <button type="submit" class="btn btn-primary" @click="postUserById(user, $emit)">更新</button>
+      <button type="submit" class="btn btn-warning" @click="deleteUserById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
@@ -51,3 +54,4 @@ label {
   float: left;
 }
 </style>
+
