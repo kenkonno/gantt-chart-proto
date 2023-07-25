@@ -30,9 +30,7 @@ func (r *Yaml) GetBasePaths(structName string) string {
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Get@Upper@sResponse'
+                $ref: '#/components/schemas/Get@Upper@sResponse'
               examples: {}
       operationId: get-@Lower@s
       description: ''
@@ -141,9 +139,9 @@ func (r *Yaml) componentProperties() string {
 		}
 		// Null, required関連の判定
 		if !strings.Contains(v.Type, "*") {
-			requiredProps = append(requiredProps, ToSnakeCase(v.Property))
 			if v.Property == "UpdatedAt" || v.Property == "CreatedAt" {
 			} else {
+				requiredProps = append(requiredProps, ToSnakeCase(v.Property))
 				// カスタムはこんな感じで追加する。
 				// x-go-custom-tag: binding:"min=1"
 				// requiredの時は 1以上として簡易的にバリデーションとする。

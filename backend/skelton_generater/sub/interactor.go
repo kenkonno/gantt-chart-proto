@@ -22,7 +22,7 @@ func (r *Interactor) GetImports() string {
 `
 }
 
-func (r *Interactor) GetMapping(prefix string, withoutId bool) string {
+func (r *Interactor) GetMapping(prefix string, withoutId bool, responseMapping bool) string {
 
 	var result string
 	for _, v := range r.StructInfo {
@@ -35,11 +35,16 @@ func (r *Interactor) GetMapping(prefix string, withoutId bool) string {
 		// value定義（右側）
 		value := prefix + "." + v.Property
 
-		if v.Property == "UpdatedAt" {
-			value = "0"
-		}
-		if v.Property == "CreatedAt" {
-			value = "time.Time{}"
+		// レスポンスのマッピング以外は色々特殊処理
+		if !responseMapping {
+			// 更新の場合はupdatedAtはnullで来るので0固定
+			if v.Property == "UpdatedAt" {
+				value = "0"
+			}
+			// 更新の場合はupdatedAtはnullで来るので0固定
+			if v.Property == "CreatedAt" {
+				value = "time.Time{}"
+			}
 		}
 
 		result += fmt.Sprintf("				%s:        %s,\n", p, value)
@@ -61,7 +66,7 @@ func (r *Interactor) GetInvoke(structName string) string {
 		List: lo.Map(@Lower@List, func(item db.@Upper@, index int) openapi_models.@Upper@ {
 			return openapi_models.@Upper@{
 ` +
-			r.GetMapping("item", false) + `
+			r.GetMapping("item", false, true) + `
 			}
 		}),
 	}
@@ -85,7 +90,7 @@ func (r *Interactor) GetIdInvoke(structName string) string {
 
 	return openapi_models.GetUsersIdResponse{
 		User: openapi_models.User{
-` + r.GetMapping(ToLowerCamel(structName), false) + `
+` + r.GetMapping(ToLowerCamel(structName), false, true) + `
 		},
 	}
 }
@@ -106,7 +111,7 @@ func (r *Interactor) PostInvoke(structName string) string {
 		panic(err)
 	}
 	@Lower@Rep.Upsert(db.@Upper@{
-` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, true) + `
+` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, true, false) + `
 	})
 
 	return openapi_models.@Method@@Upper@sResponse{}
@@ -131,7 +136,7 @@ func (r *Interactor) PostIdInvoke(structName string) string {
 	}
 
 	@Lower@Rep.Upsert(db.@Upper@{
-` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, false) + `
+` + r.GetMapping(ToLowerCamel(structName)+"Req."+structName, false, false) + `
 	})
 
 	return openapi_models.@Method@@Upper@sIdResponse{}

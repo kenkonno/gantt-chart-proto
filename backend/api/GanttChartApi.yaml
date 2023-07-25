@@ -16,9 +16,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GetUsersResponse'
+                $ref: '#/components/schemas/GetUsersResponse'
               examples: {}
       operationId: get-users
       description: ''
@@ -97,8 +95,6 @@ components:
       required:
         - password
         - email
-        - created_at
-        - updated_at
       description: ''
       x-tags:
         - User
@@ -165,5 +161,4 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
-
   parameters: {}
