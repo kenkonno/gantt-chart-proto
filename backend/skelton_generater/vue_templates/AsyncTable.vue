@@ -8,8 +8,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="item in @Lower@s" :key="item.id">
-        @AsyncTableBody@
+      <tr v-for="item in list" :key="item.id">
+@AsyncTableBody@
       </tr>
       </tbody>
     </table>
@@ -17,10 +17,15 @@
 </template>
 
 <script setup lang="ts">
-import {use@Upper@Table} from "@/composable/@Lower@";
+import {@Upper@} from "@/api";
 
-const @Lower@s = await use@Upper@Table()
 defineEmits(['openEditModal'])
+
+interface Async@Upper@Table {
+  list: @Upper@[]
+}
+
+const props = defineProps<Async@Upper@Table>()
 
 </script>
 
@@ -31,3 +36,5 @@ tr > td:nth-child(1) {
   cursor: pointer;
 }
 </style>
+
+

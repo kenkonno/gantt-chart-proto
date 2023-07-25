@@ -6,8 +6,14 @@ import {toast} from "vue3-toastify";
 
 // ユーザー一覧。特別ref系は必要ない。
 export async function use@Upper@Table() {
-    const resp = await Api.get@Upper@s()
-    return resp.data.list
+    const list = ref<@Upper@[]>([])
+    const refresh = async () => {
+        const resp = await Api.get@Upper@s()
+        list.value.splice(0, list.value.length)
+        list.value.push(...resp.data.list)
+    }
+    await refresh()
+    return {list, refresh}
 }
 
 // ユーザー追加・更新。
@@ -27,28 +33,35 @@ export async function use@Upper@(@Lower@Id?: number) {
 
 }
 
-export async function post@Upper@(@Lower@: @Upper@) {
+export async function post@Upper@(@Lower@: @Upper@, emit: any) {
     const req: Post@Upper@sRequest = {
         @Lower@: @Lower@
     }
     await Api.post@Upper@s(req).then(() => {
         toast("成功しました。")
+    }).finally(() => {
+        emit('closeEditModal')
     })
 }
 
-export async function post@Upper@ById(@Lower@: @Upper@) {
+export async function post@Upper@ById(@Lower@: @Upper@, emit: any) {
     const req: Post@Upper@sRequest = {
         @Lower@: @Lower@
     }
     if (@Lower@.id != null) {
         await Api.post@Upper@sId(@Lower@.id, req).then(() => {
             toast("成功しました。")
+        }).finally(() => {
+            emit('closeEditModal')
         })
     }
 }
 
-export async function delete@Upper@ById(id: number) {
+export async function delete@Upper@ById(id: number, emit: any) {
     await Api.delete@Upper@sId(id).then(() => {
         toast("成功しました。")
+    }).finally(() => {
+        emit('closeEditModal')
     })
 }
+

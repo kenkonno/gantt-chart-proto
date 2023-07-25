@@ -2,11 +2,11 @@
   <div class="container">
 @AsyncEditMapping@
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="post@Upper@(@Lower@); $emit('closeEditModal')">更新</button>
+      <button type="submit" class="btn btn-primary" @click="post@Upper@(@Lower@, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="post@Upper@ById(@Lower@); $emit('closeEditModal')">更新</button>
-      <button type="submit" class="btn btn-warning" @click="delete@Upper@ById(id); $emit('closeEditModal')">削除</button>
+      <button type="submit" class="btn btn-primary" @click="post@Upper@ById(@Lower@, $emit)">更新</button>
+      <button type="submit" class="btn btn-warning" @click="delete@Upper@ById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
@@ -30,3 +30,4 @@ label {
   float: left;
 }
 </style>
+
