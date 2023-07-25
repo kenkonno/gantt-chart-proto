@@ -29,7 +29,6 @@ const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const closeModalProxy = async () => {
   await refresh()
   closeEditModal()
-  console.log("CLOSE EDIT BUTTON")
 }
 
 </script>
