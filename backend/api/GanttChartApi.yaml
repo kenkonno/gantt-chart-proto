@@ -72,6 +72,403 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostUsersRequest'
+  /api/departments:
+    get:
+      summary: GetDepartments
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDepartmentsResponse'
+              examples: {}
+      operationId: get-departments
+      description: ''
+      parameters: []
+    post:
+      summary: PostDepartments
+      operationId: post-departments
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDepartmentsRequest'
+    parameters: []
+  '/api/departments/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetDepartmentsId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDepartmentsIdResponse'
+              examples: {}
+      operationId: get-departments-id
+      description: ''
+    delete:
+      summary: DeleteDepartmentsId
+      operationId: delete-departments-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostDepartmentsId
+      operationId: post-departments-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDepartmentsRequest'
+  /api/facilities:
+    get:
+      summary: GetFacilities
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilitiesResponse'
+              examples: {}
+      operationId: get-facilities
+      description: ''
+      parameters: []
+    post:
+      summary: PostFacilities
+      operationId: post-facilities
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilitiesRequest'
+    parameters: []
+  '/api/facilities/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetFacilitiesId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilitiesIdResponse'
+              examples: {}
+      operationId: get-facilities-id
+      description: ''
+    delete:
+      summary: DeleteFacilitiesId
+      operationId: delete-facilities-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostFacilitiesId
+      operationId: post-facilities-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilitiesRequest'
+  /api/holidays:
+    get:
+      summary: GetHolidays
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHolidaysResponse'
+              examples: {}
+      operationId: get-holidays
+      description: ''
+      parameters: []
+    post:
+      summary: PostHolidays
+      operationId: post-holidays
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostHolidaysRequest'
+    parameters: []
+  '/api/holidays/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetHolidaysId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHolidaysIdResponse'
+              examples: {}
+      operationId: get-holidays-id
+      description: ''
+    delete:
+      summary: DeleteHolidaysId
+      operationId: delete-holidays-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostHolidaysId
+      operationId: post-holidays-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostHolidaysRequest'
+  /api/operationSettings:
+    get:
+      summary: GetOperationSettings
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOperationSettingsResponse'
+              examples: {}
+      operationId: get-operationSettings
+      description: ''
+      parameters: []
+    post:
+      summary: PostOperationSettings
+      operationId: post-operationSettings
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostOperationSettingsRequest'
+    parameters: []
+
+  /api/operationSettings/{id}:
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetOperationSettingsId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOperationSettingsIdResponse'
+              examples: {}
+      operationId: get-operationSettings-id
+      description: ''
+    delete:
+      summary: DeleteOperationSettingsId
+      operationId: delete-operationSettings-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostOperationSettingsId
+      operationId: post-operationSettings-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostOperationSettingsRequest'
+  /api/processes:
+    get:
+      summary: GetProcesses
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProcessesResponse'
+              examples: {}
+      operationId: get-processes
+      description: ''
+      parameters: []
+    post:
+      summary: PostProcesses
+      operationId: post-processes
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostProcessesRequest'
+    parameters: []
+  '/api/processes/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetProcessesId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProcessesIdResponse'
+              examples: {}
+      operationId: get-processes-id
+      description: ''
+    delete:
+      summary: DeleteProcessesId
+      operationId: delete-processes-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostProcessesId
+      operationId: post-processes-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostProcessesRequest'
+  /api/units:
+    get:
+      summary: GetUnits
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUnitsResponse'
+              examples: {}
+      operationId: get-units
+      description: ''
+      parameters: []
+    post:
+      summary: PostUnits
+      operationId: post-units
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUnitsRequest'
+    parameters: []
+  '/api/units/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetUnitsId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUnitsIdResponse'
+              examples: {}
+      operationId: get-units-id
+      description: ''
+    delete:
+      summary: DeleteUnitsId
+      operationId: delete-units-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostUnitsId
+      operationId: post-units-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUnitsRequest'
 components:
   schemas:
     User:
@@ -81,18 +478,22 @@ components:
         id:
           type: integer
           nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
         password:
           type: string
-          x-go-custom-tag: binding:"min=1"
+          x-go-custom-tag: 'binding:"min=1"'
         email:
           type: string
-          x-go-custom-tag: binding:"min=1"
+          x-go-custom-tag: 'binding:"min=1"'
         created_at:
           type: string
           format: date-time
         updated_at:
           type: int
       required:
+        - name
         - password
         - email
       description: ''
@@ -161,4 +562,529 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+    Department:
+      title: Department
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - name
+      description: ''
+      x-tags:
+        - Department
+    GetDepartmentsRequest:
+      title: GetDepartmentsRequest
+      type: object
+    GetDepartmentsResponse:
+      title: GetDepartmentsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+      required:
+        - list
+    GetDepartmentsIdRequest:
+      title: GetDepartmentsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetDepartmentsIdResponse:
+      title: GetDepartmentsResponse
+      type: object
+      properties:
+        department:
+          $ref: '#/components/schemas/Department'
+    DeleteDepartmentsIdRequest:
+      title: DeleteDepartmentsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteDepartmentsIdResponse:
+      title: DeleteDepartmentsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostDepartmentsRequest:
+      title: PostDepartmentsRequest
+      type: object
+      properties:
+        department:
+          $ref: '#/components/schemas/Department'
+    PostDepartmentsResponse:
+      title: PostDepartmentsResponse
+      type: object
+      properties:
+        department:
+          $ref: '#/components/schemas/Department'
+    PostDepartmentsIdRequest:
+      title: PostDepartmentsIdRequest
+      type: object
+      properties:
+        department:
+          $ref: '#/components/schemas/Department'
+    PostDepartmentsIdResponse:
+      title: PostDepartmentsIdResponse
+      type: object
+      properties:
+        department:
+          $ref: '#/components/schemas/Department'
+    Facility:
+      title: Facility
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        term_from:
+          type: string
+          format: date-time
+          x-go-custom-tag: 'binding:"min=1"'
+        term_to:
+          type: string
+          format: date-time
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - name
+        - term_from
+        - term_to
+      description: ''
+      x-tags:
+        - Facility
+    GetFacilitiesRequest:
+      title: GetFacilitiesRequest
+      type: object
+    GetFacilitiesResponse:
+      title: GetFacilitiesResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Facility'
+      required:
+        - list
+    GetFacilitiesIdRequest:
+      title: GetFacilitiesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetFacilitiesIdResponse:
+      title: GetFacilitiesResponse
+      type: object
+      properties:
+        facility:
+          $ref: '#/components/schemas/Facility'
+    DeleteFacilitiesIdRequest:
+      title: DeleteFacilitiesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteFacilitiesIdResponse:
+      title: DeleteFacilitiesIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostFacilitiesRequest:
+      title: PostFacilitiesRequest
+      type: object
+      properties:
+        facility:
+          $ref: '#/components/schemas/Facility'
+    PostFacilitiesResponse:
+      title: PostFacilitiesResponse
+      type: object
+      properties:
+        facility:
+          $ref: '#/components/schemas/Facility'
+    PostFacilitiesIdRequest:
+      title: PostFacilitiesIdRequest
+      type: object
+      properties:
+        facility:
+          $ref: '#/components/schemas/Facility'
+    PostFacilitiesIdResponse:
+      title: PostFacilitiesIdResponse
+      type: object
+      properties:
+        facility:
+          $ref: '#/components/schemas/Facility'
+    Holiday:
+      title: Holiday
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        date:
+          type: string
+          format: date-time
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - name
+        - date
+      description: ''
+      x-tags:
+        - Holiday
+    GetHolidaysRequest:
+      title: GetHolidaysRequest
+      type: object
+    GetHolidaysResponse:
+      title: GetHolidaysResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+      required:
+        - list
+    GetHolidaysIdRequest:
+      title: GetHolidaysIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetHolidaysIdResponse:
+      title: GetHolidaysResponse
+      type: object
+      properties:
+        holiday:
+          $ref: '#/components/schemas/Holiday'
+    DeleteHolidaysIdRequest:
+      title: DeleteHolidaysIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteHolidaysIdResponse:
+      title: DeleteHolidaysIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostHolidaysRequest:
+      title: PostHolidaysRequest
+      type: object
+      properties:
+        holiday:
+          $ref: '#/components/schemas/Holiday'
+    PostHolidaysResponse:
+      title: PostHolidaysResponse
+      type: object
+      properties:
+        holiday:
+          $ref: '#/components/schemas/Holiday'
+    PostHolidaysIdRequest:
+      title: PostHolidaysIdRequest
+      type: object
+      properties:
+        holiday:
+          $ref: '#/components/schemas/Holiday'
+    PostHolidaysIdResponse:
+      title: PostHolidaysIdResponse
+      type: object
+      properties:
+        holiday:
+          $ref: '#/components/schemas/Holiday'
+    OperationSetting:
+      title: OperationSetting
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: binding:"min=1"
+        unit_id:
+          type: integer
+          x-go-custom-tag: binding:"min=1"
+        process_id:
+          type: integer
+          x-go-custom-tag: binding:"min=1"
+        work_hour:
+          type: integer
+          x-go-custom-tag: binding:"min=1"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+        - unit_id
+        - process_id
+        - work_hour
+      description: ''
+      x-tags:
+        - OperationSetting
+    GetOperationSettingsRequest:
+      title: GetOperationSettingsRequest
+      type: object
+    GetOperationSettingsResponse:
+      title: GetOperationSettingsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationSetting'
+      required:
+        - list
+    GetOperationSettingsIdRequest:
+      title: GetOperationSettingsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetOperationSettingsIdResponse:
+      title: GetOperationSettingsResponse
+      type: object
+      properties:
+        operationSetting:
+          $ref: '#/components/schemas/OperationSetting'
+    DeleteOperationSettingsIdRequest:
+      title: DeleteOperationSettingsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteOperationSettingsIdResponse:
+      title: DeleteOperationSettingsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostOperationSettingsRequest:
+      title: PostOperationSettingsRequest
+      type: object
+      properties:
+        operationSetting:
+          $ref: '#/components/schemas/OperationSetting'
+    PostOperationSettingsResponse:
+      title: PostOperationSettingsResponse
+      type: object
+      properties:
+        operationSetting:
+          $ref: '#/components/schemas/OperationSetting'
+    PostOperationSettingsIdRequest:
+      title: PostOperationSettingsIdRequest
+      type: object
+      properties:
+        operationSetting:
+          $ref: '#/components/schemas/OperationSetting'
+    PostOperationSettingsIdResponse:
+      title: PostOperationSettingsIdResponse
+      type: object
+      properties:
+        operationSetting:
+          $ref: '#/components/schemas/OperationSetting'
+    Process:
+      title: Process
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - name
+      description: ''
+      x-tags:
+        - Process
+    GetProcessesRequest:
+      title: GetProcessesRequest
+      type: object
+    GetProcessesResponse:
+      title: GetProcessesResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+      required:
+        - list
+    GetProcessesIdRequest:
+      title: GetProcessesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetProcessesIdResponse:
+      title: GetProcessesResponse
+      type: object
+      properties:
+        process:
+          $ref: '#/components/schemas/Process'
+    DeleteProcessesIdRequest:
+      title: DeleteProcessesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteProcessesIdResponse:
+      title: DeleteProcessesIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostProcessesRequest:
+      title: PostProcessesRequest
+      type: object
+      properties:
+        process:
+          $ref: '#/components/schemas/Process'
+    PostProcessesResponse:
+      title: PostProcessesResponse
+      type: object
+      properties:
+        process:
+          $ref: '#/components/schemas/Process'
+    PostProcessesIdRequest:
+      title: PostProcessesIdRequest
+      type: object
+      properties:
+        process:
+          $ref: '#/components/schemas/Process'
+    PostProcessesIdResponse:
+      title: PostProcessesIdResponse
+      type: object
+      properties:
+        process:
+          $ref: '#/components/schemas/Process'
+    Unit:
+      title: Unit
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - name
+      description: ''
+      x-tags:
+        - Unit
+    GetUnitsRequest:
+      title: GetUnitsRequest
+      type: object
+    GetUnitsResponse:
+      title: GetUnitsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+      required:
+        - list
+    GetUnitsIdRequest:
+      title: GetUnitsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetUnitsIdResponse:
+      title: GetUnitsResponse
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/Unit'
+    DeleteUnitsIdRequest:
+      title: DeleteUnitsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteUnitsIdResponse:
+      title: DeleteUnitsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostUnitsRequest:
+      title: PostUnitsRequest
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/Unit'
+    PostUnitsResponse:
+      title: PostUnitsResponse
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/Unit'
+    PostUnitsIdRequest:
+      title: PostUnitsIdRequest
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/Unit'
+    PostUnitsIdResponse:
+      title: PostUnitsIdResponse
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/Unit'
   parameters: {}

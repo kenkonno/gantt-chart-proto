@@ -26,6 +26,162 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
 /**
  * 
  * @export
+ * @interface DeleteDepartmentsIdRequest
+ */
+export interface DeleteDepartmentsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteDepartmentsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteDepartmentsIdResponse
+ */
+export interface DeleteDepartmentsIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteDepartmentsIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteFacilitiesIdRequest
+ */
+export interface DeleteFacilitiesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteFacilitiesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteFacilitiesIdResponse
+ */
+export interface DeleteFacilitiesIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteFacilitiesIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteHolidaysIdRequest
+ */
+export interface DeleteHolidaysIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteHolidaysIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteHolidaysIdResponse
+ */
+export interface DeleteHolidaysIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteHolidaysIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteOperationSettingsIdRequest
+ */
+export interface DeleteOperationSettingsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteOperationSettingsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteOperationSettingsIdResponse
+ */
+export interface DeleteOperationSettingsIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteOperationSettingsIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteProcessesIdRequest
+ */
+export interface DeleteProcessesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteProcessesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteProcessesIdResponse
+ */
+export interface DeleteProcessesIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteProcessesIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteUnitsIdRequest
+ */
+export interface DeleteUnitsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteUnitsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteUnitsIdResponse
+ */
+export interface DeleteUnitsIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteUnitsIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeleteUsersIdRequest
  */
 export interface DeleteUsersIdRequest {
@@ -48,6 +204,314 @@ export interface DeleteUsersIdResponse {
      * @memberof DeleteUsersIdResponse
      */
     'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface Department
+ */
+export interface Department {
+    /**
+     * 
+     * @type {number}
+     * @memberof Department
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Department
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Department
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Department
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface Facility
+ */
+export interface Facility {
+    /**
+     * 
+     * @type {number}
+     * @memberof Facility
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'term_from': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'term_to': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Facility
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetDepartmentsIdRequest
+ */
+export interface GetDepartmentsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDepartmentsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetDepartmentsIdResponse
+ */
+export interface GetDepartmentsIdResponse {
+    /**
+     * 
+     * @type {Department}
+     * @memberof GetDepartmentsIdResponse
+     */
+    'department'?: Department;
+}
+/**
+ * 
+ * @export
+ * @interface GetDepartmentsResponse
+ */
+export interface GetDepartmentsResponse {
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetDepartmentsResponse
+     */
+    'list': Array<Department>;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilitiesIdRequest
+ */
+export interface GetFacilitiesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetFacilitiesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilitiesIdResponse
+ */
+export interface GetFacilitiesIdResponse {
+    /**
+     * 
+     * @type {Facility}
+     * @memberof GetFacilitiesIdResponse
+     */
+    'facility'?: Facility;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilitiesResponse
+ */
+export interface GetFacilitiesResponse {
+    /**
+     * 
+     * @type {Array<Facility>}
+     * @memberof GetFacilitiesResponse
+     */
+    'list': Array<Facility>;
+}
+/**
+ * 
+ * @export
+ * @interface GetHolidaysIdRequest
+ */
+export interface GetHolidaysIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetHolidaysIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetHolidaysIdResponse
+ */
+export interface GetHolidaysIdResponse {
+    /**
+     * 
+     * @type {Holiday}
+     * @memberof GetHolidaysIdResponse
+     */
+    'holiday'?: Holiday;
+}
+/**
+ * 
+ * @export
+ * @interface GetHolidaysResponse
+ */
+export interface GetHolidaysResponse {
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetHolidaysResponse
+     */
+    'list': Array<Holiday>;
+}
+/**
+ * 
+ * @export
+ * @interface GetOperationSettingsIdRequest
+ */
+export interface GetOperationSettingsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetOperationSettingsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetOperationSettingsIdResponse
+ */
+export interface GetOperationSettingsIdResponse {
+    /**
+     * 
+     * @type {Array<OperationSetting>}
+     * @memberof GetOperationSettingsIdResponse
+     */
+    'operationSettings': Array<OperationSetting>;
+}
+/**
+ * 
+ * @export
+ * @interface GetOperationSettingsResponse
+ */
+export interface GetOperationSettingsResponse {
+    /**
+     * 
+     * @type {Array<OperationSetting>}
+     * @memberof GetOperationSettingsResponse
+     */
+    'list': Array<OperationSetting>;
+}
+/**
+ * 
+ * @export
+ * @interface GetProcessesIdRequest
+ */
+export interface GetProcessesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetProcessesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetProcessesIdResponse
+ */
+export interface GetProcessesIdResponse {
+    /**
+     * 
+     * @type {Process}
+     * @memberof GetProcessesIdResponse
+     */
+    'process'?: Process;
+}
+/**
+ * 
+ * @export
+ * @interface GetProcessesResponse
+ */
+export interface GetProcessesResponse {
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetProcessesResponse
+     */
+    'list': Array<Process>;
+}
+/**
+ * 
+ * @export
+ * @interface GetUnitsIdRequest
+ */
+export interface GetUnitsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetUnitsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetUnitsIdResponse
+ */
+export interface GetUnitsIdResponse {
+    /**
+     * 
+     * @type {Unit}
+     * @memberof GetUnitsIdResponse
+     */
+    'unit'?: Unit;
+}
+/**
+ * 
+ * @export
+ * @interface GetUnitsResponse
+ */
+export interface GetUnitsResponse {
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetUnitsResponse
+     */
+    'list': Array<Unit>;
 }
 /**
  * 
@@ -87,6 +551,404 @@ export interface GetUsersResponse {
      * @memberof GetUsersResponse
      */
     'list': Array<User>;
+}
+/**
+ * 
+ * @export
+ * @interface Holiday
+ */
+export interface Holiday {
+    /**
+     * 
+     * @type {number}
+     * @memberof Holiday
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Holiday
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Holiday
+     */
+    'date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Holiday
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Holiday
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface OperationSetting
+ */
+export interface OperationSetting {
+    /**
+     * 
+     * @type {number}
+     * @memberof OperationSetting
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof OperationSetting
+     */
+    'facility_id'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof OperationSetting
+     */
+    'user_id'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof OperationSetting
+     */
+    'unit_id'?: number;
+    /**
+     * 
+     * @type {Array<WorkHour>}
+     * @memberof OperationSetting
+     */
+    'workHours': Array<WorkHour>;
+    /**
+     * 
+     * @type {string}
+     * @memberof OperationSetting
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof OperationSetting
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface PostDepartmentsIdRequest
+ */
+export interface PostDepartmentsIdRequest {
+    /**
+     * 
+     * @type {Department}
+     * @memberof PostDepartmentsIdRequest
+     */
+    'department'?: Department;
+}
+/**
+ * 
+ * @export
+ * @interface PostDepartmentsIdResponse
+ */
+export interface PostDepartmentsIdResponse {
+    /**
+     * 
+     * @type {Department}
+     * @memberof PostDepartmentsIdResponse
+     */
+    'department'?: Department;
+}
+/**
+ * 
+ * @export
+ * @interface PostDepartmentsRequest
+ */
+export interface PostDepartmentsRequest {
+    /**
+     * 
+     * @type {Department}
+     * @memberof PostDepartmentsRequest
+     */
+    'department'?: Department;
+}
+/**
+ * 
+ * @export
+ * @interface PostDepartmentsResponse
+ */
+export interface PostDepartmentsResponse {
+    /**
+     * 
+     * @type {Department}
+     * @memberof PostDepartmentsResponse
+     */
+    'department'?: Department;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitiesIdRequest
+ */
+export interface PostFacilitiesIdRequest {
+    /**
+     * 
+     * @type {Facility}
+     * @memberof PostFacilitiesIdRequest
+     */
+    'facility'?: Facility;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitiesIdResponse
+ */
+export interface PostFacilitiesIdResponse {
+    /**
+     * 
+     * @type {Facility}
+     * @memberof PostFacilitiesIdResponse
+     */
+    'facility'?: Facility;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitiesRequest
+ */
+export interface PostFacilitiesRequest {
+    /**
+     * 
+     * @type {Facility}
+     * @memberof PostFacilitiesRequest
+     */
+    'facility'?: Facility;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitiesResponse
+ */
+export interface PostFacilitiesResponse {
+    /**
+     * 
+     * @type {Facility}
+     * @memberof PostFacilitiesResponse
+     */
+    'facility'?: Facility;
+}
+/**
+ * 
+ * @export
+ * @interface PostHolidaysIdRequest
+ */
+export interface PostHolidaysIdRequest {
+    /**
+     * 
+     * @type {Holiday}
+     * @memberof PostHolidaysIdRequest
+     */
+    'holiday'?: Holiday;
+}
+/**
+ * 
+ * @export
+ * @interface PostHolidaysIdResponse
+ */
+export interface PostHolidaysIdResponse {
+    /**
+     * 
+     * @type {Holiday}
+     * @memberof PostHolidaysIdResponse
+     */
+    'holiday'?: Holiday;
+}
+/**
+ * 
+ * @export
+ * @interface PostHolidaysRequest
+ */
+export interface PostHolidaysRequest {
+    /**
+     * 
+     * @type {Holiday}
+     * @memberof PostHolidaysRequest
+     */
+    'holiday'?: Holiday;
+}
+/**
+ * 
+ * @export
+ * @interface PostHolidaysResponse
+ */
+export interface PostHolidaysResponse {
+    /**
+     * 
+     * @type {Holiday}
+     * @memberof PostHolidaysResponse
+     */
+    'holiday'?: Holiday;
+}
+/**
+ * 
+ * @export
+ * @interface PostOperationSettingsIdRequest
+ */
+export interface PostOperationSettingsIdRequest {
+    /**
+     * 
+     * @type {OperationSetting}
+     * @memberof PostOperationSettingsIdRequest
+     */
+    'operationSetting'?: OperationSetting;
+}
+/**
+ * 
+ * @export
+ * @interface PostOperationSettingsIdResponse
+ */
+export interface PostOperationSettingsIdResponse {
+    /**
+     * 
+     * @type {OperationSetting}
+     * @memberof PostOperationSettingsIdResponse
+     */
+    'operationSetting'?: OperationSetting;
+}
+/**
+ * 
+ * @export
+ * @interface PostOperationSettingsRequest
+ */
+export interface PostOperationSettingsRequest {
+    /**
+     * 
+     * @type {Array<OperationSetting>}
+     * @memberof PostOperationSettingsRequest
+     */
+    'operationSettings'?: Array<OperationSetting>;
+}
+/**
+ * 
+ * @export
+ * @interface PostOperationSettingsResponse
+ */
+export interface PostOperationSettingsResponse {
+    /**
+     * 
+     * @type {OperationSetting}
+     * @memberof PostOperationSettingsResponse
+     */
+    'operationSetting'?: OperationSetting;
+}
+/**
+ * 
+ * @export
+ * @interface PostProcessesIdRequest
+ */
+export interface PostProcessesIdRequest {
+    /**
+     * 
+     * @type {Process}
+     * @memberof PostProcessesIdRequest
+     */
+    'process'?: Process;
+}
+/**
+ * 
+ * @export
+ * @interface PostProcessesIdResponse
+ */
+export interface PostProcessesIdResponse {
+    /**
+     * 
+     * @type {Process}
+     * @memberof PostProcessesIdResponse
+     */
+    'process'?: Process;
+}
+/**
+ * 
+ * @export
+ * @interface PostProcessesRequest
+ */
+export interface PostProcessesRequest {
+    /**
+     * 
+     * @type {Process}
+     * @memberof PostProcessesRequest
+     */
+    'process'?: Process;
+}
+/**
+ * 
+ * @export
+ * @interface PostProcessesResponse
+ */
+export interface PostProcessesResponse {
+    /**
+     * 
+     * @type {Process}
+     * @memberof PostProcessesResponse
+     */
+    'process'?: Process;
+}
+/**
+ * 
+ * @export
+ * @interface PostUnitsIdRequest
+ */
+export interface PostUnitsIdRequest {
+    /**
+     * 
+     * @type {Unit}
+     * @memberof PostUnitsIdRequest
+     */
+    'unit'?: Unit;
+}
+/**
+ * 
+ * @export
+ * @interface PostUnitsIdResponse
+ */
+export interface PostUnitsIdResponse {
+    /**
+     * 
+     * @type {Unit}
+     * @memberof PostUnitsIdResponse
+     */
+    'unit'?: Unit;
+}
+/**
+ * 
+ * @export
+ * @interface PostUnitsRequest
+ */
+export interface PostUnitsRequest {
+    /**
+     * 
+     * @type {Unit}
+     * @memberof PostUnitsRequest
+     */
+    'unit'?: Unit;
+}
+/**
+ * 
+ * @export
+ * @interface PostUnitsResponse
+ */
+export interface PostUnitsResponse {
+    /**
+     * 
+     * @type {Unit}
+     * @memberof PostUnitsResponse
+     */
+    'unit'?: Unit;
 }
 /**
  * 
@@ -143,6 +1005,68 @@ export interface PostUsersResponse {
 /**
  * 
  * @export
+ * @interface Process
+ */
+export interface Process {
+    /**
+     * 
+     * @type {number}
+     * @memberof Process
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Process
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Process
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Process
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface Unit
+ */
+export interface Unit {
+    /**
+     * 
+     * @type {number}
+     * @memberof Unit
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Unit
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Unit
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Unit
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
  * @interface User
  */
 export interface User {
@@ -152,6 +1076,12 @@ export interface User {
      * @memberof User
      */
     'id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'name': string;
     /**
      * 
      * @type {string}
@@ -177,6 +1107,25 @@ export interface User {
      */
     'updated_at'?: number;
 }
+/**
+ * 
+ * @export
+ * @interface WorkHour
+ */
+export interface WorkHour {
+    /**
+     * 
+     * @type {number}
+     * @memberof WorkHour
+     */
+    'process_id'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof WorkHour
+     */
+    'work_hour'?: number;
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -184,6 +1133,210 @@ export interface User {
  */
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary DeleteDepartmentsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteDepartmentsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteDepartmentsId', 'id', id)
+            const localVarPath = `/api/departments/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteFacilitiesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFacilitiesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteFacilitiesId', 'id', id)
+            const localVarPath = `/api/facilities/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteHolidaysId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteHolidaysId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteHolidaysId', 'id', id)
+            const localVarPath = `/api/holidays/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteOperationSettingsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteOperationSettingsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteOperationSettingsId', 'id', id)
+            const localVarPath = `/api/operationSettings/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteProcessesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteProcessesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteProcessesId', 'id', id)
+            const localVarPath = `/api/processes/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteUnitsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteUnitsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteUnitsId', 'id', id)
+            const localVarPath = `/api/units/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary DeleteUsersId
@@ -204,6 +1357,360 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             }
 
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetDepartments
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDepartments: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/departments`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetDepartmentsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDepartmentsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getDepartmentsId', 'id', id)
+            const localVarPath = `/api/departments/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetFacilities
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilities: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/facilities`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetFacilitiesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilitiesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getFacilitiesId', 'id', id)
+            const localVarPath = `/api/facilities/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetHolidays
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getHolidays: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/holidays`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetHolidaysId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getHolidaysId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getHolidaysId', 'id', id)
+            const localVarPath = `/api/holidays/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetOperationSettingsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOperationSettingsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getOperationSettingsId', 'id', id)
+            const localVarPath = `/api/operationSettings/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetProcesses
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProcesses: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/processes`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetProcessesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProcessesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getProcessesId', 'id', id)
+            const localVarPath = `/api/processes/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetUnits
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUnits: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/units`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetUnitsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUnitsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getUnitsId', 'id', id)
+            const localVarPath = `/api/units/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -276,6 +1783,404 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostDepartments
+         * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postDepartments: async (postDepartmentsRequest?: PostDepartmentsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/departments`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postDepartmentsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostDepartmentsId
+         * @param {number} id 
+         * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postDepartmentsId: async (id: number, postDepartmentsRequest?: PostDepartmentsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postDepartmentsId', 'id', id)
+            const localVarPath = `/api/departments/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postDepartmentsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostFacilities
+         * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilities: async (postFacilitiesRequest?: PostFacilitiesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/facilities`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFacilitiesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostFacilitiesId
+         * @param {number} id 
+         * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilitiesId: async (id: number, postFacilitiesRequest?: PostFacilitiesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postFacilitiesId', 'id', id)
+            const localVarPath = `/api/facilities/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFacilitiesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostHolidays
+         * @param {PostHolidaysRequest} [postHolidaysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postHolidays: async (postHolidaysRequest?: PostHolidaysRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/holidays`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postHolidaysRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostHolidaysId
+         * @param {number} id 
+         * @param {PostHolidaysRequest} [postHolidaysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postHolidaysId: async (id: number, postHolidaysRequest?: PostHolidaysRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postHolidaysId', 'id', id)
+            const localVarPath = `/api/holidays/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postHolidaysRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostOperationSettingsId
+         * @param {number} id 
+         * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postOperationSettingsId: async (id: number, postOperationSettingsRequest?: PostOperationSettingsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postOperationSettingsId', 'id', id)
+            const localVarPath = `/api/operationSettings/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postOperationSettingsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostProcesses
+         * @param {PostProcessesRequest} [postProcessesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postProcesses: async (postProcessesRequest?: PostProcessesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/processes`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postProcessesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostProcessesId
+         * @param {number} id 
+         * @param {PostProcessesRequest} [postProcessesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postProcessesId: async (id: number, postProcessesRequest?: PostProcessesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postProcessesId', 'id', id)
+            const localVarPath = `/api/processes/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postProcessesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostUnits
+         * @param {PostUnitsRequest} [postUnitsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUnits: async (postUnitsRequest?: PostUnitsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/units`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postUnitsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostUnitsId
+         * @param {number} id 
+         * @param {PostUnitsRequest} [postUnitsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUnitsId: async (id: number, postUnitsRequest?: PostUnitsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postUnitsId', 'id', id)
+            const localVarPath = `/api/units/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postUnitsRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -366,6 +2271,72 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary DeleteDepartmentsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteDepartmentsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteDepartmentsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteFacilitiesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteFacilitiesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFacilitiesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteHolidaysId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteHolidaysId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteHolidaysId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteOperationSettingsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteOperationSettingsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteOperationSettingsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteProcessesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteProcessesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteProcessesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteUnitsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteUnitsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUnitsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary DeleteUsersId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -373,6 +2344,122 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async deleteUsersId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUsersId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetDepartments
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDepartments(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDepartmentsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDepartments(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetDepartmentsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDepartmentsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDepartmentsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDepartmentsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetFacilities
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFacilities(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilities(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetFacilitiesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFacilitiesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitiesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetHolidays
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getHolidays(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetHolidaysResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getHolidays(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetHolidaysId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getHolidaysId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetHolidaysIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getHolidaysId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetOperationSettingsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOperationSettingsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetOperationSettingsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOperationSettingsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetProcesses
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getProcesses(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetProcessesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getProcesses(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetProcessesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getProcessesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetProcessesIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getProcessesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetUnits
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUnits(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUnitsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUnits(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetUnitsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUnitsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUnitsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUnitsId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -394,6 +2481,133 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getUsersId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUsersIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUsersId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostDepartments
+         * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postDepartments(postDepartmentsRequest?: PostDepartmentsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postDepartments(postDepartmentsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostDepartmentsId
+         * @param {number} id 
+         * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postDepartmentsId(id: number, postDepartmentsRequest?: PostDepartmentsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postDepartmentsId(id, postDepartmentsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostFacilities
+         * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFacilities(postFacilitiesRequest?: PostFacilitiesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilities(postFacilitiesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostFacilitiesId
+         * @param {number} id 
+         * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFacilitiesId(id: number, postFacilitiesRequest?: PostFacilitiesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilitiesId(id, postFacilitiesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostHolidays
+         * @param {PostHolidaysRequest} [postHolidaysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postHolidays(postHolidaysRequest?: PostHolidaysRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postHolidays(postHolidaysRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostHolidaysId
+         * @param {number} id 
+         * @param {PostHolidaysRequest} [postHolidaysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postHolidaysId(id: number, postHolidaysRequest?: PostHolidaysRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postHolidaysId(id, postHolidaysRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostOperationSettingsId
+         * @param {number} id 
+         * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postOperationSettingsId(id: number, postOperationSettingsRequest?: PostOperationSettingsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postOperationSettingsId(id, postOperationSettingsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostProcesses
+         * @param {PostProcessesRequest} [postProcessesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postProcesses(postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postProcesses(postProcessesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostProcessesId
+         * @param {number} id 
+         * @param {PostProcessesRequest} [postProcessesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postProcessesId(id, postProcessesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostUnits
+         * @param {PostUnitsRequest} [postUnitsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postUnits(postUnitsRequest?: PostUnitsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postUnits(postUnitsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostUnitsId
+         * @param {number} id 
+         * @param {PostUnitsRequest} [postUnitsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postUnitsId(id: number, postUnitsRequest?: PostUnitsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postUnitsId(id, postUnitsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -431,6 +2645,66 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
+         * @summary DeleteDepartmentsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteDepartmentsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteDepartmentsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteFacilitiesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFacilitiesId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFacilitiesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteHolidaysId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteHolidaysId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteHolidaysId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteOperationSettingsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteOperationSettingsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteOperationSettingsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteProcessesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteProcessesId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteProcessesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteUnitsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteUnitsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteUnitsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary DeleteUsersId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -438,6 +2712,111 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         deleteUsersId(id: number, options?: any): AxiosPromise<void> {
             return localVarFp.deleteUsersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetDepartments
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDepartments(options?: any): AxiosPromise<GetDepartmentsResponse> {
+            return localVarFp.getDepartments(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetDepartmentsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDepartmentsId(id: number, options?: any): AxiosPromise<GetDepartmentsIdResponse> {
+            return localVarFp.getDepartmentsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetFacilities
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilities(options?: any): AxiosPromise<GetFacilitiesResponse> {
+            return localVarFp.getFacilities(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetFacilitiesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilitiesId(id: number, options?: any): AxiosPromise<GetFacilitiesIdResponse> {
+            return localVarFp.getFacilitiesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetHolidays
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getHolidays(options?: any): AxiosPromise<GetHolidaysResponse> {
+            return localVarFp.getHolidays(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetHolidaysId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getHolidaysId(id: number, options?: any): AxiosPromise<GetHolidaysIdResponse> {
+            return localVarFp.getHolidaysId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetOperationSettingsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOperationSettingsId(id: number, options?: any): AxiosPromise<GetOperationSettingsIdResponse> {
+            return localVarFp.getOperationSettingsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetProcesses
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProcesses(options?: any): AxiosPromise<GetProcessesResponse> {
+            return localVarFp.getProcesses(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetProcessesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProcessesId(id: number, options?: any): AxiosPromise<GetProcessesIdResponse> {
+            return localVarFp.getProcessesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetUnits
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUnits(options?: any): AxiosPromise<GetUnitsResponse> {
+            return localVarFp.getUnits(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetUnitsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUnitsId(id: number, options?: any): AxiosPromise<GetUnitsIdResponse> {
+            return localVarFp.getUnitsId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -457,6 +2836,122 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getUsersId(id: number, options?: any): AxiosPromise<GetUsersIdResponse> {
             return localVarFp.getUsersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostDepartments
+         * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postDepartments(postDepartmentsRequest?: PostDepartmentsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postDepartments(postDepartmentsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostDepartmentsId
+         * @param {number} id 
+         * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postDepartmentsId(id: number, postDepartmentsRequest?: PostDepartmentsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postDepartmentsId(id, postDepartmentsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostFacilities
+         * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilities(postFacilitiesRequest?: PostFacilitiesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postFacilities(postFacilitiesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostFacilitiesId
+         * @param {number} id 
+         * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilitiesId(id: number, postFacilitiesRequest?: PostFacilitiesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postFacilitiesId(id, postFacilitiesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostHolidays
+         * @param {PostHolidaysRequest} [postHolidaysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postHolidays(postHolidaysRequest?: PostHolidaysRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postHolidays(postHolidaysRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostHolidaysId
+         * @param {number} id 
+         * @param {PostHolidaysRequest} [postHolidaysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postHolidaysId(id: number, postHolidaysRequest?: PostHolidaysRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postHolidaysId(id, postHolidaysRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostOperationSettingsId
+         * @param {number} id 
+         * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postOperationSettingsId(id: number, postOperationSettingsRequest?: PostOperationSettingsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postOperationSettingsId(id, postOperationSettingsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostProcesses
+         * @param {PostProcessesRequest} [postProcessesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postProcesses(postProcessesRequest?: PostProcessesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postProcesses(postProcessesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostProcessesId
+         * @param {number} id 
+         * @param {PostProcessesRequest} [postProcessesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postProcessesId(id, postProcessesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostUnits
+         * @param {PostUnitsRequest} [postUnitsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUnits(postUnitsRequest?: PostUnitsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postUnits(postUnitsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostUnitsId
+         * @param {number} id 
+         * @param {PostUnitsRequest} [postUnitsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUnitsId(id: number, postUnitsRequest?: PostUnitsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postUnitsId(id, postUnitsRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -491,6 +2986,78 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export class DefaultApi extends BaseAPI {
     /**
      * 
+     * @summary DeleteDepartmentsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteDepartmentsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteDepartmentsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteFacilitiesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteFacilitiesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteFacilitiesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteHolidaysId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteHolidaysId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteHolidaysId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteOperationSettingsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteOperationSettingsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteOperationSettingsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteProcessesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteProcessesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteProcessesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteUnitsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteUnitsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteUnitsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary DeleteUsersId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -499,6 +3066,133 @@ export class DefaultApi extends BaseAPI {
      */
     public deleteUsersId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).deleteUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetDepartments
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getDepartments(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getDepartments(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetDepartmentsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getDepartmentsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getDepartmentsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetFacilities
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFacilities(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilities(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetFacilitiesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFacilitiesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilitiesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetHolidays
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getHolidays(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getHolidays(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetHolidaysId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getHolidaysId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getHolidaysId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetOperationSettingsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getOperationSettingsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getOperationSettingsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetProcesses
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getProcesses(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getProcesses(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetProcessesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getProcessesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getProcessesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetUnits
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getUnits(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getUnits(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetUnitsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getUnitsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getUnitsId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -522,6 +3216,144 @@ export class DefaultApi extends BaseAPI {
      */
     public getUsersId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostDepartments
+     * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postDepartments(postDepartmentsRequest?: PostDepartmentsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postDepartments(postDepartmentsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostDepartmentsId
+     * @param {number} id 
+     * @param {PostDepartmentsRequest} [postDepartmentsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postDepartmentsId(id: number, postDepartmentsRequest?: PostDepartmentsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postDepartmentsId(id, postDepartmentsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostFacilities
+     * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFacilities(postFacilitiesRequest?: PostFacilitiesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFacilities(postFacilitiesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostFacilitiesId
+     * @param {number} id 
+     * @param {PostFacilitiesRequest} [postFacilitiesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFacilitiesId(id: number, postFacilitiesRequest?: PostFacilitiesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFacilitiesId(id, postFacilitiesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostHolidays
+     * @param {PostHolidaysRequest} [postHolidaysRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postHolidays(postHolidaysRequest?: PostHolidaysRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postHolidays(postHolidaysRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostHolidaysId
+     * @param {number} id 
+     * @param {PostHolidaysRequest} [postHolidaysRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postHolidaysId(id: number, postHolidaysRequest?: PostHolidaysRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postHolidaysId(id, postHolidaysRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostOperationSettingsId
+     * @param {number} id 
+     * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postOperationSettingsId(id: number, postOperationSettingsRequest?: PostOperationSettingsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postOperationSettingsId(id, postOperationSettingsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostProcesses
+     * @param {PostProcessesRequest} [postProcessesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postProcesses(postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postProcesses(postProcessesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostProcessesId
+     * @param {number} id 
+     * @param {PostProcessesRequest} [postProcessesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postProcessesId(id, postProcessesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostUnits
+     * @param {PostUnitsRequest} [postUnitsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postUnits(postUnitsRequest?: PostUnitsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postUnits(postUnitsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostUnitsId
+     * @param {number} id 
+     * @param {PostUnitsRequest} [postUnitsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postUnitsId(id: number, postUnitsRequest?: PostUnitsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postUnitsId(id, postUnitsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -11,7 +11,13 @@ package openapi
 
 import (
 
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -19,10 +25,136 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// DeleteDepartmentsId - DeleteDepartmentsId
+func DeleteDepartmentsId(c *gin.Context) {
+	var r openapi_models.DeleteDepartmentsIdResponse
+	r = departments.DeleteDepartmentsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteFacilitiesId - DeleteFacilitiesId
+func DeleteFacilitiesId(c *gin.Context) {
+	var r openapi_models.DeleteFacilitiesIdResponse
+	r = facilities.DeleteFacilitiesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteHolidaysId - DeleteHolidaysId
+func DeleteHolidaysId(c *gin.Context) {
+	var r openapi_models.DeleteHolidaysIdResponse
+	r = holidays.DeleteHolidaysIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteOperationSettingsId - DeleteOperationSettingsId
+func DeleteOperationSettingsId(c *gin.Context) {
+	var r openapi_models.DeleteOperationSettingsIdResponse
+	r = operation_settings.DeleteOperationSettingsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteProcessesId - DeleteProcessesId
+func DeleteProcessesId(c *gin.Context) {
+	var r openapi_models.DeleteProcessesIdResponse
+	r = processes.DeleteProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteUnitsId - DeleteUnitsId
+func DeleteUnitsId(c *gin.Context) {
+	var r openapi_models.DeleteUnitsIdResponse
+	r = units.DeleteUnitsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
 // DeleteUsersId - DeleteUsersId
 func DeleteUsersId(c *gin.Context) {
 	var r openapi_models.DeleteUsersIdResponse
 	r = users.DeleteUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetDepartments - GetDepartments
+func GetDepartments(c *gin.Context) {
+	var r openapi_models.GetDepartmentsResponse
+	r = departments.GetDepartmentsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetDepartmentsId - GetDepartmentsId
+func GetDepartmentsId(c *gin.Context) {
+	var r openapi_models.GetDepartmentsIdResponse
+	r = departments.GetDepartmentsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetFacilities - GetFacilities
+func GetFacilities(c *gin.Context) {
+	var r openapi_models.GetFacilitiesResponse
+	r = facilities.GetFacilitiesInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetFacilitiesId - GetFacilitiesId
+func GetFacilitiesId(c *gin.Context) {
+	var r openapi_models.GetFacilitiesIdResponse
+	r = facilities.GetFacilitiesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetHolidays - GetHolidays
+func GetHolidays(c *gin.Context) {
+	var r openapi_models.GetHolidaysResponse
+	r = holidays.GetHolidaysInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetHolidaysId - GetHolidaysId
+func GetHolidaysId(c *gin.Context) {
+	var r openapi_models.GetHolidaysIdResponse
+	r = holidays.GetHolidaysIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetOperationSettings - GetOperationSettings
+func GetOperationSettings(c *gin.Context) {
+	var r openapi_models.GetOperationSettingsResponse
+	r = operation_settings.GetOperationSettingsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetOperationSettingsId - GetOperationSettingsId
+func GetOperationSettingsId(c *gin.Context) {
+	var r openapi_models.GetOperationSettingsIdResponse
+	r = operation_settings.GetOperationSettingsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetProcesses - GetProcesses
+func GetProcesses(c *gin.Context) {
+	var r openapi_models.GetProcessesResponse
+	r = processes.GetProcessesInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetProcessesId - GetProcessesId
+func GetProcessesId(c *gin.Context) {
+	var r openapi_models.GetProcessesIdResponse
+	r = processes.GetProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetUnits - GetUnits
+func GetUnits(c *gin.Context) {
+	var r openapi_models.GetUnitsResponse
+	r = units.GetUnitsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetUnitsId - GetUnitsId
+func GetUnitsId(c *gin.Context) {
+	var r openapi_models.GetUnitsIdResponse
+	r = units.GetUnitsIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 
@@ -37,6 +169,90 @@ func GetUsers(c *gin.Context) {
 func GetUsersId(c *gin.Context) {
 	var r openapi_models.GetUsersIdResponse
 	r = users.GetUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostDepartments - PostDepartments
+func PostDepartments(c *gin.Context) {
+	var r openapi_models.PostDepartmentsResponse
+	r = departments.PostDepartmentsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostDepartmentsId - PostDepartmentsId
+func PostDepartmentsId(c *gin.Context) {
+	var r openapi_models.PostDepartmentsIdResponse
+	r = departments.PostDepartmentsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostFacilities - PostFacilities
+func PostFacilities(c *gin.Context) {
+	var r openapi_models.PostFacilitiesResponse
+	r = facilities.PostFacilitiesInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostFacilitiesId - PostFacilitiesId
+func PostFacilitiesId(c *gin.Context) {
+	var r openapi_models.PostFacilitiesIdResponse
+	r = facilities.PostFacilitiesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostHolidays - PostHolidays
+func PostHolidays(c *gin.Context) {
+	var r openapi_models.PostHolidaysResponse
+	r = holidays.PostHolidaysInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostHolidaysId - PostHolidaysId
+func PostHolidaysId(c *gin.Context) {
+	var r openapi_models.PostHolidaysIdResponse
+	r = holidays.PostHolidaysIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostOperationSettings - PostOperationSettings
+func PostOperationSettings(c *gin.Context) {
+	var r openapi_models.PostOperationSettingsResponse
+	r = operation_settings.PostOperationSettingsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostOperationSettingsId - PostOperationSettingsId
+func PostOperationSettingsId(c *gin.Context) {
+	var r openapi_models.PostOperationSettingsIdResponse
+	r = operation_settings.PostOperationSettingsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostProcesses - PostProcesses
+func PostProcesses(c *gin.Context) {
+	var r openapi_models.PostProcessesResponse
+	r = processes.PostProcessesInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostProcessesId - PostProcessesId
+func PostProcessesId(c *gin.Context) {
+	var r openapi_models.PostProcessesIdResponse
+	r = processes.PostProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostUnits - PostUnits
+func PostUnits(c *gin.Context) {
+	var r openapi_models.PostUnitsResponse
+	r = units.PostUnitsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostUnitsId - PostUnitsId
+func PostUnitsId(c *gin.Context) {
+	var r openapi_models.PostUnitsIdResponse
+	r = units.PostUnitsIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

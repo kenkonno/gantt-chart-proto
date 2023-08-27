@@ -65,10 +65,136 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteDepartmentsId",
+		http.MethodDelete,
+		"/api/departments/:id",
+		DeleteDepartmentsId,
+	},
+
+	{
+		"DeleteFacilitiesId",
+		http.MethodDelete,
+		"/api/facilities/:id",
+		DeleteFacilitiesId,
+	},
+
+	{
+		"DeleteHolidaysId",
+		http.MethodDelete,
+		"/api/holidays/:id",
+		DeleteHolidaysId,
+	},
+
+	{
+		"DeleteOperationSettingsId",
+		http.MethodDelete,
+		"/api/operationSettings/:id",
+		DeleteOperationSettingsId,
+	},
+
+	{
+		"DeleteProcessesId",
+		http.MethodDelete,
+		"/api/processes/:id",
+		DeleteProcessesId,
+	},
+
+	{
+		"DeleteUnitsId",
+		http.MethodDelete,
+		"/api/units/:id",
+		DeleteUnitsId,
+	},
+
+	{
 		"DeleteUsersId",
 		http.MethodDelete,
 		"/api/users/:id",
 		DeleteUsersId,
+	},
+
+	{
+		"GetDepartments",
+		http.MethodGet,
+		"/api/departments",
+		GetDepartments,
+	},
+
+	{
+		"GetDepartmentsId",
+		http.MethodGet,
+		"/api/departments/:id",
+		GetDepartmentsId,
+	},
+
+	{
+		"GetFacilities",
+		http.MethodGet,
+		"/api/facilities",
+		GetFacilities,
+	},
+
+	{
+		"GetFacilitiesId",
+		http.MethodGet,
+		"/api/facilities/:id",
+		GetFacilitiesId,
+	},
+
+	{
+		"GetHolidays",
+		http.MethodGet,
+		"/api/holidays",
+		GetHolidays,
+	},
+
+	{
+		"GetHolidaysId",
+		http.MethodGet,
+		"/api/holidays/:id",
+		GetHolidaysId,
+	},
+
+	{
+		"GetOperationSettings",
+		http.MethodGet,
+		"/api/operationSettings",
+		GetOperationSettings,
+	},
+
+	{
+		"GetOperationSettingsId",
+		http.MethodGet,
+		"/api/operationSettings/:id",
+		GetOperationSettingsId,
+	},
+
+	{
+		"GetProcesses",
+		http.MethodGet,
+		"/api/processes",
+		GetProcesses,
+	},
+
+	{
+		"GetProcessesId",
+		http.MethodGet,
+		"/api/processes/:id",
+		GetProcessesId,
+	},
+
+	{
+		"GetUnits",
+		http.MethodGet,
+		"/api/units",
+		GetUnits,
+	},
+
+	{
+		"GetUnitsId",
+		http.MethodGet,
+		"/api/units/:id",
+		GetUnitsId,
 	},
 
 	{
@@ -83,6 +209,90 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/users/:id",
 		GetUsersId,
+	},
+
+	{
+		"PostDepartments",
+		http.MethodPost,
+		"/api/departments",
+		PostDepartments,
+	},
+
+	{
+		"PostDepartmentsId",
+		http.MethodPost,
+		"/api/departments/:id",
+		PostDepartmentsId,
+	},
+
+	{
+		"PostFacilities",
+		http.MethodPost,
+		"/api/facilities",
+		PostFacilities,
+	},
+
+	{
+		"PostFacilitiesId",
+		http.MethodPost,
+		"/api/facilities/:id",
+		PostFacilitiesId,
+	},
+
+	{
+		"PostHolidays",
+		http.MethodPost,
+		"/api/holidays",
+		PostHolidays,
+	},
+
+	{
+		"PostHolidaysId",
+		http.MethodPost,
+		"/api/holidays/:id",
+		PostHolidaysId,
+	},
+
+	{
+		"PostOperationSettings",
+		http.MethodPost,
+		"/api/operationSettings",
+		PostOperationSettings,
+	},
+
+	{
+		"PostOperationSettingsId",
+		http.MethodPost,
+		"/api/operationSettings/:id",
+		PostOperationSettingsId,
+	},
+
+	{
+		"PostProcesses",
+		http.MethodPost,
+		"/api/processes",
+		PostProcesses,
+	},
+
+	{
+		"PostProcessesId",
+		http.MethodPost,
+		"/api/processes/:id",
+		PostProcessesId,
+	},
+
+	{
+		"PostUnits",
+		http.MethodPost,
+		"/api/units",
+		PostUnits,
+	},
+
+	{
+		"PostUnitsId",
+		http.MethodPost,
+		"/api/units/:id",
+		PostUnitsId,
 	},
 
 	{

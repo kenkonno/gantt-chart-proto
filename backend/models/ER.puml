@@ -1,0 +1,58 @@
+/'
+Type	記号
+0か1	|o--
+1のみ	||--
+0以上	}o--
+1以上	}|--
+'/
+@startuml
+' 組織
+entity Organization {
+    *Id int32
+    --
+    name string
+}
+' 案件
+entity Project {
+    *Id int32
+    --
+    OrganizationId int32
+    Name string
+    TermFrom time.Time
+    TermTo time.Time
+}
+' 作業
+entity Task {
+    *Id int32
+    --
+    ProjectId int32
+    NumberOfWorkers int
+    NeedPersonDay int
+    From time.Time
+    To time.Time
+}
+
+entity User {
+    *Id int32
+    --
+    FirstName string
+    LastName string
+    *Email string
+    *Password string
+}
+
+entity UserPrivilege {
+    *Id int32
+    --
+    UserId int32
+    ProjectId int32
+    ProjectPrivilege EnumProjectPrivilege
+}
+
+enum EnumProjectPrivilege {
+    Admin 管理者：ユーザーの追加・削除・権限付与が可能
+    Editor 編集者：担当案件のプロジェクトの閲覧と編集が可能
+    Guest ゲスト：閲覧のみ
+}
+
+@enduml

@@ -17,6 +17,7 @@ func GetUsersInvoke(c *gin.Context) openapi_models.GetUsersResponse {
 		List: lo.Map(userList, func(item db.User, index int) openapi_models.User {
 			return openapi_models.User{
 				Id:        item.Id,
+				Name:      item.Name,
 				Password:  item.Password,
 				Email:     item.Email,
 				CreatedAt: item.CreatedAt,

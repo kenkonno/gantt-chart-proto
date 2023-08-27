@@ -21,6 +21,7 @@ export async function useUser(userId?: number) {
 
     const user = ref<User>({
         id: null,
+        name: "",
         password: "",
         email: "",
         created_at: undefined,
@@ -30,6 +31,7 @@ export async function useUser(userId?: number) {
         const {data} = await Api.getUsersId(userId)
         if (data.user != undefined) {
             user.value.id = data.user.id
+            user.value.name = data.user.name
             user.value.password = data.user.password
             user.value.email = data.user.email
             user.value.created_at = data.user.created_at

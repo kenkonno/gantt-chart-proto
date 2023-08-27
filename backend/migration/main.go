@@ -9,6 +9,12 @@ import (
 var con = repository.GetConnection()
 
 func main() {
+	migrate(db.Department{})
+	migrate(db.Facility{})
+	migrate(db.Holiday{})
+	migrate(db.OperationSetting{})
+	migrate(db.Process{})
+	migrate(db.Unit{})
 	migrate(db.User{})
 }
 

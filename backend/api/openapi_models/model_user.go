@@ -18,11 +18,13 @@ type User struct {
 
 	Id *int32 `json:"id,omitempty"`
 
+	Name string `json:"name" binding:"min=1"`
+
 	Password string `json:"password" binding:"min=1"`
 
 	Email string `json:"email" binding:"min=1"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
 
-	UpdatedAt int `json:"updated_at"`
+	UpdatedAt int `json:"updated_at,omitempty"`
 }

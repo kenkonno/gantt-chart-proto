@@ -88,8 +88,8 @@ func (r *Interactor) GetIdInvoke(structName string) string {
 
 	@Lower@ := @Lower@Rep.Find(int32(id))
 
-	return openapi_models.GetUsersIdResponse{
-		User: openapi_models.User{
+	return openapi_models.Get@Upper@Response{
+		@Upper@: openapi_models.@Upper@{
 ` + r.GetMapping(ToLowerCamel(structName), false, true) + `
 		},
 	}

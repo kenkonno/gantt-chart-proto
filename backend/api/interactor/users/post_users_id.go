@@ -21,6 +21,7 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 
 	userRep.Upsert(db.User{
 		Id:        userReq.User.Id,
+		Name:      userReq.User.Name,
 		Password:  userReq.User.Password,
 		Email:     userReq.User.Email,
 		CreatedAt: time.Time{},

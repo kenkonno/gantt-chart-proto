@@ -6,6 +6,11 @@
     </div>
 
     <div class="mb-2">
+      <label class="form-label" for="id">Name</label>
+      <input class="form-control" type="text" name="name" id="name" v-model="user.name" :disabled="false">
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">Password</label>
       <input class="form-control" type="text" name="password" id="password" v-model="user.password" :disabled="false">
     </div>

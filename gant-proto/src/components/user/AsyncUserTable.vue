@@ -5,6 +5,7 @@
       <thead>
       <tr>
         <th>Id</th>
+        <th>Name</th>
         <th>Password</th>
         <th>Email</th>
         <th>CreatedAt</th>
@@ -14,6 +15,7 @@
       <tbody>
       <tr v-for="item in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
+        <td>{{ item.name }}</td>
         <td>{{ item.password }}</td>
         <td>{{ item.email }}</td>
         <td>{{ item.created_at }}</td>

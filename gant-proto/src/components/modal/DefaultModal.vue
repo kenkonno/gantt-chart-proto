@@ -1,24 +1,24 @@
 <template>
-  <div id="overlay" class="overlay-event overlay-on">
-    <div class="flex">
-      <div id="overlay-inner">
-        <div class="modal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">{{ title }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="$emit('closeEditModal')"></button>
-              </div>
-              <div class="modal-body">
-                <slot/>
+  <Teleport to="body">
+    <div id="overlay" class="overlay-event overlay-on">
+      <div class="flex">
+          <div class="modal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ title }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                          @click="$emit('closeEditModal')"></button>
+                </div>
+                <div class="modal-body">
+                  <slot/>
+                </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
-  </div>
-
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +56,11 @@ const open = ref(false)
 
 .modal-dialog {
   max-width: 90%;
+  height: 80%;
+}
+
+.modal-content {
+  min-height: 80%;
 }
 
 #overlay.overlay-on {
@@ -71,18 +76,4 @@ const open = ref(false)
   align-items: center;
 }
 
-#overlay-inner {
-  padding: 10px 60px;
-  background-color: #FFF;
-  text-align: center;
-}
-
-#open-btn, #close-btn {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 30px;
-  background-color: #eee;
-  border: solid #ccc 1px;
-  cursor: pointer;
-}
 </style>
