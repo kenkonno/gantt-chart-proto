@@ -18,7 +18,7 @@ type facilityRepository struct {
 func (r *facilityRepository) FindAll() []db.Facility {
 	var facilities []db.Facility
 
-	result := r.con.Order("id DESC").Find(&facilities)
+	result := r.con.Order("id ASC").Find(&facilities)
 	if result.Error != nil {
 		panic(result.Error)
 	}

@@ -9,7 +9,9 @@
 
 package openapi_models
 
-type GetOperationSettingsIdResponse struct {
+type WorkHour struct {
 
-	OperationSettings []OperationSetting `json:"operationSettings"`
+	ProcessId int32 `json:"process_id,omitempty"`
+
+	WorkHour int32 `json:"work_hour,omitempty"`
 }

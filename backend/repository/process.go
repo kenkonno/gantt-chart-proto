@@ -18,7 +18,7 @@ type processRepository struct {
 func (r *processRepository) FindAll() []db.Process {
 	var processes []db.Process
 
-	result := r.con.Order("id DESC").Find(&processes)
+	result := r.con.Order("id ASC").Find(&processes)
 	if result.Error != nil {
 		panic(result.Error)
 	}

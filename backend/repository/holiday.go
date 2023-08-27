@@ -1,10 +1,12 @@
 package repository
+
 import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
-// Auto generated start 
+
+// Auto generated start
 func NewHolidayRepository() holidayRepository {
 	return holidayRepository{con}
 }
@@ -12,10 +14,11 @@ func NewHolidayRepository() holidayRepository {
 type holidayRepository struct {
 	con *gorm.DB
 }
+
 func (r *holidayRepository) FindAll() []db.Holiday {
 	var holidays []db.Holiday
 
-	result := r.con.Order("id DESC").Find(&holidays)
+	result := r.con.Order("id ASC").Find(&holidays)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -42,4 +45,5 @@ func (r *holidayRepository) Upsert(m db.Holiday) {
 func (r *holidayRepository) Delete(id int32) {
 	r.con.Where("id = ?", id).Delete(db.Holiday{})
 }
-// Auto generated end 
+
+// Auto generated end

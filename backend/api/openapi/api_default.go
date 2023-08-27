@@ -11,13 +11,13 @@ package openapi
 
 import (
 
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -116,13 +116,6 @@ func GetHolidaysId(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
-// GetOperationSettings - GetOperationSettings
-func GetOperationSettings(c *gin.Context) {
-	var r openapi_models.GetOperationSettingsResponse
-	r = operation_settings.GetOperationSettingsInvoke(c)
-	c.JSON(http.StatusOK, r)
-}
-
 // GetOperationSettingsId - GetOperationSettingsId
 func GetOperationSettingsId(c *gin.Context) {
 	var r openapi_models.GetOperationSettingsIdResponse
@@ -211,13 +204,6 @@ func PostHolidays(c *gin.Context) {
 func PostHolidaysId(c *gin.Context) {
 	var r openapi_models.PostHolidaysIdResponse
 	r = holidays.PostHolidaysIdInvoke(c)
-	c.JSON(http.StatusOK, r)
-}
-
-// PostOperationSettings - PostOperationSettings
-func PostOperationSettings(c *gin.Context) {
-	var r openapi_models.PostOperationSettingsResponse
-	r = operation_settings.PostOperationSettingsInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

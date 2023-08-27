@@ -18,13 +18,13 @@ type OperationSetting struct {
 
 	Id *int32 `json:"id,omitempty"`
 
-	FacilityId int32 `json:"facility_id" binding:"min=1"`
+	FacilityId int32 `json:"facility_id,omitempty"`
 
-	UnitId int32 `json:"unit_id" binding:"min=1"`
+	UserId int32 `json:"user_id,omitempty"`
 
-	ProcessId int32 `json:"process_id" binding:"min=1"`
+	UnitId int32 `json:"unit_id,omitempty"`
 
-	WorkHour int32 `json:"work_hour" binding:"min=1"`
+	WorkHours []WorkHour `json:"workHours" binding:"min=1"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

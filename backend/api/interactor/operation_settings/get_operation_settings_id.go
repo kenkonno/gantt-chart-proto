@@ -1,9 +1,12 @@
 package operation_settings
+
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"strconv"
 )
+
 func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSettingsIdResponse {
 	operationSettingRep := repository.NewOperationSettingRepository()
 
@@ -12,18 +15,44 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 		panic(err)
 	}
 
-	operationSetting := operationSettingRep.Find(int32(id))
+	operationSettings := operationSettingRep.FindByFacilityId(int32(id))
 
-	return openapi_models.GetOperationSettingResponse{
-		OperationSetting: openapi_models.OperationSetting{
-				Id:        operationSetting.Id,
-				FacilityId:        operationSetting.FacilityId,
-				UnitId:        operationSetting.UnitId,
-				ProcessId:        operationSetting.ProcessId,
-				WorkHour:        operationSetting.WorkHour,
-				CreatedAt:        operationSetting.CreatedAt,
-				UpdatedAt:        operationSetting.UpdatedAt,
+	var results []openapi_models.OperationSetting
 
-		},
+	if len(operationSettings) > 0 {
+		var prev = operationSettings[0]
+		var workHours []openapi_models.WorkHour
+		// 工程の集約
+		for _, v := range operationSettings {
+			if prev.UnitId != v.UnitId || prev.UserId != v.UserId {
+				results = append(results, openapi_models.OperationSetting{
+					Id:        prev.Id,
+					UserId:    prev.UserId,
+					UnitId:    prev.UnitId,
+					WorkHours: append([]openapi_models.WorkHour{}, workHours...), // copy slice
+					CreatedAt: prev.CreatedAt,
+					UpdatedAt: prev.UpdatedAt,
+				})
+				workHours = []openapi_models.WorkHour{}
+			}
+			workHours = append(workHours, openapi_models.WorkHour{
+				ProcessId: v.ProcessId,
+				WorkHour:  v.WorkHour,
+			})
+			prev = v
+		}
+		// 最終行の処理
+		results = append(results, openapi_models.OperationSetting{
+			Id:        prev.Id,
+			UserId:    prev.UserId,
+			UnitId:    prev.UnitId,
+			WorkHours: append([]openapi_models.WorkHour{}, workHours...), // copy slice
+			CreatedAt: prev.CreatedAt,
+			UpdatedAt: 0,
+		})
+	}
+
+	return openapi_models.GetOperationSettingsIdResponse{
+		OperationSettings: results,
 	}
 }

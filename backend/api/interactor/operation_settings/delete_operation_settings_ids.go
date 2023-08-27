@@ -1,9 +1,12 @@
 package operation_settings
+
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"strconv"
 )
+
 func DeleteOperationSettingsIdInvoke(c *gin.Context) openapi_models.DeleteOperationSettingsIdResponse {
 
 	operationSettingRep := repository.NewOperationSettingRepository()

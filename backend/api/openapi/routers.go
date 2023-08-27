@@ -156,13 +156,6 @@ var routes = Routes{
 	},
 
 	{
-		"GetOperationSettings",
-		http.MethodGet,
-		"/api/operationSettings",
-		GetOperationSettings,
-	},
-
-	{
 		"GetOperationSettingsId",
 		http.MethodGet,
 		"/api/operationSettings/:id",
@@ -251,13 +244,6 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/holidays/:id",
 		PostHolidaysId,
-	},
-
-	{
-		"PostOperationSettings",
-		http.MethodPost,
-		"/api/operationSettings",
-		PostOperationSettings,
 	},
 
 	{

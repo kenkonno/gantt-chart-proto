@@ -270,36 +270,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostHolidaysRequest'
-  /api/operationSettings:
-    get:
-      summary: GetOperationSettings
-      tags: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetOperationSettingsResponse'
-              examples: {}
-      operationId: get-operationSettings
-      description: ''
-      parameters: []
-    post:
-      summary: PostOperationSettings
-      operationId: post-operationSettings
-      responses:
-        '200':
-          description: OK
-      description: ''
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostOperationSettingsRequest'
-    parameters: []
-
-  /api/operationSettings/{id}:
+  '/api/operationSettings/{id}':
     parameters:
       - schema:
           type: number
@@ -829,35 +800,31 @@ components:
     OperationSetting:
       title: OperationSetting
       type: object
+      description: ''
+      x-tags:
+        - OperationSetting
       properties:
         id:
           type: integer
           nullable: true
         facility_id:
           type: integer
-          x-go-custom-tag: binding:"min=1"
+        user_id:
+          type: integer
         unit_id:
           type: integer
-          x-go-custom-tag: binding:"min=1"
-        process_id:
-          type: integer
-          x-go-custom-tag: binding:"min=1"
-        work_hour:
-          type: integer
-          x-go-custom-tag: binding:"min=1"
+        workHours:
+          x-go-custom-tag: 'binding:"min=1"'
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkHour'
         created_at:
           type: string
           format: date-time
         updated_at:
           type: int
       required:
-        - facility_id
-        - unit_id
-        - process_id
-        - work_hour
-      description: ''
-      x-tags:
-        - OperationSetting
+        - workHours
     GetOperationSettingsRequest:
       title: GetOperationSettingsRequest
       type: object
@@ -882,8 +849,12 @@ components:
       title: GetOperationSettingsResponse
       type: object
       properties:
-        operationSetting:
-          $ref: '#/components/schemas/OperationSetting'
+        operationSettings:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationSetting'
+      required:
+        - operationSettings
     DeleteOperationSettingsIdRequest:
       title: DeleteOperationSettingsIdRequest
       type: object
@@ -901,8 +872,10 @@ components:
       title: PostOperationSettingsRequest
       type: object
       properties:
-        operationSetting:
-          $ref: '#/components/schemas/OperationSetting'
+        operationSettings:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationSetting'
     PostOperationSettingsResponse:
       title: PostOperationSettingsResponse
       type: object
@@ -1087,4 +1060,14 @@ components:
       properties:
         unit:
           $ref: '#/components/schemas/Unit'
+    WorkHour:
+      title: WorkHour
+      x-stoplight:
+        id: d3rebxnc2b4lk
+      type: object
+      properties:
+        process_id:
+          type: integer
+        work_hour:
+          type: integer
   parameters: {}
