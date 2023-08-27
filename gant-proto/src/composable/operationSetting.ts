@@ -5,11 +5,11 @@ import {toast} from "vue3-toastify";
 
 
 // ユーザー追加・更新。
-export async function useOperationSettingTable(operationSettingId: number) {
+export async function useOperationSettingTable(facilityId: number) {
 
     const list = ref<OperationSetting[]>([])
     const refresh = async () => {
-        const resp = await Api.getOperationSettingsId(operationSettingId)
+        const resp = await Api.getOperationSettingsId(facilityId)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.operationSettings)
     }

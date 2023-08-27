@@ -32,8 +32,8 @@ export async function useFacility(facilityId?: number) {
         if (data.facility != undefined) {
             facility.value.id = data.facility.id
             facility.value.name = data.facility.name
-            facility.value.term_from = data.facility.term_from
-            facility.value.term_to = data.facility.term_to
+            facility.value.term_from = data.facility.term_from.substring(0,10)
+            facility.value.term_to = data.facility.term_to.substring(0,10)
             facility.value.created_at = data.facility.created_at
             facility.value.updated_at = data.facility.updated_at
         }
@@ -44,6 +44,8 @@ export async function useFacility(facilityId?: number) {
 }
 
 export async function postFacility(facility: Facility, emit: any) {
+    facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
+    facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
     const req: PostFacilitiesRequest = {
         facility: facility
     }
@@ -51,10 +53,13 @@ export async function postFacility(facility: Facility, emit: any) {
         toast("成功しました。")
     }).finally(() => {
         emit('closeEditModal')
+        emit('update')
     })
 }
 
 export async function postFacilityById(facility: Facility, emit: any) {
+    facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
+    facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
     const req: PostFacilitiesRequest = {
         facility: facility
     }
@@ -63,6 +68,7 @@ export async function postFacilityById(facility: Facility, emit: any) {
             toast("成功しました。")
         }).finally(() => {
             emit('closeEditModal')
+            emit('update')
         })
     }
 }
@@ -72,6 +78,7 @@ export async function deleteFacilityById(id: number, emit: any) {
         toast("成功しました。")
     }).finally(() => {
         emit('closeEditModal')
+        emit('update')
     })
 }
 

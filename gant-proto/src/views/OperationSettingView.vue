@@ -20,8 +20,14 @@ import {useUnitTable} from "@/composable/unit";
 import {useProcessTable} from "@/composable/process";
 import {useUserTable} from "@/composable/user";
 
-const {list, refresh} = await useOperationSettingTable(1)
-const {list: unitList } = await useUnitTable()
+interface OperationSettingView {
+  facilityId: number
+}
+const props = defineProps<OperationSettingView>()
+
+
+const {list, refresh} = await useOperationSettingTable(props.facilityId)
+const {list: unitList } = await useUnitTable(props.facilityId)
 const {list: processList } = await useProcessTable()
 const {list: userList } = await useUserTable()
 

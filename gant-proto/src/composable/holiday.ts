@@ -5,10 +5,10 @@ import {toast} from "vue3-toastify";
 
 
 // ユーザー一覧。特別ref系は必要ない。
-export async function useHolidayTable() {
+export async function useHolidayTable(facilityId: number) {
     const list = ref<Holiday[]>([])
     const refresh = async () => {
-        const resp = await Api.getHolidays()
+        const resp = await Api.getHolidays(facilityId)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }
@@ -21,6 +21,7 @@ export async function useHoliday(holidayId?: number) {
 
     const holiday = ref<Holiday>({
         id: null,
+        facility_id: 0,
         name: "",
         date: "",
         created_at: undefined,
@@ -30,8 +31,9 @@ export async function useHoliday(holidayId?: number) {
         const {data} = await Api.getHolidaysId(holidayId)
         if (data.holiday != undefined) {
             holiday.value.id = data.holiday.id
+            holiday.value.facility_id = data.holiday.facility_id
             holiday.value.name = data.holiday.name
-            holiday.value.date = data.holiday.date
+            holiday.value.date = data.holiday.date.substring(0,10)
             holiday.value.created_at = data.holiday.created_at
             holiday.value.updated_at = data.holiday.updated_at
         }
@@ -41,10 +43,11 @@ export async function useHoliday(holidayId?: number) {
 
 }
 
-export async function postHoliday(holiday: Holiday, emit: any) {
+export async function postHoliday(holiday: Holiday, facilityId: number, emit: any) {
     holiday.date = holiday.date + "T00:00:00.00000+09:00"
+    holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
-        holiday: holiday
+        holiday: holiday,
     }
     await Api.postHolidays(req).then(() => {
         toast("成功しました。")
@@ -53,9 +56,10 @@ export async function postHoliday(holiday: Holiday, emit: any) {
     })
 }
 
-export async function postHolidayById(holiday: Holiday, emit: any) {
+export async function postHolidayById(holiday: Holiday, facilityId: number, emit: any) {
+    holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
-        holiday: holiday
+        holiday: holiday,
     }
     if (holiday.id != null) {
         await Api.postHolidaysId(holiday.id, req).then(() => {

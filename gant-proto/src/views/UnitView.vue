@@ -10,7 +10,7 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="Unit" @close-edit-modal="closeModalProxy">
-      <async-unit-edit :id="id" @close-edit-modal="closeModalProxy"></async-unit-edit>
+      <async-unit-edit :id="id" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-unit-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -24,7 +24,12 @@ import AsyncUnitEdit from "@/components/unit/AsyncUnitEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {useUnitTable} from "@/composable/unit";
-const {list, refresh} = await useUnitTable()
+interface UnitView {
+  facilityId: number
+}
+const props = defineProps<UnitView>()
+
+const {list, refresh} = await useUnitTable(props.facilityId)
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const closeModalProxy = async () => {
   await refresh()

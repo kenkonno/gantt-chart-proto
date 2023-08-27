@@ -12,12 +12,12 @@
 
     <div class="mb-2">
       <label class="form-label" for="id">TermFrom</label>
-      <input class="form-control" type="text" name="termFrom" id="termFrom" v-model="facility.term_from" :disabled="false">
+      <input class="form-control" type="date" name="termFrom" id="termFrom" v-model="facility.term_from" :disabled="false">
     </div>
 
     <div class="mb-2">
       <label class="form-label" for="id">TermTo</label>
-      <input class="form-control" type="text" name="termTo" id="termTo" v-model="facility.term_to" :disabled="false">
+      <input class="form-control" type="date" name="termTo" id="termTo" v-model="facility.term_to" :disabled="false">
     </div>
 
     <div class="mb-2">
@@ -48,7 +48,7 @@ interface AsyncFacilityEdit {
 }
 
 const props = defineProps<AsyncFacilityEdit>()
-defineEmits(['closeEditModal'])
+defineEmits(['closeEditModal', 'update'])
 
 const {facility} = await useFacility(props.id)
 

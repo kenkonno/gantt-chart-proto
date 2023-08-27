@@ -5,10 +5,10 @@ import {toast} from "vue3-toastify";
 
 
 // ユーザー一覧。特別ref系は必要ない。
-export async function useUnitTable() {
+export async function useUnitTable(facilityId: number) {
     const list = ref<Unit[]>([])
     const refresh = async () => {
-        const resp = await Api.getUnits()
+        const resp = await Api.getUnits(facilityId)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }
@@ -22,6 +22,7 @@ export async function useUnit(unitId?: number) {
     const unit = ref<Unit>({
         id: null,
         name: "",
+        facility_id: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -30,6 +31,7 @@ export async function useUnit(unitId?: number) {
         if (data.unit != undefined) {
             unit.value.id = data.unit.id
             unit.value.name = data.unit.name
+            unit.value.facility_id = data.unit.facility_id
             unit.value.created_at = data.unit.created_at
             unit.value.updated_at = data.unit.updated_at
         }
@@ -39,9 +41,10 @@ export async function useUnit(unitId?: number) {
 
 }
 
-export async function postUnit(unit: Unit, emit: any) {
+export async function postUnit(unit: Unit, facilityId: number, emit: any) {
+    unit.facility_id = facilityId
     const req: PostUnitsRequest = {
-        unit: unit
+        unit: unit,
     }
     await Api.postUnits(req).then(() => {
         toast("成功しました。")
@@ -50,9 +53,10 @@ export async function postUnit(unit: Unit, emit: any) {
     })
 }
 
-export async function postUnitById(unit: Unit, emit: any) {
+export async function postUnitById(unit: Unit, facilityId: number, emit: any) {
+    unit.facility_id = facilityId
     const req: PostUnitsRequest = {
-        unit: unit
+        unit: unit,
     }
     if (unit.id != null) {
         await Api.postUnitsId(unit.id, req).then(() => {

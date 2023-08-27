@@ -10,7 +10,7 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="Facility" @close-edit-modal="closeModalProxy">
-      <async-facility-edit :id="id" @close-edit-modal="closeModalProxy"></async-facility-edit>
+      <async-facility-edit :id="id" @close-edit-modal="closeModalProxy" @update="$emit('update')"></async-facility-edit>
     </default-modal>
     <template #fallback>
       Loading...

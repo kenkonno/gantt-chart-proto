@@ -10,7 +10,7 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="Holiday" @close-edit-modal="closeModalProxy">
-      <async-holiday-edit :id="id" @close-edit-modal="closeModalProxy"></async-holiday-edit>
+      <async-holiday-edit :id="id" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-holiday-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -24,8 +24,14 @@ import AsyncHolidayEdit from "@/components/holiday/AsyncHolidayEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {useHolidayTable} from "@/composable/holiday";
-const {list, refresh} = await useHolidayTable()
+
+interface HolidayView {
+  facilityId: number
+}
+const props = defineProps<HolidayView>()
+const {list, refresh} = await useHolidayTable(props.facilityId)
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+
 const closeModalProxy = async () => {
   await refresh()
   closeEditModal()

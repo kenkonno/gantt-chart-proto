@@ -26,10 +26,10 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postHoliday(holiday, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="postHoliday(holiday, facilityId, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postHolidayById(holiday, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="postHolidayById(holiday, facilityId, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteHolidayById(id, $emit)">削除</button>
     </template>
   </div>
@@ -39,7 +39,8 @@
 import {useHoliday, postHolidayById, postHoliday, deleteHolidayById} from "@/composable/holiday";
 
 interface AsyncHolidayEdit {
-  id: number | undefined
+  id: number | undefined,
+  facilityId: number
 }
 
 const props = defineProps<AsyncHolidayEdit>()

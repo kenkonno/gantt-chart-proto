@@ -1,5 +1,6 @@
 <template>
-  <p @click="open=true">{{title}}</p>
+  <p @click="open=true" v-if="!disabled">{{title}}</p>
+  <p v-else style="text-decoration: inherit; cursor:inherit">{{title}}</p>
   <DefaultModal v-if="open" @close-edit-modal="open=false" title="">
     <slot />
   </DefaultModal>
@@ -10,7 +11,8 @@ import {ref} from 'vue'
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 
 interface ModalWithLink {
-  title: string
+  title: string,
+  disabled: boolean
 }
 
 const props = defineProps<ModalWithLink>()
