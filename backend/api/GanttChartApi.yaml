@@ -218,7 +218,12 @@ paths:
               examples: {}
       operationId: get-holidays
       description: ''
-      parameters: []
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: facilityId
+          required: true
     post:
       summary: PostHolidays
       operationId: post-holidays
@@ -388,7 +393,12 @@ paths:
               examples: {}
       operationId: get-units
       description: ''
-      parameters: []
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: facilityId
+          required: true
     post:
       summary: PostUnits
       operationId: post-units
@@ -629,11 +639,9 @@ components:
         term_from:
           type: string
           format: date-time
-          x-go-custom-tag: 'binding:"min=1"'
         term_to:
           type: string
           format: date-time
-          x-go-custom-tag: 'binding:"min=1"'
         created_at:
           type: string
           format: date-time
@@ -712,6 +720,9 @@ components:
     Holiday:
       title: Holiday
       type: object
+      description: ''
+      x-tags:
+        - Holiday
       properties:
         id:
           type: integer
@@ -728,12 +739,12 @@ components:
           format: date-time
         updated_at:
           type: int
+        facility_id:
+          type: integer
       required:
         - name
         - date
-      description: ''
-      x-tags:
-        - Holiday
+        - facility_id
     GetHolidaysRequest:
       title: GetHolidaysRequest
       type: object
@@ -779,6 +790,8 @@ components:
       properties:
         holiday:
           $ref: '#/components/schemas/Holiday'
+      required:
+        - holiday
     PostHolidaysResponse:
       title: PostHolidaysResponse
       type: object
@@ -980,6 +993,9 @@ components:
     Unit:
       title: Unit
       type: object
+      description: ''
+      x-tags:
+        - Unit
       properties:
         id:
           type: integer
@@ -992,11 +1008,11 @@ components:
           format: date-time
         updated_at:
           type: int
+        facility_id:
+          type: integer
       required:
         - name
-      description: ''
-      x-tags:
-        - Unit
+        - facility_id
     GetUnitsRequest:
       title: GetUnitsRequest
       type: object
@@ -1042,6 +1058,8 @@ components:
       properties:
         unit:
           $ref: '#/components/schemas/Unit'
+      required:
+        - unit
     PostUnitsResponse:
       title: PostUnitsResponse
       type: object

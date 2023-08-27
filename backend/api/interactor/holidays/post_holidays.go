@@ -19,10 +19,11 @@ func PostHolidaysInvoke(c *gin.Context) openapi_models.PostHolidaysResponse {
 		panic(err)
 	}
 	holidayRep.Upsert(db.Holiday{
-		Name:      holidayReq.Holiday.Name,
-		Date:      holidayReq.Holiday.Date,
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
+		FacilityId: holidayReq.Holiday.FacilityId,
+		Name:       holidayReq.Holiday.Name,
+		Date:       holidayReq.Holiday.Date,
+		CreatedAt:  time.Time{},
+		UpdatedAt:  0,
 	})
 
 	return openapi_models.PostHolidaysResponse{}

@@ -19,9 +19,10 @@ func PostUnitsInvoke(c *gin.Context) openapi_models.PostUnitsResponse {
 		panic(err)
 	}
 	unitRep.Upsert(db.Unit{
-		Name:      unitReq.Unit.Name,
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
+		Name:       unitReq.Unit.Name,
+		FacilityId: unitReq.Unit.FacilityId,
+		CreatedAt:  time.Time{},
+		UpdatedAt:  0,
 	})
 
 	return openapi_models.PostUnitsResponse{}

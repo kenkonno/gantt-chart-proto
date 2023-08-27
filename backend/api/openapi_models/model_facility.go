@@ -20,9 +20,9 @@ type Facility struct {
 
 	Name string `json:"name" binding:"min=1"`
 
-	TermFrom time.Time `json:"term_from" binding:"min=1"`
+	TermFrom time.Time `json:"term_from"`
 
-	TermTo time.Time `json:"term_to" binding:"min=1"`
+	TermTo time.Time `json:"term_to"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

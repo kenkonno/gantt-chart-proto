@@ -23,4 +23,6 @@ type Unit struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
 	UpdatedAt int `json:"updated_at,omitempty"`
+
+	FacilityId int32 `json:"facility_id"`
 }

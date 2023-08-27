@@ -19,10 +19,11 @@ func GetUnitsIdInvoke(c *gin.Context) openapi_models.GetUnitsIdResponse {
 
 	return openapi_models.GetUnitsIdResponse{
 		Unit: openapi_models.Unit{
-			Id:        unit.Id,
-			Name:      unit.Name,
-			CreatedAt: unit.CreatedAt,
-			UpdatedAt: unit.UpdatedAt,
+			Id:         unit.Id,
+			Name:       unit.Name,
+			FacilityId: unit.FacilityId,
+			CreatedAt:  unit.CreatedAt,
+			UpdatedAt:  unit.UpdatedAt,
 		},
 	}
 }

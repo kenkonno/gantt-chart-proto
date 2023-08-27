@@ -6,20 +6,26 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
+	"strconv"
 )
 
 func GetUnitsInvoke(c *gin.Context) openapi_models.GetUnitsResponse {
 	unitRep := repository.NewUnitRepository()
 
-	unitList := unitRep.FindAll()
+	facilityId, err := strconv.Atoi(c.Query("facilityId"))
+	if err != nil {
+		panic(err)
+	}
+	unitList := unitRep.FindByFacilityId(int32(facilityId))
 
 	return openapi_models.GetUnitsResponse{
 		List: lo.Map(unitList, func(item db.Unit, index int) openapi_models.Unit {
 			return openapi_models.Unit{
-				Id:        item.Id,
-				Name:      item.Name,
-				CreatedAt: item.CreatedAt,
-				UpdatedAt: item.UpdatedAt,
+				Id:         item.Id,
+				Name:       item.Name,
+				FacilityId: item.FacilityId,
+				CreatedAt:  item.CreatedAt,
+				UpdatedAt:  item.UpdatedAt,
 			}
 		}),
 	}

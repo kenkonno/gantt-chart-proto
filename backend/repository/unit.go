@@ -18,7 +18,7 @@ type unitRepository struct {
 func (r *unitRepository) FindAll() []db.Unit {
 	var units []db.Unit
 
-	result := r.con.Order("id ASC").Find(&units)
+	result := r.con.Order("id DESC").Find(&units)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -47,3 +47,12 @@ func (r *unitRepository) Delete(id int32) {
 }
 
 // Auto generated end
+func (r *unitRepository) FindByFacilityId(facilityId int32) []db.Unit {
+	var units []db.Unit
+
+	result := r.con.Where("facility_id = ?", facilityId).Order("id DESC").Find(&units)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return units
+}

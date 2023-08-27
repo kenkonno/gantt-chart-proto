@@ -19,11 +19,12 @@ func GetHolidaysIdInvoke(c *gin.Context) openapi_models.GetHolidaysIdResponse {
 
 	return openapi_models.GetHolidaysIdResponse{
 		Holiday: openapi_models.Holiday{
-			Id:        holiday.Id,
-			Name:      holiday.Name,
-			Date:      holiday.Date,
-			CreatedAt: holiday.CreatedAt,
-			UpdatedAt: holiday.UpdatedAt,
+			Id:         holiday.Id,
+			FacilityId: holiday.FacilityId,
+			Name:       holiday.Name,
+			Date:       holiday.Date,
+			CreatedAt:  holiday.CreatedAt,
+			UpdatedAt:  holiday.UpdatedAt,
 		},
 	}
 }

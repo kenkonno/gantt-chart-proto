@@ -18,7 +18,7 @@ type holidayRepository struct {
 func (r *holidayRepository) FindAll() []db.Holiday {
 	var holidays []db.Holiday
 
-	result := r.con.Order("id ASC").Find(&holidays)
+	result := r.con.Order("id DESC").Find(&holidays)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -47,3 +47,13 @@ func (r *holidayRepository) Delete(id int32) {
 }
 
 // Auto generated end
+
+func (r *holidayRepository) FindByFacilityId(facilityId int32) []db.Holiday {
+	var holidays []db.Holiday
+
+	result := r.con.Where("facility_id = ?", facilityId).Order("id DESC").Find(&holidays)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return holidays
+}

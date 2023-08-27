@@ -20,10 +20,11 @@ func PostUnitsIdInvoke(c *gin.Context) openapi_models.PostUnitsIdResponse {
 	}
 
 	unitRep.Upsert(db.Unit{
-		Id:        unitReq.Unit.Id,
-		Name:      unitReq.Unit.Name,
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
+		Id:         unitReq.Unit.Id,
+		Name:       unitReq.Unit.Name,
+		FacilityId: unitReq.Unit.FacilityId,
+		CreatedAt:  time.Time{},
+		UpdatedAt:  0,
 	})
 
 	return openapi_models.PostUnitsIdResponse{}
