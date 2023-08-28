@@ -78,6 +78,32 @@ export interface DeleteFacilitiesIdResponse {
 /**
  * 
  * @export
+ * @interface DeleteGanttGroupsIdRequest
+ */
+export interface DeleteGanttGroupsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteGanttGroupsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteGanttGroupsIdResponse
+ */
+export interface DeleteGanttGroupsIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteGanttGroupsIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeleteHolidaysIdRequest
  */
 export interface DeleteHolidaysIdRequest {
@@ -150,6 +176,58 @@ export interface DeleteProcessesIdResponse {
      * 
      * @type {string}
      * @memberof DeleteProcessesIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteTicketUsersIdRequest
+ */
+export interface DeleteTicketUsersIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteTicketUsersIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteTicketUsersIdResponse
+ */
+export interface DeleteTicketUsersIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteTicketUsersIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteTicketsIdRequest
+ */
+export interface DeleteTicketsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteTicketsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteTicketsIdResponse
+ */
+export interface DeleteTicketsIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteTicketsIdResponse
      */
     'msg'?: string;
 }
@@ -282,6 +360,49 @@ export interface Facility {
 /**
  * 
  * @export
+ * @interface GanttGroup
+ */
+export interface GanttGroup {
+    /**
+     * 
+     * @type {number}
+     * @memberof GanttGroup
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof GanttGroup
+     */
+    'facility_id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GanttGroup
+     */
+    'unit_id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GanttGroup
+     */
+    'order': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GanttGroup
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof GanttGroup
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
  * @interface GetDepartmentsIdRequest
  */
 export interface GetDepartmentsIdRequest {
@@ -356,6 +477,45 @@ export interface GetFacilitiesResponse {
      * @memberof GetFacilitiesResponse
      */
     'list': Array<Facility>;
+}
+/**
+ * 
+ * @export
+ * @interface GetGanttGroupsIdRequest
+ */
+export interface GetGanttGroupsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetGanttGroupsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetGanttGroupsIdResponse
+ */
+export interface GetGanttGroupsIdResponse {
+    /**
+     * 
+     * @type {GanttGroup}
+     * @memberof GetGanttGroupsIdResponse
+     */
+    'ganttGroup'?: GanttGroup;
+}
+/**
+ * 
+ * @export
+ * @interface GetGanttGroupsResponse
+ */
+export interface GetGanttGroupsResponse {
+    /**
+     * 
+     * @type {Array<GanttGroup>}
+     * @memberof GetGanttGroupsResponse
+     */
+    'list': Array<GanttGroup>;
 }
 /**
  * 
@@ -473,6 +633,84 @@ export interface GetProcessesResponse {
      * @memberof GetProcessesResponse
      */
     'list': Array<Process>;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketUsersIdRequest
+ */
+export interface GetTicketUsersIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetTicketUsersIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketUsersIdResponse
+ */
+export interface GetTicketUsersIdResponse {
+    /**
+     * 
+     * @type {TicketUser}
+     * @memberof GetTicketUsersIdResponse
+     */
+    'ticketUser'?: TicketUser;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketUsersResponse
+ */
+export interface GetTicketUsersResponse {
+    /**
+     * 
+     * @type {Array<TicketUser>}
+     * @memberof GetTicketUsersResponse
+     */
+    'list': Array<TicketUser>;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketsIdRequest
+ */
+export interface GetTicketsIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetTicketsIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketsIdResponse
+ */
+export interface GetTicketsIdResponse {
+    /**
+     * 
+     * @type {Ticket}
+     * @memberof GetTicketsIdResponse
+     */
+    'ticket'?: Ticket;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketsResponse
+ */
+export interface GetTicketsResponse {
+    /**
+     * 
+     * @type {Array<Ticket>}
+     * @memberof GetTicketsResponse
+     */
+    'list': Array<Ticket>;
 }
 /**
  * 
@@ -751,6 +989,58 @@ export interface PostFacilitiesResponse {
 /**
  * 
  * @export
+ * @interface PostGanttGroupsIdRequest
+ */
+export interface PostGanttGroupsIdRequest {
+    /**
+     * 
+     * @type {GanttGroup}
+     * @memberof PostGanttGroupsIdRequest
+     */
+    'ganttGroup'?: GanttGroup;
+}
+/**
+ * 
+ * @export
+ * @interface PostGanttGroupsIdResponse
+ */
+export interface PostGanttGroupsIdResponse {
+    /**
+     * 
+     * @type {GanttGroup}
+     * @memberof PostGanttGroupsIdResponse
+     */
+    'ganttGroup'?: GanttGroup;
+}
+/**
+ * 
+ * @export
+ * @interface PostGanttGroupsRequest
+ */
+export interface PostGanttGroupsRequest {
+    /**
+     * 
+     * @type {GanttGroup}
+     * @memberof PostGanttGroupsRequest
+     */
+    'ganttGroup'?: GanttGroup;
+}
+/**
+ * 
+ * @export
+ * @interface PostGanttGroupsResponse
+ */
+export interface PostGanttGroupsResponse {
+    /**
+     * 
+     * @type {GanttGroup}
+     * @memberof PostGanttGroupsResponse
+     */
+    'ganttGroup'?: GanttGroup;
+}
+/**
+ * 
+ * @export
  * @interface PostHolidaysIdRequest
  */
 export interface PostHolidaysIdRequest {
@@ -907,6 +1197,110 @@ export interface PostProcessesResponse {
 /**
  * 
  * @export
+ * @interface PostTicketUsersIdRequest
+ */
+export interface PostTicketUsersIdRequest {
+    /**
+     * 
+     * @type {TicketUser}
+     * @memberof PostTicketUsersIdRequest
+     */
+    'ticketUser'?: TicketUser;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketUsersIdResponse
+ */
+export interface PostTicketUsersIdResponse {
+    /**
+     * 
+     * @type {TicketUser}
+     * @memberof PostTicketUsersIdResponse
+     */
+    'ticketUser'?: TicketUser;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketUsersRequest
+ */
+export interface PostTicketUsersRequest {
+    /**
+     * 
+     * @type {TicketUser}
+     * @memberof PostTicketUsersRequest
+     */
+    'ticketUser'?: TicketUser;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketUsersResponse
+ */
+export interface PostTicketUsersResponse {
+    /**
+     * 
+     * @type {TicketUser}
+     * @memberof PostTicketUsersResponse
+     */
+    'ticketUser'?: TicketUser;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketsIdRequest
+ */
+export interface PostTicketsIdRequest {
+    /**
+     * 
+     * @type {Ticket}
+     * @memberof PostTicketsIdRequest
+     */
+    'ticket'?: Ticket;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketsIdResponse
+ */
+export interface PostTicketsIdResponse {
+    /**
+     * 
+     * @type {Ticket}
+     * @memberof PostTicketsIdResponse
+     */
+    'ticket'?: Ticket;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketsRequest
+ */
+export interface PostTicketsRequest {
+    /**
+     * 
+     * @type {Ticket}
+     * @memberof PostTicketsRequest
+     */
+    'ticket'?: Ticket;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketsResponse
+ */
+export interface PostTicketsResponse {
+    /**
+     * 
+     * @type {Ticket}
+     * @memberof PostTicketsResponse
+     */
+    'ticket'?: Ticket;
+}
+/**
+ * 
+ * @export
  * @interface PostUnitsIdRequest
  */
 export interface PostUnitsIdRequest {
@@ -1036,6 +1430,128 @@ export interface Process {
      * 
      * @type {number}
      * @memberof Process
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface Ticket
+ */
+export interface Ticket {
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'gantt_group_id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'process_id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'department_id'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Ticket
+     */
+    'limit_date'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'estimate'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'days_after'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Ticket
+     */
+    'start_date'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Ticket
+     */
+    'end_date'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'progress_percent'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'order': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Ticket
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface TicketUser
+ */
+export interface TicketUser {
+    /**
+     * 
+     * @type {number}
+     * @memberof TicketUser
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof TicketUser
+     */
+    'ticket_id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TicketUser
+     */
+    'user_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TicketUser
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof TicketUser
      */
     'updated_at'?: number;
 }
@@ -1215,6 +1731,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary DeleteGanttGroupsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGanttGroupsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteGanttGroupsId', 'id', id)
+            const localVarPath = `/api/ganttGroups/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary DeleteHolidaysId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -1292,6 +1842,74 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteProcessesId', 'id', id)
             const localVarPath = `/api/processes/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteTicketUsersId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTicketUsersId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteTicketUsersId', 'id', id)
+            const localVarPath = `/api/ticketUsers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteTicketsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTicketsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteTicketsId', 'id', id)
+            const localVarPath = `/api/tickets/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1513,6 +2131,77 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetGanttGroups
+         * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGanttGroups: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'facilityId' is not null or undefined
+            assertParamExists('getGanttGroups', 'facilityId', facilityId)
+            const localVarPath = `/api/ganttGroups`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (facilityId !== undefined) {
+                localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetGanttGroupsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGanttGroupsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getGanttGroupsId', 'id', id)
+            const localVarPath = `/api/ganttGroups/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetHolidays
          * @param {number} facilityId 
          * @param {*} [options] Override http request option.
@@ -1657,6 +2346,148 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getProcessesId', 'id', id)
             const localVarPath = `/api/processes/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetTicketUsers
+         * @param {Array<number>} ticketIds 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketUsers: async (ticketIds: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'ticketIds' is not null or undefined
+            assertParamExists('getTicketUsers', 'ticketIds', ticketIds)
+            const localVarPath = `/api/ticketUsers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (ticketIds) {
+                localVarQueryParameter['ticketIds'] = ticketIds;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetTicketUsersId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketUsersId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTicketUsersId', 'id', id)
+            const localVarPath = `/api/ticketUsers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetTickets
+         * @param {Array<number>} ganttGroupIds 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTickets: async (ganttGroupIds: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'ganttGroupIds' is not null or undefined
+            assertParamExists('getTickets', 'ganttGroupIds', ganttGroupIds)
+            const localVarPath = `/api/tickets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (ganttGroupIds) {
+                localVarQueryParameter['ganttGroupIds'] = ganttGroupIds;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetTicketsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTicketsId', 'id', id)
+            const localVarPath = `/api/tickets/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1961,6 +2792,78 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostGanttGroups
+         * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postGanttGroups: async (postGanttGroupsRequest?: PostGanttGroupsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/ganttGroups`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postGanttGroupsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostGanttGroupsId
+         * @param {number} id 
+         * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postGanttGroupsId: async (id: number, postGanttGroupsRequest?: PostGanttGroupsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postGanttGroupsId', 'id', id)
+            const localVarPath = `/api/ganttGroups/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postGanttGroupsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostHolidays
          * @param {PostHolidaysRequest} [postHolidaysRequest] 
          * @param {*} [options] Override http request option.
@@ -2135,6 +3038,150 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(postProcessesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostTicketUsers
+         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketUsers: async (postTicketUsersRequest?: PostTicketUsersRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/ticketUsers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketUsersRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostTicketUsersId
+         * @param {number} id 
+         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketUsersId: async (id: number, postTicketUsersRequest?: PostTicketUsersRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postTicketUsersId', 'id', id)
+            const localVarPath = `/api/ticketUsers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketUsersRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostTickets
+         * @param {PostTicketsRequest} [postTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTickets: async (postTicketsRequest?: PostTicketsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/tickets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostTicketsId
+         * @param {number} id 
+         * @param {PostTicketsRequest} [postTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketsId: async (id: number, postTicketsRequest?: PostTicketsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postTicketsId', 'id', id)
+            const localVarPath = `/api/tickets/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketsRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2319,6 +3366,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary DeleteGanttGroupsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteGanttGroupsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteGanttGroupsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary DeleteHolidaysId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -2348,6 +3406,28 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async deleteProcessesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteProcessesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteTicketUsersId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteTicketUsersId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTicketUsersId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary DeleteTicketsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteTicketsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTicketsId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2416,6 +3496,28 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetGanttGroups
+         * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGanttGroups(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetGanttGroupsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGanttGroupsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroupsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetHolidays
          * @param {number} facilityId 
          * @param {*} [options] Override http request option.
@@ -2466,6 +3568,50 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getProcessesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetProcessesIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getProcessesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetTicketUsers
+         * @param {Array<number>} ticketIds 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketUsers(ticketIds: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketUsersResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketUsers(ticketIds, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetTicketUsersId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketUsersId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketUsersIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketUsersId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetTickets
+         * @param {Array<number>} ganttGroupIds 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTickets(ganttGroupIds: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTickets(ganttGroupIds, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetTicketsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketsId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2559,6 +3705,29 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary PostGanttGroups
+         * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postGanttGroups(postGanttGroupsRequest?: PostGanttGroupsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postGanttGroups(postGanttGroupsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostGanttGroupsId
+         * @param {number} id 
+         * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postGanttGroupsId(id: number, postGanttGroupsRequest?: PostGanttGroupsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postGanttGroupsId(id, postGanttGroupsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostHolidays
          * @param {PostHolidaysRequest} [postHolidaysRequest] 
          * @param {*} [options] Override http request option.
@@ -2613,6 +3782,52 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postProcessesId(id, postProcessesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostTicketUsers
+         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketUsers(postTicketUsersRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostTicketUsersId
+         * @param {number} id 
+         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketUsersId(id: number, postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketUsersId(id, postTicketUsersRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostTickets
+         * @param {PostTicketsRequest} [postTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTickets(postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTickets(postTicketsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostTicketsId
+         * @param {number} id 
+         * @param {PostTicketsRequest} [postTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketsId(id, postTicketsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2693,6 +3908,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary DeleteGanttGroupsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGanttGroupsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteGanttGroupsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary DeleteHolidaysId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -2720,6 +3945,26 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         deleteProcessesId(id: number, options?: any): AxiosPromise<void> {
             return localVarFp.deleteProcessesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteTicketUsersId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTicketUsersId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteTicketUsersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteTicketsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTicketsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteTicketsId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2781,6 +4026,26 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetGanttGroups
+         * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGanttGroups(facilityId: number, options?: any): AxiosPromise<GetGanttGroupsResponse> {
+            return localVarFp.getGanttGroups(facilityId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetGanttGroupsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGanttGroupsId(id: number, options?: any): AxiosPromise<GetGanttGroupsIdResponse> {
+            return localVarFp.getGanttGroupsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetHolidays
          * @param {number} facilityId 
          * @param {*} [options] Override http request option.
@@ -2827,6 +4092,46 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getProcessesId(id: number, options?: any): AxiosPromise<GetProcessesIdResponse> {
             return localVarFp.getProcessesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetTicketUsers
+         * @param {Array<number>} ticketIds 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketUsers(ticketIds: Array<number>, options?: any): AxiosPromise<GetTicketUsersResponse> {
+            return localVarFp.getTicketUsers(ticketIds, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetTicketUsersId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketUsersId(id: number, options?: any): AxiosPromise<GetTicketUsersIdResponse> {
+            return localVarFp.getTicketUsersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetTickets
+         * @param {Array<number>} ganttGroupIds 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTickets(ganttGroupIds: Array<number>, options?: any): AxiosPromise<GetTicketsResponse> {
+            return localVarFp.getTickets(ganttGroupIds, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetTicketsId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketsId(id: number, options?: any): AxiosPromise<GetTicketsIdResponse> {
+            return localVarFp.getTicketsId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2911,6 +4216,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary PostGanttGroups
+         * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postGanttGroups(postGanttGroupsRequest?: PostGanttGroupsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postGanttGroups(postGanttGroupsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostGanttGroupsId
+         * @param {number} id 
+         * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postGanttGroupsId(id: number, postGanttGroupsRequest?: PostGanttGroupsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postGanttGroupsId(id, postGanttGroupsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary PostHolidays
          * @param {PostHolidaysRequest} [postHolidaysRequest] 
          * @param {*} [options] Override http request option.
@@ -2961,6 +4287,48 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postProcessesId(id, postProcessesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostTicketUsers
+         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketUsers(postTicketUsersRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostTicketUsersId
+         * @param {number} id 
+         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketUsersId(id: number, postTicketUsersRequest?: PostTicketUsersRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketUsersId(id, postTicketUsersRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostTickets
+         * @param {PostTicketsRequest} [postTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTickets(postTicketsRequest?: PostTicketsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTickets(postTicketsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostTicketsId
+         * @param {number} id 
+         * @param {PostTicketsRequest} [postTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketsId(id, postTicketsRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3040,6 +4408,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary DeleteGanttGroupsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteGanttGroupsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteGanttGroupsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary DeleteHolidaysId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -3072,6 +4452,30 @@ export class DefaultApi extends BaseAPI {
      */
     public deleteProcessesId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).deleteProcessesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteTicketUsersId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteTicketUsersId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteTicketUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteTicketsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteTicketsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteTicketsId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3146,6 +4550,30 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary GetGanttGroups
+     * @param {number} facilityId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getGanttGroups(facilityId: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getGanttGroups(facilityId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetGanttGroupsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getGanttGroupsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getGanttGroupsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary GetHolidays
      * @param {number} facilityId 
      * @param {*} [options] Override http request option.
@@ -3201,6 +4629,54 @@ export class DefaultApi extends BaseAPI {
      */
     public getProcessesId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getProcessesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetTicketUsers
+     * @param {Array<number>} ticketIds 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketUsers(ticketIds: Array<number>, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketUsers(ticketIds, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetTicketUsersId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketUsersId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetTickets
+     * @param {Array<number>} ganttGroupIds 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTickets(ganttGroupIds: Array<number>, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTickets(ganttGroupIds, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetTicketsId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketsId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3302,6 +4778,31 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary PostGanttGroups
+     * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postGanttGroups(postGanttGroupsRequest?: PostGanttGroupsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postGanttGroups(postGanttGroupsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostGanttGroupsId
+     * @param {number} id 
+     * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postGanttGroupsId(id: number, postGanttGroupsRequest?: PostGanttGroupsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postGanttGroupsId(id, postGanttGroupsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary PostHolidays
      * @param {PostHolidaysRequest} [postHolidaysRequest] 
      * @param {*} [options] Override http request option.
@@ -3361,6 +4862,56 @@ export class DefaultApi extends BaseAPI {
      */
     public postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postProcessesId(id, postProcessesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostTicketUsers
+     * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketUsers(postTicketUsersRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostTicketUsersId
+     * @param {number} id 
+     * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketUsersId(id: number, postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketUsersId(id, postTicketUsersRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostTickets
+     * @param {PostTicketsRequest} [postTicketsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTickets(postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTickets(postTicketsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostTicketsId
+     * @param {number} id 
+     * @param {PostTicketsRequest} [postTicketsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketsId(id, postTicketsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

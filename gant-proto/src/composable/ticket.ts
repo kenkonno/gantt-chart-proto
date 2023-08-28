@@ -7,12 +7,11 @@ import {toast} from "vue3-toastify";
 // ユーザー一覧。特別ref系は必要ない。
 export async function useTicketTable() {
     const list = ref<Ticket[]>([])
-    const refresh = async () => {
-        const resp = await Api.getTickets()
+    const refresh = async (ganttGroupIds: number[]) => {
+        const resp = await Api.getTickets(ganttGroupIds)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }
-    await refresh()
     return {list, refresh}
 }
 
@@ -24,12 +23,13 @@ export async function useTicket(ticketId?: number) {
         gantt_group_id: 0,
         process_id: 0,
         department_id: 0,
-        limit_date: ,
+        limit_date: "",
         estimate: 0,
         days_after: 0,
-        start_date: ,
-        end_date: ,
+        start_date: "",
+        end_date: "",
         progress_percent: 0,
+        order: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -46,6 +46,7 @@ export async function useTicket(ticketId?: number) {
             ticket.value.start_date = data.ticket.start_date
             ticket.value.end_date = data.ticket.end_date
             ticket.value.progress_percent = data.ticket.progress_percent
+            ticket.value.order = data.ticket.order
             ticket.value.created_at = data.ticket.created_at
             ticket.value.updated_at = data.ticket.updated_at
         }

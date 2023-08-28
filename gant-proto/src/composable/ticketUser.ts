@@ -7,12 +7,11 @@ import {toast} from "vue3-toastify";
 // ユーザー一覧。特別ref系は必要ない。
 export async function useTicketUserTable() {
     const list = ref<TicketUser[]>([])
-    const refresh = async () => {
-        const resp = await Api.getTicketUsers()
+    const refresh = async (ticketIds: number[]) => {
+        const resp = await Api.getTicketUsers(ticketIds)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }
-    await refresh()
     return {list, refresh}
 }
 

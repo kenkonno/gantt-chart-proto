@@ -1,6 +1,11 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
 import {ref, watch} from "vue";
+import {GanttGroup, Ticket, TicketUser, Unit} from "@/api";
+import {Api} from "@/api/axios";
+import {useGanttGroup, useGanttGroupTable} from "@/composable/ganttGroup";
+import {useTicketTable} from "@/composable/ticket";
+import {useTicketUserTable} from "@/composable/ticketUser";
 
 type TaskName = string;
 type NumberOfWorkers = number;
@@ -13,9 +18,17 @@ const chartStart = ref("01.05.2023 00:00")
 const chartEnd = ref("31.07.2023 00:00")
 const format = ref("DD.MM.YYYY HH:mm")
 
+type GanttChartGroup = {
+    ganttGroup: GanttGroup
+    rows: GanttRow[]
+}
 
-type Row = {
+type GanttRow = {
     bar: GanttBarObject
+    ganttGroup?: GanttGroup
+    ticket?: Ticket
+    ticketUsers?: TicketUser[]
+    // TODO: ここから下は後で消す
     taskName: TaskName
     numberOfWorkers: NumberOfWorkers
     workStartDate: WorkStartDate
@@ -23,9 +36,31 @@ type Row = {
     estimatePersonDay: EstimatePersonDay
 }
 
-export function useGantt() {
-// ここからダミーデータ
-    const rows = ref<Row[]>([
+export async function useGantt(facilityId: number) {
+
+    // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
+    const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
+    const {list: ticketList, refresh: ticketRefresh} = await useTicketTable()
+    const {list: ticketUserList, refresh: ticketUserRefresh} = await useTicketUserTable()
+    await ganttGroupRefresh(facilityId)
+    const ganttGroupIds = ganttGroupList.value.map(v => v.id!)
+    await ticketRefresh(ganttGroupIds)
+    const ticketIds = ticketList.value.map(v => v.id!)
+    await ticketUserRefresh(ticketIds)
+    // ここからガントチャートに渡すオブジェクトを作成する
+    const ganttChartGroup: GanttChartGroup[] = []
+    ganttGroupList.value.forEach(ganttGroup => {
+        ganttChartGroup.push(
+            {
+                ganttGroup: ganttGroup,
+                rows: ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id).sort(v => v.order).map(ticket => ticketToGanttRow(ticket))
+            }
+        )
+    })
+
+
+    // ここからダミーデータ
+    const rows = ref<GanttRow[]>([
         newRow("id-1", "作業1", 1, 5, dayjs('2023-05-02 00:00'), dayjs('2023-05-06 23:59')),
         newRow("id-2", "作業2", 1, 6, dayjs('2023-05-07 00:00'), dayjs('2023-05-12 23:59')),
         newRow("id-3", "作業3", 1, 3, dayjs('2023-05-13 00:00'), dayjs('2023-05-15 23:59')),
@@ -45,8 +80,8 @@ export function useGantt() {
         if (!target) {
             console.error(`ID: ${bar.ganttBarConfig.id} が現在のガントに存在しません。`, rows)
         } else {
-            target.workStartDate = dayjs(ganttDateToYMDDate(bar.beginDate))
-            target.workEndDate = dayjs(ganttDateToYMDDate(bar.endDate))
+            // target.workStartDate = dayjs(ganttDateToYMDDate(bar.beginDate))
+            // target.workEndDate = dayjs(ganttDateToYMDDate(bar.endDate))
         }
     }
     const addRow = () => {
@@ -76,7 +111,7 @@ export function useGantt() {
 
         // rowsの変更を barsに反映させる。色々散らばっているが、ここでは時刻関係以外とする。
         bars.splice(0)
-        bars.push(...rows.value.map( v => {
+        bars.push(...rows.value.map(v => {
             v.bar.ganttBarConfig.label = v.taskName
             return v.bar
         }))
@@ -90,6 +125,7 @@ export function useGantt() {
         chartStart,
         chartEnd,
         format,
+        ganttChartGroup,
         updateWorkStartDate,
         updateWorkEndDate,
         setScheduleByPersonDay,
@@ -103,7 +139,7 @@ export function useGantt() {
 
 // 人日重視でスケジュールを設定する
 // 人日*作業人数で期間を決定する
-const setScheduleByPersonDay = (rows: Row[]) => {
+const setScheduleByPersonDay = (rows: GanttRow[]) => {
     let currentDate = rows[0].workStartDate
     rows.forEach(row => {
         // 必要日数。少数が出たら最小の整数にする。例：二人で5人日の場合 3日必要 5/2 = 2.5 つまり少数が出たら整数に足す
@@ -120,7 +156,7 @@ const setScheduleByPersonDay = (rows: Row[]) => {
 }
 // 開始日・終了日重視で人数を設定する
 // 期間で満了できるように人数を割り当てる
-const setScheduleByFromTo = (rows: Row[]) => {
+const setScheduleByFromTo = (rows: GanttRow[]) => {
     rows.forEach(row => {
         // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
         // 必要人数 = 見積人日 / 期間
@@ -129,7 +165,7 @@ const setScheduleByFromTo = (rows: Row[]) => {
     })
 }
 // スケジュールをきれいにスライドさせる（重複をなくす）
-const slideSchedule = (rows: Row[]) => {
+const slideSchedule = (rows: GanttRow[]) => {
     let prevEndDate: Dayjs
     rows.forEach((row, i) => {
         // 1回目は無視
@@ -145,7 +181,7 @@ const slideSchedule = (rows: Row[]) => {
 }
 
 // 人数の積み上げを行う
-const calculateStuckPersons = (rows: Row[]) => {
+const calculateStuckPersons = (rows: GanttRow[]) => {
     console.log("calculateStuckPersons start")
 
     const result: number[] = []
@@ -190,14 +226,14 @@ const calculateStuckPersons = (rows: Row[]) => {
     return result.map(v => v === 0 ? '' : v.toString())
 }
 
-const reflectGantt = (row: Row) => {
+const reflectGantt = (row: GanttRow) => {
     row.bar.beginDate = row.workStartDate.format(format.value)
     row.bar.endDate = row.workEndDate.format(format.value)
 }
 
 
 const newRow = (id: RowID, taskName: TaskName, numberOfWorkers: NumberOfWorkers, estimatePersonDay: EstimatePersonDay, workStartDate: WorkStartDate, workEndDate: WorkEndDate) => {
-    const result: Row = {
+    const result: GanttRow = {
         bar: {
             beginDate: workStartDate.format(format.value),
             endDate: workEndDate.format(format.value),
@@ -205,24 +241,44 @@ const newRow = (id: RowID, taskName: TaskName, numberOfWorkers: NumberOfWorkers,
                 hasHandles: true,
                 id: id,
                 label: taskName,
-            }
+            },
         },
         taskName: taskName,
         numberOfWorkers: numberOfWorkers,
         workStartDate: workStartDate,
         workEndDate: workEndDate,
-        estimatePersonDay: estimatePersonDay
+        estimatePersonDay: estimatePersonDay,
+    }
+    return result
+}
+
+const ticketToGanttRow = (ticket: Ticket) => {
+    const result: GanttRow = {
+        bar: {
+            beginDate: ticket.start_date!,
+            endDate: ticket.end_date!,
+            ganttBarConfig: {
+                hasHandles: true,
+                id: ticket.id!.toString(), // TODO: まあIDが数字でもいっか
+                label: "", // TODO: コメントをラベルにする
+            },
+        },
+        taskName: "taskName",
+        numberOfWorkers: 1,
+        workStartDate: dayjs(),
+        workEndDate: dayjs(),
+        estimatePersonDay: 1,
     }
     return result
 }
 
 // ここからデータ更新
-const updateWorkStartDate = (row: Row, newValue: string) => {
+const updateWorkStartDate = (row: GanttRow, newValue: string) => {
     console.log(row, newValue)
     row.workStartDate = dayjs(newValue)
     row.bar.beginDate = row.workStartDate.format(format.value)
 }
-const updateWorkEndDate = (row: Row, newValue: string) => {
+const updateWorkEndDate = (row: GanttRow, newValue: string) => {
     console.log(row, newValue)
     row.workEndDate = dayjs(newValue).set('minute', 59).set('hour', 23)
     row.bar.endDate = row.workEndDate.format(format.value)

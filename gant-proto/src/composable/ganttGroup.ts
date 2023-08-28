@@ -7,12 +7,11 @@ import {toast} from "vue3-toastify";
 // ユーザー一覧。特別ref系は必要ない。
 export async function useGanttGroupTable() {
     const list = ref<GanttGroup[]>([])
-    const refresh = async () => {
-        const resp = await Api.getGanttGroups()
+    const refresh = async (facilityId: number) => {
+        const resp = await Api.getGanttGroups(facilityId)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }
-    await refresh()
     return {list, refresh}
 }
 
@@ -23,6 +22,7 @@ export async function useGanttGroup(ganttGroupId?: number) {
         id: null,
         facility_id: 0,
         unit_id: 0,
+        order: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -32,6 +32,7 @@ export async function useGanttGroup(ganttGroupId?: number) {
             ganttGroup.value.id = data.ganttGroup.id
             ganttGroup.value.facility_id = data.ganttGroup.facility_id
             ganttGroup.value.unit_id = data.ganttGroup.unit_id
+            ganttGroup.value.order = data.ganttGroup.order
             ganttGroup.value.created_at = data.ganttGroup.created_at
             ganttGroup.value.updated_at = data.ganttGroup.updated_at
         }

@@ -7,6 +7,7 @@
         <th>Id</th>
         <th>FacilityId</th>
         <th>UnitId</th>
+        <th>Order</th>
         <th>CreatedAt</th>
         <th>UpdatedAt</th>
       </tr>
@@ -16,6 +17,7 @@
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.facility_id }}</td>
         <td>{{ item.unit_id }}</td>
+        <td>{{ item.order }}</td>
         <td>{{ item.created_at }}</td>
         <td>{{ item.updated_at }}</td>
       </tr>

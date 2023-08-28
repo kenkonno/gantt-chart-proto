@@ -26,32 +26,52 @@
       sticky
   >
     <g-gantt-row v-for="bar in bars" :key="bar.ganttBarConfig.id" :bars="[bar]"/>
-    <template #table-header>
-      table header
-    </template>
-    <template #rows>
-      <div class="row-wrapper">
-        <div class="g-gantt-row" v-for="row in rows" :key="row.bar.ganttBarConfig.id"
-             style="height: 40px; align-items: center;">
-          <div><input type="text" v-model="row.taskName" /></div>
-          <div><input type="number" v-model="row.numberOfWorkers" style="width: 2rem"/>人</div>
-          <div><input type="number" v-model="row.estimatePersonDay" style="width: 2rem"/>人日</div>
-          <div><input type="date" :value="row.workStartDate.format('YYYY-MM-DD')"
-                      @input="updateWorkStartDate(row, $event.target.value)"/></div>
-          <div><input type="date" :value="row.workEndDate.format('YYYY-MM-DD')"
-                      @input="updateWorkEndDate(row, $event.target.value)"/></div>
-          <div><a href="#" @click="deleteRow(row.bar.ganttBarConfig.id)">削除</a></div>
-        </div>
-        <div>
-          <input type="button" value="行の追加" @click="addRow()">
-        </div>
-      </div>
+    <template #side-menu>
+      <table class="side-menu">
+        <thead class="side-menu-header">
+        <tr>
+          <th class="side-menu-cell">ユニット</th>
+          <th class="side-menu-cell">工程</th>
+          <th class="side-menu-cell">部署</th>
+          <th class="side-menu-cell">担当者</th>
+          <th class="side-menu-cell">期日</th>
+          <th class="side-menu-cell">工数</th>
+          <th class="side-menu-cell">日後</th>
+          <th class="side-menu-cell">開始日</th>
+          <th class="side-menu-cell">終了日</th>
+          <th class="side-menu-cell">進捗</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- TODO: この辺の初期値からの時を考慮しながら行を追加するコードを追加する。結構よくなってきたよ。 -->
+        <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
+          <tr v-for="row in item.rows" :key="row.ticket.id">
+            <td class="side-menu-cell">{{ unitMap[item.ganttGroup.unit_id] }}</td>
+            <td class="side-menu-cell">{{ processMap[row.ticket.process_id] }}</td>
+            <td class="side-menu-cell">{{ departmentMap[row.ticket.department_id] }}</td>
+            <td class="side-menu-cell">担当者</td>
+            <td class="side-menu-cell"><input type="date" /></td>
+            <td class="side-menu-cell"><input type="number" class="small-numeric"/></td>
+            <td class="side-menu-cell"><input type="number" class="small-numeric"/></td>
+            <td class="side-menu-cell"><input type="date" /></td>
+            <td class="side-menu-cell"><input type="date" /></td>
+            <td class="side-menu-cell"><input type="number" class="middle-numeric"/></td>
+          </tr>
+          <tr>
+            <td colspan="10">
+              <button>{{ unitMap[item.ganttGroup.unit_id] }}の工程を追加する</button>
+            </td>
+          </tr>
+        </template>
+        </tbody>
+      </table>
     </template>
   </g-gantt-chart>
 </template>
 <style lang="scss" scoped>
 .row-wrapper {
   display: table;
+
   > .g-gantt-row {
     display: table-row;
 
@@ -61,13 +81,41 @@
       display: table-cell;
     }
   }
-
 }
+
+.side-menu {
+  white-space: nowrap;
+  text-align: center;
+  td, th {
+    border: solid 1px #eaeaea;
+  }
+  tr {
+    height: 40px;
+  }
+
+  .side-menu-header {
+    min-height: 75px;
+    max-height: 75px;
+    height: 75px;
+  }
+
+  .small-numeric {
+    width: 3rem;
+  }
+  .middle-numeric {
+    width: 4rem;
+  }
+}
+
 </style>
 
 <script setup lang="ts">
 import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
 import {useGantt} from "@/composable/gantt";
+import {useUnitTable} from "@/composable/unit";
+import {useProcessTable} from "@/composable/process";
+import {useDepartment, useDepartmentTable} from "@/composable/department";
+import {useUserTable} from "@/composable/user";
 
 const {
   rows,
@@ -83,9 +131,31 @@ const {
   adjustBar,
   slideSchedule,
   addRow,
-  deleteRow
-} = useGantt()
+  deleteRow,
+  ganttChartGroup,
+} = await useGantt(10) // TODO: facilityId
 
+const {list: unitList, refresh: unitRefresh} = await useUnitTable(10) // TODO: facilityId
+const {list: processList, refresh: processRefresh} = await useProcessTable()
+const {list: departmentList, refresh: departmentRefresh} = await useDepartmentTable()
+const {list: userList, refresh: userRefresh} = await useUserTable()
+
+const unitMap: { [x: number]: string; } = {}
+unitList.value.forEach(v => {
+  unitMap[v.id!] = v.name
+})
+const processMap: { [x: number]: string; } = {}
+processList.value.forEach(v => {
+  processMap[v.id!] = v.name
+})
+const departmentMap: { [x: number]: string; } = {}
+departmentList.value.forEach(v => {
+  departmentMap[v.id!] = v.name
+})
+const userMap: { [x: number]: string; } = {}
+userList.value.forEach(v => {
+  userMap[v.id!] = v.name
+})
 
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {

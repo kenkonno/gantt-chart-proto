@@ -51,6 +51,11 @@
     </div>
 
     <div class="mb-2">
+      <label class="form-label" for="id">Order</label>
+      <input class="form-control" type="text" name="order" id="order" v-model="ticket.order" :disabled="false">
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">CreatedAt</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="ticket.created_at" :disabled="true">
     </div>

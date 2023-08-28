@@ -14,6 +14,7 @@
         <th>StartDate</th>
         <th>EndDate</th>
         <th>ProgressPercent</th>
+        <th>Order</th>
         <th>CreatedAt</th>
         <th>UpdatedAt</th>
       </tr>
@@ -30,6 +31,7 @@
         <td>{{ item.start_date }}</td>
         <td>{{ item.end_date }}</td>
         <td>{{ item.progress_percent }}</td>
+        <td>{{ item.order }}</td>
         <td>{{ item.created_at }}</td>
         <td>{{ item.updated_at }}</td>
       </tr>
