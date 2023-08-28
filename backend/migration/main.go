@@ -16,6 +16,9 @@ func main() {
 	migrate(db.Process{})
 	migrate(db.Unit{})
 	migrate(db.User{})
+	migrate(db.GanttGroup{})
+	migrate(db.TicketUser{})
+	migrate(db.Ticket{})
 }
 
 func migrate[T any](model T) {

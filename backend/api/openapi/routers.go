@@ -79,6 +79,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteGanttGroupsId",
+		http.MethodDelete,
+		"/api/ganttGroups/:id",
+		DeleteGanttGroupsId,
+	},
+
+	{
 		"DeleteHolidaysId",
 		http.MethodDelete,
 		"/api/holidays/:id",
@@ -97,6 +104,20 @@ var routes = Routes{
 		http.MethodDelete,
 		"/api/processes/:id",
 		DeleteProcessesId,
+	},
+
+	{
+		"DeleteTicketUsersId",
+		http.MethodDelete,
+		"/api/ticketUsers/:id",
+		DeleteTicketUsersId,
+	},
+
+	{
+		"DeleteTicketsId",
+		http.MethodDelete,
+		"/api/tickets/:id",
+		DeleteTicketsId,
 	},
 
 	{
@@ -142,6 +163,20 @@ var routes = Routes{
 	},
 
 	{
+		"GetGanttGroups",
+		http.MethodGet,
+		"/api/ganttGroups",
+		GetGanttGroups,
+	},
+
+	{
+		"GetGanttGroupsId",
+		http.MethodGet,
+		"/api/ganttGroups/:id",
+		GetGanttGroupsId,
+	},
+
+	{
 		"GetHolidays",
 		http.MethodGet,
 		"/api/holidays",
@@ -174,6 +209,34 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/processes/:id",
 		GetProcessesId,
+	},
+
+	{
+		"GetTicketUsers",
+		http.MethodGet,
+		"/api/ticketUsers",
+		GetTicketUsers,
+	},
+
+	{
+		"GetTicketUsersId",
+		http.MethodGet,
+		"/api/ticketUsers/:id",
+		GetTicketUsersId,
+	},
+
+	{
+		"GetTickets",
+		http.MethodGet,
+		"/api/tickets",
+		GetTickets,
+	},
+
+	{
+		"GetTicketsId",
+		http.MethodGet,
+		"/api/tickets/:id",
+		GetTicketsId,
 	},
 
 	{
@@ -233,6 +296,20 @@ var routes = Routes{
 	},
 
 	{
+		"PostGanttGroups",
+		http.MethodPost,
+		"/api/ganttGroups",
+		PostGanttGroups,
+	},
+
+	{
+		"PostGanttGroupsId",
+		http.MethodPost,
+		"/api/ganttGroups/:id",
+		PostGanttGroupsId,
+	},
+
+	{
 		"PostHolidays",
 		http.MethodPost,
 		"/api/holidays",
@@ -265,6 +342,34 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/processes/:id",
 		PostProcessesId,
+	},
+
+	{
+		"PostTicketUsers",
+		http.MethodPost,
+		"/api/ticketUsers",
+		PostTicketUsers,
+	},
+
+	{
+		"PostTicketUsersId",
+		http.MethodPost,
+		"/api/ticketUsers/:id",
+		PostTicketUsersId,
+	},
+
+	{
+		"PostTickets",
+		http.MethodPost,
+		"/api/tickets",
+		PostTickets,
+	},
+
+	{
+		"PostTicketsId",
+		http.MethodPost,
+		"/api/tickets/:id",
+		PostTicketsId,
 	},
 
 	{

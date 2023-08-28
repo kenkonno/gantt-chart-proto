@@ -55,11 +55,12 @@ func (r *@Lower@Repository) Find(id int32) db.@Upper@ {
 	return @Lower@
 }
 
-func (r *@Lower@Repository) Upsert(m db.@Upper@) {
+func (r *@Lower@Repository) Upsert(m db.@Upper@) db.@Upper@ {
 	r.con.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
+	return m
 }
 
 func (r *@Lower@Repository) Delete(id int32) {

@@ -10,6 +10,7 @@ import (
 func DeleteUnitsIdInvoke(c *gin.Context) openapi_models.DeleteUnitsIdResponse {
 
 	unitRep := repository.NewUnitRepository()
+	ganttGroupsRep := repository.NewGanttGroupRepository()
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -17,6 +18,9 @@ func DeleteUnitsIdInvoke(c *gin.Context) openapi_models.DeleteUnitsIdResponse {
 	}
 
 	unitRep.Delete(int32(id))
+
+	// TODO: チケットとかのデータも消す
+	ganttGroupsRep.DeleteByUnitId(int32(id))
 
 	return openapi_models.DeleteUnitsIdResponse{}
 

@@ -11,13 +11,16 @@ package openapi
 
 import (
 
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -39,6 +42,13 @@ func DeleteFacilitiesId(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
+// DeleteGanttGroupsId - DeleteGanttGroupsId
+func DeleteGanttGroupsId(c *gin.Context) {
+	var r openapi_models.DeleteGanttGroupsIdResponse
+	r = gantt_groups.DeleteGanttGroupsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
 // DeleteHolidaysId - DeleteHolidaysId
 func DeleteHolidaysId(c *gin.Context) {
 	var r openapi_models.DeleteHolidaysIdResponse
@@ -57,6 +67,20 @@ func DeleteOperationSettingsId(c *gin.Context) {
 func DeleteProcessesId(c *gin.Context) {
 	var r openapi_models.DeleteProcessesIdResponse
 	r = processes.DeleteProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteTicketUsersId - DeleteTicketUsersId
+func DeleteTicketUsersId(c *gin.Context) {
+	var r openapi_models.DeleteTicketUsersIdResponse
+	r = ticket_users.DeleteTicketUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteTicketsId - DeleteTicketsId
+func DeleteTicketsId(c *gin.Context) {
+	var r openapi_models.DeleteTicketsIdResponse
+	r = tickets.DeleteTicketsIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 
@@ -102,6 +126,20 @@ func GetFacilitiesId(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
+// GetGanttGroups - GetGanttGroups
+func GetGanttGroups(c *gin.Context) {
+	var r openapi_models.GetGanttGroupsResponse
+	r = gantt_groups.GetGanttGroupsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetGanttGroupsId - GetGanttGroupsId
+func GetGanttGroupsId(c *gin.Context) {
+	var r openapi_models.GetGanttGroupsIdResponse
+	r = gantt_groups.GetGanttGroupsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
 // GetHolidays - GetHolidays
 func GetHolidays(c *gin.Context) {
 	var r openapi_models.GetHolidaysResponse
@@ -134,6 +172,34 @@ func GetProcesses(c *gin.Context) {
 func GetProcessesId(c *gin.Context) {
 	var r openapi_models.GetProcessesIdResponse
 	r = processes.GetProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetTicketUsers - GetTicketUsers
+func GetTicketUsers(c *gin.Context) {
+	var r openapi_models.GetTicketUsersResponse
+	r = ticket_users.GetTicketUsersInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetTicketUsersId - GetTicketUsersId
+func GetTicketUsersId(c *gin.Context) {
+	var r openapi_models.GetTicketUsersIdResponse
+	r = ticket_users.GetTicketUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetTickets - GetTickets
+func GetTickets(c *gin.Context) {
+	var r openapi_models.GetTicketsResponse
+	r = tickets.GetTicketsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetTicketsId - GetTicketsId
+func GetTicketsId(c *gin.Context) {
+	var r openapi_models.GetTicketsIdResponse
+	r = tickets.GetTicketsIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 
@@ -193,6 +259,20 @@ func PostFacilitiesId(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
+// PostGanttGroups - PostGanttGroups
+func PostGanttGroups(c *gin.Context) {
+	var r openapi_models.PostGanttGroupsResponse
+	r = gantt_groups.PostGanttGroupsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostGanttGroupsId - PostGanttGroupsId
+func PostGanttGroupsId(c *gin.Context) {
+	var r openapi_models.PostGanttGroupsIdResponse
+	r = gantt_groups.PostGanttGroupsIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
 // PostHolidays - PostHolidays
 func PostHolidays(c *gin.Context) {
 	var r openapi_models.PostHolidaysResponse
@@ -225,6 +305,34 @@ func PostProcesses(c *gin.Context) {
 func PostProcessesId(c *gin.Context) {
 	var r openapi_models.PostProcessesIdResponse
 	r = processes.PostProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostTicketUsers - PostTicketUsers
+func PostTicketUsers(c *gin.Context) {
+	var r openapi_models.PostTicketUsersResponse
+	r = ticket_users.PostTicketUsersInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostTicketUsersId - PostTicketUsersId
+func PostTicketUsersId(c *gin.Context) {
+	var r openapi_models.PostTicketUsersIdResponse
+	r = ticket_users.PostTicketUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostTickets - PostTickets
+func PostTickets(c *gin.Context) {
+	var r openapi_models.PostTicketsResponse
+	r = tickets.PostTicketsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostTicketsId - PostTicketsId
+func PostTicketsId(c *gin.Context) {
+	var r openapi_models.PostTicketsIdResponse
+	r = tickets.PostTicketsIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

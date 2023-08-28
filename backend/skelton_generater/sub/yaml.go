@@ -139,7 +139,8 @@ func (r *Yaml) componentProperties() string {
 		}
 		// Null, required関連の判定
 		if !strings.Contains(v.Type, "*") {
-			if v.Property == "UpdatedAt" || v.Property == "CreatedAt" || v.Property == "Date" ||
+			if v.Property == "UpdatedAt" || v.Property == "CreatedAt" ||
+				strings.Index(v.Property, "Date") != -1 ||
 				strings.Index(v.Property, "From") != -1 || strings.Index(v.Property, "To") != -1 { // TODO: この辺り整理しないといけない。Dateでmin=1だとvalidationエラーになるから一旦回避
 			} else {
 				requiredProps = append(requiredProps, ToSnakeCase(v.Property))

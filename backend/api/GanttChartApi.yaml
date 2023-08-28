@@ -450,6 +450,223 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostUnitsRequest'
+  /api/ganttGroups:
+    get:
+      summary: GetGanttGroups
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGanttGroupsResponse'
+              examples: {}
+      operationId: get-ganttGroups
+      description: ''
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: facilityId
+          required: true
+    post:
+      summary: PostGanttGroups
+      operationId: post-ganttGroups
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostGanttGroupsRequest'
+    parameters: []
+  '/api/ganttGroups/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetGanttGroupsId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGanttGroupsIdResponse'
+              examples: {}
+      operationId: get-ganttGroups-id
+      description: ''
+    delete:
+      summary: DeleteGanttGroupsId
+      operationId: delete-ganttGroups-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostGanttGroupsId
+      operationId: post-ganttGroups-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostGanttGroupsRequest'
+  /api/tickets:
+    get:
+      summary: GetTickets
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketsResponse'
+              examples: {}
+      operationId: get-tickets
+      description: ''
+      parameters:
+        - schema:
+            type: array
+            items:
+              type: integer
+          in: query
+          name: ganttGroupIds
+          required: true
+    post:
+      summary: PostTickets
+      operationId: post-tickets
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketsRequest'
+    parameters: []
+  '/api/tickets/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketsId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketsIdResponse'
+              examples: {}
+      operationId: get-tickets-id
+      description: ''
+    delete:
+      summary: DeleteTicketsId
+      operationId: delete-tickets-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostTicketsId
+      operationId: post-tickets-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketsRequest'
+  /api/ticketUsers:
+    get:
+      summary: GetTicketUsers
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketUsersResponse'
+              examples: {}
+      operationId: get-ticketUsers
+      description: ''
+      parameters:
+        - schema:
+            type: array
+            items:
+              type: integer              
+          in: query
+          name: ticketIds
+          required: true
+    post:
+      summary: PostTicketUsers
+      operationId: post-ticketUsers
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketUsersRequest'
+    parameters: []
+  '/api/ticketUsers/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketUsersId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketUsersIdResponse'
+              examples: {}
+      operationId: get-ticketUsers-id
+      description: ''
+    delete:
+      summary: DeleteTicketUsersId
+      operationId: delete-ticketUsers-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostTicketUsersId
+      operationId: post-ticketUsers-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketUsersRequest'
 components:
   schemas:
     User:
@@ -1088,4 +1305,293 @@ components:
           type: integer
         work_hour:
           type: integer
+    GanttGroup:
+      title: GanttGroup
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        unit_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+        - unit_id
+        - order
+      description: ''
+      x-tags:
+        - GanttGroup
+    GetGanttGroupsRequest:
+      title: GetGanttGroupsRequest
+      type: object
+    GetGanttGroupsResponse:
+      title: GetGanttGroupsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/GanttGroup'
+      required:
+        - list
+    GetGanttGroupsIdRequest:
+      title: GetGanttGroupsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetGanttGroupsIdResponse:
+      title: GetGanttGroupsResponse
+      type: object
+      properties:
+        ganttGroup:
+          $ref: '#/components/schemas/GanttGroup'
+    DeleteGanttGroupsIdRequest:
+      title: DeleteGanttGroupsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteGanttGroupsIdResponse:
+      title: DeleteGanttGroupsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostGanttGroupsRequest:
+      title: PostGanttGroupsRequest
+      type: object
+      properties:
+        ganttGroup:
+          $ref: '#/components/schemas/GanttGroup'
+    PostGanttGroupsResponse:
+      title: PostGanttGroupsResponse
+      type: object
+      properties:
+        ganttGroup:
+          $ref: '#/components/schemas/GanttGroup'
+    PostGanttGroupsIdRequest:
+      title: PostGanttGroupsIdRequest
+      type: object
+      properties:
+        ganttGroup:
+          $ref: '#/components/schemas/GanttGroup'
+    PostGanttGroupsIdResponse:
+      title: PostGanttGroupsIdResponse
+      type: object
+      properties:
+        ganttGroup:
+          $ref: '#/components/schemas/GanttGroup'
+    Ticket:
+      title: Ticket
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        gantt_group_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        process_id:
+          type: integer
+          nullable: true
+        department_id:
+          type: integer
+          nullable: true
+        limit_date:
+          type: string
+          format: date-time
+        estimate:
+          type: integer
+          nullable: true
+        days_after:
+          type: integer
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        progress_percent:
+          type: integer
+          nullable: true
+        order:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - gantt_group_id
+        - order
+      description: ''
+      x-tags:
+        - Ticket
+    GetTicketsRequest:
+      title: GetTicketsRequest
+      type: object
+    GetTicketsResponse:
+      title: GetTicketsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+      required:
+        - list
+    GetTicketsIdRequest:
+      title: GetTicketsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetTicketsIdResponse:
+      title: GetTicketsResponse
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+    DeleteTicketsIdRequest:
+      title: DeleteTicketsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteTicketsIdResponse:
+      title: DeleteTicketsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostTicketsRequest:
+      title: PostTicketsRequest
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+    PostTicketsResponse:
+      title: PostTicketsResponse
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+    PostTicketsIdRequest:
+      title: PostTicketsIdRequest
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+    PostTicketsIdResponse:
+      title: PostTicketsIdResponse
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+    TicketUser:
+      title: TicketUser
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        ticket_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        user_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - ticket_id
+        - user_id
+      description: ''
+      x-tags:
+        - TicketUser
+    GetTicketUsersRequest:
+      title: GetTicketUsersRequest
+      type: object
+    GetTicketUsersResponse:
+      title: GetTicketUsersResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketUser'
+      required:
+        - list
+    GetTicketUsersIdRequest:
+      title: GetTicketUsersIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetTicketUsersIdResponse:
+      title: GetTicketUsersResponse
+      type: object
+      properties:
+        ticketUser:
+          $ref: '#/components/schemas/TicketUser'
+    DeleteTicketUsersIdRequest:
+      title: DeleteTicketUsersIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteTicketUsersIdResponse:
+      title: DeleteTicketUsersIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostTicketUsersRequest:
+      title: PostTicketUsersRequest
+      type: object
+      properties:
+        ticketUser:
+          $ref: '#/components/schemas/TicketUser'
+    PostTicketUsersResponse:
+      title: PostTicketUsersResponse
+      type: object
+      properties:
+        ticketUser:
+          $ref: '#/components/schemas/TicketUser'
+    PostTicketUsersIdRequest:
+      title: PostTicketUsersIdRequest
+      type: object
+      properties:
+        ticketUser:
+          $ref: '#/components/schemas/TicketUser'
+    PostTicketUsersIdResponse:
+      title: PostTicketUsersIdResponse
+      type: object
+      properties:
+        ticketUser:
+          $ref: '#/components/schemas/TicketUser'
   parameters: {}
