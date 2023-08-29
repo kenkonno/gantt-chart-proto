@@ -18,7 +18,7 @@ func PostTicketsInvoke(c *gin.Context) openapi_models.PostTicketsResponse {
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
-	ticketRep.Upsert(db.Ticket{
+	result := ticketRep.Upsert(db.Ticket{
 		GanttGroupId:    ticketReq.Ticket.GanttGroupId,
 		ProcessId:       ticketReq.Ticket.ProcessId,
 		DepartmentId:    ticketReq.Ticket.DepartmentId,
@@ -33,6 +33,22 @@ func PostTicketsInvoke(c *gin.Context) openapi_models.PostTicketsResponse {
 		UpdatedAt:       0,
 	})
 
-	return openapi_models.PostTicketsResponse{}
+	return openapi_models.PostTicketsResponse{
+		Ticket: openapi_models.Ticket{
+			Id:              result.Id,
+			GanttGroupId:    result.GanttGroupId,
+			ProcessId:       result.ProcessId,
+			DepartmentId:    result.DepartmentId,
+			LimitDate:       result.LimitDate,
+			Estimate:        result.Estimate,
+			DaysAfter:       result.DaysAfter,
+			StartDate:       result.StartDate,
+			EndDate:         result.EndDate,
+			ProgressPercent: result.ProgressPercent,
+			Order:           result.Order,
+			CreatedAt:       result.CreatedAt,
+			UpdatedAt:       result.UpdatedAt,
+		},
+	}
 
 }

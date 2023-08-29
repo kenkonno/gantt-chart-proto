@@ -41,6 +41,10 @@ func (r *Yaml) GetBasePaths(structName string) string {
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post@Upper@sResponse'
       description: ''
       requestBody:
         content:

@@ -7,11 +7,11 @@ type Ticket struct {
 	GanttGroupId    int32
 	ProcessId       *int32
 	DepartmentId    *int32
-	LimitDate       time.Time
+	LimitDate       *time.Time
 	Estimate        *int32
 	DaysAfter       *int32
-	StartDate       time.Time
-	EndDate         time.Time
+	StartDate       *time.Time
+	EndDate         *time.Time
 	ProgressPercent *int32
 	Order           int32
 	CreatedAt       time.Time

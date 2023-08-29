@@ -24,15 +24,15 @@ type Ticket struct {
 
 	DepartmentId *int32 `json:"department_id,omitempty"`
 
-	LimitDate time.Time `json:"limit_date,omitempty"`
+	LimitDate *time.Time `json:"limit_date,omitempty"`
 
 	Estimate *int32 `json:"estimate,omitempty"`
 
 	DaysAfter *int32 `json:"days_after,omitempty"`
 
-	StartDate time.Time `json:"start_date,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty"`
 
-	EndDate time.Time `json:"end_date,omitempty"`
+	EndDate *time.Time `json:"end_date,omitempty"`
 
 	ProgressPercent *int32 `json:"progress_percent,omitempty"`
 

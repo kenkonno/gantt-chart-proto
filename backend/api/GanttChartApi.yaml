@@ -549,12 +549,17 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostTicketsResponse'
       description: ''
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PostTicketsRequest'
+        description: ''
     parameters: []
   '/api/tickets/{id}':
     parameters:
@@ -612,7 +617,7 @@ paths:
         - schema:
             type: array
             items:
-              type: integer              
+              type: integer
           in: query
           name: ticketIds
           required: true
@@ -1415,6 +1420,7 @@ components:
         limit_date:
           type: string
           format: date-time
+          nullable: true
         estimate:
           type: integer
           nullable: true
@@ -1424,9 +1430,11 @@ components:
         start_date:
           type: string
           format: date-time
+          nullable: true
         end_date:
           type: string
           format: date-time
+          nullable: true
         progress_percent:
           type: integer
           nullable: true
