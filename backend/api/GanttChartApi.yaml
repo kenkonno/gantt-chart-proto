@@ -627,6 +627,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostTicketUsersResponse'
       description: ''
       requestBody:
         content:
@@ -661,17 +665,6 @@ paths:
         '200':
           description: OK
       description: ''
-    post:
-      summary: PostTicketUsersId
-      operationId: post-ticketUsers-id
-      responses:
-        '200':
-          description: OK
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostTicketUsersRequest'
 components:
   schemas:
     User:
@@ -1582,14 +1575,25 @@ components:
       title: PostTicketUsersRequest
       type: object
       properties:
-        ticketUser:
-          $ref: '#/components/schemas/TicketUser'
+        ticketId:
+          type: integer
+        userIds:
+          type: array
+          items:
+            type: integer
+      required:
+        - ticketId
+        - userIds
     PostTicketUsersResponse:
       title: PostTicketUsersResponse
       type: object
       properties:
-        ticketUser:
-          $ref: '#/components/schemas/TicketUser'
+        ticketUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketUser'
+      required:
+        - ticketUsers
     PostTicketUsersIdRequest:
       title: PostTicketUsersIdRequest
       type: object

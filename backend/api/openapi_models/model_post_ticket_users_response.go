@@ -11,5 +11,5 @@ package openapi_models
 
 type PostTicketUsersResponse struct {
 
-	TicketUser TicketUser `json:"ticketUser,omitempty"`
+	TicketUsers []TicketUser `json:"ticketUsers"`
 }

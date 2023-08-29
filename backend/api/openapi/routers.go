@@ -352,13 +352,6 @@ var routes = Routes{
 	},
 
 	{
-		"PostTicketUsersId",
-		http.MethodPost,
-		"/api/ticketUsers/:id",
-		PostTicketUsersId,
-	},
-
-	{
 		"PostTickets",
 		http.MethodPost,
 		"/api/tickets",

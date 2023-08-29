@@ -11,5 +11,7 @@ package openapi_models
 
 type PostTicketUsersRequest struct {
 
-	TicketUser TicketUser `json:"ticketUser,omitempty"`
+	TicketId int32 `json:"ticketId"`
+
+	UserIds []int32 `json:"userIds"`
 }

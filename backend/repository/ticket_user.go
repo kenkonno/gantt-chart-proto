@@ -35,15 +35,20 @@ func (r *ticketUserRepository) Find(id int32) db.TicketUser {
 	return ticketUser
 }
 
-func (r *ticketUserRepository) Upsert(m db.TicketUser) {
+func (r *ticketUserRepository) Upsert(m db.TicketUser) db.TicketUser {
 	r.con.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
+	return m
 }
 
 func (r *ticketUserRepository) Delete(id int32) {
 	r.con.Where("id = ?", id).Delete(db.TicketUser{})
+}
+
+func (r *ticketUserRepository) DeleteByTicketId(id int32) {
+	r.con.Where("ticket_id = ?", id).Delete(db.TicketUser{})
 }
 
 // Auto generated end
