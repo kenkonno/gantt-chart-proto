@@ -37,6 +37,7 @@ type GanttRow = {
 }
 
 export async function useGantt(facilityId: number) {
+    // TODO: マスタ編集系と同期がとれていない。global store 戦略のほうが良いかも。
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -95,6 +96,16 @@ export async function useGantt(facilityId: number) {
         const {data} = await Api.postTickets({ticket: newTicket})
         ticketList.value.push(data.ticket!)
         refreshLocalGantt()
+    }
+    const ticketUserUpdate = async (ticketId: number, userIds: number[]) => {
+        const {data} = await Api.postTicketUsers({ticketId: ticketId, userIds: userIds})
+        // ticketUserList から TicketId をつけなおす
+        const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticketId)
+        newTicketUserList.push(...data.ticketUsers)
+        ticketUserList.value.length = 0
+        ticketUserList.value.push(...newTicketUserList)
+        refreshLocalGantt()
+
     }
 
     // ####################### ここから下は昔の資産 ###############################
@@ -175,7 +186,8 @@ export async function useGantt(facilityId: number) {
         addRow,
         deleteRow,
         addNewTicket,
-        updateTicket
+        updateTicket,
+        ticketUserUpdate
     }
 }
 

@@ -6,6 +6,7 @@
       :close-on-select="false"
       :search="true"
       :options="options"
+      @input="$emit('update', $event)"
   >
     <template v-slot:tag="{ option, handleTagRemove, disabled }">
       <div
@@ -38,9 +39,10 @@ defineEmits(['update:modelValue', 'change'])
 const options = props.userList.map(v => {
   return {value: v.id, label: v.name}
 })
-const value = props.ticketUser.map(v => {
-  v.user_id
-})
+const value = props.ticketUser.map(v => v.user_id)
+const update = (value: any) => {
+  console.log(value)
+}
 
 const getBgColor = (value: number) => {
   const master = [

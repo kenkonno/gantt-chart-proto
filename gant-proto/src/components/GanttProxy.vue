@@ -58,7 +58,7 @@
               </select>
             </td>
             <td class="side-menu-cell" style="width: 14rem;">
-              <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"></UserMultiselect>
+              <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers" @update="ticketUserUpdate(row.ticket.id ,$event)"></UserMultiselect>
             </td>
             <td class="side-menu-cell"><input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/></td>
             <td class="side-menu-cell"><FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/></td>
@@ -146,7 +146,8 @@ const {
   deleteRow,
   ganttChartGroup,
   addNewTicket,
-  updateTicket
+  updateTicket,
+  ticketUserUpdate
 } = await useGantt(10) // TODO: facilityId
 
 const {list: unitList, refresh: unitRefresh} = await useUnitTable(10) // TODO: facilityId

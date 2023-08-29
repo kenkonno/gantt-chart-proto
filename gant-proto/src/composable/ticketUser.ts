@@ -40,9 +40,11 @@ export async function useTicketUser(ticketUserId?: number) {
 
 }
 
-export async function postTicketUser(ticketUser: TicketUser, emit: any) {
+export async function postTicketUser(ticketId: number, userIds: number[], emit: any) {
     const req: PostTicketUsersRequest = {
-        ticketUser: ticketUser
+        ticketId: ticketId,
+        userIds: userIds
+
     }
     await Api.postTicketUsers(req).then(() => {
         toast("成功しました。")
@@ -51,18 +53,6 @@ export async function postTicketUser(ticketUser: TicketUser, emit: any) {
     })
 }
 
-export async function postTicketUserById(ticketUser: TicketUser, emit: any) {
-    const req: PostTicketUsersRequest = {
-        ticketUser: ticketUser
-    }
-    if (ticketUser.id != null) {
-        await Api.postTicketUsersId(ticketUser.id, req).then(() => {
-            toast("成功しました。")
-        }).finally(() => {
-            emit('closeEditModal')
-        })
-    }
-}
 
 export async function deleteTicketUserById(id: number, emit: any) {
     await Api.deleteTicketUsersId(id).then(() => {

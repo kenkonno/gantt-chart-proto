@@ -1228,10 +1228,16 @@ export interface PostTicketUsersIdResponse {
 export interface PostTicketUsersRequest {
     /**
      * 
-     * @type {TicketUser}
+     * @type {number}
      * @memberof PostTicketUsersRequest
      */
-    'ticketUser'?: TicketUser;
+    'ticketId': number;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof PostTicketUsersRequest
+     */
+    'userIds': Array<number>;
 }
 /**
  * 
@@ -1241,10 +1247,10 @@ export interface PostTicketUsersRequest {
 export interface PostTicketUsersResponse {
     /**
      * 
-     * @type {TicketUser}
+     * @type {Array<TicketUser>}
      * @memberof PostTicketUsersResponse
      */
-    'ticketUser'?: TicketUser;
+    'ticketUsers': Array<TicketUser>;
 }
 /**
  * 
@@ -3080,44 +3086,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @summary PostTicketUsersId
-         * @param {number} id 
-         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        postTicketUsersId: async (id: number, postTicketUsersRequest?: PostTicketUsersRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('postTicketUsersId', 'id', id)
-            const localVarPath = `/api/ticketUsers/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(postTicketUsersRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @summary PostTickets
          * @param {PostTicketsRequest} [postTicketsRequest] 
          * @param {*} [options] Override http request option.
@@ -3791,20 +3759,8 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTicketUsersResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketUsers(postTicketUsersRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @summary PostTicketUsersId
-         * @param {number} id 
-         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async postTicketUsersId(id: number, postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketUsersId(id, postTicketUsersRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4295,19 +4251,8 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: any): AxiosPromise<void> {
+        postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: any): AxiosPromise<PostTicketUsersResponse> {
             return localVarFp.postTicketUsers(postTicketUsersRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary PostTicketUsersId
-         * @param {number} id 
-         * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        postTicketUsersId(id: number, postTicketUsersRequest?: PostTicketUsersRequest, options?: any): AxiosPromise<void> {
-            return localVarFp.postTicketUsersId(id, postTicketUsersRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4874,19 +4819,6 @@ export class DefaultApi extends BaseAPI {
      */
     public postTicketUsers(postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postTicketUsers(postTicketUsersRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary PostTicketUsersId
-     * @param {number} id 
-     * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public postTicketUsersId(id: number, postTicketUsersRequest?: PostTicketUsersRequest, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).postTicketUsersId(id, postTicketUsersRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
