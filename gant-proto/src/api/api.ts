@@ -1468,7 +1468,7 @@ export interface Ticket {
      * @type {string}
      * @memberof Ticket
      */
-    'limit_date'?: string;
+    'limit_date'?: string | null;
     /**
      * 
      * @type {number}
@@ -1486,13 +1486,13 @@ export interface Ticket {
      * @type {string}
      * @memberof Ticket
      */
-    'start_date'?: string;
+    'start_date'?: string | null;
     /**
      * 
      * @type {string}
      * @memberof Ticket
      */
-    'end_date'?: string;
+    'end_date'?: string | null;
     /**
      * 
      * @type {number}
@@ -3814,7 +3814,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postTickets(postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async postTickets(postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTicketsResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postTickets(postTicketsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -4316,7 +4316,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postTickets(postTicketsRequest?: PostTicketsRequest, options?: any): AxiosPromise<void> {
+        postTickets(postTicketsRequest?: PostTicketsRequest, options?: any): AxiosPromise<PostTicketsResponse> {
             return localVarFp.postTickets(postTicketsRequest, options).then((request) => request(axios, basePath));
         },
         /**

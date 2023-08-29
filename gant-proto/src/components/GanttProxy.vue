@@ -43,23 +43,33 @@
         </tr>
         </thead>
         <tbody>
-        <!-- TODO: この辺の初期値からの時を考慮しながら行を追加するコードを追加する。結構よくなってきたよ。 -->
+        <!-- TODO: 担当者関係をしっかりやる。 -->
         <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
           <tr v-for="row in item.rows" :key="row.ticket.id">
             <td class="side-menu-cell">{{ unitMap[item.ganttGroup.unit_id] }}</td>
-            <td class="side-menu-cell">{{ processMap[row.ticket.process_id] }}</td>
-            <td class="side-menu-cell">{{ departmentMap[row.ticket.department_id] }}</td>
-            <td class="side-menu-cell">担当者</td>
-            <td class="side-menu-cell"><input type="date" /></td>
-            <td class="side-menu-cell"><input type="number" class="small-numeric"/></td>
-            <td class="side-menu-cell"><input type="number" class="small-numeric"/></td>
-            <td class="side-menu-cell"><input type="date" /></td>
-            <td class="side-menu-cell"><input type="date" /></td>
-            <td class="side-menu-cell"><input type="number" class="middle-numeric"/></td>
+            <td class="side-menu-cell">
+              <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
+                <option v-for="item in processList" :key="item.id" :value="item.id">{{item.name}}</option>
+              </select>
+            </td>
+            <td class="side-menu-cell">
+              <select v-model="row.ticket.department_id" @change="updateTicket(row.ticket)">
+                <option v-for="item in departmentList" :key="item.id" :value="item.id">{{item.name}}</option>
+              </select>
+            </td>
+            <td class="side-menu-cell" style="width: 14rem;">
+              <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"></UserMultiselect>
+            </td>
+            <td class="side-menu-cell"><input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><FormNumber class="middle-numeric" v-model="row.ticket.progress_percent" @change="updateTicket(row.ticket)"/></td>
           </tr>
           <tr>
             <td colspan="10">
-              <button>{{ unitMap[item.ganttGroup.unit_id] }}の工程を追加する</button>
+              <button @click="addNewTicket(item.ganttGroup.id)">{{ unitMap[item.ganttGroup.unit_id] }}の工程を追加する</button>
             </td>
           </tr>
         </template>
@@ -82,12 +92,12 @@
     }
   }
 }
-
 .side-menu {
   white-space: nowrap;
   text-align: center;
   td, th {
     border: solid 1px #eaeaea;
+    box-sizing: border-box;
   }
   tr {
     height: 40px;
@@ -116,6 +126,8 @@ import {useUnitTable} from "@/composable/unit";
 import {useProcessTable} from "@/composable/process";
 import {useDepartment, useDepartmentTable} from "@/composable/department";
 import {useUserTable} from "@/composable/user";
+import FormNumber from "@/components/form/FormNumber.vue";
+import UserMultiselect from "@/components/form/UserMultiselect.vue";
 
 const {
   rows,
@@ -133,6 +145,8 @@ const {
   addRow,
   deleteRow,
   ganttChartGroup,
+  addNewTicket,
+  updateTicket
 } = await useGantt(10) // TODO: facilityId
 
 const {list: unitList, refresh: unitRefresh} = await useUnitTable(10) // TODO: facilityId
@@ -156,6 +170,7 @@ const userMap: { [x: number]: string; } = {}
 userList.value.forEach(v => {
   userMap[v.id!] = v.name
 })
+const userOptions = userList.value.map(v => {return {id: v.id!, name: v.name!}})
 
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {

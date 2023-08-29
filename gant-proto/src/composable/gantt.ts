@@ -1,6 +1,6 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {ref, watch} from "vue";
+import {Ref, ref, UnwrapRef, watch} from "vue";
 import {GanttGroup, Ticket, TicketUser, Unit} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroup, useGanttGroupTable} from "@/composable/ganttGroup";
@@ -48,16 +48,56 @@ export async function useGantt(facilityId: number) {
     const ticketIds = ticketList.value.map(v => v.id!)
     await ticketUserRefresh(ticketIds)
     // ここからガントチャートに渡すオブジェクトを作成する
-    const ganttChartGroup: GanttChartGroup[] = []
-    ganttGroupList.value.forEach(ganttGroup => {
-        ganttChartGroup.push(
-            {
-                ganttGroup: ganttGroup,
-                rows: ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id).sort(v => v.order).map(ticket => ticketToGanttRow(ticket))
-            }
-        )
-    })
+    const ganttChartGroup = ref<GanttChartGroup[]>([])
+    const refreshLocalGantt = () => {
+        ganttChartGroup.value.length = 0
+        ganttGroupList.value.forEach(ganttGroup => {
+            ganttChartGroup.value.push(
+                {
+                    ganttGroup: ganttGroup,
+                    rows: ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id).sort(v => v.order).map(ticket => ticketToGanttRow(ticket, ticketUserList.value))
+                }
+            )
+        })
+    }
+    refreshLocalGantt()
+    const updateTicket = async (ticket: Ticket) => {
+        const reqTicket = Object.assign({}, ticket)
+        if (reqTicket.start_date != undefined) {
+            reqTicket.start_date = ticket.start_date + "T00:00:00.00000+09:00"
+        }
+        if (reqTicket.end_date != undefined) {
+            reqTicket.end_date = ticket.end_date + "T00:00:00.00000+09:00"
+        }
+        if (reqTicket.limit_date != undefined) {
+            reqTicket.limit_date = ticket.limit_date + "T00:00:00.00000+09:00"
+        }
+        await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
+    }
 
+    const addNewTicket = async (ganttGroupId: number) => {
+        const order = ticketList.value.filter(v => v.gantt_group_id === ganttGroupId).length + 1
+        const newTicket: Ticket = {
+            created_at: undefined,
+            days_after: undefined,
+            department_id: undefined,
+            end_date: undefined,
+            estimate: undefined,
+            gantt_group_id: ganttGroupId,
+            id: undefined,
+            limit_date: undefined,
+            order: order,
+            process_id: undefined,
+            progress_percent: undefined,
+            start_date: undefined,
+            updated_at: 0
+        }
+        const {data} = await Api.postTickets({ticket: newTicket})
+        ticketList.value.push(data.ticket!)
+        refreshLocalGantt()
+    }
+
+    // ####################### ここから下は昔の資産 ###############################
 
     // ここからダミーデータ
     const rows = ref<GanttRow[]>([
@@ -133,7 +173,9 @@ export async function useGantt(facilityId: number) {
         adjustBar,
         slideSchedule,
         addRow,
-        deleteRow
+        deleteRow,
+        addNewTicket,
+        updateTicket
     }
 }
 
@@ -252,7 +294,17 @@ const newRow = (id: RowID, taskName: TaskName, numberOfWorkers: NumberOfWorkers,
     return result
 }
 
-const ticketToGanttRow = (ticket: Ticket) => {
+const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[]) => {
+    if (ticket.start_date != undefined) {
+        ticket.start_date = ticket.start_date.substring(0, 10)
+    }
+    if (ticket.end_date != undefined) {
+        ticket.end_date = ticket.end_date.substring(0, 10)
+    }
+    if (ticket.limit_date != undefined) {
+        ticket.limit_date = ticket.limit_date.substring(0, 10)
+    }
+
     const result: GanttRow = {
         bar: {
             beginDate: ticket.start_date!,
@@ -263,6 +315,8 @@ const ticketToGanttRow = (ticket: Ticket) => {
                 label: "", // TODO: コメントをラベルにする
             },
         },
+        ticket: ticket,
+        ticketUsers: ticketUserList.filter(v => v.ticket_id === ticket.id),
         taskName: "taskName",
         numberOfWorkers: 1,
         workStartDate: dayjs(),
