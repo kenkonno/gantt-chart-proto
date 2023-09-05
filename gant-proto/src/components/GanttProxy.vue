@@ -1,7 +1,7 @@
 <template>
-  <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDay(rows)">
-  <input type="button" value="スケジュール重視で設定する" @click="setScheduleByFromTo(rows)">
-  <input type="button" value="スケジュールをスライドする" @click="slideSchedule(rows)">
+  <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDay(oldRows)">
+  <input type="button" value="スケジュール重視で設定する" @click="setScheduleByFromTo(oldRows)">
+  <input type="button" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">
   <g-gantt-chart
       :chart-start="chartStart"
       :chart-end="chartEnd"
@@ -43,33 +43,46 @@
         </tr>
         </thead>
         <tbody>
-        <!-- TODO: 担当者関係をしっかりやる。 -->
         <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
           <tr v-for="row in item.rows" :key="row.ticket.id">
             <td class="side-menu-cell">{{ unitMap[item.ganttGroup.unit_id] }}</td>
             <td class="side-menu-cell">
               <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
-                <option v-for="item in processList" :key="item.id" :value="item.id">{{item.name}}</option>
+                <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
               </select>
             </td>
             <td class="side-menu-cell">
               <select v-model="row.ticket.department_id" @change="updateTicket(row.ticket)">
-                <option v-for="item in departmentList" :key="item.id" :value="item.id">{{item.name}}</option>
+                <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
               </select>
             </td>
             <td class="side-menu-cell" style="width: 14rem;">
-              <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers" @update="ticketUserUpdate(row.ticket.id ,$event)"></UserMultiselect>
+              <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"
+                               @update="ticketUserUpdate(row.ticket.id ,$event)"></UserMultiselect>
             </td>
-            <td class="side-menu-cell"><input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/></td>
-            <td class="side-menu-cell"><FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/></td>
-            <td class="side-menu-cell"><FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/></td>
-            <td class="side-menu-cell"><input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/></td>
-            <td class="side-menu-cell"><input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/></td>
-            <td class="side-menu-cell"><FormNumber class="middle-numeric" v-model="row.ticket.progress_percent" @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><input type="date" v-model="row.ticket.limit_date"
+                                              @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell">
+              <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
+            </td>
+            <td class="side-menu-cell">
+              <FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/>
+            </td>
+            <td class="side-menu-cell"><input type="date" v-model="row.ticket.start_date"
+                                              @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell"><input type="date" v-model="row.ticket.end_date"
+                                              @change="updateTicket(row.ticket)"/></td>
+            <td class="side-menu-cell">
+              <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
+                          @change="updateTicket(row.ticket)"/>
+            </td>
           </tr>
           <tr>
             <td colspan="10">
-              <button @click="addNewTicket(item.ganttGroup.id)">{{ unitMap[item.ganttGroup.unit_id] }}の工程を追加する</button>
+              <button @click="addNewTicket(item.ganttGroup.id)">{{
+                  unitMap[item.ganttGroup.unit_id]
+                }}の工程を追加する
+              </button>
             </td>
           </tr>
         </template>
@@ -77,6 +90,12 @@
       </table>
     </template>
   </g-gantt-chart>
+  <pre>
+  {{bars[0]}}
+  </pre>
+  <pre>
+  {{ganttChartGroup[0].rows[0].ticket}}
+  </pre>
 </template>
 <style lang="scss" scoped>
 .row-wrapper {
@@ -92,13 +111,16 @@
     }
   }
 }
+
 .side-menu {
   white-space: nowrap;
   text-align: center;
+
   td, th {
     border: solid 1px #eaeaea;
     box-sizing: border-box;
   }
+
   tr {
     height: 40px;
   }
@@ -106,12 +128,13 @@
   .side-menu-header {
     min-height: 75px;
     max-height: 75px;
-    height: 75px;
+    height: 8vh;
   }
 
   .small-numeric {
     width: 3rem;
   }
+
   .middle-numeric {
     width: 4rem;
   }
@@ -130,24 +153,19 @@ import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 
 const {
-  rows,
-  bars,
   chartStart,
   chartEnd,
   format,
   footerLabels,
-  updateWorkStartDate,
-  updateWorkEndDate,
   setScheduleByPersonDay,
   setScheduleByFromTo,
   adjustBar,
   slideSchedule,
-  addRow,
-  deleteRow,
   ganttChartGroup,
   addNewTicket,
   updateTicket,
-  ticketUserUpdate
+  ticketUserUpdate,
+  bars,
 } = await useGantt(10) // TODO: facilityId
 
 const {list: unitList, refresh: unitRefresh} = await useUnitTable(10) // TODO: facilityId
@@ -171,13 +189,14 @@ const userMap: { [x: number]: string; } = {}
 userList.value.forEach(v => {
   userMap[v.id!] = v.name
 })
-const userOptions = userList.value.map(v => {return {id: v.id!, name: v.name!}})
+const userOptions = userList.value.map(v => {
+  return {id: v.id!, name: v.name!}
+})
 
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   adjustBar(bar)
-
 }
 
 const onMousedownBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {

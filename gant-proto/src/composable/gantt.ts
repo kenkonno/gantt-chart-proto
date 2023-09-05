@@ -1,9 +1,9 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {Ref, ref, UnwrapRef, watch} from "vue";
-import {GanttGroup, Ticket, TicketUser, Unit} from "@/api";
+import {computed, ref, watch} from "vue";
+import {GanttGroup, Ticket, TicketUser} from "@/api";
 import {Api} from "@/api/axios";
-import {useGanttGroup, useGanttGroupTable} from "@/composable/ganttGroup";
+import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
 
@@ -62,6 +62,8 @@ export async function useGantt(facilityId: number) {
         })
     }
     refreshLocalGantt()
+
+    // DBへのストア及びローカルのガントに情報を反映する
     const updateTicket = async (ticket: Ticket) => {
         const reqTicket = Object.assign({}, ticket)
         if (reqTicket.start_date != undefined) {
@@ -74,8 +76,10 @@ export async function useGantt(facilityId: number) {
             reqTicket.limit_date = ticket.limit_date + "T00:00:00.00000+09:00"
         }
         await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
+        reflectTicketToGantt(reqTicket)
     }
 
+    // DBへのストア及びローカルのガントに情報を反映する
     const addNewTicket = async (ganttGroupId: number) => {
         const order = ticketList.value.filter(v => v.gantt_group_id === ganttGroupId).length + 1
         const newTicket: Ticket = {
@@ -97,6 +101,7 @@ export async function useGantt(facilityId: number) {
         ticketList.value.push(data.ticket!)
         refreshLocalGantt()
     }
+    // DBへのストア及びローカルのガントに情報を反映する
     const ticketUserUpdate = async (ticketId: number, userIds: number[]) => {
         const {data} = await Api.postTicketUsers({ticketId: ticketId, userIds: userIds})
         // ticketUserList から TicketId をつけなおす
@@ -104,90 +109,100 @@ export async function useGantt(facilityId: number) {
         newTicketUserList.push(...data.ticketUsers)
         ticketUserList.value.length = 0
         ticketUserList.value.push(...newTicketUserList)
+        // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
         refreshLocalGantt()
+    }
 
+    // computedだとドラッグ関連が上手くいかない為やはりオブジェクトとして双方向に同期をとるようにする。
+    const bars = ref<GanttBarObject[]>([])
+    // ガントチャート描画用のオブジェクトの生成
+    const refreshBars = () => {
+        bars.value.length = 0;
+        ganttChartGroup.value.forEach(unit => {
+            const emptyRow: GanttBarObject = {
+                beginDate: "",
+                endDate: "",
+                ganttBarConfig: {id: Math.random().toString()}
+            }
+            bars.value.push(...unit.rows.map(task => <GanttBarObject>{
+                beginDate: dayjs(task.ticket!.start_date!).format(format.value),
+                endDate: dayjs(task.ticket!.end_date!).format(format.value),
+                ganttGroupId: unit.ganttGroup.id,
+                ganttBarConfig: {
+                    hasHandles: true,
+                    id: task.ticket?.id!.toString(),
+                    label: "",
+                }
+            }))
+            // ボタン用の空行を追加する
+            bars.value.push(emptyRow)
+        })
+    }
+    refreshBars()
+
+    const adjustBar = (bar: GanttBarObject) => {
+        // id をもとにvuejs側のデータも更新する
+        const targetGanttGroup = ganttChartGroup.value.find(v => v.ganttGroup.id === bar.ganttGroupId)
+        if (!targetGanttGroup) {
+            console.error(`Unit ID: ${bar.ganttGroupId} が現在のガントに存在しません。`, ganttChartGroup)
+        } else {
+            const targetTicket = targetGanttGroup.rows.find(v => v.ticket?.id!.toString() === bar.ganttBarConfig.id)
+            if (!targetTicket) {
+                console.error(`ID: ${bar.ganttBarConfig.id} が現在のガントに存在しません。`, ganttChartGroup)
+            } else {
+                targetTicket.ticket!.start_date = ganttDateToYMDDate(bar.beginDate)
+                targetTicket.ticket!.end_date = ganttDateToYMDDate(bar.endDate)
+                updateTicket(targetTicket.ticket!)
+            }
+        }
+    }
+
+    // モデル情報をガントチャート（bars）に反映させる
+    const reflectTicketToGantt = (ticket: Ticket) => {
+        const targetTicket = bars.value.find(v => v.ganttBarConfig.id! === ticket.id!.toString())
+        if (!targetTicket) {
+            console.error(`TicketID: ${ticket.id} が現在のガントに存在しません。`, bars)
+        } else {
+            targetTicket.beginDate = dayjs(ticket.start_date!).format(format.value)
+            targetTicket.endDate = dayjs(ticket.end_date!).format(format.value)
+        }
     }
 
     // ####################### ここから下は昔の資産 ###############################
 
-    // ここからダミーデータ
-    const rows = ref<GanttRow[]>([
-        newRow("id-1", "作業1", 1, 5, dayjs('2023-05-02 00:00'), dayjs('2023-05-06 23:59')),
-        newRow("id-2", "作業2", 1, 6, dayjs('2023-05-07 00:00'), dayjs('2023-05-12 23:59')),
-        newRow("id-3", "作業3", 1, 3, dayjs('2023-05-13 00:00'), dayjs('2023-05-15 23:59')),
-        newRow("id-4", "作業4", 1, 2, dayjs('2023-05-16 00:00'), dayjs('2023-05-17 23:59')),
-        newRow("id-5", "作業5", 2, 7, dayjs('2023-05-18 00:00'), dayjs('2023-05-24 23:59')),
-        newRow("id-6", "作業6", 2, 10, dayjs('2023-05-25 00:00'), dayjs('2023-06-03 23:59'))
-    ])
-    const bars = rows.value.map(v => v.bar)
     const footerLabels = ref<string[]>([])
     // 積み上げの更新
-    footerLabels.value.push(...calculateStuckPersons(rows.value))
+    // footerLabels.value.push(...calculateStuckPersons(oldRows.value))
 
-    // リアクティブな関数群
-    const adjustBar = (bar: GanttBarObject) => {
-        // id をもとにvuejs側のデータも更新する
-        const target = rows.value.find(v => v.bar.ganttBarConfig.id === bar.ganttBarConfig.id)
-        if (!target) {
-            console.error(`ID: ${bar.ganttBarConfig.id} が現在のガントに存在しません。`, rows)
-        } else {
-            // target.workStartDate = dayjs(ganttDateToYMDDate(bar.beginDate))
-            // target.workEndDate = dayjs(ganttDateToYMDDate(bar.endDate))
-        }
-    }
-    const addRow = () => {
-        rows.value.push(newRow(
-            Math.random().toString(),
-            "新規タスク",
-            1,
-            1,
-            dayjs(ganttDateToYMDDate(chartStart.value)),
-            dayjs(ganttDateToYMDDate(chartStart.value)).add(3, 'day'),
-        ))
-    }
-
-    const deleteRow = (id: RowID) => {
-        console.log("#deleterow")
-        rows.value.forEach((row, i) => {
-            if (row.bar.ganttBarConfig.id === id) {
-                rows.value.splice(i, 1)
-            }
-        })
-    }
-
-    watch(rows, () => {
-        console.log("WATCH")
-        footerLabels.value.splice(0)
-        footerLabels.value.push(...calculateStuckPersons(rows.value))
-
-        // rowsの変更を barsに反映させる。色々散らばっているが、ここでは時刻関係以外とする。
-        bars.splice(0)
-        bars.push(...rows.value.map(v => {
-            v.bar.ganttBarConfig.label = v.taskName
-            return v.bar
-        }))
-
-    }, {deep: true})
+    //
+    // watch(oldRows, () => {
+    //     console.log("WATCH")
+    //     footerLabels.value.splice(0)
+    //     footerLabels.value.push(...calculateStuckPersons(oldRows.value))
+    //
+    //     // rowsの変更を barsに反映させる。色々散らばっているが、ここでは時刻関係以外とする。
+    //     oldBars.splice(0)
+    //     oldBars.push(...oldRows.value.map(v => {
+    //         v.bar.ganttBarConfig.label = v.taskName
+    //         return v.bar
+    //     }))
+    //
+    // }, {deep: true})
 
     return {
-        rows,
-        bars,
-        footerLabels,
         chartStart,
         chartEnd,
-        format,
         ganttChartGroup,
-        updateWorkStartDate,
-        updateWorkEndDate,
+        bars,
+        footerLabels,
+        format,
         setScheduleByPersonDay,
         setScheduleByFromTo,
         adjustBar,
         slideSchedule,
-        addRow,
-        deleteRow,
         addNewTicket,
         updateTicket,
-        ticketUserUpdate
+        ticketUserUpdate,
     }
 }
 
@@ -319,8 +334,8 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[]) => {
 
     const result: GanttRow = {
         bar: {
-            beginDate: ticket.start_date!,
-            endDate: ticket.end_date!,
+            beginDate: dayjs(ticket.start_date!).format(format.value),
+            endDate: dayjs(ticket.end_date!).format(format.value),
             ganttBarConfig: {
                 hasHandles: true,
                 id: ticket.id!.toString(), // TODO: まあIDが数字でもいっか
@@ -337,19 +352,6 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[]) => {
     }
     return result
 }
-
-// ここからデータ更新
-const updateWorkStartDate = (row: GanttRow, newValue: string) => {
-    console.log(row, newValue)
-    row.workStartDate = dayjs(newValue)
-    row.bar.beginDate = row.workStartDate.format(format.value)
-}
-const updateWorkEndDate = (row: GanttRow, newValue: string) => {
-    console.log(row, newValue)
-    row.workEndDate = dayjs(newValue).set('minute', 59).set('hour', 23)
-    row.bar.endDate = row.workEndDate.format(format.value)
-}
-
 
 const ganttDateToYMDDate = (date: string) => {
     const e = date.split(" ")[0].split(".")
