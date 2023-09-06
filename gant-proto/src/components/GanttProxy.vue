@@ -1,5 +1,5 @@
 <template>
-  <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDay(oldRows)">
+  <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDayProxy()">
   <input type="button" value="スケジュール重視で設定する" @click="setScheduleByFromTo(oldRows)">
   <input type="button" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">
   <g-gantt-chart
@@ -30,6 +30,7 @@
       <table class="side-menu">
         <thead class="side-menu-header">
         <tr>
+          <th class="side-menu-cell"></th><!-- css hack min-height -->
           <th class="side-menu-cell">ユニット</th>
           <th class="side-menu-cell">工程</th>
           <th class="side-menu-cell">部署</th>
@@ -45,6 +46,7 @@
         <tbody>
         <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
           <tr v-for="row in item.rows" :key="row.ticket.id">
+            <td class="side-menu-cell"></td><!-- css hack min-height -->
             <td class="side-menu-cell">{{ unitMap[item.ganttGroup.unit_id] }}</td>
             <td class="side-menu-cell">
               <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
@@ -78,7 +80,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="10">
+            <td colspan="11">
               <button @click="addNewTicket(item.ganttGroup.id)">{{
                   unitMap[item.ganttGroup.unit_id]
                 }}の工程を追加する
@@ -90,12 +92,6 @@
       </table>
     </template>
   </g-gantt-chart>
-  <pre>
-  {{bars[0]}}
-  </pre>
-  <pre>
-  {{ganttChartGroup[0].rows[0].ticket}}
-  </pre>
 </template>
 <style lang="scss" scoped>
 .row-wrapper {
@@ -125,9 +121,11 @@
     height: 40px;
   }
 
-  .side-menu-header {
+  .side-menu-header > tr > th:first-child {
+    display: block;
+    float: left;
+    content: "";
     min-height: 75px;
-    max-height: 75px;
     height: 8vh;
   }
 
@@ -151,6 +149,8 @@ import {useDepartment, useDepartmentTable} from "@/composable/department";
 import {useUserTable} from "@/composable/user";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
+import {useHolidayTable} from "@/composable/holiday";
+import {useOperationSettingTable} from "@/composable/operationSetting";
 
 const {
   chartStart,
@@ -172,6 +172,14 @@ const {list: unitList, refresh: unitRefresh} = await useUnitTable(10) // TODO: f
 const {list: processList, refresh: processRefresh} = await useProcessTable()
 const {list: departmentList, refresh: departmentRefresh} = await useDepartmentTable()
 const {list: userList, refresh: userRefresh} = await useUserTable()
+const {list: holidayList, refresh: holidayRefresh} = await useHolidayTable(10) // TODO: facilityId
+const {list: operationSettingList, refresh: operationSettingRefresh} = await useOperationSettingTable(10) // TODO: facilityId
+
+const setScheduleByPersonDayProxy = () => {
+  ganttChartGroup.value.forEach(v => {
+    setScheduleByPersonDay(v.rows, holidayList.value, operationSettingList.value)
+  })
+}
 
 const unitMap: { [x: number]: string; } = {}
 unitList.value.forEach(v => {

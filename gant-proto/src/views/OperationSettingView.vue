@@ -5,6 +5,7 @@
         :unitList="unitList"
         :processList="processList"
         :userList="userList"
+        :facility-id="facilityId"
     />
     <template #fallback>
       Loading...

@@ -69,9 +69,4 @@ import {useTicketTable} from "@/composable/ticket";
 
 const {list: facilityList, refresh: facilityRefresh} = await useFacilityTable()
 const currentFacilityId = ref<number>(-1)
-// debug
-const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
-const {list: ticketList, refresh: ticketRefresh} = await useTicketTable()
-ganttGroupRefresh(9)
-ticketRefresh([1,2,3])
 </script>

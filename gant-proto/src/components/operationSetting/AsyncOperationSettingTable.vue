@@ -22,7 +22,7 @@
       </tr>
       </tbody>
     </table>
-    <button type="submit" class="btn btn-primary" @click="postOperationSettingById(1, list, $emit)">更新</button>
+    <button type="submit" class="btn btn-primary" @click="postOperationSettingById(facilityId, list, $emit)">更新</button>
   </div>
 </template>
 
@@ -37,6 +37,7 @@ interface AsyncOperationSettingTable {
   unitList: Unit[]
   processList: Process[]
   userList: User[]
+  facilityId: number
 }
 
 const props = defineProps<AsyncOperationSettingTable>()
