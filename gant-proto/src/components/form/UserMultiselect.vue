@@ -71,14 +71,21 @@ const getBgColor = (value: number) => {
 }
 
 .multiselect, .multiselect-wrapper {
-  height: 36px !important;
-  min-height: 36px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  font-size: 10pt;
 }
-
+.multiselect-option {
+  padding: 2px;
+  font-size: 10pt;
+}
+.multiselect-tags{
+  margin: 0;
+}
 .multiselect-tag {
-  width: 35px;
-  height: 35px;
-  line-height: 35px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
   border-radius: 50%;
   color: #fff;
   text-align: center;
@@ -86,6 +93,7 @@ const getBgColor = (value: number) => {
   z-index: 10;
   border: solid 1px white;
 }
+
 .multiselect-tag:hover {
   opacity: 0.8;
 }
@@ -114,12 +122,15 @@ const getBgColor = (value: number) => {
 .multiselect-tag:nth-child(6) {
   left: 75%
 }
+
 .multiselect-tag:nth-child(7) {
   left: 90%
 }
+
 .multiselect-tag:nth-child(8) {
   left: 105%
 }
+
 .multiselect-tag:nth-child(9) {
   left: 120%
 }

@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav class="navbar navbar-light bg-light">
     <div>
       <b>全体設定</b>
       <modal-with-link title="設備一覧" :disabled="false">
@@ -40,7 +40,7 @@
 
 <style lang="scss" scoped>
 nav {
-  padding: 30px;
+  padding: 10px;
 
   a {
     font-weight: bold;

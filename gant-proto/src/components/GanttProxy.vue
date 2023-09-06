@@ -1,7 +1,30 @@
 <template>
-  <input type="button" value="人日重視で設定する" @click="setScheduleByPersonDayProxy()">
-  <input type="button" value="スケジュール重視で設定する" @click="setScheduleByFromTo(oldRows)">
-  <input type="button" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">
+
+  <div class="action-menu d-flex">
+    <div><span>メニュー</span></div>
+    <AccordionHorizontal>
+      <template v-slot:icon>
+        <span class="material-symbols-outlined">menu_open</span>
+      </template>
+      <template v-slot:body>
+        <input type="button" class="btn btn-sm btn-outline-dark" value="人日重視で設定する"
+               @click="setScheduleByPersonDayProxy()">
+        <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュール重視で設定する"
+               @click="setScheduleByFromTo(oldRows)">
+      </template>
+    </AccordionHorizontal>
+    <AccordionHorizontal>
+      <template v-slot:icon>
+        <span class="material-symbols-outlined">filter_list</span>
+      </template>
+      <template v-slot:body>
+        列表示・非表示機能
+      </template>
+    </AccordionHorizontal>
+
+  </div>
+
+  <!--  <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">-->
   <g-gantt-chart
       :chart-start="chartStart"
       :chart-end="chartEnd"
@@ -94,6 +117,11 @@
   </g-gantt-chart>
 </template>
 <style lang="scss" scoped>
+.action-menu > div {
+  border-right: 1px solid #eaeaea;
+  padding: 0 5px;
+}
+
 .row-wrapper {
   display: table;
 
@@ -119,6 +147,10 @@
 
   tr {
     height: 40px;
+  }
+
+  .side-menu-header {
+    box-shadow: 0px 8px 4px -5px rgba(50, 50, 50, 0.5);
   }
 
   .side-menu-header > tr > th:first-child {
@@ -151,6 +183,7 @@ import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 import {useHolidayTable} from "@/composable/holiday";
 import {useOperationSettingTable} from "@/composable/operationSetting";
+import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 
 const {
   chartStart,
