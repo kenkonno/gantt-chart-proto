@@ -13,14 +13,13 @@ import (
 	"time"
 )
 
-// Holiday - 
+// Holiday -
 type Holiday struct {
-
 	Id *int32 `json:"id,omitempty"`
 
 	Name string `json:"name" binding:"min=1"`
 
-	Date time.Time `json:"date" binding:"min=1"`
+	Date time.Time `json:"date"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

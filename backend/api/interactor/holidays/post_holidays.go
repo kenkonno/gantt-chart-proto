@@ -13,6 +13,7 @@ func PostHolidaysInvoke(c *gin.Context) openapi_models.PostHolidaysResponse {
 
 	holidayRep := repository.NewHolidayRepository()
 
+	// TODO: HolidayRequestの binding:"min=1"を消す。 skeltonのyaml生成を見直す。
 	var holidayReq openapi_models.PostHolidaysRequest
 	if err := c.ShouldBindJSON(&holidayReq); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())

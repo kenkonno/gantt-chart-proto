@@ -74,7 +74,9 @@ func (r *operationSettingRepository) FindByFacilityId(facilityId int32) []db.Ope
 	AND operation_settings.user_id = users.id
 	AND operation_settings.process_id = processes.id
 	AND operation_settings.facility_id = %d
+	WHERE
+		units.facility_id = %d
 	ORDER BY users.id, units.id, processes.id
-	`, facilityId, facilityId)).Scan(&results)
+	`, facilityId, facilityId, facilityId)).Scan(&results)
 	return results
 }

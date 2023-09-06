@@ -26,12 +26,13 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 		for _, v := range operationSettings {
 			if prev.UnitId != v.UnitId || prev.UserId != v.UserId {
 				results = append(results, openapi_models.OperationSetting{
-					Id:        prev.Id,
-					UserId:    prev.UserId,
-					UnitId:    prev.UnitId,
-					WorkHours: append([]openapi_models.WorkHour{}, workHours...), // copy slice
-					CreatedAt: prev.CreatedAt,
-					UpdatedAt: prev.UpdatedAt,
+					Id:         prev.Id,
+					FacilityId: prev.FacilityId,
+					UserId:     prev.UserId,
+					UnitId:     prev.UnitId,
+					WorkHours:  append([]openapi_models.WorkHour{}, workHours...), // copy slice
+					CreatedAt:  prev.CreatedAt,
+					UpdatedAt:  prev.UpdatedAt,
 				})
 				workHours = []openapi_models.WorkHour{}
 			}
@@ -43,12 +44,13 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 		}
 		// 最終行の処理
 		results = append(results, openapi_models.OperationSetting{
-			Id:        prev.Id,
-			UserId:    prev.UserId,
-			UnitId:    prev.UnitId,
-			WorkHours: append([]openapi_models.WorkHour{}, workHours...), // copy slice
-			CreatedAt: prev.CreatedAt,
-			UpdatedAt: 0,
+			Id:         prev.Id,
+			FacilityId: prev.FacilityId,
+			UserId:     prev.UserId,
+			UnitId:     prev.UnitId,
+			WorkHours:  append([]openapi_models.WorkHour{}, workHours...), // copy slice
+			CreatedAt:  prev.CreatedAt,
+			UpdatedAt:  0,
 		})
 	}
 
