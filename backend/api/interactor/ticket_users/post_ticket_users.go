@@ -19,7 +19,7 @@ func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersRespons
 		panic(err)
 	}
 
-	var result []openapi_models.TicketUser
+	var result = []openapi_models.TicketUser{}
 	ticketUserRep.DeleteByTicketId(ticketUserReq.TicketId)
 	for _, v := range ticketUserReq.UserIds {
 		r := ticketUserRep.Upsert(db.TicketUser{
