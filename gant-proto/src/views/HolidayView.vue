@@ -31,10 +31,12 @@ interface HolidayView {
 const props = defineProps<HolidayView>()
 const {list, refresh} = await useHolidayTable(props.facilityId)
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+const emit = defineEmits(["update"])
 
 const closeModalProxy = async () => {
   await refresh()
   closeEditModal()
+  emit("update")
 }
 
 </script>

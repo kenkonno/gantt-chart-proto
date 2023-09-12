@@ -31,9 +31,11 @@ const props = defineProps<UnitView>()
 
 const {list, refresh} = await useUnitTable(props.facilityId)
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+const emit = defineEmits(["update"])
 const closeModalProxy = async () => {
   await refresh()
   closeEditModal()
+  emit("update")
 }
 
 </script>

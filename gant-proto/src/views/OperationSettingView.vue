@@ -6,6 +6,7 @@
         :processList="processList"
         :userList="userList"
         :facility-id="facilityId"
+        @close-edit-modal="$emit('update')"
     />
     <template #fallback>
       Loading...
@@ -25,7 +26,7 @@ interface OperationSettingView {
   facilityId: number
 }
 const props = defineProps<OperationSettingView>()
-
+const emit = defineEmits(["update"])
 
 const {list, refresh} = await useOperationSettingTable(props.facilityId)
 const {list: unitList } = await useUnitTable(props.facilityId)

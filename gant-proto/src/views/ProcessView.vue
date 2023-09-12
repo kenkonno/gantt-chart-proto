@@ -26,9 +26,12 @@ import {useModalWithId} from "@/composable/modalWIthId";
 import {useProcessTable} from "@/composable/process";
 const {list, refresh} = await useProcessTable()
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+const emit = defineEmits(["update"])
+
 const closeModalProxy = async () => {
   await refresh()
   closeEditModal()
+  emit("update")
 }
 
 </script>

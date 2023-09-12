@@ -6,29 +6,29 @@
         <facility-view @update="facilityRefresh"></facility-view>
       </modal-with-link>
       <modal-with-link title="工程一覧">
-        <process-view></process-view>
+        <process-view @update="refreshGantt(currentFacilityId)"></process-view>
       </modal-with-link>
       <modal-with-link title="部署一覧">
-        <department-view></department-view>
+        <department-view @update="refreshGantt(currentFacilityId)"></department-view>
       </modal-with-link>
       <modal-with-link title="担当者一覧">
-        <user-view></user-view>
+        <user-view @update="refreshGantt(currentFacilityId)"></user-view>
       </modal-with-link>
       <p style="display: inline">全体スケジュールビュー(未実装)</p>
     </div>
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
-      <b>ユニット設定</b>
+      <b>設備設定</b>
       <select style="display: inline" v-model="currentFacilityId" @input="refreshGantt($event.target.value)">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
       <modal-with-link title="ユニット一覧" :disabled="currentFacilityId===-1">
-        <unit-view :facility-id="currentFacilityId"></unit-view>
+        <unit-view :facility-id="currentFacilityId" @update="refreshGantt(currentFacilityId)"></unit-view>
       </modal-with-link>
       <modal-with-link title="稼働設定" :disabled="currentFacilityId===-1">
-        <operation-setting-view :facility-id="currentFacilityId"></operation-setting-view>
+        <operation-setting-view :facility-id="currentFacilityId" @update="refreshGantt(currentFacilityId)"></operation-setting-view>
       </modal-with-link>
       <modal-with-link title="休日設定" :disabled="currentFacilityId===-1">
-        <holiday-view :facilityId="currentFacilityId"></holiday-view>
+        <holiday-view :facilityId="currentFacilityId" @update="refreshGantt(currentFacilityId)"></holiday-view>
       </modal-with-link>
       <p style="display: inline">権限設定</p>
     </div>

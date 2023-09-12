@@ -22,7 +22,8 @@
       </tr>
       </tbody>
     </table>
-    <button type="submit" class="btn btn-primary" @click="postOperationSettingById(facilityId, list, $emit)">更新</button>
+    <button type="submit" class="btn btn-primary" @click="postOperationSettingById(facilityId, list, $emit)">更新
+    </button>
   </div>
 </template>
 
@@ -30,7 +31,7 @@
 import {OperationSetting, Process, Unit, User} from "@/api";
 import {postOperationSettingById} from "@/composable/operationSetting";
 
-defineEmits(['openEditModal'])
+defineEmits(['openEditModal', 'closeEditModal'])
 
 interface AsyncOperationSettingTable {
   list: OperationSetting[]
