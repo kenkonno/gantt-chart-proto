@@ -14,7 +14,7 @@
       <modal-with-link title="担当者一覧">
         <user-view @update="refreshGantt(currentFacilityId)"></user-view>
       </modal-with-link>
-      <p style="display: inline">全体スケジュールビュー(未実装)</p>
+      <p style="display: inline">全体スケジュールビュー</p>
     </div>
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>設備設定</b>

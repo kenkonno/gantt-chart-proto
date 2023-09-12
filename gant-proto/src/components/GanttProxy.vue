@@ -1,126 +1,131 @@
 <template>
-  <div class="action-menu d-flex">
-    <div class="wrapper d-flex">
-      <div class="justify-middle">
-        <div>メニュー</div>
-      </div>
-    </div>
-    <AccordionHorizontal>
-      <template v-slot:icon>
-        <span class="material-symbols-outlined">menu_open</span>
-      </template>
-      <template v-slot:body>
-        <input type="button" class="btn btn-sm btn-outline-dark" value="人日重視で設定する"
-               @click="setScheduleByPersonDayProxy()">
-        <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュール重視で設定する"
-               @click="setScheduleByFromTo(oldRows)">
-      </template>
-    </AccordionHorizontal>
-    <AccordionHorizontal>
-      <template v-slot:icon>
-        <span class="material-symbols-outlined">filter_list</span>
-      </template>
-      <template v-slot:body>
+  <div v-if="operationSettingList.length > 0" id="gantt-wrapper">
+    <div class="action-menu d-flex">
+      <div class="wrapper d-flex">
         <div class="justify-middle">
-          <div class="filter">
-            <label v-for="item in GanttHeader" :key="item" class="side-menu-cell">
-              <input type="checkbox" v-model="item.visible"/>{{ item.name }}
-            </label>
-          </div>
+          <div>メニュー</div>
         </div>
-      </template>
-    </AccordionHorizontal>
-  </div>
-
-  <!--  <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">-->
-  <g-gantt-chart
-      :chart-start="chartStart"
-      :chart-end="chartEnd"
-      precision="day"
-      :row-height="40"
-      grid
-      width="1800px"
-      bar-start="beginDate"
-      bar-end="endDate"
-      :date-format="format"
-      @click-bar="onClickBar($event.bar, $event.e, $event.datetime)"
-      @mousedown-bar="onMousedownBar($event.bar, $event.e, $event.datetime)"
-      @dblclick-bar="onMouseupBar($event.bar, $event.e, $event.datetime)"
-      @mouseenter-bar="onMouseenterBar($event.bar, $event.e)"
-      @mouseleave-bar="onMouseleaveBar($event.bar, $event.e)"
-      @dragstart-bar="onDragstartBar($event.bar, $event.e)"
-      @drag-bar="onDragBar($event.bar, $event.e)"
-      @dragend-bar="onDragendBar($event.bar, $event.e)"
-      @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
-      color-scheme="creamy"
-
-      :highlighted-dates="holidays"
-      :footer-labels="footerLabels"
-      sticky
-  >
-    <g-gantt-row v-for="bar in bars" :key="bar.ganttBarConfig.id" :bars="[bar]"/>
-    <template #side-menu>
-      <table class="side-menu">
-        <thead class="side-menu-header">
-        <tr>
-          <th class="side-menu-cell"></th><!-- css hack min-height -->
-          <th v-for="item in GanttHeader" :key="item" class="side-menu-cell" :class="{'d-none': !item.visible}">
-            {{ item.name }}
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
-          <tr v-for="row in item.rows" :key="row.ticket.id">
-            <td class="side-menu-cell"></td><!-- css hack min-height -->
-            <gantt-td :visible="GanttHeader[0].visible">{{ unitMap[item.ganttGroup.unit_id] }}</gantt-td>
-            <gantt-td :visible="GanttHeader[1].visible">
-              <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
-                <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
-              </select>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[2].visible">
-              <select v-model="row.ticket.department_id" @change="updateTicket(row.ticket)">
-                <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
-              </select>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[3].visible" style="width: 14rem;">
-              <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"
-                               @update="ticketUserUpdate(row.ticket.id ,$event)"></UserMultiselect>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[4].visible">
-              <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[5].visible">
-              <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[6].visible">
-              <FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[7].visible">
-              <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[8].visible">
-              <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/>
-            </gantt-td>
-            <gantt-td :visible="GanttHeader[9].visible">
-              <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
-                          @change="updateTicket(row.ticket)"/>
-            </gantt-td>
-          </tr>
-          <tr>
-            <td colspan="11">
-              <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
-                  unitMap[item.ganttGroup.unit_id]
-                }}の工程を追加する
-              </button>
-            </td>
-          </tr>
+      </div>
+      <AccordionHorizontal class="justify-middle">
+        <template v-slot:icon>
+          <span class="material-symbols-outlined">menu_open</span>
         </template>
-        </tbody>
-      </table>
-    </template>
-  </g-gantt-chart>
+        <template v-slot:body>
+          <input type="button" class="btn btn-sm btn-outline-dark" value="人日重視で設定する"
+                 @click="setScheduleByPersonDayProxy()">
+          <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュール重視で設定する"
+                 @click="setScheduleByFromTo(oldRows)">
+        </template>
+      </AccordionHorizontal>
+      <AccordionHorizontal class="justify-middle">
+        <template v-slot:icon>
+          <span class="material-symbols-outlined">filter_list</span>
+        </template>
+        <template v-slot:body>
+          <div class="justify-middle">
+            <div class="filter">
+              <label v-for="item in GanttHeader" :key="item" class="side-menu-cell">
+                <input type="checkbox" v-model="item.visible"/>{{ item.name }}
+              </label>
+            </div>
+          </div>
+        </template>
+      </AccordionHorizontal>
+    </div>
+
+    <!--  <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">-->
+    <g-gantt-chart
+        :chart-start="chartStart"
+        :chart-end="chartEnd"
+        precision="day"
+        :row-height="40"
+        grid
+        width="1800px"
+        bar-start="beginDate"
+        bar-end="endDate"
+        :date-format="format"
+        @click-bar="onClickBar($event.bar, $event.e, $event.datetime)"
+        @mousedown-bar="onMousedownBar($event.bar, $event.e, $event.datetime)"
+        @dblclick-bar="onMouseupBar($event.bar, $event.e, $event.datetime)"
+        @mouseenter-bar="onMouseenterBar($event.bar, $event.e)"
+        @mouseleave-bar="onMouseleaveBar($event.bar, $event.e)"
+        @dragstart-bar="onDragstartBar($event.bar, $event.e)"
+        @drag-bar="onDragBar($event.bar, $event.e)"
+        @dragend-bar="onDragendBar($event.bar, $event.e)"
+        @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
+        color-scheme="creamy"
+
+        class="gantt-chart-body"
+        :highlighted-dates="holidays"
+        sticky
+    >
+      <g-gantt-row v-for="bar in bars" :key="bar.ganttBarConfig.id" :bars="[bar]"/>
+      <template #side-menu>
+        <table class="side-menu">
+          <thead class="side-menu-header">
+          <tr>
+            <th class="side-menu-cell"></th><!-- css hack min-height -->
+            <th v-for="item in GanttHeader" :key="item" class="side-menu-cell" :class="{'d-none': !item.visible}">
+              {{ item.name }}
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
+            <tr v-for="row in item.rows" :key="row.ticket.id">
+              <td class="side-menu-cell"></td><!-- css hack min-height -->
+              <gantt-td :visible="GanttHeader[0].visible">{{ unitMap[item.ganttGroup.unit_id] }}</gantt-td>
+              <gantt-td :visible="GanttHeader[1].visible">
+                <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
+                  <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
+                </select>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[2].visible">
+                <select v-model="row.ticket.department_id" @change="updateTicket(row.ticket)">
+                  <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
+                </select>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[3].visible" style="width: 14rem;">
+                <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"
+                                 @update="ticketUserUpdate(row.ticket.id ,$event)"></UserMultiselect>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[4].visible">
+                <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[5].visible">
+                <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[6].visible">
+                <FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[7].visible">
+                <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[8].visible">
+                <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[9].visible">
+                <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
+                            @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+            </tr>
+            <tr>
+              <td colspan="11">
+                <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
+                    unitMap[item.ganttGroup.unit_id]
+                  }}の工程を追加する
+                </button>
+              </td>
+            </tr>
+          </template>
+          </tbody>
+        </table>
+      </template>
+    </g-gantt-chart>
+  </div>
+  <div v-else>
+    ユニットを追加してください。
+  </div>
 </template>
 <style lang="scss" scoped>
 
@@ -148,9 +153,12 @@
 }
 
 
-.action-menu > div {
-  border-right: 1px solid #eaeaea;
-  padding: 0 5px;
+.action-menu {
+  height: 32px;
+  > div {
+    border-right: 1px solid #eaeaea;
+    padding: 0 5px;
+  }
 }
 
 .row-wrapper {
@@ -165,6 +173,12 @@
       display: table-cell;
     }
   }
+}
+
+.gantt-chart-body {
+  height: 100%;
+  margin-top: -30px;
+  padding-top: 30px;
 }
 
 .side-menu {
@@ -223,6 +237,7 @@ import {useHolidayTable} from "@/composable/holiday";
 import {useOperationSettingTable} from "@/composable/operationSetting";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
+import {useFacility} from "@/composable/facility";
 
 type GanttProxyProps = {
   facilityId: number
@@ -254,9 +269,7 @@ const {list: userList, refresh: userRefresh} = await useUserTable()
 const {list: holidayList, refresh: holidayRefresh} = await useHolidayTable(props.facilityId)
 const {list: operationSettingList, refresh: operationSettingRefresh} = await useOperationSettingTable(props.facilityId)
 
-const holidays = holidayList.value.map( v => new Date(v.date) )
-console.log(holidayList.value.map(v => v.date))
-console.log(holidays)
+const holidays = holidayList.value.map(v => new Date(v.date))
 
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {

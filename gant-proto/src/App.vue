@@ -15,6 +15,20 @@
   padding: 10px;
 }
 
+html, body, #app, #gantt-wrapper {
+  height: 100%
+}
+
+nav {
+  height: 60px;
+}
+
+#gantt-wrapper {
+
+  margin-top: -60px;
+  padding-top: 60px;
+}
+
 </style>
 <script setup lang="ts">
 import TopPage from "@/views/TopPage.vue";

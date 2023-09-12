@@ -7,9 +7,8 @@ import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
 import {useProcessTable} from "@/composable/process";
+import {useFacility} from "@/composable/facility";
 
-const chartStart = ref("01.05.2023 00:00")
-const chartEnd = ref("31.07.2023 00:00")
 const format = ref("DD.MM.YYYY HH:mm")
 
 type GanttChartGroup = {
@@ -48,6 +47,9 @@ export async function useGantt(facilityId: number) {
         {name: "終了日", visible: true},
         {name: "進捗", visible: true},
     ])
+    const {facility} = await useFacility(facilityId)
+    const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
+    const chartEnd = ref(dayjs(facility.value.term_to).format(format.value))
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -217,11 +219,11 @@ export async function useGantt(facilityId: number) {
         let prevDaysAfter = 0
         rows.forEach(row => {
             // 開始日・工数・担当者が未設定の場合はスキップする
-            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers) {
+            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length) {
                 return;
             }
             if (prevDaysAfter > 0) {
-                currentDate = currentDate.add(prevDaysAfter, 'day')
+                currentDate = currentDate.add(prevDaysAfter - 1, 'day') // 現在日を最後に１日足しているため。
             } else {
                 currentDate = dayjs(row.ticket!.start_date)
             }
@@ -245,7 +247,7 @@ export async function useGantt(facilityId: number) {
             row.ticket.end_date = ganttDateToYMDDate(
                 adjustEndDateByHolidays(
                     currentDate,
-                    dayjs(currentDate).add(numberOfDaysRequired, 'day'),
+                    dayjs(currentDate).add(numberOfDaysRequired, 'day').add(-1, 'minute'),
                     holidays
                 ).add(-1, 'minute').format(format.value)
             )
@@ -458,18 +460,23 @@ const adjustEndDateByHolidays = (startDate: Dayjs, endDate: Dayjs, holidays: Hol
     // まず期間に含まれている分伸ばす
     const includes = holidays.filter(holiday => {
         const dayjsHoliday = dayjs(holiday.date)
-        return (
-            (startDate.isSame(dayjsHoliday) || endDate.isSame(dayjsHoliday)) ||
-            (dayjsHoliday.isAfter(startDate) && dayjsHoliday.isBefore(endDate))
-        )
+        return dayBetween(dayjsHoliday, startDate, endDate)
     })
     result = result.add(includes.length, "day")
-    let endCheck = holidays.find(v => dayjs(v.date).isSame(result))
+    let endCheck = holidays.find(v => endCheckHoliday(dayjs(v.date), result))
     while (endCheck) {
         result = result.add(1, "day")
-        endCheck = holidays.find(v => dayjs(v.date).isSame(result))
+        endCheck = holidays.find(v => endCheckHoliday(dayjs(v.date), result))
     }
     return result
+}
+
+const dayBetween = (day: Dayjs, form: Dayjs, to: Dayjs) => {
+    return (form.isSame(day) || to.isSame(day)) ||
+        (day.isAfter(form) && day.isBefore(to))
+}
+const endCheckHoliday = (holiday: Dayjs, endDate: Dayjs) => {
+    return holiday.isBefore(endDate) && endDate.isBefore(holiday.add(1, 'day'))
 }
 
 /**
