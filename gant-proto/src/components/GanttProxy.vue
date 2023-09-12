@@ -1,6 +1,10 @@
 <template>
   <div class="action-menu d-flex">
-    <div><span>メニュー</span></div>
+    <div class="wrapper d-flex">
+      <div class="justify-middle">
+        <div>メニュー</div>
+      </div>
+    </div>
     <AccordionHorizontal>
       <template v-slot:icon>
         <span class="material-symbols-outlined">menu_open</span>
@@ -17,10 +21,12 @@
         <span class="material-symbols-outlined">filter_list</span>
       </template>
       <template v-slot:body>
-        <div class="filter">
-          <label v-for="item in GanttHeader" :key="item" class="side-menu-cell">
-            <input type="checkbox" v-model="item.visible"/>{{ item.name }}
-          </label>
+        <div class="justify-middle">
+          <div class="filter">
+            <label v-for="item in GanttHeader" :key="item" class="side-menu-cell">
+              <input type="checkbox" v-model="item.visible"/>{{ item.name }}
+            </label>
+          </div>
         </div>
       </template>
     </AccordionHorizontal>
@@ -46,7 +52,9 @@
       @drag-bar="onDragBar($event.bar, $event.e)"
       @dragend-bar="onDragendBar($event.bar, $event.e)"
       @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
+      color-scheme="creamy"
 
+      :highlighted-dates="holidays"
       :footer-labels="footerLabels"
       sticky
   >
@@ -116,6 +124,13 @@
 </template>
 <style lang="scss" scoped>
 
+.justify-middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .filter {
   label {
     display: inline-block;
@@ -131,6 +146,7 @@
     margin: auto;
   }
 }
+
 
 .action-menu > div {
   border-right: 1px solid #eaeaea;
@@ -166,6 +182,8 @@
 
   .side-menu-header {
     box-shadow: 0px 8px 4px -5px rgba(50, 50, 50, 0.5);
+    background: rgb(255, 246, 240);
+    color: rgb(84, 45, 5);
   }
 
   > tbody > tr > td:first-child {
@@ -235,6 +253,10 @@ const {list: departmentList, refresh: departmentRefresh} = await useDepartmentTa
 const {list: userList, refresh: userRefresh} = await useUserTable()
 const {list: holidayList, refresh: holidayRefresh} = await useHolidayTable(props.facilityId)
 const {list: operationSettingList, refresh: operationSettingRefresh} = await useOperationSettingTable(props.facilityId)
+
+const holidays = holidayList.value.map( v => new Date(v.date) )
+console.log(holidayList.value.map(v => v.date))
+console.log(holidays)
 
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {

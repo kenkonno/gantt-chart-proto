@@ -18,7 +18,7 @@
     </div>
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>設備設定</b>
-      <select style="display: inline" v-model="currentFacilityId" @input="refreshGantt($event.target.value)">
+      <select style="display: inline" v-model.number="currentFacilityId" @input="refreshGantt(Number($event.target.value))">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
       <modal-with-link title="ユニット一覧" :disabled="currentFacilityId===-1">

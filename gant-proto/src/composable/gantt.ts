@@ -6,6 +6,7 @@ import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
+import {useProcessTable} from "@/composable/process";
 
 const chartStart = ref("01.05.2023 00:00")
 const chartEnd = ref("31.07.2023 00:00")
@@ -30,8 +31,11 @@ type Header = {
     visible: boolean
 }
 
+const BAR_NORMAL_COLOR = "rgb(147 206 255)"
+const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
+const BAR_DANGER_COLOR = "rgb(255 89 89);"
+
 export async function useGantt(facilityId: number) {
-    // TODO: マスタ編集系と同期がとれていない。global store 戦略のほうが良いかも。
     const GanttHeader = ref<Header[]>([
         {name: "ユニット", visible: true},
         {name: "工程", visible: true},
@@ -49,6 +53,11 @@ export async function useGantt(facilityId: number) {
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
     const {list: ticketList, refresh: ticketRefresh} = await useTicketTable()
     const {list: ticketUserList, refresh: ticketUserRefresh} = await useTicketUserTable()
+    const {list: processList, refresh: processRefresh} = await useProcessTable()
+    const processMap: { [x: number]: string; } = {}
+    processList.value.forEach(v => {
+        processMap[v.id!] = v.name
+    })
     await ganttGroupRefresh(facilityId)
     const ganttGroupIds = ganttGroupList.value.map(v => v.id!)
     await ticketRefresh(ganttGroupIds)
@@ -78,7 +87,10 @@ export async function useGantt(facilityId: number) {
             const emptyRow: GanttBarObject = {
                 beginDate: "",
                 endDate: "",
-                ganttBarConfig: {id: Math.random().toString()}
+                ganttBarConfig: {
+                    id: Math.random().toString(),
+                    style: {backgroundColor: BAR_NORMAL_COLOR}
+                }
             }
             bars.value.push(...unit.rows.map(task => <GanttBarObject>{
                 beginDate: dayjs(task.ticket!.start_date!).format(format.value),
@@ -87,7 +99,10 @@ export async function useGantt(facilityId: number) {
                 ganttBarConfig: {
                     hasHandles: true,
                     id: task.ticket?.id!.toString(),
-                    label: "",
+                    label: processMap[task.ticket?.process_id == null ? -1 : task.ticket?.process_id],
+                    style: {backgroundColor: BAR_NORMAL_COLOR},
+                    progress: task.ticket?.progress_percent,
+                    progressColor: BAR_COMPLETE_COLOR
                 }
             }))
             // ボタン用の空行を追加する
@@ -172,8 +187,13 @@ export async function useGantt(facilityId: number) {
         if (!targetTicket) {
             console.error(`TicketID: ${ticket.id} が現在のガントに存在しません。`, bars)
         } else {
+            // パフォーマンスのためにガントチャートに反映すべきものは特別にここで記述する
             targetTicket.beginDate = dayjs(ticket.start_date!).format(format.value)
             targetTicket.endDate = endOfDay(ticket.end_date!)
+            if (ticket.progress_percent) {
+                targetTicket.ganttBarConfig.progress = ticket.progress_percent
+            }
+            targetTicket.ganttBarConfig.label = processMap[ticket.process_id == null ? -1 : ticket.process_id]
         }
     }
 

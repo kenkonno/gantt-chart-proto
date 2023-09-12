@@ -12,7 +12,7 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 
 interface ModalWithLink {
   title: string,
-  disabled: boolean
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<ModalWithLink>(), {disabled: false})
