@@ -25,8 +25,25 @@ type GanttRow = {
 
 const DEFAULT_PERSON_DAY = 8
 
+type Header = {
+    name: string,
+    visible: boolean
+}
+
 export async function useGantt(facilityId: number) {
     // TODO: マスタ編集系と同期がとれていない。global store 戦略のほうが良いかも。
+    const GanttHeader = ref<Header[]>([
+        {name: "ユニット", visible: true},
+        {name: "工程", visible: true},
+        {name: "部署", visible: true},
+        {name: "担当者", visible: true},
+        {name: "期日", visible: true},
+        {name: "工数", visible: true},
+        {name: "日後", visible: true},
+        {name: "開始日", visible: true},
+        {name: "終了日", visible: true},
+        {name: "進捗", visible: true},
+    ])
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -121,6 +138,7 @@ export async function useGantt(facilityId: number) {
     }
     // DBへのストア及びローカルのガントに情報を反映する
     const ticketUserUpdate = async (ticketId: number, userIds: number[]) => {
+        console.log(userIds)
         const {data} = await Api.postTicketUsers({ticketId: ticketId, userIds: userIds})
         // ticketUserList から TicketId をつけなおす
         const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticketId)
@@ -182,7 +200,7 @@ export async function useGantt(facilityId: number) {
             if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers) {
                 return;
             }
-            if (prevDaysAfter > 0){
+            if (prevDaysAfter > 0) {
                 currentDate = currentDate.add(prevDaysAfter, 'day')
             } else {
                 currentDate = dayjs(row.ticket!.start_date)
@@ -251,6 +269,7 @@ export async function useGantt(facilityId: number) {
         bars,
         footerLabels,
         format,
+        GanttHeader,
         setScheduleByPersonDay,
         setScheduleByFromTo,
         adjustBar,

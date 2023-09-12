@@ -1,8 +1,8 @@
 <template>
-  <p @click="open=true" v-if="!disabled">{{title}}</p>
-  <p v-else style="text-decoration: inherit; cursor:inherit">{{title}}</p>
+  <p @click="open=true" v-if="!disabled">{{ title }}</p>
+  <p v-else style="text-decoration: inherit; cursor:inherit">{{ title }}</p>
   <DefaultModal v-if="open" @close-edit-modal="open=false" title="">
-    <slot />
+    <slot/>
   </DefaultModal>
 </template>
 
@@ -15,7 +15,7 @@ interface ModalWithLink {
   disabled: boolean
 }
 
-const props = defineProps<ModalWithLink>()
+const props = withDefaults(defineProps<ModalWithLink>(), {disabled: false})
 defineEmits(['closeEditModal'])
 
 const open = ref(false)

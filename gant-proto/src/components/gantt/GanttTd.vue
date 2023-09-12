@@ -1,17 +1,13 @@
 <template>
-  <input type="number"
-         :value="modelValue"
-         @input="$emit('update:modelValue',parseFloat($event.target.value) || undefined)"
-         @change="$emit('change')"
-  />
+  <td class="side-menu-cell" :class="{'d-none': !visible}">
+    <slot></slot>
+  </td>
 </template>
 
 <script setup lang="ts">
-interface FormNumber {
-  modelValue: number | undefined
+interface GanttTd {
+  visible: boolean
 }
-const props = defineProps<FormNumber>()
-defineEmits(['update:modelValue', 'change'])
-
+const props = defineProps<GanttTd>()
 
 </script>
