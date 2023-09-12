@@ -35,11 +35,12 @@ func (r *facilityRepository) Find(id int32) db.Facility {
 	return facility
 }
 
-func (r *facilityRepository) Upsert(m db.Facility) {
+func (r *facilityRepository) Upsert(m db.Facility) db.Facility {
 	r.con.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
+	return m
 }
 
 func (r *facilityRepository) Delete(id int32) {

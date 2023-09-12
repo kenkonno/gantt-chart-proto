@@ -17,7 +17,7 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 
 	operationSettings := operationSettingRep.FindByFacilityId(int32(id))
 
-	var results []openapi_models.OperationSetting
+	var results = []openapi_models.OperationSetting{}
 
 	if len(operationSettings) > 0 {
 		var prev = operationSettings[0]

@@ -12,19 +12,21 @@ import (
 func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse {
 
 	facilityRep := repository.NewFacilityRepository()
+	holidayRep := repository.NewHolidayRepository()
 
 	var facilityReq openapi_models.PostFacilitiesRequest
 	if err := c.ShouldBindJSON(&facilityReq); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
-	facilityRep.Upsert(db.Facility{
+	newFacility := facilityRep.Upsert(db.Facility{
 		Name:      facilityReq.Facility.Name,
 		TermFrom:  facilityReq.Facility.TermFrom,
 		TermTo:    facilityReq.Facility.TermTo,
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,
 	})
+	holidayRep.InsertByFacilityId(*newFacility.Id)
 
 	return openapi_models.PostFacilitiesResponse{}
 

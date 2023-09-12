@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -56,4 +57,23 @@ func (r *holidayRepository) FindByFacilityId(facilityId int32) []db.Holiday {
 		panic(result.Error)
 	}
 	return holidays
+}
+
+func (r *holidayRepository) InsertByFacilityId(facilityId int32) []db.Holiday {
+	var results []db.Holiday
+
+	r.con.Raw(fmt.Sprintf(`
+	WITH date_master AS (SELECT date                                                  as date,
+								CASE
+									WHEN extract(dow FROM date) = 6 THEN '土曜日'
+									WHEN extract(dow FROM date) = 0 THEN '日曜日' END as youbi
+						 FROM generate_series((SELECT term_from FROM facilities WHERE id = %d),
+											  (SELECT term_to FROM facilities WHERE id = %d), '1 days') as date
+						 WHERE extract(dow FROM date) IN (6, 0))
+	INSERT
+	INTO holidays (name, date, created_at, facility_id)
+	SELECT youbi, date, now(), %d
+	FROM date_master
+	`, facilityId, facilityId, facilityId)).Scan(&results)
+	return results
 }
