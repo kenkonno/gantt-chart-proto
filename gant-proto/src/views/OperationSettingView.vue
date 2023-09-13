@@ -1,6 +1,6 @@
 <template>
   <Suspense>
-    <async-operationSetting-table
+    <AsyncOperationSettingTable
         :list="list"
         :unitList="unitList"
         :processList="processList"
@@ -18,6 +18,7 @@
 import {useOperationSettingTable} from "@/composable/operationSetting";
 import {useUnitTable} from "@/composable/unit";
 import {useProcessTable} from "@/composable/process";
+import AsyncOperationSettingTable from "@/components/operationSetting/AsyncOperationSettingTable.vue";
 
 interface OperationSettingView {
   facilityId: number

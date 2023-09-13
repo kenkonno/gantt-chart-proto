@@ -1480,6 +1480,12 @@ export interface Ticket {
      * @type {number}
      * @memberof Ticket
      */
+    'number_of_worker'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
     'days_after'?: number | null;
     /**
      * 

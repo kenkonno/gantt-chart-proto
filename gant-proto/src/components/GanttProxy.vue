@@ -11,10 +11,10 @@
           <span class="material-symbols-outlined">menu_open</span>
         </template>
         <template v-slot:body>
-          <input type="button" class="btn btn-sm btn-outline-dark" value="人日重視で設定する"
+          <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
                  @click="setScheduleByPersonDayProxy()">
-          <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュール重視で設定する"
-                 @click="setScheduleByFromTo(oldRows)">
+          <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
+                 @click="setScheduleByFromToProxy()">
         </template>
       </AccordionHorizontal>
       <AccordionHorizontal class="justify-middle">
@@ -87,30 +87,34 @@
               </gantt-td>
               <gantt-td :visible="GanttHeader[3].visible" style="width: 14rem;">
                 <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"
-                                 @update="ticketUserUpdate(row.ticket.id ,$event)"></UserMultiselect>
+                                 @update="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
               </gantt-td>
               <gantt-td :visible="GanttHeader[4].visible">
-                <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/>
+                <FormNumber class="small-numeric" v-model="row.ticket.number_of_worker"
+                            @change="updateTicket(row.ticket)" :disabled="row.ticketUsers?.length > 0"/>
               </gantt-td>
               <gantt-td :visible="GanttHeader[5].visible">
-                <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
+                <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/>
               </gantt-td>
               <gantt-td :visible="GanttHeader[6].visible">
-                <FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/>
+                <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
               </gantt-td>
               <gantt-td :visible="GanttHeader[7].visible">
-                <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
+                <FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/>
               </gantt-td>
               <gantt-td :visible="GanttHeader[8].visible">
-                <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/>
+                <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
               </gantt-td>
               <gantt-td :visible="GanttHeader[9].visible">
+                <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[10].visible">
                 <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
                             @change="updateTicket(row.ticket)"/>
               </gantt-td>
             </tr>
             <tr>
-              <td colspan="11">
+              <td :colspan="GanttHeader.length + 1">
                 <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                     unitMap[item.ganttGroup.unit_id]
                   }}の工程を追加する
@@ -155,6 +159,7 @@
 
 .action-menu {
   height: 32px;
+
   > div {
     border-right: 1px solid #eaeaea;
     padding: 0 5px;
@@ -274,6 +279,12 @@ const holidays = holidayList.value.map(v => new Date(v.date))
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
     setScheduleByPersonDay(v.rows, holidayList.value, operationSettingList.value)
+  })
+}
+
+const setScheduleByFromToProxy = () => {
+  ganttChartGroup.value.forEach(v => {
+    setScheduleByFromTo(v.rows, holidayList.value, operationSettingList.value)
   })
 }
 

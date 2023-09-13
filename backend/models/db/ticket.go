@@ -9,6 +9,7 @@ type Ticket struct {
 	DepartmentId    *int32
 	LimitDate       *time.Time
 	Estimate        *int32
+	NumberOfWorker  *int32
 	DaysAfter       *int32
 	StartDate       *time.Time
 	EndDate         *time.Time
