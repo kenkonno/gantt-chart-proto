@@ -4,7 +4,6 @@
         :list="list"
         :unitList="unitList"
         :processList="processList"
-        :userList="userList"
         :facility-id="facilityId"
         @close-edit-modal="$emit('update')"
     />
@@ -16,11 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import AsyncOperationSettingTable from "@/components/operationSetting/AsyncOperationSettingTable.vue";
 import {useOperationSettingTable} from "@/composable/operationSetting";
 import {useUnitTable} from "@/composable/unit";
 import {useProcessTable} from "@/composable/process";
-import {useUserTable} from "@/composable/user";
 
 interface OperationSettingView {
   facilityId: number
@@ -31,6 +28,5 @@ const emit = defineEmits(["update"])
 const {list, refresh} = await useOperationSettingTable(props.facilityId)
 const {list: unitList } = await useUnitTable(props.facilityId)
 const {list: processList } = await useProcessTable()
-const {list: userList } = await useUserTable()
 
 </script>

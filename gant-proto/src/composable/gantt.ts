@@ -230,10 +230,9 @@ export async function useGantt(facilityId: number) {
             // 開始日が祝日だった場合ずらす
             currentDate = adjustStartDateByHolidays(currentDate, holidays)
 
-            // 工程と担当者から総稼働予定時間を取得する
+            // 工程から総稼働予定時間を取得する
             const scheduledOperatingHours = operationSettings.filter(operationSetting => {
-                return row.ticketUsers!.map(v => v.user_id).includes(operationSetting.user_id!) &&
-                    operationSetting.facility_id === row.ganttGroup?.facility_id &&
+                return operationSetting.facility_id === row.ganttGroup?.facility_id &&
                     operationSetting.unit_id === row.ganttGroup?.unit_id
             }).reduce((accumulateValue, currentValue) => {
                 const workHours = currentValue.workHours.find(v => v.process_id === row.ticket?.process_id)

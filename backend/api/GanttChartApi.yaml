@@ -1037,8 +1037,6 @@ components:
           nullable: true
         facility_id:
           type: integer
-        user_id:
-          type: integer
         unit_id:
           type: integer
         workHours:

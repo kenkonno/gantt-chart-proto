@@ -10,15 +10,14 @@
 package openapi
 
 import (
-
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 
@@ -356,4 +355,3 @@ func PostUsersId(c *gin.Context) {
 	r = users.PostUsersIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
-
