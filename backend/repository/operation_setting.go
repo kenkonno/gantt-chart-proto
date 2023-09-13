@@ -38,7 +38,7 @@ func (r *operationSettingRepository) Find(id int32) db.OperationSetting {
 
 func (r *operationSettingRepository) Upsert(m db.OperationSetting) {
 	r.con.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "facility_id"}, {Name: "user_id"}, {Name: "unit_id"}, {Name: "process_id"}},
+		Columns:   []clause.Column{{Name: "facility_id"}, {Name: "unit_id"}, {Name: "process_id"}},
 		UpdateAll: true,
 	}).Create(&m)
 }
@@ -56,14 +56,11 @@ func (r *operationSettingRepository) FindByFacilityId(facilityId int32) []db.Ope
 		operation_settings.id
 	,   %d facility_id
 	,   units.id as unit_id
-	,   users.id as user_id
 	,   processes.id as process_id
 	,   COALESCE(operation_settings.work_hour, 8) as work_hour
 	,   COALESCE(operation_settings.created_at, now()) as created_at
 	,   operation_settings.updated_at
 	FROM
-		users
-		CROSS JOIN
 		processes
 		CROSS JOIN
 		units
@@ -71,12 +68,11 @@ func (r *operationSettingRepository) FindByFacilityId(facilityId int32) []db.Ope
 		operation_settings
 	ON
 		operation_settings.unit_id = units.id
-	AND operation_settings.user_id = users.id
 	AND operation_settings.process_id = processes.id
 	AND operation_settings.facility_id = %d
 	WHERE
 		units.facility_id = %d
-	ORDER BY users.id, units.id, processes.id
+	ORDER BY units.id, processes.id
 	`, facilityId, facilityId, facilityId)).Scan(&results)
 	return results
 }

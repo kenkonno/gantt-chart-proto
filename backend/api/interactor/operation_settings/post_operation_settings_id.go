@@ -28,7 +28,6 @@ func PostOperationSettingsIdInvoke(c *gin.Context) openapi_models.PostOperationS
 			operationSettingRep.Upsert(db.OperationSetting{
 				Id:         v.Id,
 				FacilityId: int32(facilityId),
-				UserId:     v.UserId,
 				UnitId:     v.UnitId,
 				ProcessId:  vv.ProcessId,
 				WorkHour:   vv.WorkHour,

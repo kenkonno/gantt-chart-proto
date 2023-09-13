@@ -24,11 +24,10 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 		var workHours []openapi_models.WorkHour
 		// 工程の集約
 		for _, v := range operationSettings {
-			if prev.UnitId != v.UnitId || prev.UserId != v.UserId {
+			if prev.UnitId != v.UnitId {
 				results = append(results, openapi_models.OperationSetting{
 					Id:         prev.Id,
 					FacilityId: prev.FacilityId,
-					UserId:     prev.UserId,
 					UnitId:     prev.UnitId,
 					WorkHours:  append([]openapi_models.WorkHour{}, workHours...), // copy slice
 					CreatedAt:  prev.CreatedAt,
@@ -46,7 +45,6 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 		results = append(results, openapi_models.OperationSetting{
 			Id:         prev.Id,
 			FacilityId: prev.FacilityId,
-			UserId:     prev.UserId,
 			UnitId:     prev.UnitId,
 			WorkHours:  append([]openapi_models.WorkHour{}, workHours...), // copy slice
 			CreatedAt:  prev.CreatedAt,

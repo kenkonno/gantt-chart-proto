@@ -856,12 +856,6 @@ export interface OperationSetting {
      * @type {number}
      * @memberof OperationSetting
      */
-    'user_id'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OperationSetting
-     */
     'unit_id'?: number;
     /**
      * 
