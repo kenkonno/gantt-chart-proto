@@ -87,7 +87,7 @@
               </gantt-td>
               <gantt-td :visible="GanttHeader[3].visible" style="width: 14rem;">
                 <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"
-                                 @update="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
+                                 @update:modelValue="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
               </gantt-td>
               <gantt-td :visible="GanttHeader[4].visible">
                 <FormNumber class="small-numeric" v-model="row.ticket.number_of_worker"

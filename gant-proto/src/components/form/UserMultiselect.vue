@@ -6,7 +6,7 @@
       :close-on-select="false"
       :search="true"
       :options="options"
-      @input="$emit('update', $event)"
+      @input="$emit('update:modelValue', $event)"
   >
     <template v-slot:tag="{ option, handleTagRemove, disabled }">
       <div

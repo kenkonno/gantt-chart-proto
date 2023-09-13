@@ -1,7 +1,7 @@
 <template>
   <input type="number"
          :value="modelValue"
-         @input="$emit('update:modelValue',parseFloat($event.target.value) || undefined)"
+         @input="$emit('update:modelValue',parseFloat($event.target.value) != null ? parseFloat($event.target.value) : undefined)"
          @change="$emit('change')"
          :disabled="disabled"
   />
