@@ -13,9 +13,8 @@ import (
 	"time"
 )
 
-// Ticket - 
+// Ticket -
 type Ticket struct {
-
 	Id *int32 `json:"id,omitempty"`
 
 	GanttGroupId int32 `json:"gantt_group_id" binding:"min=1"`
@@ -27,6 +26,8 @@ type Ticket struct {
 	LimitDate *time.Time `json:"limit_date,omitempty"`
 
 	Estimate *int32 `json:"estimate,omitempty"`
+
+	NumberOfWorker *int32 `json:"number_of_worker,omitempty"`
 
 	DaysAfter *int32 `json:"days_after,omitempty"`
 

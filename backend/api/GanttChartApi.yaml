@@ -948,7 +948,6 @@ components:
         date:
           type: string
           format: date-time
-          x-go-custom-tag: 'binding:"min=1"'
         created_at:
           type: string
           format: date-time
@@ -1395,6 +1394,9 @@ components:
     Ticket:
       title: Ticket
       type: object
+      description: ''
+      x-tags:
+        - Ticket
       properties:
         id:
           type: integer
@@ -1413,6 +1415,9 @@ components:
           format: date-time
           nullable: true
         estimate:
+          type: integer
+          nullable: true
+        number_of_worker:
           type: integer
           nullable: true
         days_after:
@@ -1440,9 +1445,6 @@ components:
       required:
         - gantt_group_id
         - order
-      description: ''
-      x-tags:
-        - Ticket
     GetTicketsRequest:
       title: GetTicketsRequest
       type: object

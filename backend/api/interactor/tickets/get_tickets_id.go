@@ -25,6 +25,7 @@ func GetTicketsIdInvoke(c *gin.Context) openapi_models.GetTicketsIdResponse {
 			DepartmentId:    ticket.DepartmentId,
 			LimitDate:       ticket.LimitDate,
 			Estimate:        ticket.Estimate,
+			NumberOfWorker:  ticket.NumberOfWorker,
 			DaysAfter:       ticket.DaysAfter,
 			StartDate:       ticket.StartDate,
 			EndDate:         ticket.EndDate,
