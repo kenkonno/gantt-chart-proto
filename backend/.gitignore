@@ -1,3 +1,4 @@
 .env*
 ssh_tunnnel.sh
 skelton_generater/dest/*
+api/api
