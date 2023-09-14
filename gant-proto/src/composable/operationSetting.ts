@@ -17,7 +17,7 @@ export async function useOperationSettingTable(facilityId: number) {
     return {list, refresh}
 }
 
-export async function postOperationSettingById(facilityId: number, operationSettings: OperationSetting[], emit: any) {
+export async function postOperationSettingById(facilityId: number, operationSettings: OperationSetting[], emit: Emit) {
     const req: PostOperationSettingsRequest = {
         operationSettings: operationSettings
     }
@@ -28,7 +28,7 @@ export async function postOperationSettingById(facilityId: number, operationSett
     })
 }
 
-export async function deleteOperationSettingById(id: number, emit: any) {
+export async function deleteOperationSettingById(id: number, emit: Emit) {
     await Api.deleteOperationSettingsId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

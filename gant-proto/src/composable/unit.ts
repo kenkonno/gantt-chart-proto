@@ -2,6 +2,7 @@ import {Api} from "@/api/axios";
 import {PostUnitsRequest, Unit} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
+import {changeSort} from "@/utils/sort";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -13,7 +14,17 @@ export async function useUnitTable(facilityId: number) {
         list.value.push(...resp.data.list)
     }
     await refresh()
-    return {list, refresh}
+    const updateOrder = async (index: number, direction: number) => {
+        changeSort(list.value, index, direction)
+
+        for (const v of list.value) {
+            v.order = list.value.indexOf(v)
+            // API直呼び出しは少し気持ち悪いが効率を考慮してこうする。
+            await Api.postUnitsId(v.id!, {unit: v})
+        }
+    }
+
+    return {list, refresh, updateOrder}
 }
 
 // ユーザー追加・更新。
@@ -23,6 +34,7 @@ export async function useUnit(unitId?: number) {
         id: null,
         name: "",
         facility_id: 0,
+        order: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -32,6 +44,7 @@ export async function useUnit(unitId?: number) {
             unit.value.id = data.unit.id
             unit.value.name = data.unit.name
             unit.value.facility_id = data.unit.facility_id
+            unit.value.order = data.unit.order
             unit.value.created_at = data.unit.created_at
             unit.value.updated_at = data.unit.updated_at
         }
@@ -41,7 +54,8 @@ export async function useUnit(unitId?: number) {
 
 }
 
-export async function postUnit(unit: Unit, facilityId: number, emit: any) {
+export async function postUnit(unit: Unit, facilityId: number, order: number, emit: Emit) {
+    unit.order = order
     unit.facility_id = facilityId
     const req: PostUnitsRequest = {
         unit: unit,
@@ -53,7 +67,7 @@ export async function postUnit(unit: Unit, facilityId: number, emit: any) {
     })
 }
 
-export async function postUnitById(unit: Unit, facilityId: number, emit: any) {
+export async function postUnitById(unit: Unit, facilityId: number, emit: Emit) {
     unit.facility_id = facilityId
     const req: PostUnitsRequest = {
         unit: unit,
@@ -67,7 +81,7 @@ export async function postUnitById(unit: Unit, facilityId: number, emit: any) {
     }
 }
 
-export async function deleteUnitById(id: number, emit: any) {
+export async function deleteUnitById(id: number, emit: Emit) {
     await Api.deleteUnitsId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

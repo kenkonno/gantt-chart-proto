@@ -20,6 +20,7 @@ func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
 				Name:      item.Name,
 				TermFrom:  item.TermFrom,
 				TermTo:    item.TermTo,
+				Order:     int32(item.Order),
 				CreatedAt: item.CreatedAt,
 				UpdatedAt: item.UpdatedAt,
 			}

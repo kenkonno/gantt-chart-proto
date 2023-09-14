@@ -24,6 +24,7 @@ func GetUnitsInvoke(c *gin.Context) openapi_models.GetUnitsResponse {
 				Id:         item.Id,
 				Name:       item.Name,
 				FacilityId: item.FacilityId,
+				Order:      int32(item.Order),
 				CreatedAt:  item.CreatedAt,
 				UpdatedAt:  item.UpdatedAt,
 			}

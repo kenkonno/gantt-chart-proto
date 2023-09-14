@@ -22,6 +22,7 @@ func GetTicketUsersIdInvoke(c *gin.Context) openapi_models.GetTicketUsersIdRespo
 			Id:        ticketUser.Id,
 			TicketId:  ticketUser.TicketId,
 			UserId:    ticketUser.UserId,
+			Order:     int32(ticketUser.Order),
 			CreatedAt: ticketUser.CreatedAt,
 			UpdatedAt: ticketUser.UpdatedAt,
 		},

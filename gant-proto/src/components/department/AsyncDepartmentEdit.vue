@@ -21,7 +21,7 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postDepartment(department, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="postDepartment(department, order, $emit)">更新</button>
     </template>
     <template v-else>
       <button type="submit" class="btn btn-primary" @click="postDepartmentById(department, $emit)">更新</button>
@@ -34,7 +34,8 @@
 import {useDepartment, postDepartmentById, postDepartment, deleteDepartmentById} from "@/composable/department";
 
 interface AsyncDepartmentEdit {
-  id: number | undefined
+  id: number | undefined,
+  order?: number
 }
 
 const props = defineProps<AsyncDepartmentEdit>()

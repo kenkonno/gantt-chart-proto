@@ -21,6 +21,7 @@ func GetProcessesIdInvoke(c *gin.Context) openapi_models.GetProcessesIdResponse 
 		Process: openapi_models.Process{
 			Id:        process.Id,
 			Name:      process.Name,
+			Order:     int32(process.Order),
 			CreatedAt: process.CreatedAt,
 			UpdatedAt: process.UpdatedAt,
 		},

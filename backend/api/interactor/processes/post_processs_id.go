@@ -22,6 +22,7 @@ func PostProcessesIdInvoke(c *gin.Context) openapi_models.PostProcessesIdRespons
 	processRep.Upsert(db.Process{
 		Id:        processReq.Process.Id,
 		Name:      processReq.Process.Name,
+		Order:     int(processReq.Process.Order),
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,
 	})

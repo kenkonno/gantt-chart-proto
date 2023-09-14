@@ -18,6 +18,7 @@ func GetDepartmentsInvoke(c *gin.Context) openapi_models.GetDepartmentsResponse 
 			return openapi_models.Department{
 				Id:        item.Id,
 				Name:      item.Name,
+				Order:     int32(item.Order),
 				CreatedAt: item.CreatedAt,
 				UpdatedAt: item.UpdatedAt,
 			}

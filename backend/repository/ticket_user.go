@@ -55,7 +55,7 @@ func (r *ticketUserRepository) DeleteByTicketId(id int32) {
 func (r *ticketUserRepository) FindAllByTicketIds(ticketIds []int32) []db.TicketUser {
 	var ticketUsers []db.TicketUser
 
-	result := r.con.Where("ticket_id IN ?", ticketIds).Order("id DESC").Find(&ticketUsers)
+	result := r.con.Where("ticket_id IN ?", ticketIds).Order(`id, "order" `).Find(&ticketUsers)
 	if result.Error != nil {
 		panic(result.Error)
 	}

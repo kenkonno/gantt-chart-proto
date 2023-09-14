@@ -43,7 +43,7 @@ export async function useUser(userId?: number) {
 
 }
 
-export async function postUser(user: User, emit: any) {
+export async function postUser(user: User, emit: Emit) {
     const req: PostUsersRequest = {
         user: user
     }
@@ -54,7 +54,7 @@ export async function postUser(user: User, emit: any) {
     })
 }
 
-export async function postUserById(user: User, emit: any) {
+export async function postUserById(user: User, emit: Emit) {
     const req: PostUsersRequest = {
         user: user
     }
@@ -67,7 +67,7 @@ export async function postUserById(user: User, emit: any) {
     }
 }
 
-export async function deleteUserById(id: number, emit: any) {
+export async function deleteUserById(id: number, emit: Emit) {
     await Api.deleteUsersId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

@@ -303,6 +303,12 @@ export interface Department {
     'name': string;
     /**
      * 
+     * @type {number}
+     * @memberof Department
+     */
+    'order': number;
+    /**
+     * 
      * @type {string}
      * @memberof Department
      */
@@ -346,6 +352,12 @@ export interface Facility {
     'term_to': string;
     /**
      * 
+     * @type {number}
+     * @memberof Facility
+     */
+    'order'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof Facility
      */
@@ -381,12 +393,6 @@ export interface GanttGroup {
      * @memberof GanttGroup
      */
     'unit_id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GanttGroup
-     */
-    'order': number;
     /**
      * 
      * @type {string}
@@ -1422,6 +1428,12 @@ export interface Process {
     'name': string;
     /**
      * 
+     * @type {number}
+     * @memberof Process
+     */
+    'order'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof Process
      */
@@ -1550,6 +1562,12 @@ export interface TicketUser {
     'user_id': number;
     /**
      * 
+     * @type {number}
+     * @memberof TicketUser
+     */
+    'order'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof TicketUser
      */
@@ -1575,10 +1593,22 @@ export interface Unit {
     'id'?: number | null;
     /**
      * 
+     * @type {number}
+     * @memberof Unit
+     */
+    'facility_id': number;
+    /**
+     * 
      * @type {string}
      * @memberof Unit
      */
     'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Unit
+     */
+    'order'?: number;
     /**
      * 
      * @type {string}
@@ -1591,12 +1621,6 @@ export interface Unit {
      * @memberof Unit
      */
     'updated_at'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Unit
-     */
-    'facility_id': number;
 }
 /**
  * 

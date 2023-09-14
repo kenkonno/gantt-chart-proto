@@ -8,14 +8,19 @@
         <th>Name</th>
         <th>CreatedAt</th>
         <th>UpdatedAt</th>
+        <th>並び替え</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="item in list" :key="item.id">
+      <tr v-for="(item, index) in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.created_at }}</td>
         <td>{{ item.updated_at }}</td>
+        <td>
+          <a href="#" @click="$emit('moveUp', index)"><span class="material-symbols-outlined">arrow_upward</span></a>
+          <a href="#" @click="$emit('moveDown', index)"><span class="material-symbols-outlined">arrow_downward</span></a>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -25,7 +30,7 @@
 <script setup lang="ts">
 import {Department} from "@/api";
 
-defineEmits(['openEditModal'])
+defineEmits(['openEditModal', 'moveUp', 'moveDown'])
 
 interface AsyncDepartmentTable {
   list: Department[]

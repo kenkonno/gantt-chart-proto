@@ -7,6 +7,7 @@ type Facility struct {
 	Name     string
 	TermFrom time.Time
 	TermTo   time.Time
+	Order    int
 
 	CreatedAt time.Time
 	UpdatedAt int

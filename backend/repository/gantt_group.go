@@ -56,12 +56,15 @@ func (r *ganttGroupRepository) FindByFacilityId(facilityId int32) []db.GanttGrou
 		gg.id
 	,   %d as facility_id
 	,   gg.unit_id
-	,   gg.order
 	FROM
 		gantt_groups gg
+	INNER JOIN
+		units u 
+	ON
+		gg.unit_id = u.id
 	WHERE
 		gg.facility_id = %d
-	ORDER BY gg.order
+	ORDER BY u.order
 	`, facilityId, facilityId)).Scan(&results)
 
 	return results

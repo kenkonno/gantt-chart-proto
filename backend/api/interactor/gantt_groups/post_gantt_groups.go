@@ -21,7 +21,6 @@ func PostGanttGroupsInvoke(c *gin.Context) openapi_models.PostGanttGroupsRespons
 	ganttGroupRep.Upsert(db.GanttGroup{
 		FacilityId: ganttGroupReq.GanttGroup.FacilityId,
 		UnitId:     ganttGroupReq.GanttGroup.UnitId,
-		Order:      ganttGroupReq.GanttGroup.Order,
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})

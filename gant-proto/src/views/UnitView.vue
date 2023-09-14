@@ -2,6 +2,8 @@
   <Suspense>
     <async-unit-table
         @open-edit-modal="openEditModal($event)"
+        @move-up="updateOrder($event, -1)"
+        @move-down="updateOrder($event, 1)"
         :list="list"
     />
     <template #fallback>
@@ -10,7 +12,7 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="Unit" @close-edit-modal="closeModalProxy">
-      <async-unit-edit :id="id" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-unit-edit>
+      <async-unit-edit :id="id" :order="list.length + 1" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-unit-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -29,7 +31,7 @@ interface UnitView {
 }
 const props = defineProps<UnitView>()
 
-const {list, refresh} = await useUnitTable(props.facilityId)
+const {list, refresh, updateOrder} = await useUnitTable(props.facilityId)
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 const closeModalProxy = async () => {

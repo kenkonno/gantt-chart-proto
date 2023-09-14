@@ -22,6 +22,7 @@ export async function useTicketUser(ticketUserId?: number) {
         id: null,
         ticket_id: 0,
         user_id: 0,
+        order: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -31,6 +32,7 @@ export async function useTicketUser(ticketUserId?: number) {
             ticketUser.value.id = data.ticketUser.id
             ticketUser.value.ticket_id = data.ticketUser.ticket_id
             ticketUser.value.user_id = data.ticketUser.user_id
+            ticketUser.value.order = data.ticketUser.order
             ticketUser.value.created_at = data.ticketUser.created_at
             ticketUser.value.updated_at = data.ticketUser.updated_at
         }
@@ -40,7 +42,7 @@ export async function useTicketUser(ticketUserId?: number) {
 
 }
 
-export async function postTicketUser(ticketId: number, userIds: number[], emit: any) {
+export async function postTicketUser(ticketId: number, userIds: number[], emit: Emit) {
     const req: PostTicketUsersRequest = {
         ticketId: ticketId,
         userIds: userIds
@@ -54,7 +56,7 @@ export async function postTicketUser(ticketId: number, userIds: number[], emit: 
 }
 
 
-export async function deleteTicketUserById(id: number, emit: any) {
+export async function deleteTicketUserById(id: number, emit: Emit) {
     await Api.deleteTicketUsersId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

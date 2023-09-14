@@ -21,7 +21,7 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postProcess(process, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="postProcess(process, order, $emit)">更新</button>
     </template>
     <template v-else>
       <button type="submit" class="btn btn-primary" @click="postProcessById(process, $emit)">更新</button>
@@ -34,7 +34,8 @@
 import {useProcess, postProcessById, postProcess, deleteProcessById} from "@/composable/process";
 
 interface AsyncProcessEdit {
-  id: number | undefined
+  id: number | undefined,
+  order?: number
 }
 
 const props = defineProps<AsyncProcessEdit>()

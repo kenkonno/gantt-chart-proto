@@ -13,14 +13,14 @@ import (
 	"time"
 )
 
-// TicketUser - 
 type TicketUser struct {
-
 	Id *int32 `json:"id,omitempty"`
 
 	TicketId int32 `json:"ticket_id" binding:"min=1"`
 
 	UserId int32 `json:"user_id" binding:"min=1"`
+
+	Order int32 `json:"order,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

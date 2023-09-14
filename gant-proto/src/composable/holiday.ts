@@ -43,7 +43,7 @@ export async function useHoliday(holidayId?: number) {
 
 }
 
-export async function postHoliday(holiday: Holiday, facilityId: number, emit: any) {
+export async function postHoliday(holiday: Holiday, facilityId: number, emit: Emit) {
     holiday.date = holiday.date + "T00:00:00.00000+09:00"
     holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
@@ -56,7 +56,7 @@ export async function postHoliday(holiday: Holiday, facilityId: number, emit: an
     })
 }
 
-export async function postHolidayById(holiday: Holiday, facilityId: number, emit: any) {
+export async function postHolidayById(holiday: Holiday, facilityId: number, emit: Emit) {
     holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
         holiday: holiday,
@@ -70,7 +70,7 @@ export async function postHolidayById(holiday: Holiday, facilityId: number, emit
     }
 }
 
-export async function deleteHolidayById(id: number, emit: any) {
+export async function deleteHolidayById(id: number, emit: Emit) {
     await Api.deleteHolidaysId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {
