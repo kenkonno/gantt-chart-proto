@@ -22,7 +22,6 @@ export async function useGanttGroup(ganttGroupId?: number) {
         id: null,
         facility_id: 0,
         unit_id: 0,
-        order: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -32,7 +31,6 @@ export async function useGanttGroup(ganttGroupId?: number) {
             ganttGroup.value.id = data.ganttGroup.id
             ganttGroup.value.facility_id = data.ganttGroup.facility_id
             ganttGroup.value.unit_id = data.ganttGroup.unit_id
-            ganttGroup.value.order = data.ganttGroup.order
             ganttGroup.value.created_at = data.ganttGroup.created_at
             ganttGroup.value.updated_at = data.ganttGroup.updated_at
         }
@@ -42,7 +40,7 @@ export async function useGanttGroup(ganttGroupId?: number) {
 
 }
 
-export async function postGanttGroup(ganttGroup: GanttGroup, emit: any) {
+export async function postGanttGroup(ganttGroup: GanttGroup, emit: Emit) {
     const req: PostGanttGroupsRequest = {
         ganttGroup: ganttGroup
     }
@@ -53,7 +51,7 @@ export async function postGanttGroup(ganttGroup: GanttGroup, emit: any) {
     })
 }
 
-export async function postGanttGroupById(ganttGroup: GanttGroup, emit: any) {
+export async function postGanttGroupById(ganttGroup: GanttGroup, emit: Emit) {
     const req: PostGanttGroupsRequest = {
         ganttGroup: ganttGroup
     }
@@ -66,7 +64,7 @@ export async function postGanttGroupById(ganttGroup: GanttGroup, emit: any) {
     }
 }
 
-export async function deleteGanttGroupById(id: number, emit: any) {
+export async function deleteGanttGroupById(id: number, emit: Emit) {
     await Api.deleteGanttGroupsId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

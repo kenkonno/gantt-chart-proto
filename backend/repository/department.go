@@ -18,7 +18,7 @@ type departmentRepository struct {
 func (r *departmentRepository) FindAll() []db.Department {
 	var departments []db.Department
 
-	result := r.con.Order("id ASC").Find(&departments)
+	result := r.con.Order(`"order" ASC`).Find(&departments)
 	if result.Error != nil {
 		panic(result.Error)
 	}

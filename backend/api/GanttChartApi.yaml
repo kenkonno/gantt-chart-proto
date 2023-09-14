@@ -761,6 +761,8 @@ components:
     Department:
       title: Department
       type: object
+      x-tags:
+        - Department
       properties:
         id:
           type: integer
@@ -768,6 +770,8 @@ components:
         name:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
         created_at:
           type: string
           format: date-time
@@ -775,9 +779,7 @@ components:
           type: int
       required:
         - name
-      description: ''
-      x-tags:
-        - Department
+        - order
     GetDepartmentsRequest:
       title: GetDepartmentsRequest
       type: object
@@ -844,6 +846,8 @@ components:
     Facility:
       title: Facility
       type: object
+      x-tags:
+        - Facility
       properties:
         id:
           type: integer
@@ -857,6 +861,8 @@ components:
         term_to:
           type: string
           format: date-time
+        order:
+          type: integer
         created_at:
           type: string
           format: date-time
@@ -866,9 +872,6 @@ components:
         - name
         - term_from
         - term_to
-      description: ''
-      x-tags:
-        - Facility
     GetFacilitiesRequest:
       title: GetFacilitiesRequest
       type: object
@@ -1122,6 +1125,8 @@ components:
     Process:
       title: Process
       type: object
+      x-tags:
+        - Process
       properties:
         id:
           type: integer
@@ -1129,6 +1134,8 @@ components:
         name:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
         created_at:
           type: string
           format: date-time
@@ -1136,9 +1143,6 @@ components:
           type: int
       required:
         - name
-      description: ''
-      x-tags:
-        - Process
     GetProcessesRequest:
       title: GetProcessesRequest
       type: object
@@ -1205,26 +1209,27 @@ components:
     Unit:
       title: Unit
       type: object
-      description: ''
       x-tags:
         - Unit
       properties:
         id:
           type: integer
           nullable: true
+        facility_id:
+          type: integer
         name:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
         created_at:
           type: string
           format: date-time
         updated_at:
           type: int
-        facility_id:
-          type: integer
       required:
-        - name
         - facility_id
+        - name
     GetUnitsRequest:
       title: GetUnitsRequest
       type: object
@@ -1303,6 +1308,8 @@ components:
     GanttGroup:
       title: GanttGroup
       type: object
+      x-tags:
+        - GanttGroup
       properties:
         id:
           type: integer
@@ -1313,9 +1320,6 @@ components:
         unit_id:
           type: integer
           x-go-custom-tag: 'binding:"min=1"'
-        order:
-          type: integer
-          x-go-custom-tag: 'binding:"min=1"'
         created_at:
           type: string
           format: date-time
@@ -1324,10 +1328,6 @@ components:
       required:
         - facility_id
         - unit_id
-        - order
-      description: ''
-      x-tags:
-        - GanttGroup
     GetGanttGroupsRequest:
       title: GetGanttGroupsRequest
       type: object
@@ -1436,7 +1436,6 @@ components:
           nullable: true
         order:
           type: integer
-          x-go-custom-tag: 'binding:"min=1"'
         created_at:
           type: string
           format: date-time
@@ -1511,6 +1510,8 @@ components:
     TicketUser:
       title: TicketUser
       type: object
+      x-tags:
+        - TicketUser
       properties:
         id:
           type: integer
@@ -1521,6 +1522,8 @@ components:
         user_id:
           type: integer
           x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
         created_at:
           type: string
           format: date-time
@@ -1529,9 +1532,6 @@ components:
       required:
         - ticket_id
         - user_id
-      description: ''
-      x-tags:
-        - TicketUser
     GetTicketUsersRequest:
       title: GetTicketUsersRequest
       type: object

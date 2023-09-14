@@ -8,6 +8,7 @@ import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
 import {useProcessTable} from "@/composable/process";
 import {useFacility} from "@/composable/facility";
+import {changeSort} from "@/utils/sort";
 
 const format = ref("DD.MM.YYYY HH:mm")
 
@@ -57,6 +58,7 @@ export async function useGantt(facilityId: number) {
         {name: "開始日", visible: true},
         {name: "終了日", visible: true},
         {name: "進捗", visible: true},
+        {name: "操作", visible: true},
     ])
     const {facility} = await useFacility(facilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
@@ -124,6 +126,16 @@ export async function useGantt(facilityId: number) {
     }
     refreshLocalGantt()
     refreshBars()
+
+    const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
+        changeSort(ganttRows, index, direction)
+        // ガントチャートのオブジェクトと同期をとる
+        changeSort(bars.value, index, direction)
+        for (const v of ganttRows) {
+            v.ticket!.order = ganttRows.indexOf(v)
+            await updateTicket(v.ticket!)
+        }
+    }
 
     // DBへのストア及びローカルのガントに情報を反映する
     const updateTicket = async (ticket: Ticket) => {
@@ -354,6 +366,7 @@ export async function useGantt(facilityId: number) {
         addNewTicket,
         updateTicket,
         ticketUserUpdate,
+        updateOrder,
     }
 }
 

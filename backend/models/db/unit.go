@@ -7,6 +7,7 @@ type Unit struct {
 	Name       string
 	FacilityId int32
 
+	Order     int
 	CreatedAt time.Time
 	UpdatedAt int
 }

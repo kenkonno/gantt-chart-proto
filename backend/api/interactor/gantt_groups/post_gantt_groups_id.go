@@ -23,7 +23,6 @@ func PostGanttGroupsIdInvoke(c *gin.Context) openapi_models.PostGanttGroupsIdRes
 		Id:         ganttGroupReq.GanttGroup.Id,
 		FacilityId: ganttGroupReq.GanttGroup.FacilityId,
 		UnitId:     ganttGroupReq.GanttGroup.UnitId,
-		Order:      ganttGroupReq.GanttGroup.Order,
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})

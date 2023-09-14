@@ -1,7 +1,8 @@
 import {Api} from "@/api/axios";
-import {PostFacilitiesRequest, Facility} from "@/api";
+import {Facility, PostFacilitiesRequest} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
+import {changeSort} from "@/utils/sort";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -13,7 +14,18 @@ export async function useFacilityTable() {
         list.value.push(...resp.data.list)
     }
     await refresh()
-    return {list, refresh}
+
+    const updateOrder = async (index: number, direction: number) => {
+        changeSort(list.value, index, direction)
+
+        for (const v of list.value) {
+            v.order = list.value.indexOf(v)
+            // API直呼び出しは少し気持ち悪いが効率を考慮してこうする。
+            await Api.postFacilitiesId(v.id!, {facility: v})
+        }
+    }
+
+    return {list, refresh, updateOrder}
 }
 
 // ユーザー追加・更新。
@@ -24,6 +36,7 @@ export async function useFacility(facilityId?: number) {
         name: "",
         term_from: "",
         term_to: "",
+        order: 0,
         created_at: undefined,
         updated_at: undefined
     })
@@ -32,8 +45,9 @@ export async function useFacility(facilityId?: number) {
         if (data.facility != undefined) {
             facility.value.id = data.facility.id
             facility.value.name = data.facility.name
-            facility.value.term_from = data.facility.term_from.substring(0,10)
-            facility.value.term_to = data.facility.term_to.substring(0,10)
+            facility.value.term_from = data.facility.term_from.substring(0, 10)
+            facility.value.term_to = data.facility.term_to.substring(0, 10)
+            facility.value.order = data.facility.order
             facility.value.created_at = data.facility.created_at
             facility.value.updated_at = data.facility.updated_at
         }
@@ -43,9 +57,10 @@ export async function useFacility(facilityId?: number) {
 
 }
 
-export async function postFacility(facility: Facility, emit: any) {
+export async function postFacility(facility: Facility, order: number, emit: Emit) {
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
+    facility.order = order
     const req: PostFacilitiesRequest = {
         facility: facility
     }
@@ -57,7 +72,7 @@ export async function postFacility(facility: Facility, emit: any) {
     })
 }
 
-export async function postFacilityById(facility: Facility, emit: any) {
+export async function postFacilityById(facility: Facility, emit: Emit) {
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
     const req: PostFacilitiesRequest = {
@@ -73,7 +88,7 @@ export async function postFacilityById(facility: Facility, emit: any) {
     }
 }
 
-export async function deleteFacilityById(id: number, emit: any) {
+export async function deleteFacilityById(id: number, emit: Emit) {
     await Api.deleteFacilitiesId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

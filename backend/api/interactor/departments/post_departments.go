@@ -20,6 +20,7 @@ func PostDepartmentsInvoke(c *gin.Context) openapi_models.PostDepartmentsRespons
 	}
 	departmentRep.Upsert(db.Department{
 		Name:      departmentReq.Department.Name,
+		Order:     int(departmentReq.Department.Order),
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,
 	})

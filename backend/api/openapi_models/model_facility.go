@@ -13,9 +13,7 @@ import (
 	"time"
 )
 
-// Facility - 
 type Facility struct {
-
 	Id *int32 `json:"id,omitempty"`
 
 	Name string `json:"name" binding:"min=1"`
@@ -23,6 +21,8 @@ type Facility struct {
 	TermFrom time.Time `json:"term_from"`
 
 	TermTo time.Time `json:"term_to"`
+
+	Order int32 `json:"order,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

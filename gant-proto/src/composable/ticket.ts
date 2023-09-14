@@ -56,7 +56,7 @@ export async function useTicket(ticketId?: number) {
 
 }
 
-export async function postTicket(ticket: Ticket, emit: any) {
+export async function postTicket(ticket: Ticket, emit: Emit) {
     const req: PostTicketsRequest = {
         ticket: ticket
     }
@@ -67,7 +67,7 @@ export async function postTicket(ticket: Ticket, emit: any) {
     })
 }
 
-export async function postTicketById(ticket: Ticket, emit: any) {
+export async function postTicketById(ticket: Ticket, emit: Emit) {
     const req: PostTicketsRequest = {
         ticket: ticket
     }
@@ -80,7 +80,7 @@ export async function postTicketById(ticket: Ticket, emit: any) {
     }
 }
 
-export async function deleteTicketById(id: number, emit: any) {
+export async function deleteTicketById(id: number, emit: Emit) {
     await Api.deleteTicketsId(id).then(() => {
         toast("成功しました。")
     }).finally(() => {

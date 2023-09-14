@@ -72,7 +72,7 @@
           </thead>
           <tbody>
           <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
-            <tr v-for="row in item.rows" :key="row.ticket.id">
+            <tr v-for="(row, index) in item.rows" :key="row.ticket.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="GanttHeader[0].visible">{{ unitMap[item.ganttGroup.unit_id] }}</gantt-td>
               <gantt-td :visible="GanttHeader[1].visible">
@@ -111,6 +111,10 @@
               <gantt-td :visible="GanttHeader[10].visible">
                 <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
                             @change="updateTicket(row.ticket)"/>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[11].visible">
+                <a href="#" @click="updateOrder(item.rows,index, -1)"><span class="material-symbols-outlined">arrow_upward</span></a>
+                <a href="#" @click="updateOrder(item.rows, index,1)"><span class="material-symbols-outlined">arrow_downward</span></a>
               </gantt-td>
             </tr>
             <tr>
@@ -234,7 +238,7 @@ import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic
 import {useGantt} from "@/composable/gantt";
 import {useUnitTable} from "@/composable/unit";
 import {useProcessTable} from "@/composable/process";
-import {useDepartment, useDepartmentTable} from "@/composable/department";
+import {useDepartmentTable} from "@/composable/department";
 import {useUserTable} from "@/composable/user";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
@@ -242,7 +246,6 @@ import {useHolidayTable} from "@/composable/holiday";
 import {useOperationSettingTable} from "@/composable/operationSetting";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {useFacility} from "@/composable/facility";
 
 type GanttProxyProps = {
   facilityId: number
@@ -265,6 +268,7 @@ const {
   addNewTicket,
   updateTicket,
   ticketUserUpdate,
+  updateOrder
 } = await useGantt(props.facilityId)
 
 const {list: unitList, refresh: unitRefresh} = await useUnitTable(props.facilityId)

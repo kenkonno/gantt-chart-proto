@@ -24,6 +24,7 @@ func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdRespo
 		Name:      facilityReq.Facility.Name,
 		TermFrom:  facilityReq.Facility.TermFrom,
 		TermTo:    facilityReq.Facility.TermTo,
+		Order:     int(facilityReq.Facility.Order),
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,
 	})

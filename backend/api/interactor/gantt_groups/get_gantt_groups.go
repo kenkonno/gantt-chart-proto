@@ -27,7 +27,6 @@ func GetGanttGroupsInvoke(c *gin.Context) openapi_models.GetGanttGroupsResponse 
 				Id:         item.Id,
 				FacilityId: item.FacilityId,
 				UnitId:     item.UnitId,
-				Order:      item.Order,
 				CreatedAt:  item.CreatedAt,
 				UpdatedAt:  item.UpdatedAt,
 			}

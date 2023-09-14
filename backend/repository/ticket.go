@@ -18,7 +18,7 @@ type ticketRepository struct {
 func (r *ticketRepository) FindAll() []db.Ticket {
 	var tickets []db.Ticket
 
-	result := r.con.Order("id DESC").Find(&tickets)
+	result := r.con.Order(`"order" ASC`).Find(&tickets)
 	if result.Error != nil {
 		panic(result.Error)
 	}

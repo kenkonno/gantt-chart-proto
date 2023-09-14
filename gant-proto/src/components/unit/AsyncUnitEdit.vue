@@ -21,7 +21,7 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postUnit(unit, facilityId, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="postUnit(unit, facilityId, order,$emit)">更新</button>
     </template>
     <template v-else>
       <button type="submit" class="btn btn-primary" @click="postUnitById(unit, facilityId, $emit)">更新</button>
@@ -35,7 +35,8 @@ import {useUnit, postUnitById, postUnit, deleteUnitById} from "@/composable/unit
 
 interface AsyncUnitEdit {
   id: number | undefined,
-  facilityId: number
+  facilityId: number,
+  order?: number
 }
 
 const props = defineProps<AsyncUnitEdit>()

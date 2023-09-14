@@ -13,16 +13,16 @@ import (
 	"time"
 )
 
-// Unit - 
 type Unit struct {
-
 	Id *int32 `json:"id,omitempty"`
 
+	FacilityId int32 `json:"facility_id"`
+
 	Name string `json:"name" binding:"min=1"`
+
+	Order int32 `json:"order,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
 	UpdatedAt int `json:"updated_at,omitempty"`
-
-	FacilityId int32 `json:"facility_id"`
 }

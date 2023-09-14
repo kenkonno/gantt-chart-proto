@@ -21,10 +21,11 @@ func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersRespons
 
 	var result = []openapi_models.TicketUser{}
 	ticketUserRep.DeleteByTicketId(ticketUserReq.TicketId)
-	for _, v := range ticketUserReq.UserIds {
+	for index, v := range ticketUserReq.UserIds {
 		r := ticketUserRep.Upsert(db.TicketUser{
 			TicketId:  ticketUserReq.TicketId,
 			UserId:    v,
+			Order:     index,
 			CreatedAt: time.Time{},
 			UpdatedAt: 0,
 		})
@@ -32,6 +33,7 @@ func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersRespons
 			Id:        r.Id,
 			TicketId:  r.TicketId,
 			UserId:    r.UserId,
+			Order:     int32(r.Order),
 			CreatedAt: r.CreatedAt,
 			UpdatedAt: r.UpdatedAt,
 		})

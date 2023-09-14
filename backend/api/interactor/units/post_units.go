@@ -22,6 +22,7 @@ func PostUnitsInvoke(c *gin.Context) openapi_models.PostUnitsResponse {
 	r := unitRep.Upsert(db.Unit{
 		Name:       unitReq.Unit.Name,
 		FacilityId: unitReq.Unit.FacilityId,
+		Order:      int(unitReq.Unit.Order),
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})
@@ -30,7 +31,6 @@ func PostUnitsInvoke(c *gin.Context) openapi_models.PostUnitsResponse {
 		Id:         nil,
 		FacilityId: unitReq.Unit.FacilityId,
 		UnitId:     *r.Id,
-		Order:      0, // TODO: ユニット一覧に並び順を持たせるべき 今はもう適当にする
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})

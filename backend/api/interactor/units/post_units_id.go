@@ -23,6 +23,7 @@ func PostUnitsIdInvoke(c *gin.Context) openapi_models.PostUnitsIdResponse {
 		Id:         unitReq.Unit.Id,
 		Name:       unitReq.Unit.Name,
 		FacilityId: unitReq.Unit.FacilityId,
+		Order:      int(unitReq.Unit.Order),
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})

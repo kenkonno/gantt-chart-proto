@@ -19,7 +19,7 @@ type Holiday struct {
 
 	Name string `json:"name" binding:"min=1"`
 
-	Date time.Time `json:"date" binding:"min=1"`
+	Date time.Time `json:"date"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

@@ -23,13 +23,14 @@ func GetTicketUsersInvoke(c *gin.Context) openapi_models.GetTicketUsersResponse 
 	}
 
 	ticketUserList := ticketUserRep.FindAllByTicketIds(ticketIds)
-	
+
 	return openapi_models.GetTicketUsersResponse{
 		List: lo.Map(ticketUserList, func(item db.TicketUser, index int) openapi_models.TicketUser {
 			return openapi_models.TicketUser{
 				Id:        item.Id,
 				TicketId:  item.TicketId,
 				UserId:    item.UserId,
+				Order:     int32(item.Order),
 				CreatedAt: item.CreatedAt,
 				UpdatedAt: item.UpdatedAt,
 			}
