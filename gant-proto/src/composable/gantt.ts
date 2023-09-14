@@ -34,14 +34,25 @@ const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
 const BAR_DANGER_COLOR = "rgb(255 89 89);"
 
+function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
+    return operationSettings.filter(operationSetting => {
+        return operationSetting.facility_id === row.ganttGroup?.facility_id &&
+            operationSetting.unit_id === row.ganttGroup?.unit_id
+    }).reduce((accumulateValue, currentValue) => {
+        const workHours = currentValue.workHours.find(v => v.process_id === row.ticket?.process_id)
+        return accumulateValue + workHours!.work_hour!
+    }, 0);
+}
+
 export async function useGantt(facilityId: number) {
     const GanttHeader = ref<Header[]>([
         {name: "ユニット", visible: true},
         {name: "工程", visible: true},
         {name: "部署", visible: true},
         {name: "担当者", visible: true},
+        {name: "人数", visible: true},
         {name: "期日", visible: true},
-        {name: "工数", visible: true},
+        {name: "工数(h)", visible: true},
         {name: "日後", visible: true},
         {name: "開始日", visible: true},
         {name: "終了日", visible: true},
@@ -154,14 +165,17 @@ export async function useGantt(facilityId: number) {
         refreshBars()
     }
     // DBへのストア及びローカルのガントに情報を反映する
-    const ticketUserUpdate = async (ticketId: number, userIds: number[]) => {
-        console.log(userIds)
-        const {data} = await Api.postTicketUsers({ticketId: ticketId, userIds: userIds})
+    const ticketUserUpdate = async (ticket: Ticket, userIds: number[]) => {
+        const {data} = await Api.postTicketUsers({ticketId: ticket.id!, userIds: userIds})
         // ticketUserList から TicketId をつけなおす
-        const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticketId)
+        const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticket.id!)
         newTicketUserList.push(...data.ticketUsers)
         ticketUserList.value.length = 0
         ticketUserList.value.push(...newTicketUserList)
+
+        // 人数を更新する
+        ticket.number_of_worker = data.ticketUsers.length
+        await updateTicket(ticket)
         // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
         refreshLocalGantt()
     }
@@ -201,6 +215,7 @@ export async function useGantt(facilityId: number) {
 
     /**
      * setScheduleByPersonDay
+     * リスケ（工数h）重視
      * 稼働予定時間ベースでスケジュールを引き直す。
      *
      * @param rows
@@ -215,56 +230,96 @@ export async function useGantt(facilityId: number) {
      * とりあえず作らないと話にならないので一旦作る
      */
     const setScheduleByPersonDay = (rows: GanttRow[], holidays: Holiday[], operationSettings: OperationSetting[]) => {
-        let currentDate: Dayjs
-        let prevDaysAfter = 0
+        let prevEndDate: Dayjs
         rows.forEach(row => {
+            let startDate: Dayjs
             // 開始日・工数・担当者が未設定の場合はスキップする
             if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length) {
+                if (row.ticket?.end_date != null) {
+                    prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
+                }
                 return;
             }
-            if (prevDaysAfter > 0) {
-                currentDate = currentDate.add(prevDaysAfter - 1, 'day') // 現在日を最後に１日足しているため。
+            if (row.ticket.days_after != null && row.ticket.days_after! >= 0 && prevEndDate != null) {
+                startDate = prevEndDate.add(row.ticket.days_after!, 'day') // 現在日を最後に１日足しているため。
             } else {
-                currentDate = dayjs(row.ticket!.start_date)
+                startDate = dayjs(row.ticket!.start_date)
             }
             // 開始日が祝日だった場合ずらす
-            currentDate = adjustStartDateByHolidays(currentDate, holidays)
+            startDate = adjustStartDateByHolidays(startDate, holidays)
 
-            // 工程と担当者から総稼働予定時間を取得する
-            const scheduledOperatingHours = operationSettings.filter(operationSetting => {
-                return row.ticketUsers!.map(v => v.user_id).includes(operationSetting.user_id!) &&
-                    operationSetting.facility_id === row.ganttGroup?.facility_id &&
-                    operationSetting.unit_id === row.ganttGroup?.unit_id
-            }).reduce((accumulateValue, currentValue) => {
-                const workHours = currentValue.workHours.find(v => v.process_id === row.ticket?.process_id)
-                return accumulateValue + workHours!.work_hour!
-            }, 0)
+            // 工程から総稼働予定時間を取得する
+            const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row) * row.ticketUsers.length
             // 必要日数。少数が出たら最小の整数にする。例：二人で5人日の場合 3日必要 5/2 = 2.5 つまり少数が出たら整数に足す
-            const numberOfDaysRequired = Math.ceil(row.ticket.estimate! * DEFAULT_PERSON_DAY / scheduledOperatingHours)
+            const numberOfDaysRequired = Math.ceil(row.ticket.estimate! / scheduledOperatingHours)
             // 開始日を設定する
-            row.ticket.start_date = ganttDateToYMDDate(currentDate.format(format.value))
+            row.ticket.start_date = ganttDateToYMDDate(startDate.format(format.value))
             // 終了日を決定する、祝日が含まれている場合終了日をずらす。
             row.ticket.end_date = ganttDateToYMDDate(
-                adjustEndDateByHolidays(
-                    currentDate,
-                    dayjs(currentDate).add(numberOfDaysRequired, 'day').add(-1, 'minute'),
-                    holidays
-                ).add(-1, 'minute').format(format.value)
+                getEndDateByRequiredBusinessDay(startDate, numberOfDaysRequired, holidays)
+                    .add(-1, 'minute').format(format.value)
             )
-
-            // 日後の設定
-            prevDaysAfter = row.ticket.days_after ? row.ticket.days_after! : 0
-
             // ガントに反映する
             reflectTicketToGantt(row.ticket)
             updateTicket(row.ticket)
-            // 現在日付を設定する
-            currentDate = dayjs(row.ticket.end_date).add(1, 'day')
+            // 前回の終了日を設定する
+            prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
+        })
+    }
+
+    /**
+     * リスケ（日付）重視
+     * 開始日・終了日重視で人数を設定する
+     * 期間で満了できるように人数を割り当てる
+     * ※担当者が入っていたとしても人数は必ず入っているので、人数列で参照する。
+     *
+     * @param rows
+     * @param holidays
+     * @param operationSettings
+     */
+    const setScheduleByFromTo = (rows: GanttRow[], holidays: Holiday[], operationSettings: OperationSetting[]) => {
+        // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
+        // 担当者が未定の時に人数を計算する
+        // 必要日数 = 工数 / 労働時間
+        // 必要人数 = 必要日数 / 期間日数 の数値は上に寄せる
+        let prevEndDate: Dayjs
+        rows.forEach(row => {
+            if (row.ticket && row.ticketUsers?.length == 0 &&
+                row.ticket?.estimate && row.ticket?.estimate > 0 &&
+                row.ticket?.start_date && row.ticket?.end_date) {
+                // 日後の処理
+                if (row.ticket.days_after != null && row.ticket.days_after >= 0 && prevEndDate != null) {
+                    // 現在設定されている営業日を計算する
+                    let dayjsStartDate = dayjs(row.ticket.start_date)
+                    let dayjsEndDate = dayjs(row.ticket.end_date)
+                    const requiredNumberOfBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
+                    // 開始日を日後分ずらした日付に設定する
+                    dayjsStartDate = prevEndDate.add(row.ticket.days_after, 'days')
+                    // 終了日を設定されている営業日分確保する
+                    dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, requiredNumberOfBusinessDays, holidays)
+                    // チケットに反映させる
+                    row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(format.value))
+                    row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(format.value))
+                }
+
+                // 工数(h)
+                const estimate = row.ticket.estimate
+                // 労働予定時間 ユニット & 工程 に紐づく稼働予定時間を取得
+                const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row)
+                // 必要日数
+                const requiredNumberOfDays = estimate / scheduledOperatingHours
+                // 日数（期間）
+                const numberOfDays = getNumberOfDays(row, holidays)
+                // 必要人数
+                row.ticket.number_of_worker = Math.ceil(requiredNumberOfDays / numberOfDays)
+                // 前回の終了日を設定する
+                updateTicket(row.ticket)
+            }
+            prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket?.end_date).add(1, 'day'), holidays)
         })
     }
 
     // ####################### ここから下は昔の資産 ###############################
-
     const footerLabels = ref<string[]>([])
     // 積み上げの更新
     // footerLabels.value.push(...calculateStuckPersons(oldRows.value))
@@ -303,52 +358,21 @@ export async function useGantt(facilityId: number) {
 }
 
 
-// リスケ（工数h）
-
-
-// 人日重視でスケジュールを設定する
-// 人日*作業人数で期間を決定する
-// const setScheduleByPersonDay = (rows: GanttRow[]) => {
-//     let currentDate = rows[0].workStartDate
-//     rows.forEach(row => {
-//         // 必要日数。少数が出たら最小の整数にする。例：二人で5人日の場合 3日必要 5/2 = 2.5 つまり少数が出たら整数に足す
-//         const numberOfDaysRequired = Math.ceil(row.estimatePersonDay / row.numberOfWorkers)
-//         // 開始日を設定する
-//         row.workStartDate = currentDate
-//         // 終了日を決定する
-//         row.workEndDate = row.workStartDate.add(numberOfDaysRequired, 'day').add(-1, 'minute')
-//         // ガントに反映する
-//         reflectGantt(row)
-//         // 現在日付を設定する
-//         currentDate = row.workEndDate.add(1, 'minute')
-//     })
-// }
-
-
-// 開始日・終了日重視で人数を設定する
-// 期間で満了できるように人数を割り当てる
-// 担当者の機能になったことで、人数を割り当てる機能というのが謎となる。
-// 適当な人を優先順位順に割り当てる機能になる？
-// 難しい機能ではある。
-// 学術的な問題な気がする
-// こっちのほうが優先かな。でも仕様を相談したほうがよさそう。
-//
-const setScheduleByFromTo = (rows: GanttRow[]) => {
-    // rows.forEach(row => {
-    //     // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
-    //     // 必要人数 = 見積人日 / 期間
-    //     const period = (row.workEndDate.diff(row.workStartDate, 'day', false) + 1)
-    //     row.numberOfWorkers = Math.ceil(row.estimatePersonDay / period)
-    // })
+/**
+ * 祝日を除く期間の日数を返却する
+ * @param row
+ * @param holidays
+ */
+function getNumberOfDays(row: GanttRow, holidays: Holiday[]) {
+    const dayjsStartDate = dayjs(row.ticket?.start_date)
+    const dayjsEndDate = dayjs(row.ticket?.end_date)
+    const numberOfHolidays = holidays.filter(v => {
+        return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
+    })
+    const numberOfDays = dayjsEndDate.diff(dayjsStartDate, 'day') + 1
+    return numberOfDays - numberOfHolidays.length
 }
-// const setScheduleByFromTo = (rows: GanttRow[]) => {
-//     rows.forEach(row => {
-//         // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
-//         // 必要人数 = 見積人日 / 期間
-//         const period = (row.workEndDate.diff(row.workStartDate, 'day', false) + 1)
-//         row.numberOfWorkers = Math.ceil(row.estimatePersonDay / period)
-//     })
-// }
+
 
 // スケジュールをきれいにスライドさせる（重複をなくす）
 const slideSchedule = (rows: GanttRow[]) => {
@@ -455,20 +479,27 @@ const endOfDay = (dateString: string) => {
  * @param endDate
  * @param holidays
  */
-const adjustEndDateByHolidays = (startDate: Dayjs, endDate: Dayjs, holidays: Holiday[]) => {
-    let result = endDate
-    // まず期間に含まれている分伸ばす
+const getNumberOfBusinessDays = (startDate: Dayjs, endDate: Dayjs, holidays: Holiday[]) => {
+    // 差がない場合は1営業日になる
+    const result = endDate.diff(startDate,'days') + 1
+    // 開始日と終了日の内、祝日を除いた日数を返す
     const includes = holidays.filter(holiday => {
         const dayjsHoliday = dayjs(holiday.date)
         return dayBetween(dayjsHoliday, startDate, endDate)
     })
-    result = result.add(includes.length, "day")
-    let endCheck = holidays.find(v => endCheckHoliday(dayjs(v.date), result))
-    while (endCheck) {
-        result = result.add(1, "day")
-        endCheck = holidays.find(v => endCheckHoliday(dayjs(v.date), result))
+    return result + includes.length
+}
+
+const getEndDateByRequiredBusinessDay = (startDate: Dayjs, requiredNumberOfBusinessDays: number, holidays: Holiday[]) => {
+    let currentDate = startDate
+    const dayjsHolidays = holidays.map(v => dayjs(v.date))
+    // 1営業日だとしたらstartDateを返せばよい
+    while (requiredNumberOfBusinessDays > 1) {
+        currentDate = currentDate.add(1, 'day')
+        if (dayjsHolidays.some(v => v.isSame(currentDate))) continue
+        requiredNumberOfBusinessDays--
     }
-    return result
+    return currentDate.endOf('day')
 }
 
 const dayBetween = (day: Dayjs, form: Dayjs, to: Dayjs) => {

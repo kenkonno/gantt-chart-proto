@@ -13,14 +13,11 @@ import (
 	"time"
 )
 
-// OperationSetting - 
+// OperationSetting -
 type OperationSetting struct {
-
 	Id *int32 `json:"id,omitempty"`
 
 	FacilityId int32 `json:"facility_id,omitempty"`
-
-	UserId int32 `json:"user_id,omitempty"`
 
 	UnitId int32 `json:"unit_id,omitempty"`
 

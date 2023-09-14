@@ -856,12 +856,6 @@ export interface OperationSetting {
      * @type {number}
      * @memberof OperationSetting
      */
-    'user_id'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OperationSetting
-     */
     'unit_id'?: number;
     /**
      * 
@@ -1481,6 +1475,12 @@ export interface Ticket {
      * @memberof Ticket
      */
     'estimate'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Ticket
+     */
+    'number_of_worker'?: number | null;
     /**
      * 
      * @type {number}
