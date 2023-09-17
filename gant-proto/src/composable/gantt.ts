@@ -1,7 +1,7 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
 import {ref} from "vue";
-import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser} from "@/api";
+import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -9,6 +9,10 @@ import {useTicketUserTable} from "@/composable/ticketUser";
 import {useProcessTable} from "@/composable/process";
 import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
+import {useUserTable} from "@/composable/user";
+import {useHolidayTable} from "@/composable/holiday";
+import {useOperationSettingTable} from "@/composable/operationSetting";
+import {useDepartmentTable} from "@/composable/department";
 
 const format = ref("DD.MM.YYYY HH:mm")
 
@@ -24,16 +28,24 @@ type GanttRow = {
     ticketUsers?: TicketUser[]
 }
 
-const DEFAULT_PERSON_DAY = 8
-
 type Header = {
     name: string,
     visible: boolean
 }
 
+type PileUpByPerson = {
+    user: User,
+    labels: number[],
+}
+type PileUpByDepartment = {
+    departmentId: number,
+    users: number[][],
+}
+
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
 const BAR_DANGER_COLOR = "rgb(255 89 89);"
+
 
 function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
     return operationSettings.filter(operationSetting => {
@@ -49,26 +61,29 @@ export async function useGantt(facilityId: number) {
     const GanttHeader = ref<Header[]>([
         {name: "ユニット", visible: true},
         {name: "工程", visible: true},
-        {name: "部署", visible: true},
+        {name: "部署", visible: false},
         {name: "担当者", visible: true},
-        {name: "人数", visible: true},
-        {name: "期日", visible: true},
+        {name: "人数", visible: false},
+        {name: "期日", visible: false},
         {name: "工数(h)", visible: true},
-        {name: "日後", visible: true},
-        {name: "開始日", visible: true},
-        {name: "終了日", visible: true},
+        {name: "日後", visible: false},
+        {name: "開始日", visible: false},
+        {name: "終了日", visible: false},
         {name: "進捗", visible: true},
-        {name: "操作", visible: true},
+        {name: "操作", visible: false},
     ])
     const {facility} = await useFacility(facilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
     const chartEnd = ref(dayjs(facility.value.term_to).format(format.value))
+    const pileUpsByPerson = ref<PileUpByPerson[]>([])
+    const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
     const {list: ticketList, refresh: ticketRefresh} = await useTicketTable()
     const {list: ticketUserList, refresh: ticketUserRefresh} = await useTicketUserTable()
     const {list: processList, refresh: processRefresh} = await useProcessTable()
+    const {list: userList, refresh: userRefresh} = await useUserTable()
     const processMap: { [x: number]: string; } = {}
     processList.value.forEach(v => {
         processMap[v.id!] = v.name
@@ -151,6 +166,7 @@ export async function useGantt(facilityId: number) {
         }
         await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
         reflectTicketToGantt(reqTicket)
+        await refreshPileUps() // TODO: 山積みの更新の呼び出し
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -190,6 +206,7 @@ export async function useGantt(facilityId: number) {
         await updateTicket(ticket)
         // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
         refreshLocalGantt()
+        await refreshPileUps() // TODO: 山積みの更新の呼び出し
     }
 
     const adjustBar = (bar: GanttBarObject) => {
@@ -225,6 +242,9 @@ export async function useGantt(facilityId: number) {
         }
     }
 
+    /**********************************************************
+     *                   リスケジュール関連
+     **********************************************************/
     /**
      * setScheduleByPersonDay
      * リスケ（工数h）重視
@@ -330,43 +350,162 @@ export async function useGantt(facilityId: number) {
             prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket?.end_date).add(1, 'day'), holidays)
         })
     }
+    /**********************************************************
+     *                         山積み関連
+     **********************************************************/
+    let refreshPileUpByPersonExclusive = false
+    // 人単位・部署単位ともに更新する
+    const refreshPileUps = async () => {
+        if (refreshPileUpByPersonExclusive) {
+            return
+        } else {
+            refreshPileUpByPersonExclusive = true
+        }
+        // TODO: DepartmentApiの呼び出し
+        // TODO: holidayAPIの呼び出し
+        // TODO: operationSettingsApiの呼び出し
+        const {list: holidayList} = await useHolidayTable(facilityId)
+        const {list: operationSettingList} = await useOperationSettingTable(facilityId)
+        const {list: departmentList} = await useDepartmentTable()
 
-    // ####################### ここから下は昔の資産 ###############################
-    const footerLabels = ref<string[]>([])
-    // 積み上げの更新
-    // footerLabels.value.push(...calculateStuckPersons(oldRows.value))
+        pileUpsByPerson.value.length = 0
+        pileUpsByDepartment.value.length = 0
+        // 開始日・終了日は表示中の設備にする
+        const duration = dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), 'day')
+        // 全ユーザー分初期化する
+        userList.value.forEach(v => {
+            pileUpsByPerson.value.push({labels: Array(duration).fill(0), user: v})
+        })
+        // 部署ごとの初期化
+        departmentList.value.forEach(v => {
+            pileUpsByDepartment.value.push({departmentId: v.id!, users: Array(duration).fill([])})
+        })
+        // fillは同じオブジェクトを参照するため上書きする。
+        pileUpsByDepartment.value.forEach((v, i) => {
+            v.users.forEach((vv, ii) => {
+                v.users[ii] = []
+            })
+        })
 
-    //
-    // watch(oldRows, () => {
-    //     console.log("WATCH")
-    //     footerLabels.value.splice(0)
-    //     footerLabels.value.push(...calculateStuckPersons(oldRows.value))
-    //
-    //     // rowsの変更を barsに反映させる。色々散らばっているが、ここでは時刻関係以外とする。
-    //     oldBars.splice(0)
-    //     oldBars.push(...oldRows.value.map(v => {
-    //         v.bar.ganttBarConfig.label = v.taskName
-    //         return v.bar
-    //     }))
-    //
-    // }, {deep: true})
+        // 全てのチケットから積み上げを更新する
+        ganttChartGroup.value.forEach(unit => {
+            unit.rows.forEach(row => {
+                setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, holidayList.value, operationSettingList.value)
+            })
+        })
+        refreshPileUpByPersonExclusive = false
+    }
+
+    /**
+     * 人の積み上げを行う。
+     * 有効な期間から予定稼働時間をハメていく。
+     * 期間が十分でない場合は最後の人に全て割り当てる。
+     * 期間が十分で余りが出る場合は稼働予定が少ない順、チケットに割り当て順で積み上げる。
+     * @param pileUpsByPerson
+     * @param pileUpByDepartment
+     * @param row
+     * @param facilityStartDate
+     * @param holidays
+     * @param operationSettings
+     */
+    const setWorkHour = (pileUpsByPerson: PileUpByPerson[],pileUpByDepartment: PileUpByDepartment[],
+                         row: GanttRow,
+                         facilityStartDate: string,
+                         holidays: Holiday[],
+                         operationSettings: OperationSetting[]) => {
+        // validation
+        if (row.ticket?.start_date == null || row.ticket?.end_date == null || row.ticket.estimate == null ||
+            (row.ticketUsers == null || row.ticketUsers?.length <= 0)) {
+            return
+        }
+        const dayjsFacilityStartDate = dayjs(facilityStartDate)
+        const dayjsStartDate = dayjs(row.ticket?.start_date)
+        const dayjsEndDate = dayjs(row.ticket?.end_date)
+        const startIndex = getIndexByDate(dayjsFacilityStartDate, dayjsStartDate)
+        const endIndex = getIndexByDate(dayjsFacilityStartDate, dayjsEndDate)
+        const workHour = getScheduledOperatingHours(operationSettings, row)
+        let estimate = row.ticket?.estimate
+        const holidayIndexes = holidays.filter(v => {
+            return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
+        }).map(v => getIndexByDate(dayjsFacilityStartDate, dayjs(v.date)))
+        // 有効なIndexを設定する
+        const validIndexes: number[] = []
+        for (let i = 0; i + startIndex <= endIndex; i++) {
+            validIndexes.push(i + startIndex)
+        }
+        // 祝日を削除する
+        holidayIndexes.forEach(v => {
+            const i = validIndexes.indexOf(v)
+            if (i > -1) {
+                validIndexes.splice(i, 1)
+            }
+        })
+        const lastIndex = validIndexes[validIndexes.length -1]
+        // 対象の取得
+        const ticketUserIds = row.ticketUsers?.map(v => v.user_id)
+        const targets = pileUpsByPerson.filter(v => ticketUserIds.includes(v.user.id!))
+        // 並び替える (末端の予定工数が少ない順, チケットにアサインされた順)
+        targets.sort((a, b) => {
+            if (a.labels[lastIndex] < b.labels[lastIndex]) return -1;
+            if (a.labels[lastIndex] > b.labels[lastIndex]) return 1;
+            if (ticketUserIds.indexOf(a.user.id!) < ticketUserIds.indexOf(b.user.id!)) return -1;
+            if (ticketUserIds.indexOf(a.user.id!) > ticketUserIds.indexOf(b.user.id!)) return 1;
+            return 0
+        })
+        // 対象部署を取得
+        const departmentTarget = pileUpByDepartment.find(v => v.departmentId === row.ticket?.department_id)
+        // 稼働時間を加算する。
+        validIndexes.forEach((validIndex, index) =>{
+            targets.forEach((v, targetIndex) => {
+                if(estimate < 0) {
+                    return
+                }
+                // 最終行かつ最終の人で予定工数が余っていた場合は全て割り当てる。
+                if(index === (validIndexes.length - 1) && targetIndex === (targets.length -1)){
+                    if(estimate - workHour > 0) {
+                        v.labels[validIndex] += estimate
+                        if(departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
+                            departmentTarget.users[validIndex].push(v.user.id!)
+                        }
+                        return
+                    }
+                }
+                if (estimate - workHour < 0) {
+                    v.labels[validIndex] += estimate
+                } else {
+                    v.labels[validIndex] += workHour
+                }
+                if(departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
+                    departmentTarget.users[validIndex].push(v.user.id!)
+                }
+                estimate -= workHour
+            })
+        })
+    }
+    // 日付からどのindexに該当するか取得する
+    const getIndexByDate = (facilityStartDate: Dayjs, date: Dayjs) => {
+        return date.diff(facilityStartDate, 'days')
+    }
+    await refreshPileUps()
+
 
     return {
         chartStart,
         chartEnd,
         ganttChartGroup,
         bars,
-        footerLabels,
+        pileUpsByPerson,
+        pileUpsByDepartment,
         format,
         GanttHeader,
         setScheduleByPersonDay,
         setScheduleByFromTo,
         adjustBar,
-        slideSchedule,
         addNewTicket,
         updateTicket,
         ticketUserUpdate,
         updateOrder,
+        refreshPileUpByPerson: refreshPileUps,
     }
 }
 
@@ -386,68 +525,6 @@ function getNumberOfDays(row: GanttRow, holidays: Holiday[]) {
     return numberOfDays - numberOfHolidays.length
 }
 
-
-// スケジュールをきれいにスライドさせる（重複をなくす）
-const slideSchedule = (rows: GanttRow[]) => {
-    // let prevEndDate: Dayjs
-    // rows.forEach((row, i) => {
-    //     // 1回目は無視
-    //     if (i > 0) {
-    //         // 期間を計算する
-    //         const duration = row.workEndDate.diff(row.workStartDate, 'day')
-    //         row.workStartDate = prevEndDate.add(1, 'day').set('hour', 0).set('minute', 0)
-    //         row.workEndDate = row.workStartDate.add(duration, 'day').set('hour', 23).set('minute', 59)
-    //         reflectGantt(row)
-    //     }
-    //     prevEndDate = row.workEndDate
-    // })
-}
-
-// 人数の積み上げを行う
-const calculateStuckPersons = (rows: GanttRow[]) => {
-    // console.log("calculateStuckPersons start")
-    //
-    // const result: number[] = []
-    // // 開始時刻
-    // let currentDate = dayjs(ganttDateToYMDDate(chartStart.value))
-    // const endDate = dayjs(ganttDateToYMDDate(chartEnd.value))
-    // // 結果セットの初期化
-    // while (currentDate.isBefore(endDate)) {
-    //     currentDate = currentDate.add(1, 'day')
-    //     result.push(0)
-    // }
-    //
-    // let seq = 0
-    // currentDate = dayjs(ganttDateToYMDDate(chartStart.value))
-    // while (currentDate.isBefore(endDate)) {
-    //     // 開始日が同じ行を探す
-    //     const targets = rows.filter(v => v.workStartDate.isSame(currentDate))
-    //     if (targets.length > 0) {
-    //         targets.forEach(target => {
-    //             let innerSeq = seq
-    //             let innerCurrentDate = currentDate
-    //             let estimatePersonDay = target.estimatePersonDay
-    //             // 作業人数
-    //             const numberOfWorkers = target.numberOfWorkers
-    //
-    //             while (estimatePersonDay > 0) {
-    //                 estimatePersonDay = estimatePersonDay - numberOfWorkers
-    //                 if (estimatePersonDay < 0) {
-    //                     result[innerSeq] += numberOfWorkers + estimatePersonDay
-    //                 } else {
-    //                     result[innerSeq] += numberOfWorkers
-    //                 }
-    //                 innerCurrentDate = innerCurrentDate.add(1, 'day')
-    //                 innerSeq++
-    //             }
-    //         })
-    //     }
-    //     currentDate = currentDate.add(1, 'day')
-    //     seq++
-    // }
-    //
-    // return result.map(v => v === 0 ? '' : v.toString())
-}
 
 const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGroup: GanttGroup) => {
     if (ticket.start_date != undefined) {
@@ -494,7 +571,7 @@ const endOfDay = (dateString: string) => {
  */
 const getNumberOfBusinessDays = (startDate: Dayjs, endDate: Dayjs, holidays: Holiday[]) => {
     // 差がない場合は1営業日になる
-    const result = endDate.diff(startDate,'days') + 1
+    const result = endDate.diff(startDate, 'days') + 1
     // 開始日と終了日の内、祝日を除いた日数を返す
     const includes = holidays.filter(holiday => {
         const dayjsHoliday = dayjs(holiday.date)

@@ -35,7 +35,7 @@
 
     <!--  <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">-->
     <div class="gantt-wrapper">
-      <div class="d-flex overflow-x-scroll" ref="ganttWrapperElement">
+      <div class="d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -101,7 +101,8 @@
                     <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[7].visible">
-                    <FormNumber class="small-numeric" v-model="row.ticket.days_after" @change="updateTicket(row.ticket)"/>
+                    <FormNumber class="small-numeric" v-model="row.ticket.days_after"
+                                @change="updateTicket(row.ticket)"/>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[8].visible">
                     <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
@@ -134,6 +135,7 @@
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->
+      <hr>
       <div class="d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <g-gantt-chart
             :chart-start="chartStart"
@@ -155,14 +157,22 @@
           <template #side-menu>
             <table class="side-menu" :style="syncWidth">
               <tbody>
-              <tr>
+              <tr v-for="item in pileUpsByPerson" :key="item.user.id">
                 <td class="side-menu-cell"></td><!-- css hack min-height -->
-                <gantt-td :visible="true">山積みtbody</gantt-td>
+                <gantt-td :visible="true">{{ item.user.name }}</gantt-td>
+              </tr>
+
+              <tr v-for="item in pileUpsByDepartment" :key="item.departmentId">
+                <td class="side-menu-cell"></td><!-- css hack min-height -->
+                <gantt-td :visible="true">{{ departmentMap[item.departmentId] }}</gantt-td>
               </tr>
               </tbody>
             </table>
           </template>
-          <g-gantt-label-row :labels="[1,2,3,4]"></g-gantt-label-row>
+          <g-gantt-label-row v-for="item in pileUpsByPerson" :key="item.user.id"
+                             :labels="item.labels.map(v => v === 0 ? '' : v.toString())"></g-gantt-label-row>
+          <g-gantt-label-row v-for="item in pileUpsByDepartment" :key="item.departmentId"
+                             :labels="item.users.map(v => v.length === 0 ? '' : v.length.toString())"></g-gantt-label-row>
         </g-gantt-chart>
       </div>
     </div>
@@ -276,6 +286,13 @@
     width: 4rem;
   }
 }
+.hide-scroll {
+  scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
+  -ms-overflow-style: none;/*Internet Explore対応のスクロールバー非表示コード*/
+}
+.hide-scroll::-webkit-scrollbar {
+  display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
+}
 
 </style>
 
@@ -304,18 +321,19 @@ const {
   chartStart,
   chartEnd,
   format,
-  footerLabels,
   ganttChartGroup,
   bars,
   GanttHeader,
-  slideSchedule,
+  pileUpsByPerson,
+  pileUpsByDepartment,
   setScheduleByPersonDay,
   setScheduleByFromTo,
   adjustBar,
   addNewTicket,
   updateTicket,
   ticketUserUpdate,
-  updateOrder
+  updateOrder,
+  refreshPileUps
 } = await useGantt(props.facilityId)
 
 const {list: unitList, refresh: unitRefresh} = await useUnitTable(props.facilityId)
@@ -367,18 +385,25 @@ const childGanttWrapperElement = ref<HTMLDivElement>()
 const resizeSyncWidth = () => {
   const parentWidth = ganttSideMenuElement.value?.clientWidth
   syncWidth.value = {width: parentWidth + "px", overflow: 'scroll'}
-  console.log("resizeSyncWidth",parentWidth)
+  console.log("resizeSyncWidth", parentWidth)
 }
 watch(GanttHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
+
+// 一旦積み上げの更新を全体ウォッチにしておく。 パフォーマンス的には何かしら考慮が必要
+// watch(ganttChartGroup, async () => {
+//   await refreshPileUps()
+// },{deep: true})
+
 onMounted(() => {
   resizeSyncWidth()
+  nextTick(resizeSyncWidth) // たまに上手くいかないので念のため
   ganttWrapperElement.value?.addEventListener("scroll", (event) => {
-    childGanttWrapperElement.value?.scrollTo(event.srcElement.scrollLeft,0)
+    childGanttWrapperElement.value?.scrollTo(event.srcElement.scrollLeft, 0)
   })
   childGanttWrapperElement.value?.addEventListener("scroll", (event) => {
-    ganttWrapperElement.value?.scrollTo(event.srcElement.scrollLeft,0)
+    ganttWrapperElement.value?.scrollTo(event.srcElement.scrollLeft, 0)
   })
 })
 onUnmounted(() => {
