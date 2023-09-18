@@ -44,7 +44,7 @@ type PileUpByDepartment = {
 
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
-const BAR_DANGER_COLOR = "rgb(255 89 89);"
+// const BAR_DANGER_COLOR = "rgb(255 89 89);"
 
 
 function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
@@ -82,8 +82,8 @@ export async function useGantt(facilityId: number) {
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
     const {list: ticketList, refresh: ticketRefresh} = await useTicketTable()
     const {list: ticketUserList, refresh: ticketUserRefresh} = await useTicketUserTable()
-    const {list: processList, refresh: processRefresh} = await useProcessTable()
-    const {list: userList, refresh: userRefresh} = await useUserTable()
+    const {list: processList} = await useProcessTable()
+    const {list: userList} = await useUserTable()
     const processMap: { [x: number]: string; } = {}
     processList.value.forEach(v => {
         processMap[v.id!] = v.name
@@ -381,7 +381,7 @@ export async function useGantt(facilityId: number) {
             pileUpsByDepartment.value.push({departmentId: v.id!, users: Array(duration).fill([])})
         })
         // fillは同じオブジェクトを参照するため上書きする。
-        pileUpsByDepartment.value.forEach((v, i) => {
+        pileUpsByDepartment.value.forEach(v => {
             v.users.forEach((vv, ii) => {
                 v.users[ii] = []
             })
@@ -595,9 +595,6 @@ const getEndDateByRequiredBusinessDay = (startDate: Dayjs, requiredNumberOfBusin
 const dayBetween = (day: Dayjs, form: Dayjs, to: Dayjs) => {
     return (form.isSame(day) || to.isSame(day)) ||
         (day.isAfter(form) && day.isBefore(to))
-}
-const endCheckHoliday = (holiday: Dayjs, endDate: Dayjs) => {
-    return holiday.isBefore(endDate) && endDate.isBefore(holiday.add(1, 'day'))
 }
 
 /**

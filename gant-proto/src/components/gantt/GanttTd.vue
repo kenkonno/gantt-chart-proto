@@ -8,6 +8,6 @@
 interface GanttTd {
   visible: boolean
 }
-const props = defineProps<GanttTd>()
+defineProps<GanttTd>()
 
 </script>

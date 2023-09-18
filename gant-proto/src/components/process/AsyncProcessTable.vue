@@ -36,7 +36,7 @@ interface AsyncProcessTable {
   list: Process[]
 }
 
-const props = defineProps<AsyncProcessTable>()
+defineProps<AsyncProcessTable>()
 
 </script>
 

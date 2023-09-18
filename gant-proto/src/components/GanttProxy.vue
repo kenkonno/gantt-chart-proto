@@ -332,16 +332,15 @@ const {
   addNewTicket,
   updateTicket,
   ticketUserUpdate,
-  updateOrder,
-  refreshPileUps
+  updateOrder
 } = await useGantt(props.facilityId)
 
-const {list: unitList, refresh: unitRefresh} = await useUnitTable(props.facilityId)
-const {list: processList, refresh: processRefresh} = await useProcessTable()
-const {list: departmentList, refresh: departmentRefresh} = await useDepartmentTable()
-const {list: userList, refresh: userRefresh} = await useUserTable()
-const {list: holidayList, refresh: holidayRefresh} = await useHolidayTable(props.facilityId)
-const {list: operationSettingList, refresh: operationSettingRefresh} = await useOperationSettingTable(props.facilityId)
+const {list: unitList} = await useUnitTable(props.facilityId)
+const {list: processList} = await useProcessTable()
+const {list: departmentList} = await useDepartmentTable()
+const {list: userList} = await useUserTable()
+const {list: holidayList} = await useHolidayTable(props.facilityId)
+const {list: operationSettingList} = await useOperationSettingTable(props.facilityId)
 
 const holidays = holidayList.value.map(v => new Date(v.date))
 
@@ -372,9 +371,6 @@ departmentList.value.forEach(v => {
 const userMap: { [x: number]: string; } = {}
 userList.value.forEach(v => {
   userMap[v.id!] = v.name
-})
-const userOptions = userList.value.map(v => {
-  return {id: v.id!, name: v.name!}
 })
 
 // スクロールや大きさの同期系

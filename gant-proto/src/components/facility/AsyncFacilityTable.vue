@@ -40,7 +40,7 @@ interface AsyncFacilityTable {
   list: Facility[]
 }
 
-const props = defineProps<AsyncFacilityTable>()
+defineProps<AsyncFacilityTable>()
 
 </script>
 

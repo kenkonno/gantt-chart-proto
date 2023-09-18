@@ -13,11 +13,6 @@
 
 <script setup lang="ts">
 import {ref} from 'vue'
-
-interface DefaultModal {
-  title: string
-}
-
 const show = ref(false)
 </script>
 

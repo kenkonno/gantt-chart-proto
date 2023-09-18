@@ -35,7 +35,7 @@ interface AsyncUserTable {
   list: User[]
 }
 
-const props = defineProps<AsyncUserTable>()
+defineProps<AsyncUserTable>()
 
 </script>
 
