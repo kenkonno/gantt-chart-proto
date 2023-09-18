@@ -2,9 +2,9 @@
   <Suspense>
     <async-department-table
         @open-edit-modal="openEditModal($event)"
-        @move-up="updateOrder($event, -1)"
-        @move-down="updateOrder($event, 1)"
-        :list="list"
+        @move-up="updateDepartmentOrder($event, -1)"
+        @move-down="updateDepartmentOrder($event, 1)"
+        :list="departmentList"
     />
     <template #fallback>
       Loading...
@@ -12,7 +12,7 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="部署" @close-edit-modal="closeModalProxy">
-      <async-department-edit :id="id" :order="list.length + 1"
+      <async-department-edit :id="id" :order="departmentList.length + 1"
                              @close-edit-modal="closeModalProxy"></async-department-edit>
     </default-modal>
     <template #fallback>
@@ -26,13 +26,15 @@ import AsyncDepartmentTable from "@/components/department/AsyncDepartmentTable.v
 import AsyncDepartmentEdit from "@/components/department/AsyncDepartmentEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
-import {useDepartmentTable} from "@/composable/department";
+import {inject} from "vue";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 
-const {list, refresh, updateOrder} = await useDepartmentTable()
+const {departmentList} = inject(GLOBAL_STATE_KEY)!
+const {refreshDepartmentList, updateDepartmentOrder} = inject(GLOBAL_ACTION_KEY)!
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 const closeModalProxy = async () => {
-  await refresh()
+  await refreshDepartmentList()
   closeEditModal()
   emit("update")
 }
