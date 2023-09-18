@@ -2,9 +2,9 @@
   <Suspense>
     <async-unit-table
         @open-edit-modal="openEditModal($event)"
-        @move-up="updateOrder($event, -1)"
-        @move-down="updateOrder($event, 1)"
-        :list="list"
+        @move-up="updateUnitOrder($event, -1)"
+        @move-down="updateUnitOrder($event, 1)"
+        :list="unitMap[currentFacilityId]"
     />
     <template #fallback>
       Loading...
@@ -12,7 +12,8 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="ユニット" @close-edit-modal="closeModalProxy">
-      <async-unit-edit :id="id" :order="list.length + 1" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-unit-edit>
+      <async-unit-edit :id="id" :order="unitMap[currentFacilityId].length + 1" :facility-id="currentFacilityId"
+                       @close-edit-modal="closeModalProxy"></async-unit-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -25,17 +26,17 @@ import AsyncUnitTable from "@/components/unit/AsyncUnitTable.vue";
 import AsyncUnitEdit from "@/components/unit/AsyncUnitEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
-import {useUnitTable} from "@/composable/unit";
-interface UnitView {
-  facilityId: number
-}
-const props = defineProps<UnitView>()
+import {inject} from "vue";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 
-const {list, refresh, updateOrder} = await useUnitTable(props.facilityId)
+const {unitMap, currentFacilityId} = inject(GLOBAL_STATE_KEY)!
+const {refreshUnitMap, updateUnitOrder} = inject(GLOBAL_ACTION_KEY)!
+await refreshUnitMap(currentFacilityId)
+
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 const closeModalProxy = async () => {
-  await refresh()
+  await refreshUnitMap(currentFacilityId)
   closeEditModal()
   emit("update")
 }

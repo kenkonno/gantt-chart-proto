@@ -1,12 +1,13 @@
 <template>
   <Suspense>
     <AsyncOperationSettingTable
-        :list="list"
-        :unitList="unitList"
+        :list="operationSettingMap[currentFacilityId]"
+        :unitList="unitMap[currentFacilityId]"
         :processList="processList"
-        :facility-id="facilityId"
+        :facility-id="currentFacilityId"
         @close-edit-modal="$emit('update')"
     />
+
     <template #fallback>
       Loading...
     </template>
@@ -15,19 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import {useOperationSettingTable} from "@/composable/operationSetting";
-import {useUnitTable} from "@/composable/unit";
-import {useProcessTable} from "@/composable/process";
 import AsyncOperationSettingTable from "@/components/operationSetting/AsyncOperationSettingTable.vue";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {inject} from "vue";
 
-interface OperationSettingView {
-  facilityId: number
-}
-const props = defineProps<OperationSettingView>()
 defineEmits(["update"])
 
-const {list} = await useOperationSettingTable(props.facilityId)
-const {list: unitList } = await useUnitTable(props.facilityId)
-const {list: processList } = await useProcessTable()
+const {processList, unitMap, operationSettingMap, currentFacilityId} = inject(GLOBAL_STATE_KEY)!
+const {refreshUnitMap, refreshOperationSettingMap} = inject(GLOBAL_ACTION_KEY)!
+await refreshUnitMap(currentFacilityId)
+await refreshOperationSettingMap(currentFacilityId)
 
 </script>

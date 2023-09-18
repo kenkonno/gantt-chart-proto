@@ -2,7 +2,7 @@
   <Suspense>
     <async-user-table
         @open-edit-modal="openEditModal($event)"
-        :list="list"
+        :list="userList"
     />
     <template #fallback>
       Loading...
@@ -23,12 +23,16 @@ import AsyncUserTable from "@/components/user/AsyncUserTable.vue";
 import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
-import {useUserTable} from "@/composable/user";
-const {list, refresh} = await useUserTable()
+import {inject} from "vue";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+
+const {userList} = inject(GLOBAL_STATE_KEY)!
+const {refreshUserList} = inject(GLOBAL_ACTION_KEY)!
+
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 const closeModalProxy = async () => {
-  await refresh()
+  await refreshUserList()
   closeEditModal()
   emit("update")
 }

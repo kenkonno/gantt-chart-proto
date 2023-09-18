@@ -3,38 +3,38 @@
     <div>
       <b>全体設定</b>
       <ModalWithLink title="設備一覧">
-        <facility-view @update="facilityRefresh"></facility-view>
+        <facility-view @update="refreshFacilityList"></facility-view>
       </ModalWithLink>
       <ModalWithLink title="工程一覧">
-        <process-view @update="refreshGantt(currentFacilityId)"></process-view>
+        <process-view></process-view>
       </ModalWithLink>
       <ModalWithLink title="部署一覧">
-        <department-view @update="refreshGantt(currentFacilityId)"></department-view>
+        <department-view></department-view>
       </ModalWithLink>
       <ModalWithLink title="担当者一覧">
-        <user-view @update="refreshGantt(currentFacilityId)"></user-view>
+        <user-view></user-view>
       </ModalWithLink>
       <p style="display: inline">全体スケジュールビュー</p>
     </div>
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>設備設定</b>
-      <select style="display: inline" v-model.number="currentFacilityId" @input="refreshGantt(Number($event.target.value))">
+      <select style="display: inline" v-model.number="globalState.currentFacilityId" @input="refreshGantt(Number($event.target.value))">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-      <ModalWithLink title="ユニット一覧" :disabled="currentFacilityId===-1">
-        <unit-view :facility-id="currentFacilityId" @update="refreshGantt(currentFacilityId)"></unit-view>
+      <ModalWithLink title="ユニット一覧" :disabled="globalState.currentFacilityId===-1">
+        <unit-view></unit-view>
       </ModalWithLink>
-      <ModalWithLink title="稼働設定" :disabled="currentFacilityId===-1">
-        <operation-setting-view :facility-id="currentFacilityId" @update="refreshGantt(currentFacilityId)"></operation-setting-view>
+      <ModalWithLink title="稼働設定" :disabled="globalState.currentFacilityId===-1">
+        <operation-setting-view></operation-setting-view>
       </ModalWithLink>
-      <ModalWithLink title="休日設定" :disabled="currentFacilityId===-1">
-        <holiday-view :facilityId="currentFacilityId" @update="refreshGantt(currentFacilityId)"></holiday-view>
+      <ModalWithLink title="休日設定" :disabled="globalState.currentFacilityId===-1">
+        <holiday-view></holiday-view>
       </ModalWithLink>
       <p style="display: inline">権限設定</p>
     </div>
     <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
   </nav>
-  <gantt-proxy :facilityId="currentFacilityId" v-if="currentFacilityId > 0"></gantt-proxy>
+  <gantt-proxy :facilityId="globalState.currentFacilityId" v-if="globalState.currentFacilityId > 0"></gantt-proxy>
   <div v-else>
     ユニットを選択してください。
   </div>
@@ -71,18 +71,29 @@ import UserView from "@/views/UserView.vue";
 import UnitView from "@/views/UnitView.vue";
 import OperationSettingView from "@/views/OperationSettingView.vue";
 import HolidayView from "@/views/HolidayView.vue";
-import {nextTick, ref} from "vue";
-import {useFacilityTable} from "@/composable/facility";
+import {nextTick, provide} from "vue";
+import GanttProxy from "@/components/GanttProxy.vue";
+import {GLOBAL_ACTION_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY, useGlobalState} from "@/composable/globalState";
 
-const {list: facilityList, refresh: facilityRefresh} = await useFacilityTable()
-const currentFacilityId = ref<number>(-1)
+const {globalState, actions, mutations} = await useGlobalState()
+provide(GLOBAL_STATE_KEY, globalState.value)
+provide(GLOBAL_ACTION_KEY, actions)
+provide(GLOBAL_MUTATION_KEY, mutations)
 
-const refreshGantt = (facilityId: number) => {
-  currentFacilityId.value = 0
+const {facilityList} = globalState.value
+const {refreshFacilityList} = actions
+const {updateCurrentFacilityId} = mutations
+
+// たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
+const refreshGantt = async (facilityId: number) => {
+  updateCurrentFacilityId(0)
+  // facility紐づくデータを初期化する
+  await actions.refreshHolidayMap(facilityId)
+  await actions.refreshUnitMap(facilityId)
+  await actions.refreshOperationSettingMap(facilityId)
   nextTick(() => {
-    currentFacilityId.value = facilityId
+    updateCurrentFacilityId(facilityId)
   })
 }
 
-import GanttProxy from "@/components/GanttProxy.vue";
 </script>

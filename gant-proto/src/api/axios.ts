@@ -8,6 +8,7 @@ const configuration = new Configuration(param);
 const basePath = ""
 const axiosConfig: CreateAxiosDefaults = {
     baseURL: "http://localhost:8081",
+    // baseURL: "https://d1s0zfb8ghpffs.cloudfront.net",
     headers: {
         // 'Access-Control-Allow-Origin': '*',
         // 'Access-Control-Allow-Headers': '*',
