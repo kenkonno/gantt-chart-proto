@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi"
+	"os"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 	r = openapi.NewRouter(r)
 	r.LoadHTMLGlob("templates/*")
 	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8081")
+	r.Run(":" + os.Getenv("API_PORT"))
 }
 
 //func userInfoMiddleware() gin.HandlerFunc {
