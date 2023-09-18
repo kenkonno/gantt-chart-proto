@@ -6,17 +6,17 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">Name</label>
+      <label class="form-label" for="id">名称</label>
       <input class="form-control" type="text" name="name" id="name" v-model="process.name" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">CreatedAt</label>
+      <label class="form-label" for="id">作成日</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="process.created_at" :disabled="true">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">UpdatedAt</label>
+      <label class="form-label" for="id">更新日</label>
       <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="process.updated_at" :disabled="true">
     </div>
 

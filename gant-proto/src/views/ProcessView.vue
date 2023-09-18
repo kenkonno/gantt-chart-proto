@@ -11,7 +11,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="Process" @close-edit-modal="closeModalProxy">
+    <default-modal title="工程" @close-edit-modal="closeModalProxy">
       <async-process-edit :id="id" :order="list.length + 1" @close-edit-modal="closeModalProxy"></async-process-edit>
     </default-modal>
     <template #fallback>

@@ -56,12 +56,12 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">CreatedAt</label>
+      <label class="form-label" for="id">作成日</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="ticket.created_at" :disabled="true">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">UpdatedAt</label>
+      <label class="form-label" for="id">更新日</label>
       <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="ticket.updated_at" :disabled="true">
     </div>
 

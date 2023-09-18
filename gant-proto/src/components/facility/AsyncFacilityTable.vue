@@ -5,11 +5,11 @@
       <thead>
       <tr>
         <th>Id</th>
-        <th>Name</th>
-        <th>TermFrom</th>
-        <th>TermTo</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
+        <th>名称</th>
+        <th>開始日</th>
+        <th>終了日</th>
+        <th>作成日</th>
+        <th>更新日</th>
         <th>並び替え</th>
       </tr>
       </thead>
@@ -19,8 +19,8 @@
         <td>{{ item.name }}</td>
         <td>{{ item.term_from }}</td>
         <td>{{ item.term_to }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.updated_at }}</td>
+        <td>{{ $filters.dateFormat(item.created_at) }}</td>
+        <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
         <td>
           <a href="#" @click="$emit('moveUp', index)"><span class="material-symbols-outlined">arrow_upward</span></a>
           <a href="#" @click="$emit('moveDown', index)"><span class="material-symbols-outlined">arrow_downward</span></a>
