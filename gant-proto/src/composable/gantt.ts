@@ -1,18 +1,14 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {ref} from "vue";
+import {computed, inject, ref} from "vue";
 import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
-import {useProcessTable} from "@/composable/process";
 import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
-import {useUserTable} from "@/composable/user";
-import {useHolidayTable} from "@/composable/holiday";
-import {useOperationSettingTable} from "@/composable/operationSetting";
-import {useDepartmentTable} from "@/composable/department";
+import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 const format = ref("DD.MM.YYYY HH:mm")
 
@@ -44,6 +40,7 @@ type PileUpByDepartment = {
 
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
+
 // const BAR_DANGER_COLOR = "rgb(255 89 89);"
 
 
@@ -57,7 +54,11 @@ function getScheduledOperatingHours(operationSettings: OperationSetting[], row: 
     }, 0);
 }
 
-export async function useGantt(facilityId: number) {
+export async function useGantt() {
+    // injectはsetupと同期的に呼び出す必要あり
+    const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
+    const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
+
     const GanttHeader = ref<Header[]>([
         {name: "ユニット", visible: true},
         {name: "工程", visible: true},
@@ -72,23 +73,39 @@ export async function useGantt(facilityId: number) {
         {name: "進捗", visible: true},
         {name: "操作", visible: false},
     ])
-    const {facility} = await useFacility(facilityId)
+    const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
     const chartEnd = ref(dayjs(facility.value.term_to).format(format.value))
     const pileUpsByPerson = ref<PileUpByPerson[]>([])
     const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
 
+    const getUnitName = computed(() => (id: number) => {
+        return unitMap[currentFacilityId].find(v => v.id === id)!.name
+    })
+    const getDepartmentName = computed(() => (id: number) => {
+        return departmentList.find(v => v.id === id)!.name
+    })
+    const getProcessName = (id: number) => {
+        return processList.find(v => v.id === id)!.name
+    }
+    const getOperationList = () => {
+        return operationSettingMap[currentFacilityId]
+    }
+    const getHolidaysForGantt = () => {
+        return holidayMap[currentFacilityId].map(v => new Date(v.date))
+    }
+    const getHolidays = () => {
+        return holidayMap[currentFacilityId]
+    }
+    const getOperationSettings = () => {
+        return operationSettingMap[currentFacilityId]
+    }
+
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
     const {list: ticketList, refresh: ticketRefresh} = await useTicketTable()
     const {list: ticketUserList, refresh: ticketUserRefresh} = await useTicketUserTable()
-    const {list: processList} = await useProcessTable()
-    const {list: userList} = await useUserTable()
-    const processMap: { [x: number]: string; } = {}
-    processList.value.forEach(v => {
-        processMap[v.id!] = v.name
-    })
-    await ganttGroupRefresh(facilityId)
+    await ganttGroupRefresh(currentFacilityId)
     const ganttGroupIds = ganttGroupList.value.map(v => v.id!)
     await ticketRefresh(ganttGroupIds)
     const ticketIds = ticketList.value.map(v => v.id!)
@@ -129,7 +146,7 @@ export async function useGantt(facilityId: number) {
                 ganttBarConfig: {
                     hasHandles: true,
                     id: task.ticket?.id!.toString(),
-                    label: processMap[task.ticket?.process_id == null ? -1 : task.ticket?.process_id],
+                    label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
                     style: {backgroundColor: BAR_NORMAL_COLOR},
                     progress: task.ticket?.progress_percent,
                     progressColor: BAR_COMPLETE_COLOR
@@ -210,7 +227,7 @@ export async function useGantt(facilityId: number) {
     }
 
     const adjustBar = (bar: GanttBarObject) => {
-        // id をもとにvuejs側のデータも更新する
+        // id をもとに VueJs 側のデータも更新する
         const targetGanttGroup = ganttChartGroup.value.find(v => v.ganttGroup.id === bar.ganttGroupId)
         if (!targetGanttGroup) {
             console.error(`Unit ID: ${bar.ganttGroupId} が現在のガントに存在しません。`, ganttChartGroup)
@@ -238,7 +255,7 @@ export async function useGantt(facilityId: number) {
             if (ticket.progress_percent) {
                 targetTicket.ganttBarConfig.progress = ticket.progress_percent
             }
-            targetTicket.ganttBarConfig.label = processMap[ticket.process_id == null ? -1 : ticket.process_id]
+            targetTicket.ganttBarConfig.label = getProcessName(ticket.process_id == null ? -1 : ticket.process_id)
         }
     }
 
@@ -251,8 +268,6 @@ export async function useGantt(facilityId: number) {
      * 稼働予定時間ベースでスケジュールを引き直す。
      *
      * @param rows
-     * @param holidays
-     * @param operationSettings
      * 色々考えたけど難しい（答えがない）のでマジでシンプルに１行ずつ処理するようにする。
      *
      * 基本的な仕様
@@ -261,7 +276,9 @@ export async function useGantt(facilityId: number) {
      * ・稼働の消化は担当者の設定順とする。
      * とりあえず作らないと話にならないので一旦作る
      */
-    const setScheduleByPersonDay = (rows: GanttRow[], holidays: Holiday[], operationSettings: OperationSetting[]) => {
+    const setScheduleByPersonDay = (rows: GanttRow[]) => {
+        const holidays = getHolidays()
+        const operationSettings = getOperationList()
         let prevEndDate: Dayjs
         rows.forEach(row => {
             let startDate: Dayjs
@@ -306,14 +323,14 @@ export async function useGantt(facilityId: number) {
      * ※担当者が入っていたとしても人数は必ず入っているので、人数列で参照する。
      *
      * @param rows
-     * @param holidays
-     * @param operationSettings
      */
-    const setScheduleByFromTo = (rows: GanttRow[], holidays: Holiday[], operationSettings: OperationSetting[]) => {
+    const setScheduleByFromTo = (rows: GanttRow[]) => {
         // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
         // 担当者が未定の時に人数を計算する
         // 必要日数 = 工数 / 労働時間
         // 必要人数 = 必要日数 / 期間日数 の数値は上に寄せる
+        const holidays = getHolidays()
+        const operationSettings = getOperationList()
         let prevEndDate: Dayjs
         rows.forEach(row => {
             if (row.ticket && row.ticketUsers?.length == 0 &&
@@ -361,23 +378,16 @@ export async function useGantt(facilityId: number) {
         } else {
             refreshPileUpByPersonExclusive = true
         }
-        // TODO: DepartmentApiの呼び出し
-        // TODO: holidayAPIの呼び出し
-        // TODO: operationSettingsApiの呼び出し
-        const {list: holidayList} = await useHolidayTable(facilityId)
-        const {list: operationSettingList} = await useOperationSettingTable(facilityId)
-        const {list: departmentList} = await useDepartmentTable()
-
         pileUpsByPerson.value.length = 0
         pileUpsByDepartment.value.length = 0
         // 開始日・終了日は表示中の設備にする
         const duration = dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), 'day')
         // 全ユーザー分初期化する
-        userList.value.forEach(v => {
+        userList.forEach(v => {
             pileUpsByPerson.value.push({labels: Array(duration).fill(0), user: v})
         })
         // 部署ごとの初期化
-        departmentList.value.forEach(v => {
+        departmentList.forEach(v => {
             pileUpsByDepartment.value.push({departmentId: v.id!, users: Array(duration).fill([])})
         })
         // fillは同じオブジェクトを参照するため上書きする。
@@ -390,7 +400,7 @@ export async function useGantt(facilityId: number) {
         // 全てのチケットから積み上げを更新する
         ganttChartGroup.value.forEach(unit => {
             unit.rows.forEach(row => {
-                setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, holidayList.value, operationSettingList.value)
+                setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, getHolidays(), getOperationSettings())
             })
         })
         refreshPileUpByPersonExclusive = false
@@ -408,7 +418,7 @@ export async function useGantt(facilityId: number) {
      * @param holidays
      * @param operationSettings
      */
-    const setWorkHour = (pileUpsByPerson: PileUpByPerson[],pileUpByDepartment: PileUpByDepartment[],
+    const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
                          row: GanttRow,
                          facilityStartDate: string,
                          holidays: Holiday[],
@@ -440,7 +450,7 @@ export async function useGantt(facilityId: number) {
                 validIndexes.splice(i, 1)
             }
         })
-        const lastIndex = validIndexes[validIndexes.length -1]
+        const lastIndex = validIndexes[validIndexes.length - 1]
         // 対象の取得
         const ticketUserIds = row.ticketUsers?.map(v => v.user_id)
         const targets = pileUpsByPerson.filter(v => ticketUserIds.includes(v.user.id!))
@@ -455,16 +465,16 @@ export async function useGantt(facilityId: number) {
         // 対象部署を取得
         const departmentTarget = pileUpByDepartment.find(v => v.departmentId === row.ticket?.department_id)
         // 稼働時間を加算する。
-        validIndexes.forEach((validIndex, index) =>{
+        validIndexes.forEach((validIndex, index) => {
             targets.forEach((v, targetIndex) => {
-                if(estimate < 0) {
+                if (estimate < 0) {
                     return
                 }
                 // 最終行かつ最終の人で予定工数が余っていた場合は全て割り当てる。
-                if(index === (validIndexes.length - 1) && targetIndex === (targets.length -1)){
-                    if(estimate - workHour > 0) {
+                if (index === (validIndexes.length - 1) && targetIndex === (targets.length - 1)) {
+                    if (estimate - workHour > 0) {
                         v.labels[validIndex] += estimate
-                        if(departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
+                        if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
                             departmentTarget.users[validIndex].push(v.user.id!)
                         }
                         return
@@ -475,7 +485,7 @@ export async function useGantt(facilityId: number) {
                 } else {
                     v.labels[validIndex] += workHour
                 }
-                if(departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
+                if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
                     departmentTarget.users[validIndex].push(v.user.id!)
                 }
                 estimate -= workHour
@@ -506,6 +516,10 @@ export async function useGantt(facilityId: number) {
         ticketUserUpdate,
         updateOrder,
         refreshPileUpByPerson: refreshPileUps,
+        getUnitName,
+        getDepartmentName,
+        getOperationList,
+        getHolidaysForGantt
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="operationSettingList.length > 0" id="gantt-proxy-wrapper">
+  <div v-if="getOperationList().length > 0" id="gantt-proxy-wrapper">
     <div class="action-menu d-flex">
       <div class="wrapper d-flex">
         <div class="justify-middle">
@@ -58,7 +58,7 @@
             color-scheme="creamy"
 
             class="gantt-chart-body"
-            :highlighted-dates="holidays"
+            :highlighted-dates="getHolidaysForGantt()"
             sticky
         >
           <template #side-menu>
@@ -75,7 +75,7 @@
               <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
                 <tr v-for="(row, index) in item.rows" :key="row.ticket.id">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
-                  <gantt-td :visible="GanttHeader[0].visible">{{ unitMap[item.ganttGroup.unit_id] }}</gantt-td>
+                  <gantt-td :visible="GanttHeader[0].visible">{{ getUnitName(item.ganttGroup.unit_id) }}</gantt-td>
                   <gantt-td :visible="GanttHeader[1].visible">
                     <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
                       <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
@@ -122,7 +122,7 @@
                 <tr>
                   <td :colspan="GanttHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
-                        unitMap[item.ganttGroup.unit_id]
+                        getUnitName(item.ganttGroup.unit_id)
                       }}の工程を追加する
                     </button>
                   </td>
@@ -151,7 +151,7 @@
             :hide-timeaxis="true"
 
             class="gantt-chart-body"
-            :highlighted-dates="holidays"
+            :highlighted-dates="getHolidaysForGantt()"
             sticky
         >
           <template #side-menu>
@@ -164,7 +164,7 @@
 
               <tr v-for="item in pileUpsByDepartment" :key="item.departmentId">
                 <td class="side-menu-cell"></td><!-- css hack min-height -->
-                <gantt-td :visible="true">{{ departmentMap[item.departmentId] }}</gantt-td>
+                <gantt-td :visible="true">{{ getDepartmentName(item.departmentId) }}</gantt-td>
               </tr>
               </tbody>
             </table>
@@ -299,23 +299,20 @@
 <script setup lang="ts">
 import {GanttBarObject, GGanttChart, GGanttLabelRow, GGanttRow} from "@infectoone/vue-ganttastic";
 import {useGantt} from "@/composable/gantt";
-import {useUnitTable} from "@/composable/unit";
-import {useProcessTable} from "@/composable/process";
-import {useDepartmentTable} from "@/composable/department";
-import {useUserTable} from "@/composable/user";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
-import {useHolidayTable} from "@/composable/holiday";
-import {useOperationSettingTable} from "@/composable/operationSetting";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 type GanttProxyProps = {
   facilityId: number
 }
 
 const props = defineProps<GanttProxyProps>()
+const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
+const {userList, processList, departmentList, holidayMap, operationSettingMap} = inject(GLOBAL_STATE_KEY)!
 
 const {
   chartStart,
@@ -332,46 +329,26 @@ const {
   addNewTicket,
   updateTicket,
   ticketUserUpdate,
-  updateOrder
-} = await useGantt(props.facilityId)
+  updateOrder,
+  getUnitName,
+  getDepartmentName,
+  getOperationList,
+  getHolidaysForGantt
 
-const {list: unitList} = await useUnitTable(props.facilityId)
-const {list: processList} = await useProcessTable()
-const {list: departmentList} = await useDepartmentTable()
-const {list: userList} = await useUserTable()
-const {list: holidayList} = await useHolidayTable(props.facilityId)
-const {list: operationSettingList} = await useOperationSettingTable(props.facilityId)
-
-const holidays = holidayList.value.map(v => new Date(v.date))
+} = await useGantt()
 
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
-    setScheduleByPersonDay(v.rows, holidayList.value, operationSettingList.value)
+    // 多分ここの holidayMapとoperationSettingMap が引数になっているのが編
+    setScheduleByPersonDay(v.rows)
   })
 }
 
 const setScheduleByFromToProxy = () => {
   ganttChartGroup.value.forEach(v => {
-    setScheduleByFromTo(v.rows, holidayList.value, operationSettingList.value)
+    setScheduleByFromTo(v.rows)
   })
 }
-
-const unitMap: { [x: number]: string; } = {}
-unitList.value.forEach(v => {
-  unitMap[v.id!] = v.name
-})
-const processMap: { [x: number]: string; } = {}
-processList.value.forEach(v => {
-  processMap[v.id!] = v.name
-})
-const departmentMap: { [x: number]: string; } = {}
-departmentList.value.forEach(v => {
-  departmentMap[v.id!] = v.name
-})
-const userMap: { [x: number]: string; } = {}
-userList.value.forEach(v => {
-  userMap[v.id!] = v.name
-})
 
 // スクロールや大きさの同期系
 const ganttSideMenuElement = ref<HTMLDivElement>()

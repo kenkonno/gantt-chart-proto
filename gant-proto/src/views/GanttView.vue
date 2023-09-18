@@ -85,8 +85,12 @@ const {refreshFacilityList} = actions
 const {updateCurrentFacilityId} = mutations
 
 // たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
-const refreshGantt = (facilityId: number) => {
+const refreshGantt = async (facilityId: number) => {
   updateCurrentFacilityId(0)
+  // facility紐づくデータを初期化する
+  await actions.refreshHolidayMap(facilityId)
+  await actions.refreshUnitMap(facilityId)
+  await actions.refreshOperationSettingMap(facilityId)
   nextTick(() => {
     updateCurrentFacilityId(facilityId)
   })
