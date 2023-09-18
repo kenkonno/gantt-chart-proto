@@ -40,9 +40,6 @@ const options = props.userList.map(v => {
   return {value: v.id, label: v.name}
 })
 const value = props.ticketUser.map(v => v.user_id)
-const update = (value: any) => {
-  console.log(value)
-}
 
 const getBgColor = (value: number) => {
   const master = [

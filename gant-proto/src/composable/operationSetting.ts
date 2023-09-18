@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostOperationSettingsRequest, OperationSetting, Holiday} from "@/api";
+import {PostOperationSettingsRequest, OperationSetting} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 

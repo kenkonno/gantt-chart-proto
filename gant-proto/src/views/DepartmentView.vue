@@ -27,7 +27,6 @@ import AsyncDepartmentEdit from "@/components/department/AsyncDepartmentEdit.vue
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {useDepartmentTable} from "@/composable/department";
-import {useFacilityTable} from "@/composable/facility";
 
 const {list, refresh, updateOrder} = await useDepartmentTable()
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()

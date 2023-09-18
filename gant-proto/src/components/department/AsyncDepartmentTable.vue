@@ -36,7 +36,7 @@ interface AsyncDepartmentTable {
   list: Department[]
 }
 
-const props = defineProps<AsyncDepartmentTable>()
+defineProps<AsyncDepartmentTable>()
 
 </script>
 

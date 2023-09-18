@@ -33,7 +33,7 @@ import {useFacilityTable} from "@/composable/facility";
 
 const {list, refresh, updateOrder} = await useFacilityTable()
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
-const emit = defineEmits(["update"])
+defineEmits(["update"])
 const closeModalProxy = async () => {
   await refresh()
   closeEditModal()

@@ -13,7 +13,8 @@ module.exports = {
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off' // よろしくないことはわかっているが、今回の設計では頻発するため導入。
   },
   globals: {
     "defineProps": "readonly",

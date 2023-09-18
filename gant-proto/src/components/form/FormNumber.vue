@@ -13,7 +13,7 @@ interface FormNumber {
   disabled?: boolean
 }
 
-const props = withDefaults(defineProps<FormNumber>(), {disabled: false, modelValue: undefined})
+withDefaults(defineProps<FormNumber>(), {disabled: false, modelValue: undefined})
 defineEmits(['update:modelValue', 'change'])
 
 

@@ -22,16 +22,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
 
 interface DefaultModal {
   title: string
 }
 
-const props = defineProps<DefaultModal>()
+defineProps<DefaultModal>()
 defineEmits(['closeEditModal'])
 
-const open = ref(false)
 </script>
 
 <style scoped>

@@ -36,7 +36,7 @@ interface AsyncUnitTable {
   list: Unit[]
 }
 
-const props = defineProps<AsyncUnitTable>()
+defineProps<AsyncUnitTable>()
 
 </script>
 

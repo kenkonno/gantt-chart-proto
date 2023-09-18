@@ -33,7 +33,7 @@ interface AsyncHolidayTable {
   list: Holiday[]
 }
 
-const props = defineProps<AsyncHolidayTable>()
+defineProps<AsyncHolidayTable>()
 
 </script>
 

@@ -15,7 +15,7 @@ interface ModalWithLink {
   disabled?: boolean
 }
 
-const props = withDefaults(defineProps<ModalWithLink>(), {disabled: false})
+withDefaults(defineProps<ModalWithLink>(), {disabled: false})
 defineEmits(['closeEditModal'])
 
 const open = ref(false)
