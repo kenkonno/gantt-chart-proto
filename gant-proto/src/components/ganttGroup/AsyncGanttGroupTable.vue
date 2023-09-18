@@ -8,8 +8,8 @@
         <th>FacilityId</th>
         <th>UnitId</th>
         <th>Order</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
+        <th>作成日</th>
+        <th>更新日</th>
       </tr>
       </thead>
       <tbody>
@@ -18,8 +18,8 @@
         <td>{{ item.facility_id }}</td>
         <td>{{ item.unit_id }}</td>
         <td>{{ item.order }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.updated_at }}</td>
+        <td>{{ $filters.dateFormat(item.created_at) }}</td>
+        <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>
       </tbody>
     </table>

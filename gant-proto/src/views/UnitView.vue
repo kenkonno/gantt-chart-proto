@@ -11,7 +11,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="Unit" @close-edit-modal="closeModalProxy">
+    <default-modal title="ユニット" @close-edit-modal="closeModalProxy">
       <async-unit-edit :id="id" :order="list.length + 1" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-unit-edit>
     </default-modal>
     <template #fallback>

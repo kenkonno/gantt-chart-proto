@@ -9,7 +9,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="Ticket" @close-edit-modal="closeModalProxy">
+    <default-modal title="チケット" @close-edit-modal="closeModalProxy">
       <async-ticket-edit :id="id" @close-edit-modal="closeModalProxy"></async-ticket-edit>
     </default-modal>
     <template #fallback>

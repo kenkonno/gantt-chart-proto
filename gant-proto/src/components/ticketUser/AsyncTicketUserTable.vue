@@ -7,8 +7,8 @@
         <th>Id</th>
         <th>TicketId</th>
         <th>UserId</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
+        <th>作成日</th>
+        <th>更新日</th>
       </tr>
       </thead>
       <tbody>
@@ -16,8 +16,8 @@
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.ticket_id }}</td>
         <td>{{ item.user_id }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.updated_at }}</td>
+        <td>{{ $filters.dateFormat(item.created_at) }}</td>
+        <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>
       </tbody>
     </table>

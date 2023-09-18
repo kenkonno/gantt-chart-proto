@@ -15,8 +15,8 @@
         <th>EndDate</th>
         <th>ProgressPercent</th>
         <th>Order</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
+        <th>作成日</th>
+        <th>更新日</th>
       </tr>
       </thead>
       <tbody>
@@ -32,8 +32,8 @@
         <td>{{ item.end_date }}</td>
         <td>{{ item.progress_percent }}</td>
         <td>{{ item.order }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.updated_at }}</td>
+        <td>{{ $filters.dateFormat(item.created_at) }}</td>
+        <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>
       </tbody>
     </table>

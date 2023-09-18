@@ -11,7 +11,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="Department" @close-edit-modal="closeModalProxy">
+    <default-modal title="部署" @close-edit-modal="closeModalProxy">
       <async-department-edit :id="id" :order="list.length + 1"
                              @close-edit-modal="closeModalProxy"></async-department-edit>
     </default-modal>

@@ -5,19 +5,19 @@
       <thead>
       <tr>
         <th>Id</th>
-        <th>Name</th>
-        <th>Date</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
+        <th>名称</th>
+        <th>日付</th>
+        <th>作成日</th>
+        <th>更新日</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="item in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.name }}</td>
-        <td>{{ item.date }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.updated_at }}</td>
+        <td>{{ $filters.dateFormatYMD(item.date) }}</td>
+        <td>{{ $filters.dateFormat(item.created_at) }}</td>
+        <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>
       </tbody>
     </table>
