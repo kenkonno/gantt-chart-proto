@@ -6,29 +6,29 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">Name</label>
+      <label class="form-label" for="id">名称</label>
       <input class="form-control" type="text" name="name" id="name" v-model="facility.name" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">TermFrom</label>
+      <label class="form-label" for="id">開始日</label>
       <input class="form-control" type="date" name="termFrom" id="termFrom" v-model="facility.term_from"
              :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">TermTo</label>
+      <label class="form-label" for="id">終了日</label>
       <input class="form-control" type="date" name="termTo" id="termTo" v-model="facility.term_to" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">CreatedAt</label>
+      <label class="form-label" for="id">作成日</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="facility.created_at"
              :disabled="true">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">UpdatedAt</label>
+      <label class="form-label" for="id">更新日</label>
       <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="facility.updated_at"
              :disabled="true">
     </div>

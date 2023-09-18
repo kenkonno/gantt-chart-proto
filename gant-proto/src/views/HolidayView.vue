@@ -9,7 +9,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="Holiday" @close-edit-modal="closeModalProxy">
+    <default-modal title="祝日" @close-edit-modal="closeModalProxy">
       <async-holiday-edit :id="id" :facility-id="facilityId" @close-edit-modal="closeModalProxy"></async-holiday-edit>
     </default-modal>
     <template #fallback>

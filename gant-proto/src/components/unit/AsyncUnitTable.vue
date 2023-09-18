@@ -5,9 +5,9 @@
       <thead>
       <tr>
         <th>Id</th>
-        <th>Name</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
+        <th>名称</th>
+        <th>作成日</th>
+        <th>更新日</th>
         <th>並び替え</th>
       </tr>
       </thead>
@@ -15,8 +15,8 @@
       <tr v-for="(item, index) in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.name }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.updated_at }}</td>
+        <td>{{ $filters.dateFormat(item.created_at) }}</td>
+        <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
         <td>
           <a href="#" @click="$emit('moveUp', index)"><span class="material-symbols-outlined">arrow_upward</span></a>
           <a href="#" @click="$emit('moveDown', index)"><span class="material-symbols-outlined">arrow_downward</span></a>

@@ -4,7 +4,7 @@
       <thead>
       <tr>
         <th>Id</th>
-        <th>Unit</th>
+        <th>ユニット名</th>
         <th v-for="item in processList" :key="item.id">
           {{ item.name }}
         </th>

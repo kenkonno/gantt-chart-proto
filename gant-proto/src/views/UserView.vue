@@ -9,7 +9,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="User" @close-edit-modal="closeModalProxy">
+    <default-modal title="担当者" @close-edit-modal="closeModalProxy">
       <async-user-edit :id="id" @close-edit-modal="closeModalProxy"></async-user-edit>
     </default-modal>
     <template #fallback>

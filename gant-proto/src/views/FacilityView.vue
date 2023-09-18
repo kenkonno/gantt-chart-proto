@@ -11,7 +11,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="Facility" @close-edit-modal="closeModalProxy">
+    <default-modal title="設備" @close-edit-modal="closeModalProxy">
       <async-facility-edit :id="id" :order="list.length + 1"
                            @close-edit-modal="closeModalProxy"
                            @update="$emit('update')">
