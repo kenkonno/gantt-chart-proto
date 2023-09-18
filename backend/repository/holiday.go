@@ -71,8 +71,8 @@ func (r *holidayRepository) InsertByFacilityId(facilityId int32) []db.Holiday {
 											  (SELECT term_to FROM facilities WHERE id = %d), '1 days') as date
 						 WHERE extract(dow FROM date) IN (6, 0))
 	INSERT
-	INTO holidays (name, date, created_at, facility_id)
-	SELECT youbi, date, now(), %d
+	INTO holidays (name, date, created_at, facility_id, updated_at)
+	SELECT youbi, date, now(), %d, EXTRACT(EPOCH FROM now())
 	FROM date_master
 	`, facilityId, facilityId, facilityId)).Scan(&results)
 	return results
