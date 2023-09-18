@@ -5,7 +5,7 @@ version: '3'
 services:
 
   # postgres サービス
-  postgres:
+  gantt_postgres:
     # コンテナの名前
     container_name: gantt_postgres
     # Dockerfile のディレクトリパス
@@ -21,7 +21,7 @@ services:
   #      - ./docker/postgres/init/:/docker-entrypoint-initdb.d/
 
     # golang アプリケーション
-  api:
+  gantt_api:
     container_name: gantt_api
     ports:
       - "8081:8081"
@@ -42,7 +42,7 @@ services:
     command: CompileDaemon -command="./api" -include="*.go" -polling
 
   # golang   batch
-  batch:
+  gantt_batch:
     container_name: gantt_batch
     # postgres をビルドした後に app をビルド
 #    depends_on:
@@ -59,7 +59,7 @@ services:
     tty:
       true
 
-  migration:
+  gantt_migration:
     container_name: gantt_migration
     build:
       context: .
