@@ -17,8 +17,8 @@
       <tr v-for="(item, index) in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.name }}</td>
-        <td>{{ item.term_from }}</td>
-        <td>{{ item.term_to }}</td>
+        <td>{{ $filters.dateFormatYMD(item.term_from) }}</td>
+        <td>{{ $filters.dateFormatYMD(item.term_to) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
         <td>

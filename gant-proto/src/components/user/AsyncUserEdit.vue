@@ -6,15 +6,21 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">部署</label>
-      <select class="form-control" v-model="user.department_id">
-        <option v-for="item in departmentList" :value="item.id" :key="item.id">{{item.name}}</option>
+      <label class="form-label" for="department_id">部署</label>
+      <select class="form-control" v-model="user.department_id" name="department_id">
+        <option v-for="item in departmentList" :value="item.id" :key="item.id">{{ item.name }}</option>
       </select>
     </div>
 
     <div class="mb-2">
       <label class="form-label" for="id">氏名</label>
       <input class="form-control" type="text" name="name" id="name" v-model="user.name" :disabled="false">
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label" for="limit_of_operation">稼働上限</label>
+      <input class="form-control" type="number" name="limit_of_operation" step="0.1" id="limit_of_operation"
+             v-model="user.limit_of_operation" :disabled="false">
     </div>
 
     <div class="mb-2">
@@ -29,12 +35,14 @@
 
     <div class="mb-2">
       <label class="form-label" for="id">作成日</label>
-      <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="user.created_at" :disabled="true">
+      <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="user.created_at"
+             :disabled="true">
     </div>
 
     <div class="mb-2">
       <label class="form-label" for="id">更新日</label>
-      <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="user.updated_at" :disabled="true">
+      <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="user.updated_at"
+             :disabled="true">
     </div>
 
     <template v-if="id == null">
@@ -55,6 +63,7 @@ import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 interface AsyncUserEdit {
   id: number | undefined
 }
+
 const {departmentList} = inject(GLOBAL_STATE_KEY)!
 const getDepartmentName = (id: number) => {
   return departmentList.find(v => v.id === id)?.name

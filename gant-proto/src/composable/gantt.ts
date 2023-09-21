@@ -80,13 +80,13 @@ export async function useGantt() {
     const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
 
     const getUnitName = computed(() => (id: number) => {
-        return unitMap[currentFacilityId].find(v => v.id === id)!.name
+        return unitMap[currentFacilityId].find(v => v.id === id)?.name
     })
     const getDepartmentName = computed(() => (id: number) => {
-        return departmentList.find(v => v.id === id)!.name
+        return departmentList.find(v => v.id === id)?.name
     })
     const getProcessName = (id: number) => {
-        return processList.find(v => v.id === id)!.name
+        return processList.find(v => v.id === id)?.name
     }
     const getOperationList = () => {
         return operationSettingMap[currentFacilityId]
@@ -183,6 +183,15 @@ export async function useGantt() {
             return []
         }
         return userList.filter(v => v.department_id === departmentId)
+    }
+
+    const deleteTicket = async (ticket: Ticket) => {
+        // TODO: confirmを作る
+        await Api.deleteTicketsId(ticket.id!)
+        // チケット情報をリフレッシュする
+        await ticketRefresh(ganttGroupIds)
+        refreshLocalGantt()
+        refreshBars()
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -298,8 +307,8 @@ export async function useGantt() {
         let prevEndDate: Dayjs
         rows.forEach(row => {
             let startDate: Dayjs
-            // 開始日・工数・担当者が未設定の場合はスキップする
-            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length) {
+            // 開始日・工数・工程・担当者が未設定の場合はスキップする
+            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length || !row.ticket?.process_id ) {
                 if (row.ticket?.end_date != null) {
                     prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
                 }
@@ -351,17 +360,19 @@ export async function useGantt() {
         rows.forEach(row => {
             if (row.ticket && row.ticketUsers?.length == 0 &&
                 row.ticket?.estimate && row.ticket?.estimate > 0 &&
+                row.ticket?.process_id && row.ticket?.process_id > 0 &&
                 row.ticket?.start_date && row.ticket?.end_date) {
                 // 日後の処理
                 if (row.ticket.days_after != null && row.ticket.days_after >= 0 && prevEndDate != null) {
                     // 現在設定されている営業日を計算する
                     let dayjsStartDate = dayjs(row.ticket.start_date)
                     let dayjsEndDate = dayjs(row.ticket.end_date)
-                    const requiredNumberOfBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
+                    const numberOfRequiredBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
                     // 開始日を日後分ずらした日付に設定する
                     dayjsStartDate = prevEndDate.add(row.ticket.days_after, 'days')
                     // 終了日を設定されている営業日分確保する
-                    dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, requiredNumberOfBusinessDays, holidays)
+                    dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, numberOfRequiredBusinessDays, holidays)
+                    console.log("##############", numberOfRequiredBusinessDays)
                     // チケットに反映させる
                     row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(format.value))
                     row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(format.value))
@@ -370,6 +381,7 @@ export async function useGantt() {
                 // 工数(h)
                 const estimate = row.ticket.estimate
                 // 労働予定時間 ユニット & 工程 に紐づく稼働予定時間を取得
+                console.log(operationSettings)
                 const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row)
                 // 必要日数
                 const requiredNumberOfDays = estimate / scheduledOperatingHours
@@ -424,7 +436,7 @@ export async function useGantt() {
 
     /**
      * 人の積み上げを行う。
-     * 有効な期間から予定稼働時間をハメていく。
+     * 工数 / 営業日 / 人数 で均等に分配する
      * 期間が十分でない場合は最後の人に全て割り当てる。
      * 期間が十分で余りが出る場合は稼働予定が少ない順、チケットに割り当て順で積み上げる。
      * @param pileUpsByPerson
@@ -449,7 +461,9 @@ export async function useGantt() {
         const dayjsEndDate = dayjs(row.ticket?.end_date)
         const startIndex = getIndexByDate(dayjsFacilityStartDate, dayjsStartDate)
         const endIndex = getIndexByDate(dayjsFacilityStartDate, dayjsEndDate)
-        const workHour = getScheduledOperatingHours(operationSettings, row)
+        // 営業日の取得
+        const numberOfBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
+        const workHour = row.ticket?.estimate / numberOfBusinessDays / row.ticketUsers.length
         let estimate = row.ticket?.estimate
         const holidayIndexes = holidays.filter(v => {
             return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
@@ -524,6 +538,9 @@ export async function useGantt() {
         pileUpsByDepartment,
         format,
         GanttHeader,
+        getUnitName,
+        getDepartmentName,
+        facility,
         setScheduleByPersonDay,
         setScheduleByFromTo,
         adjustBar,
@@ -532,12 +549,11 @@ export async function useGantt() {
         ticketUserUpdate,
         updateOrder,
         refreshPileUpByPerson: refreshPileUps,
-        getUnitName,
-        getDepartmentName,
         getOperationList,
         getHolidaysForGantt,
         updateDepartment,
-        getUserList
+        getUserList,
+        deleteTicket,
     }
 }
 
@@ -609,7 +625,7 @@ const getNumberOfBusinessDays = (startDate: Dayjs, endDate: Dayjs, holidays: Hol
         const dayjsHoliday = dayjs(holiday.date)
         return dayBetween(dayjsHoliday, startDate, endDate)
     })
-    return result + includes.length
+    return result - includes.length
 }
 
 const getEndDateByRequiredBusinessDay = (startDate: Dayjs, requiredNumberOfBusinessDays: number, holidays: Holiday[]) => {

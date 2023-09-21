@@ -66,6 +66,12 @@
               <thead class="side-menu-header">
               <tr>
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
+                <th :colspan="GanttHeader.length">
+                  「{{ facility.name }}」のスケジュール：{{facility.term_from}}～{{facility.term_to}}
+                </th>
+              </tr>
+              <tr>
+                <th class="side-menu-cell"></th><!-- css hack min-height -->
                 <th v-for="item in GanttHeader" :key="item" class="side-menu-cell" :class="{'d-none': !item.visible}">
                   {{ item.name }}
                 </th>
@@ -117,6 +123,7 @@
                   <gantt-td :visible="GanttHeader[11].visible">
                     <a href="#" @click="updateOrder(item.rows,index, -1)"><span class="material-symbols-outlined">arrow_upward</span></a>
                     <a href="#" @click="updateOrder(item.rows, index,1)"><span class="material-symbols-outlined">arrow_downward</span></a>
+                    <a href="#" @click="deleteTicket(row.ticket)"><span class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
                 <tr>
@@ -170,7 +177,7 @@
             </table>
           </template>
           <g-gantt-label-row v-for="item in pileUpsByPerson" :key="item.user.id"
-                             :labels="item.labels.map(v => v === 0 ? '' : v.toString())"></g-gantt-label-row>
+                             :labels="item.labels.map(v => v === 0 ? '' : round(v).toString())"></g-gantt-label-row>
           <g-gantt-label-row v-for="item in pileUpsByDepartment" :key="item.departmentId"
                              :labels="item.users.map(v => v.length === 0 ? '' : v.length.toString())"></g-gantt-label-row>
         </g-gantt-chart>
@@ -269,13 +276,16 @@
     border: none;
   }
 
+  .side-menu-header > tr {
+    height: 37.5px;
+  }
   .side-menu-header > tr > th:first-child {
     border: none;
     display: block;
     float: left;
     content: "";
-    min-height: 75px;
-    height: 8vh;
+    min-height: 37.5px;
+    height: 4vh;
   }
 
   .small-numeric {
@@ -305,14 +315,14 @@ import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHoriz
 import GanttTd from "@/components/gantt/GanttTd.vue";
 import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {round} from "@/utils/math";
 
 type GanttProxyProps = {
   facilityId: number
 }
 
 const props = defineProps<GanttProxyProps>()
-const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
-const {userList, processList, departmentList, holidayMap, operationSettingMap} = inject(GLOBAL_STATE_KEY)!
+const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
 
 const {
   chartStart,
@@ -323,6 +333,9 @@ const {
   GanttHeader,
   pileUpsByPerson,
   pileUpsByDepartment,
+  getUnitName,
+  getDepartmentName,
+  facility,
   setScheduleByPersonDay,
   setScheduleByFromTo,
   adjustBar,
@@ -330,12 +343,11 @@ const {
   updateTicket,
   ticketUserUpdate,
   updateOrder,
-  getUnitName,
-  getDepartmentName,
   getOperationList,
   getHolidaysForGantt,
   updateDepartment,
-  getUserList
+  getUserList,
+  deleteTicket
 
 } = await useGantt()
 
