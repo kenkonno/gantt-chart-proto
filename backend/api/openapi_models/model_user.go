@@ -13,10 +13,10 @@ import (
 	"time"
 )
 
-// User - 
 type User struct {
-
 	Id *int32 `json:"id,omitempty"`
+
+	DepartmentId int32 `json:"department_id,omitempty"`
 
 	Name string `json:"name" binding:"min=1"`
 

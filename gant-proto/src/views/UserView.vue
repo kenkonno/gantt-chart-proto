@@ -27,7 +27,8 @@ import {inject} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 const {userList} = inject(GLOBAL_STATE_KEY)!
-const {refreshUserList} = inject(GLOBAL_ACTION_KEY)!
+const {refreshUserList, refreshDepartmentList} = inject(GLOBAL_ACTION_KEY)!
+await refreshDepartmentList()
 
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])

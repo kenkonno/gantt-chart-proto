@@ -31,6 +31,7 @@ export async function useUser(userId?: number) {
         const {data} = await Api.getUsersId(userId)
         if (data.user != undefined) {
             user.value.id = data.user.id
+            user.value.department_id = data.user.department_id
             user.value.name = data.user.name
             user.value.password = data.user.password
             user.value.email = data.user.email

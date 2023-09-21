@@ -5,7 +5,8 @@
       <thead>
       <tr>
         <th>Id</th>
-        <th>名称</th>
+        <th>部署</th>
+        <th>氏名</th>
         <th v-if="false">Password</th>
         <th>Email</th>
         <th>作成日</th>
@@ -15,6 +16,7 @@
       <tbody>
       <tr v-for="item in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
+        <td>{{ getDepartmentName(item.department_id) }}</td>
         <td>{{ item.name }}</td>
         <td v-if="false">{{ item.password }}</td>
         <td>{{ item.email }}</td>
@@ -28,8 +30,14 @@
 
 <script setup lang="ts">
 import {User} from "@/api";
+import {inject} from "vue";
+import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 defineEmits(['openEditModal'])
+const {departmentList} = inject(GLOBAL_STATE_KEY)!
+const getDepartmentName = (id: number) => {
+  return departmentList.find(v => v.id === id)?.name
+}
 
 interface AsyncUserTable {
   list: User[]

@@ -1,7 +1,7 @@
 import {DefaultApiFactory} from "@/api/api";
 import axios, {CreateAxiosDefaults} from "axios";
 import {Configuration, ConfigurationParameters} from "@/api/configuration";
-import { toast } from 'vue3-toastify';
+import {toast} from 'vue3-toastify';
 
 const param: ConfigurationParameters = {}
 const configuration = new Configuration(param);

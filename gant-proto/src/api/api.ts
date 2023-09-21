@@ -1636,6 +1636,12 @@ export interface User {
     'id'?: number | null;
     /**
      * 
+     * @type {number}
+     * @memberof User
+     */
+    'department_id'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof User
      */

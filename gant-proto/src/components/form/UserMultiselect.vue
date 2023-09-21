@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import Multiselect from '@vueform/multiselect'
 import {TicketUser, User} from "@/api";
+import {computed} from "vue";
 
 interface UserMultiselect {
   ticketUser: TicketUser[]
@@ -36,10 +37,10 @@ interface UserMultiselect {
 const props = defineProps<UserMultiselect>()
 defineEmits(['update:modelValue', 'change'])
 
-const options = props.userList.map(v => {
+const options = computed(() => props.userList.map(v => {
   return {value: v.id, label: v.name}
-})
-const value = props.ticketUser.map(v => v.user_id)
+}))
+const value = computed(() => props.ticketUser.map(v => v.user_id))
 
 const getBgColor = (value: number) => {
   const master = [
@@ -72,13 +73,16 @@ const getBgColor = (value: number) => {
   min-height: 26px !important;
   font-size: 10pt;
 }
+
 .multiselect-option {
   padding: 2px;
   font-size: 10pt;
 }
-.multiselect-tags{
+
+.multiselect-tags {
   margin: 0;
 }
+
 .multiselect-tag {
   width: 24px;
   height: 24px;
