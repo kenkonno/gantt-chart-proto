@@ -6,7 +6,14 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">名称</label>
+      <label class="form-label" for="id">部署</label>
+      <select class="form-control" v-model="user.department_id">
+        <option v-for="item in departmentList" :value="item.id" :key="item.id">{{item.name}}</option>
+      </select>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label" for="id">氏名</label>
       <input class="form-control" type="text" name="name" id="name" v-model="user.name" :disabled="false">
     </div>
 
@@ -42,9 +49,15 @@
 
 <script setup lang="ts">
 import {useUser, postUserById, postUser, deleteUserById} from "@/composable/user";
+import {inject} from "vue";
+import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 interface AsyncUserEdit {
   id: number | undefined
+}
+const {departmentList} = inject(GLOBAL_STATE_KEY)!
+const getDepartmentName = (id: number) => {
+  return departmentList.find(v => v.id === id)?.name
 }
 
 const props = defineProps<AsyncUserEdit>()

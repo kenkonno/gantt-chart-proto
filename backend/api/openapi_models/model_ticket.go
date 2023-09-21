@@ -37,7 +37,7 @@ type Ticket struct {
 
 	ProgressPercent *int32 `json:"progress_percent,omitempty"`
 
-	Order int32 `json:"order" binding:"min=0"`
+	Order int32 `json:"order"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 

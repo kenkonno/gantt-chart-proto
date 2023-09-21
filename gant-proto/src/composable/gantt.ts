@@ -62,7 +62,7 @@ export async function useGantt() {
     const GanttHeader = ref<Header[]>([
         {name: "ユニット", visible: true},
         {name: "工程", visible: true},
-        {name: "部署", visible: false},
+        {name: "部署", visible: true},
         {name: "担当者", visible: true},
         {name: "人数", visible: false},
         {name: "期日", visible: false},
@@ -167,6 +167,22 @@ export async function useGantt() {
             v.ticket!.order = ganttRows.indexOf(v)
             await updateTicket(v.ticket!)
         }
+    }
+
+    // 部署の変更。
+    const updateDepartment = async (ticket: Ticket) => {
+        // 担当者をすべて外す。
+        const ticketUsers = ticketUserList.value.filter(v => v.ticket_id === ticket.id)
+        if (ticketUsers != null) {
+            ticketUsers.length = 0
+        }
+        await ticketUserUpdate(ticket, [])
+    }
+    const getUserList = (departmentId?: number) => {
+        if (departmentId == null) {
+            return []
+        }
+        return userList.filter(v => v.department_id === departmentId)
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -519,7 +535,9 @@ export async function useGantt() {
         getUnitName,
         getDepartmentName,
         getOperationList,
-        getHolidaysForGantt
+        getHolidaysForGantt,
+        updateDepartment,
+        getUserList
     }
 }
 

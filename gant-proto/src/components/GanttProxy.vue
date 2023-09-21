@@ -82,12 +82,12 @@
                     </select>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[2].visible">
-                    <select v-model="row.ticket.department_id" @change="updateTicket(row.ticket)">
+                    <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)">
                       <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[3].visible" style="min-width: 8rem;">
-                    <UserMultiselect :userList="userList" :ticketUser="row.ticketUsers"
+                    <UserMultiselect :userList="getUserList(row.ticket.department_id)" :ticketUser="row.ticketUsers"
                                      @update:modelValue="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[4].visible">
@@ -333,7 +333,9 @@ const {
   getUnitName,
   getDepartmentName,
   getOperationList,
-  getHolidaysForGantt
+  getHolidaysForGantt,
+  updateDepartment,
+  getUserList
 
 } = await useGantt()
 
