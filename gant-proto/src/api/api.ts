@@ -1639,7 +1639,13 @@ export interface User {
      * @type {number}
      * @memberof User
      */
-    'department_id'?: number;
+    'department_id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof User
+     */
+    'limit_of_operation': number;
     /**
      * 
      * @type {string}

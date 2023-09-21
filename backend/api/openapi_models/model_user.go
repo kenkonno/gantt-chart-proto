@@ -16,7 +16,9 @@ import (
 type User struct {
 	Id *int32 `json:"id,omitempty"`
 
-	DepartmentId int32 `json:"department_id,omitempty"`
+	DepartmentId int32 `json:"department_id"`
+
+	LimitOfOperation float32 `json:"limit_of_operation"`
 
 	Name string `json:"name" binding:"min=1"`
 

@@ -7,6 +7,7 @@
         <th>Id</th>
         <th>部署</th>
         <th>氏名</th>
+        <th>稼働上限</th>
         <th v-if="false">Password</th>
         <th>Email</th>
         <th>作成日</th>
@@ -18,6 +19,7 @@
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ getDepartmentName(item.department_id) }}</td>
         <td>{{ item.name }}</td>
+        <td>{{ item.limit_of_operation }}</td>
         <td v-if="false">{{ item.password }}</td>
         <td>{{ item.email }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>

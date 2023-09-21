@@ -3,7 +3,7 @@
     <div>
       <b>全体設定</b>
       <ModalWithLink title="設備一覧">
-        <facility-view @update="refreshFacilityList"></facility-view>
+        <facility-view @update="refreshFacilityList(); refreshGantt(globalState.currentFacilityId)"></facility-view>
       </ModalWithLink>
       <ModalWithLink title="工程一覧">
         <process-view></process-view>
