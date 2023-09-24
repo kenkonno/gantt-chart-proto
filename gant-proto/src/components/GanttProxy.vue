@@ -31,6 +31,20 @@
           </div>
         </template>
       </AccordionHorizontal>
+      <div class="d-flex justify-middle">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="displayType" id="byDay" v-model="displayType" value="day">
+          <label class="form-check-label" for="byDay">
+            日毎
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="displayType" id="byWeek" v-model="displayType" value="week">
+          <label class="form-check-label" for="byWeek">
+            週次
+          </label>
+        </div>
+      </div>
     </div>
 
     <!--  <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">-->
@@ -39,10 +53,10 @@
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
-            precision="day"
+            :precision="displayType"
             :row-height="40"
             grid
-            width="1800px"
+            :width="getGanttChartWidth"
             bar-start="beginDate"
             bar-end="endDate"
             :date-format="format"
@@ -57,8 +71,7 @@
             @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
             color-scheme="creamy"
 
-            class="gantt-chart-body"
-            :highlighted-dates="getHolidaysForGantt()"
+            :highlighted-dates="getHolidaysForGantt"
             sticky
         >
           <template #side-menu>
@@ -147,18 +160,17 @@
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
-            precision="day"
+            :precision="displayType"
             :row-height="40"
             grid
-            width="1800px"
+            :width="getGanttChartWidth"
             bar-start="beginDate"
             bar-end="endDate"
             :date-format="format"
             color-scheme="creamy"
             :hide-timeaxis="true"
 
-            class="gantt-chart-body"
-            :highlighted-dates="getHolidaysForGantt()"
+            :highlighted-dates="getHolidaysForGantt"
             sticky
         >
           <template #side-menu>
@@ -247,12 +259,6 @@
   overflow-x: scroll;
 }
 
-.gantt-chart-body {
-  height: 100%;
-  margin-top: -30px;
-  padding-top: 30px;
-}
-
 .side-menu {
   white-space: nowrap;
   text-align: center;
@@ -336,6 +342,8 @@ const {
   getUnitName,
   getDepartmentName,
   facility,
+  getGanttChartWidth,
+  displayType,
   setScheduleByPersonDay,
   setScheduleByFromTo,
   adjustBar,
@@ -347,13 +355,12 @@ const {
   getHolidaysForGantt,
   updateDepartment,
   getUserList,
-  deleteTicket
+  deleteTicket,
 
 } = await useGantt()
 
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
-    // 多分ここの holidayMapとoperationSettingMap が引数になっているのが編
     setScheduleByPersonDay(v.rows)
   })
 }
