@@ -1,6 +1,6 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {computed, inject, ref} from "vue";
+import {computed, inject, ref, watch} from "vue";
 import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
@@ -73,11 +73,16 @@ export async function useGantt() {
         {name: "進捗", visible: true},
         {name: "操作", visible: false},
     ])
+    const displayType = ref<"day" | "week" | "hour" | "month">("week")
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
     const chartEnd = ref(dayjs(facility.value.term_to).format(format.value))
     const pileUpsByPerson = ref<PileUpByPerson[]>([])
     const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
+    watch(displayType, () => {
+        refreshPileUps() // TODO: 本当はwatchでやるのは良くないかも。
+    })
+
 
     const getUnitName = computed(() => (id: number) => {
         return unitMap[currentFacilityId].find(v => v.id === id)?.name
@@ -91,15 +96,23 @@ export async function useGantt() {
     const getOperationList = () => {
         return operationSettingMap[currentFacilityId]
     }
-    const getHolidaysForGantt = () => {
-        return holidayMap[currentFacilityId].map(v => new Date(v.date))
-    }
+    const getHolidaysForGantt = computed(() => {
+        if (displayType.value === "day") {
+            return holidayMap[currentFacilityId].map(v => new Date(v.date))
+        } else {
+            return []
+        }
+    })
     const getHolidays = () => {
         return holidayMap[currentFacilityId]
     }
     const getOperationSettings = () => {
         return operationSettingMap[currentFacilityId]
     }
+    const getGanttChartWidth = computed<string>(() => {
+        // 1日30pxとして計算する
+        return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType.value) + 1) * 30 + "px"
+    })
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -308,7 +321,7 @@ export async function useGantt() {
         rows.forEach(row => {
             let startDate: Dayjs
             // 開始日・工数・工程・担当者が未設定の場合はスキップする
-            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length || !row.ticket?.process_id ) {
+            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length || !row.ticket?.process_id) {
                 if (row.ticket?.end_date != null) {
                     prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
                 }
@@ -428,9 +441,12 @@ export async function useGantt() {
         // 全てのチケットから積み上げを更新する
         ganttChartGroup.value.forEach(unit => {
             unit.rows.forEach(row => {
-                setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, getHolidays(), getOperationSettings())
+                setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, getHolidays())
             })
         })
+        if (displayType.value === "week") {
+            aggregatePileUpsByWeek(facility.value.term_from, facility.value.term_to, pileUpsByPerson.value, pileUpsByDepartment.value)
+        }
         refreshPileUpByPersonExclusive = false
     }
 
@@ -449,8 +465,7 @@ export async function useGantt() {
     const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
                          row: GanttRow,
                          facilityStartDate: string,
-                         holidays: Holiday[],
-                         operationSettings: OperationSetting[]) => {
+                         holidays: Holiday[]) => {
         // validation
         if (row.ticket?.start_date == null || row.ticket?.end_date == null || row.ticket.estimate == null ||
             (row.ticketUsers == null || row.ticketUsers?.length <= 0)) {
@@ -526,6 +541,56 @@ export async function useGantt() {
     const getIndexByDate = (facilityStartDate: Dayjs, date: Dayjs) => {
         return date.diff(facilityStartDate, 'days')
     }
+    const aggregatePileUpsByWeek = (term_from: string, term_to: string, pileUpsByPerson: PileUpByPerson[], pileUpsByDepartment: PileUpByDepartment[]) => {
+        // 日毎で計算された結果を週ごとに集約する。
+        // 集約元のIndexと集約先のIndexをマッピングする
+        const dayjsEndDate = dayjs(term_to)
+        let currentDate = dayjs(term_from)
+        let currentStartOfWeek = dayjs(term_from).startOf("week")
+        let currentWeekIndex = 0
+        let currentDayIndex = 0
+        const indexMap: {[index:number]:number[]} = {}
+        while(currentDate.isBefore(dayjsEndDate)) {
+            // 週が異なっていれば次の週とする
+            if(!currentStartOfWeek.isSame(currentDate.startOf("week"))) {
+                currentWeekIndex++
+                currentStartOfWeek = currentDate.startOf("week")
+            }
+            // 週のマップがなければ初期化
+            if(indexMap[currentWeekIndex] == null) {
+                indexMap[currentWeekIndex] = []
+            }
+            // その週に紐づく日付のindexを追加する
+            indexMap[currentWeekIndex].push(currentDayIndex)
+            // シーケンスを進める
+            currentDate = currentDate.add(1, "day")
+            currentDayIndex++
+        }
+        pileUpsByPerson.forEach(v => {
+            const labelsByDay = v.labels.concat()
+            v.labels.length = 0
+            for (const key in indexMap) {
+                v.labels.push(indexMap[key].reduce((p,c) => {
+                    return p + labelsByDay[c]
+                }, 0))
+            }
+        })
+        pileUpsByDepartment.forEach(v => {
+            // ユーザーを集約する
+            const usersByDay = v.users.concat()
+            v.users.length = 0
+            for (const key in indexMap) {
+                const r: number[] = []
+                indexMap[key].forEach(v => {
+                    r.push(...usersByDay[v])
+                })
+                // unique
+                v.users.push(Array.from(new Set(r)))
+            }
+        })
+
+    }
+
     await refreshPileUps()
 
 
@@ -541,6 +606,7 @@ export async function useGantt() {
         getUnitName,
         getDepartmentName,
         facility,
+        displayType,
         setScheduleByPersonDay,
         setScheduleByFromTo,
         adjustBar,
@@ -548,12 +614,13 @@ export async function useGantt() {
         updateTicket,
         ticketUserUpdate,
         updateOrder,
-        refreshPileUpByPerson: refreshPileUps,
+        refreshPileUps,
         getOperationList,
         getHolidaysForGantt,
         updateDepartment,
         getUserList,
         deleteTicket,
+        getGanttChartWidth,
     }
 }
 

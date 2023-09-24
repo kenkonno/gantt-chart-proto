@@ -9,6 +9,12 @@ import router from './router'
 import ganttastic from '@infectoone/vue-ganttastic'
 import {dateFormat, dateFormatYMD, unixTimeFormat} from "@/utils/filters";
 
+import dayjs from "dayjs";
+import 'dayjs/locale/ja'
+// locale & 月曜日始まり対応
+dayjs.locale('ja')
+dayjs.Ls.ja.weekStart=1
+
 const app = createApp(App)
 app.config.globalProperties.$filters = {
     dateFormat: dateFormat,
