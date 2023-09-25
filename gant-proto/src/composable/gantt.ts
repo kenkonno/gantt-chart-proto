@@ -1,6 +1,6 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {computed, inject, ref, watch} from "vue";
+import {computed, inject, ref, StyleValue, watch} from "vue";
 import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
@@ -9,6 +9,7 @@ import {useTicketUserTable} from "@/composable/ticketUser";
 import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {round} from "@/utils/math";
 
 const format = ref("DD.MM.YYYY HH:mm")
 
@@ -32,16 +33,32 @@ type Header = {
 type PileUpByPerson = {
     user: User,
     labels: number[],
+    // styles: StyleValue[]
+    styles: any[],
+    hasError: boolean
 }
 type PileUpByDepartment = {
     departmentId: number,
     users: number[][],
+    styles: any[],
+    hasError: boolean
+}
+
+type PileUpFilter = {
+    departmentId: number,
+    displayUsers: boolean,
+}
+
+type DisplayPileUp = {
+    labels: string[],
+    // styles?: StyleValue[], TODO: なぜか StyleValue[] だと再起的な何とかでlintエラーになるので一旦any
+    styles?: any[]
+    hasError: boolean
 }
 
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
-
-// const BAR_DANGER_COLOR = "rgb(255 89 89);"
+const BAR_DANGER_COLOR = "rgb(255 89 89)"
 
 
 function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
@@ -73,7 +90,7 @@ export async function useGantt() {
         {name: "進捗", visible: true},
         {name: "操作", visible: false},
     ])
-    const displayType = ref<"day" | "week" | "hour" | "month">("week")
+    const displayType = ref<"day" | "week" | "hour" | "month">("day")
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
     const chartEnd = ref(dayjs(facility.value.term_to).format(format.value))
@@ -113,6 +130,13 @@ export async function useGantt() {
         // 1日30pxとして計算する
         return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType.value) + 1) * 30 + "px"
     })
+
+    const pileUpFilters = ref<PileUpFilter[]>(departmentList.map(v => {
+        return <PileUpFilter>{
+            departmentId: v.id,
+            displayUsers: false
+        }
+    }))
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -412,6 +436,21 @@ export async function useGantt() {
      *                         山積み関連
      **********************************************************/
     let refreshPileUpByPersonExclusive = false
+
+    function syncDepartmentStyleByPerson() {
+        pileUpsByDepartment.value.forEach(v => {
+            // 部署に紐づく人間がエラーを持っているか？
+            v.hasError = pileUpsByPerson.value.filter(vv => vv.user.department_id === v.departmentId).some(vv => vv.hasError)
+            // 部署に紐づく担当者のエラーの複合
+            pileUpsByPerson.value.filter(vv => vv.user.department_id === v.departmentId).forEach(vv => {
+                vv.styles.forEach((vvv, index) => {
+                    // FIXME: colorがあるときにするのはいまいち。運用的には期待値通りにはなる。
+                    if (Object.keys(vvv).includes("color")) v.styles[index] = {color: BAR_DANGER_COLOR}
+                })
+            })
+        })
+    }
+
     // 人単位・部署単位ともに更新する
     const refreshPileUps = async () => {
         if (refreshPileUpByPersonExclusive) {
@@ -425,11 +464,21 @@ export async function useGantt() {
         const duration = dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), 'day')
         // 全ユーザー分初期化する
         userList.forEach(v => {
-            pileUpsByPerson.value.push({labels: Array(duration).fill(0), user: v})
+            pileUpsByPerson.value.push({
+                labels: Array(duration).fill(0),
+                user: v,
+                styles: Array(duration).fill({}),
+                hasError: false,
+            })
         })
         // 部署ごとの初期化
         departmentList.forEach(v => {
-            pileUpsByDepartment.value.push({departmentId: v.id!, users: Array(duration).fill([])})
+            pileUpsByDepartment.value.push({
+                departmentId: v.id!,
+                users: Array(duration).fill([]),
+                styles: Array(duration).fill({}),
+                hasError: false,
+            })
         })
         // fillは同じオブジェクトを参照するため上書きする。
         pileUpsByDepartment.value.forEach(v => {
@@ -444,9 +493,21 @@ export async function useGantt() {
                 setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, getHolidays())
             })
         })
+        // 稼働上限のスタイルを適応する
+        pileUpsByPerson.value.forEach(v => {
+            v.styles = v.labels.map(workHour => {
+                if (v.user.limit_of_operation < workHour) {
+                    v.hasError = v.hasError || true
+                    return {color: BAR_DANGER_COLOR}
+                } else {
+                    return {}
+                }
+            })
+        })
         if (displayType.value === "week") {
             aggregatePileUpsByWeek(facility.value.term_from, facility.value.term_to, pileUpsByPerson.value, pileUpsByDepartment.value)
         }
+        syncDepartmentStyleByPerson();
         refreshPileUpByPersonExclusive = false
     }
 
@@ -460,7 +521,6 @@ export async function useGantt() {
      * @param row
      * @param facilityStartDate
      * @param holidays
-     * @param operationSettings
      */
     const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
                          row: GanttRow,
@@ -549,15 +609,15 @@ export async function useGantt() {
         let currentStartOfWeek = dayjs(term_from).startOf("week")
         let currentWeekIndex = 0
         let currentDayIndex = 0
-        const indexMap: {[index:number]:number[]} = {}
-        while(currentDate.isBefore(dayjsEndDate)) {
+        const indexMap: { [index: number]: number[] } = {}
+        while (currentDate.isBefore(dayjsEndDate)) {
             // 週が異なっていれば次の週とする
-            if(!currentStartOfWeek.isSame(currentDate.startOf("week"))) {
+            if (!currentStartOfWeek.isSame(currentDate.startOf("week"))) {
                 currentWeekIndex++
                 currentStartOfWeek = currentDate.startOf("week")
             }
             // 週のマップがなければ初期化
-            if(indexMap[currentWeekIndex] == null) {
+            if (indexMap[currentWeekIndex] == null) {
                 indexMap[currentWeekIndex] = []
             }
             // その週に紐づく日付のindexを追加する
@@ -569,10 +629,15 @@ export async function useGantt() {
         pileUpsByPerson.forEach(v => {
             const labelsByDay = v.labels.concat()
             v.labels.length = 0
+            v.styles.length = 0
+            let hasError = false
             for (const key in indexMap) {
-                v.labels.push(indexMap[key].reduce((p,c) => {
+                v.labels.push(indexMap[key].reduce((p, c) => {
                     return p + labelsByDay[c]
                 }, 0))
+                hasError = indexMap[key].some(vv => labelsByDay[vv] > v.user.limit_of_operation)
+                v.styles.push(hasError ? {color: BAR_DANGER_COLOR} : {})
+                v.hasError = v.hasError || hasError // 一度trueになるとtrueになり続けるやつ
             }
         })
         pileUpsByDepartment.forEach(v => {
@@ -590,37 +655,66 @@ export async function useGantt() {
         })
 
     }
-
     await refreshPileUps()
+
+    // 山積みの並び順通りに配列を返す
+    const displayPileUps = computed(() => {
+        const result: DisplayPileUp[] = []
+        pileUpFilters.value.forEach(f => {
+            // 部署の追加、ユーザー数を追加する。
+            const v = pileUpsByDepartment.value.find(v => v.departmentId === f.departmentId)!
+            result.push(
+                {
+                    labels: v.users.map(vv => vv.length === 0 ? '' : vv.length.toString()),
+                    hasError: v.hasError,
+                    styles: v.styles
+                })
+            if (f.displayUsers) {
+                const v = pileUpsByPerson.value.filter(v => v.user.department_id === f.departmentId)
+                v.forEach(user => {
+                    result.push(
+                        {
+                            labels: user.labels.map(vv => vv === 0 ? '' : round(vv).toString()),
+                            styles: user.styles,
+                            hasError: user.hasError,
+                        }
+                    )
+                })
+            }
+        })
+        return result
+    })
 
 
     return {
-        chartStart,
-        chartEnd,
-        ganttChartGroup,
-        bars,
-        pileUpsByPerson,
-        pileUpsByDepartment,
-        format,
         GanttHeader,
-        getUnitName,
-        getDepartmentName,
-        facility,
+        bars,
+        chartEnd,
+        chartStart,
         displayType,
-        setScheduleByPersonDay,
-        setScheduleByFromTo,
-        adjustBar,
-        addNewTicket,
-        updateTicket,
-        ticketUserUpdate,
-        updateOrder,
-        refreshPileUps,
-        getOperationList,
+        facility,
+        format,
         getHolidaysForGantt,
-        updateDepartment,
-        getUserList,
-        deleteTicket,
+        ganttChartGroup,
+        getDepartmentName,
         getGanttChartWidth,
+        getUnitName,
+        pileUpFilters,
+        pileUpsByDepartment,
+        pileUpsByPerson,
+        displayPileUps,
+        addNewTicket,
+        adjustBar,
+        deleteTicket,
+        getOperationList,
+        getUserList,
+        refreshPileUps,
+        setScheduleByFromTo,
+        setScheduleByPersonDay,
+        ticketUserUpdate,
+        updateDepartment,
+        updateOrder,
+        updateTicket,
     }
 }
 

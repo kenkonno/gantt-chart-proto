@@ -39,7 +39,8 @@
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="displayType" id="byWeek" v-model="displayType" value="week">
+          <input class="form-check-input" type="radio" name="displayType" id="byWeek" v-model="displayType"
+                 value="week">
           <label class="form-check-label" for="byWeek">
             週次
           </label>
@@ -80,7 +81,7 @@
               <tr>
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
                 <th :colspan="GanttHeader.length">
-                  「{{ facility.name }}」のスケジュール：{{facility.term_from}}～{{facility.term_to}}
+                  「{{ facility.name }}」のスケジュール：{{ facility.term_from }}～{{ facility.term_to }}
                 </th>
               </tr>
               <tr>
@@ -176,22 +177,35 @@
           <template #side-menu>
             <table class="side-menu" :style="syncWidth">
               <tbody>
-              <tr v-for="item in pileUpsByPerson" :key="item.user.id">
-                <td class="side-menu-cell"></td><!-- css hack min-height -->
-                <gantt-td :visible="true">{{ item.user.name }}</gantt-td>
-              </tr>
-
-              <tr v-for="item in pileUpsByDepartment" :key="item.departmentId">
-                <td class="side-menu-cell"></td><!-- css hack min-height -->
-                <gantt-td :visible="true">{{ getDepartmentName(item.departmentId) }}</gantt-td>
-              </tr>
+              <gantt-nested-row v-for="item in pileUpFilters" :key="item.departmentId">
+                <template #parent>
+                  <tr>
+                    <td class="side-menu-cell"></td><!-- css hack min-height -->
+                    <gantt-td :visible="true" class="justify-middle">
+                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
+                      <span>{{ getDepartmentName(item.departmentId) }}(人)</span>
+                      <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
+                            @click="item.displayUsers = true">add</span>
+                      <span class="material-symbols-outlined pointer" v-else
+                            @click="item.displayUsers = false">remove</span>
+                    </gantt-td>
+                  </tr>
+                </template>
+                <template #child v-if="item.displayUsers">
+                  <tr v-for="user in pileUpsByPerson.filter(v => v.user.department_id === item.departmentId)"
+                      :key="user.user.id">
+                    <td class="side-menu-cell"></td><!-- css hack min-height -->
+                    <gantt-td :visible="true" class="justify-middle">
+                      <span v-if="user.hasError" class="error-over-work-hour">稼働上限を超えている日があります。</span>
+                      <span>{{ user.user.name }}(h)</span>
+                    </gantt-td>
+                  </tr>
+                </template>
+              </gantt-nested-row>
               </tbody>
             </table>
           </template>
-          <g-gantt-label-row v-for="item in pileUpsByPerson" :key="item.user.id"
-                             :labels="item.labels.map(v => v === 0 ? '' : round(v).toString())"></g-gantt-label-row>
-          <g-gantt-label-row v-for="item in pileUpsByDepartment" :key="item.departmentId"
-                             :labels="item.users.map(v => v.length === 0 ? '' : v.length.toString())"></g-gantt-label-row>
+          <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels" :styles="item.styles"></g-gantt-label-row>
         </g-gantt-chart>
       </div>
     </div>
@@ -206,6 +220,14 @@
 }
 </style>
 <style lang="scss" scoped>
+// TODO: ツールチップか何かでエラー表示を代替すべき。見にくすぎる。
+.error-over-work-hour {
+  font-size: 50%;
+  color: red
+}
+.pointer {
+  cursor: pointer;
+}
 
 .justify-middle {
   display: flex;
@@ -264,12 +286,15 @@
   text-align: center;
 
   td, th {
+    height: 100%;
     border: solid 1px #eaeaea;
     box-sizing: border-box;
   }
 
-  tr {
+  tbody tr, tbody td {
+    vertical-align: middle;
     height: 40px;
+    padding: 0;
   }
 
   .side-menu-header {
@@ -285,6 +310,7 @@
   .side-menu-header > tr {
     height: 37.5px;
   }
+
   .side-menu-header > tr > th:first-child {
     border: none;
     display: block;
@@ -302,10 +328,12 @@
     width: 4rem;
   }
 }
+
 .hide-scroll {
   scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
-  -ms-overflow-style: none;/*Internet Explore対応のスクロールバー非表示コード*/
+  -ms-overflow-style: none; /*Internet Explore対応のスクロールバー非表示コード*/
 }
+
 .hide-scroll::-webkit-scrollbar {
   display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
 }
@@ -322,6 +350,7 @@ import GanttTd from "@/components/gantt/GanttTd.vue";
 import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {round} from "@/utils/math";
+import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 
 type GanttProxyProps = {
   facilityId: number
@@ -331,32 +360,34 @@ const props = defineProps<GanttProxyProps>()
 const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
 
 const {
-  chartStart,
-  chartEnd,
-  format,
-  ganttChartGroup,
-  bars,
   GanttHeader,
-  pileUpsByPerson,
-  pileUpsByDepartment,
-  getUnitName,
-  getDepartmentName,
-  facility,
-  getGanttChartWidth,
+  bars,
+  chartEnd,
+  chartStart,
   displayType,
-  setScheduleByPersonDay,
-  setScheduleByFromTo,
-  adjustBar,
-  addNewTicket,
-  updateTicket,
-  ticketUserUpdate,
-  updateOrder,
-  getOperationList,
+  facility,
+  format,
   getHolidaysForGantt,
-  updateDepartment,
-  getUserList,
+  ganttChartGroup,
+  getDepartmentName,
+  getGanttChartWidth,
+  getUnitName,
+  pileUpFilters,
+  pileUpsByDepartment,
+  pileUpsByPerson,
+  displayPileUps,
+  addNewTicket,
+  adjustBar,
   deleteTicket,
-
+  getOperationList,
+  getUserList,
+  refreshPileUps,
+  setScheduleByFromTo,
+  setScheduleByPersonDay,
+  ticketUserUpdate,
+  updateDepartment,
+  updateOrder,
+  updateTicket,
 } = await useGantt()
 
 const setScheduleByPersonDayProxy = () => {
