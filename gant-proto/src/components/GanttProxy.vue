@@ -182,6 +182,7 @@
                   <tr>
                     <td class="side-menu-cell"></td><!-- css hack min-height -->
                     <gantt-td :visible="true" class="justify-middle">
+                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
                       <span>{{ getDepartmentName(item.departmentId) }}(人)</span>
                       <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
                             @click="item.displayUsers = true">add</span>
@@ -194,15 +195,17 @@
                   <tr v-for="user in pileUpsByPerson.filter(v => v.user.department_id === item.departmentId)"
                       :key="user.user.id">
                     <td class="side-menu-cell"></td><!-- css hack min-height -->
-                    <gantt-td :visible="true" class="justify-middle"><span>{{ user.user.name }}(h)</span></gantt-td>
+                    <gantt-td :visible="true" class="justify-middle">
+                      <span v-if="user.hasError" class="error-over-work-hour">稼働上限を超えている日があります。</span>
+                      <span>{{ user.user.name }}(h)</span>
+                    </gantt-td>
                   </tr>
                 </template>
               </gantt-nested-row>
               </tbody>
             </table>
           </template>
-          <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels"
-                             :style-func="item.styleFunc"></g-gantt-label-row>
+          <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels" :styles="item.styles"></g-gantt-label-row>
         </g-gantt-chart>
       </div>
     </div>
@@ -217,6 +220,11 @@
 }
 </style>
 <style lang="scss" scoped>
+// TODO: ツールチップか何かでエラー表示を代替すべき。見にくすぎる。
+.error-over-work-hour {
+  font-size: 50%;
+  color: red
+}
 .pointer {
   cursor: pointer;
 }
