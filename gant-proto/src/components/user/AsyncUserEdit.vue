@@ -65,9 +65,6 @@ interface AsyncUserEdit {
 }
 
 const {departmentList} = inject(GLOBAL_STATE_KEY)!
-const getDepartmentName = (id: number) => {
-  return departmentList.find(v => v.id === id)?.name
-}
 
 const props = defineProps<AsyncUserEdit>()
 defineEmits(['closeEditModal'])

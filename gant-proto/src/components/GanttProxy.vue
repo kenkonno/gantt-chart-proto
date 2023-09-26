@@ -1,5 +1,5 @@
 <template>
-  <div v-if="getOperationList().length > 0" id="gantt-proxy-wrapper">
+  <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="action-menu d-flex">
       <div class="wrapper d-flex">
         <div class="justify-middle">
@@ -60,7 +60,7 @@
             :width="getGanttChartWidth"
             bar-start="beginDate"
             bar-end="endDate"
-            :date-format="format"
+            :date-format="DAYJS_FORMAT"
             @click-bar="onClickBar($event.bar, $event.e, $event.datetime)"
             @mousedown-bar="onMousedownBar($event.bar, $event.e, $event.datetime)"
             @dblclick-bar="onMouseupBar($event.bar, $event.e, $event.datetime)"
@@ -107,7 +107,8 @@
                     </select>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[3].visible" style="min-width: 8rem;">
-                    <UserMultiselect :userList="getUserList(row.ticket.department_id)" :ticketUser="row.ticketUsers"
+                    <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id)"
+                                     :ticketUser="row.ticketUsers"
                                      @update:modelValue="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
                   </gantt-td>
                   <gantt-td :visible="GanttHeader[4].visible">
@@ -167,7 +168,7 @@
             :width="getGanttChartWidth"
             bar-start="beginDate"
             bar-end="endDate"
-            :date-format="format"
+            :date-format="DAYJS_FORMAT"
             color-scheme="creamy"
             :hide-timeaxis="true"
 
@@ -182,7 +183,8 @@
                   <tr>
                     <td class="side-menu-cell"></td><!-- css hack min-height -->
                     <gantt-td :visible="true" class="justify-middle">
-                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
+                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
+                            class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
                       <span>{{ getDepartmentName(item.departmentId) }}(人)</span>
                       <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
                             @click="item.displayUsers = true">add</span>
@@ -205,7 +207,8 @@
               </tbody>
             </table>
           </template>
-          <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels" :styles="item.styles"></g-gantt-label-row>
+          <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels"
+                             :styles="item.styles"></g-gantt-label-row>
         </g-gantt-chart>
       </div>
     </div>
@@ -225,6 +228,7 @@
   font-size: 50%;
   color: red
 }
+
 .pointer {
   cursor: pointer;
 }
@@ -342,21 +346,22 @@
 
 <script setup lang="ts">
 import {GanttBarObject, GGanttChart, GGanttLabelRow, GGanttRow} from "@infectoone/vue-ganttastic";
-import {useGantt} from "@/composable/gantt";
+import {GanttRow, useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {round} from "@/utils/math";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
+import {usePielUps} from "@/composable/pileUps";
+import {DAYJS_FORMAT} from "@/utils/day";
 
 type GanttProxyProps = {
   facilityId: number
 }
 
-const props = defineProps<GanttProxyProps>()
+defineProps<GanttProxyProps>()
 const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
 
 const {
@@ -366,29 +371,45 @@ const {
   chartStart,
   displayType,
   facility,
-  format,
   getHolidaysForGantt,
   ganttChartGroup,
   getDepartmentName,
   getGanttChartWidth,
   getUnitName,
-  pileUpFilters,
-  pileUpsByDepartment,
-  pileUpsByPerson,
-  displayPileUps,
+  getOperationList,
+  getHolidays,
   addNewTicket,
   adjustBar,
   deleteTicket,
-  getOperationList,
-  getUserList,
-  refreshPileUps,
+  getUserListByDepartmentId,
   setScheduleByFromTo,
   setScheduleByPersonDay,
   ticketUserUpdate,
   updateDepartment,
   updateOrder,
   updateTicket,
-} = await useGantt()
+} = await useGanttFacility()
+
+// FIXME: pileUpsに渡すときに、ほかの設備の奴らも渡してあげれば全体積み上げにできる。
+const rows =
+    computed(() => {
+      const result: GanttRow[] = []
+      ganttChartGroup.value.forEach(v => result.push(...v.rows))
+      return result
+    })
+const {
+  pileUpFilters,
+  pileUpsByDepartment,
+  pileUpsByPerson,
+  displayPileUps,
+  refreshPileUps,
+} = usePielUps(
+    chartStart.value,
+    chartEnd.value,
+    rows,
+    displayType,
+    getHolidays
+)
 
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
@@ -437,9 +458,9 @@ onUnmounted(() => {
 })
 
 // ここからイベントフック
-const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
+const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  adjustBar(bar)
+  await adjustBar(bar)
 }
 
 const onMousedownBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {

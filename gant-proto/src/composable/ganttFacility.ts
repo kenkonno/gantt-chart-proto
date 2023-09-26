@@ -1,7 +1,7 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {computed, inject, ref, StyleValue, watch} from "vue";
-import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
+import {computed, inject, ref, toValue} from "vue";
+import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -9,16 +9,22 @@ import {useTicketUserTable} from "@/composable/ticketUser";
 import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {round} from "@/utils/math";
-
-const format = ref("DD.MM.YYYY HH:mm")
+import {
+    adjustStartDateByHolidays,
+    dayBetween,
+    endOfDay,
+    ganttDateToYMDDate,
+    getEndDateByRequiredBusinessDay,
+    getNumberOfBusinessDays
+} from "@/coreFunctions/manHourCalculation";
+import {DAYJS_FORMAT} from "@/utils/day";
 
 type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
     rows: GanttRow[]
 }
 
-type GanttRow = {
+export type GanttRow = {
     bar: GanttBarObject
     ganttGroup?: GanttGroup
     ticket?: Ticket
@@ -30,31 +36,7 @@ type Header = {
     visible: boolean
 }
 
-type PileUpByPerson = {
-    user: User,
-    labels: number[],
-    // styles: StyleValue[]
-    styles: any[],
-    hasError: boolean
-}
-type PileUpByDepartment = {
-    departmentId: number,
-    users: number[][],
-    styles: any[],
-    hasError: boolean
-}
-
-type PileUpFilter = {
-    departmentId: number,
-    displayUsers: boolean,
-}
-
-type DisplayPileUp = {
-    labels: string[],
-    // styles?: StyleValue[], TODO: なぜか StyleValue[] だと再起的な何とかでlintエラーになるので一旦any
-    styles?: any[]
-    hasError: boolean
-}
+export type DisplayType = "day" | "week" | "hour" | "month"
 
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
@@ -71,7 +53,7 @@ function getScheduledOperatingHours(operationSettings: OperationSetting[], row: 
     }, 0);
 }
 
-export async function useGantt() {
+export async function useGanttFacility() {
     // injectはsetupと同期的に呼び出す必要あり
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
     const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
@@ -90,16 +72,10 @@ export async function useGantt() {
         {name: "進捗", visible: true},
         {name: "操作", visible: false},
     ])
-    const displayType = ref<"day" | "week" | "hour" | "month">("day")
+    const displayType = ref<DisplayType>("day")
     const {facility} = await useFacility(currentFacilityId)
-    const chartStart = ref(dayjs(facility.value.term_from).format(format.value))
-    const chartEnd = ref(dayjs(facility.value.term_to).format(format.value))
-    const pileUpsByPerson = ref<PileUpByPerson[]>([])
-    const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
-    watch(displayType, () => {
-        refreshPileUps() // TODO: 本当はwatchでやるのは良くないかも。
-    })
-
+    const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
+    const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
 
     const getUnitName = computed(() => (id: number) => {
         return unitMap[currentFacilityId].find(v => v.id === id)?.name
@@ -110,9 +86,9 @@ export async function useGantt() {
     const getProcessName = (id: number) => {
         return processList.find(v => v.id === id)?.name
     }
-    const getOperationList = () => {
+    const getOperationList = computed(() => {
         return operationSettingMap[currentFacilityId]
-    }
+    })
     const getHolidaysForGantt = computed(() => {
         if (displayType.value === "day") {
             return holidayMap[currentFacilityId].map(v => new Date(v.date))
@@ -120,23 +96,14 @@ export async function useGantt() {
             return []
         }
     })
-    const getHolidays = () => {
+    const getHolidays = computed(() => {
         return holidayMap[currentFacilityId]
-    }
-    const getOperationSettings = () => {
-        return operationSettingMap[currentFacilityId]
-    }
+    })
     const getGanttChartWidth = computed<string>(() => {
         // 1日30pxとして計算する
         return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType.value) + 1) * 30 + "px"
     })
 
-    const pileUpFilters = ref<PileUpFilter[]>(departmentList.map(v => {
-        return <PileUpFilter>{
-            departmentId: v.id,
-            displayUsers: false
-        }
-    }))
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -177,7 +144,7 @@ export async function useGantt() {
                 }
             }
             bars.value.push(...unit.rows.map(task => <GanttBarObject>{
-                beginDate: dayjs(task.ticket!.start_date!).format(format.value),
+                beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
                 endDate: endOfDay(task.ticket!.end_date!),
                 ganttGroupId: unit.ganttGroup.id,
                 ganttBarConfig: {
@@ -215,7 +182,7 @@ export async function useGantt() {
         }
         await ticketUserUpdate(ticket, [])
     }
-    const getUserList = (departmentId?: number) => {
+    const getUserListByDepartmentId = (departmentId?: number) => {
         if (departmentId == null) {
             return []
         }
@@ -245,7 +212,6 @@ export async function useGantt() {
         }
         await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
         reflectTicketToGantt(reqTicket)
-        await refreshPileUps() // TODO: 山積みの更新の呼び出し
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -285,10 +251,9 @@ export async function useGantt() {
         await updateTicket(ticket)
         // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
         refreshLocalGantt()
-        await refreshPileUps() // TODO: 山積みの更新の呼び出し
     }
 
-    const adjustBar = (bar: GanttBarObject) => {
+    const adjustBar = async (bar: GanttBarObject) => {
         // id をもとに VueJs 側のデータも更新する
         const targetGanttGroup = ganttChartGroup.value.find(v => v.ganttGroup.id === bar.ganttGroupId)
         if (!targetGanttGroup) {
@@ -300,7 +265,7 @@ export async function useGantt() {
             } else {
                 targetTicket.ticket!.start_date = ganttDateToYMDDate(bar.beginDate)
                 targetTicket.ticket!.end_date = ganttDateToYMDDate(bar.endDate)
-                updateTicket(targetTicket.ticket!)
+                await updateTicket(targetTicket.ticket!)
             }
         }
     }
@@ -312,7 +277,7 @@ export async function useGantt() {
             console.error(`TicketID: ${ticket.id} が現在のガントに存在しません。`, bars)
         } else {
             // パフォーマンスのためにガントチャートに反映すべきものは特別にここで記述する
-            targetTicket.beginDate = dayjs(ticket.start_date!).format(format.value)
+            targetTicket.beginDate = dayjs(ticket.start_date!).format(DAYJS_FORMAT)
             targetTicket.endDate = endOfDay(ticket.end_date!)
             if (ticket.progress_percent) {
                 targetTicket.ganttBarConfig.progress = ticket.progress_percent
@@ -339,8 +304,8 @@ export async function useGantt() {
      * とりあえず作らないと話にならないので一旦作る
      */
     const setScheduleByPersonDay = (rows: GanttRow[]) => {
-        const holidays = getHolidays()
-        const operationSettings = getOperationList()
+        const holidays = toValue(getHolidays)
+        const operationSettings = toValue(getOperationList)
         let prevEndDate: Dayjs
         rows.forEach(row => {
             let startDate: Dayjs
@@ -364,11 +329,11 @@ export async function useGantt() {
             // 必要日数。少数が出たら最小の整数にする。例：二人で5人日の場合 3日必要 5/2 = 2.5 つまり少数が出たら整数に足す
             const numberOfDaysRequired = Math.ceil(row.ticket.estimate! / scheduledOperatingHours)
             // 開始日を設定する
-            row.ticket.start_date = ganttDateToYMDDate(startDate.format(format.value))
+            row.ticket.start_date = ganttDateToYMDDate(startDate.format(DAYJS_FORMAT))
             // 終了日を決定する、祝日が含まれている場合終了日をずらす。
             row.ticket.end_date = ganttDateToYMDDate(
                 getEndDateByRequiredBusinessDay(startDate, numberOfDaysRequired, holidays)
-                    .add(-1, 'minute').format(format.value)
+                    .add(-1, 'minute').format(DAYJS_FORMAT)
             )
             // ガントに反映する
             reflectTicketToGantt(row.ticket)
@@ -391,8 +356,8 @@ export async function useGantt() {
         // 担当者が未定の時に人数を計算する
         // 必要日数 = 工数 / 労働時間
         // 必要人数 = 必要日数 / 期間日数 の数値は上に寄せる
-        const holidays = getHolidays()
-        const operationSettings = getOperationList()
+        const holidays = toValue(getHolidays)
+        const operationSettings = toValue(getOperationList)
         let prevEndDate: Dayjs
         rows.forEach(row => {
             if (row.ticket && row.ticketUsers?.length == 0 &&
@@ -411,8 +376,8 @@ export async function useGantt() {
                     dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, numberOfRequiredBusinessDays, holidays)
                     console.log("##############", numberOfRequiredBusinessDays)
                     // チケットに反映させる
-                    row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(format.value))
-                    row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(format.value))
+                    row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(DAYJS_FORMAT))
+                    row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(DAYJS_FORMAT))
                 }
 
                 // 工数(h)
@@ -432,260 +397,6 @@ export async function useGantt() {
             prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket?.end_date).add(1, 'day'), holidays)
         })
     }
-    /**********************************************************
-     *                         山積み関連
-     **********************************************************/
-    let refreshPileUpByPersonExclusive = false
-
-    function syncDepartmentStyleByPerson() {
-        pileUpsByDepartment.value.forEach(v => {
-            // 部署に紐づく人間がエラーを持っているか？
-            v.hasError = pileUpsByPerson.value.filter(vv => vv.user.department_id === v.departmentId).some(vv => vv.hasError)
-            // 部署に紐づく担当者のエラーの複合
-            pileUpsByPerson.value.filter(vv => vv.user.department_id === v.departmentId).forEach(vv => {
-                vv.styles.forEach((vvv, index) => {
-                    // FIXME: colorがあるときにするのはいまいち。運用的には期待値通りにはなる。
-                    if (Object.keys(vvv).includes("color")) v.styles[index] = {color: BAR_DANGER_COLOR}
-                })
-            })
-        })
-    }
-
-    // 人単位・部署単位ともに更新する
-    const refreshPileUps = async () => {
-        if (refreshPileUpByPersonExclusive) {
-            return
-        } else {
-            refreshPileUpByPersonExclusive = true
-        }
-        pileUpsByPerson.value.length = 0
-        pileUpsByDepartment.value.length = 0
-        // 開始日・終了日は表示中の設備にする
-        const duration = dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), 'day')
-        // 全ユーザー分初期化する
-        userList.forEach(v => {
-            pileUpsByPerson.value.push({
-                labels: Array(duration).fill(0),
-                user: v,
-                styles: Array(duration).fill({}),
-                hasError: false,
-            })
-        })
-        // 部署ごとの初期化
-        departmentList.forEach(v => {
-            pileUpsByDepartment.value.push({
-                departmentId: v.id!,
-                users: Array(duration).fill([]),
-                styles: Array(duration).fill({}),
-                hasError: false,
-            })
-        })
-        // fillは同じオブジェクトを参照するため上書きする。
-        pileUpsByDepartment.value.forEach(v => {
-            v.users.forEach((vv, ii) => {
-                v.users[ii] = []
-            })
-        })
-
-        // 全てのチケットから積み上げを更新する
-        ganttChartGroup.value.forEach(unit => {
-            unit.rows.forEach(row => {
-                setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, facility.value.term_from, getHolidays())
-            })
-        })
-        // 稼働上限のスタイルを適応する
-        pileUpsByPerson.value.forEach(v => {
-            v.styles = v.labels.map(workHour => {
-                if (v.user.limit_of_operation < workHour) {
-                    v.hasError = v.hasError || true
-                    return {color: BAR_DANGER_COLOR}
-                } else {
-                    return {}
-                }
-            })
-        })
-        if (displayType.value === "week") {
-            aggregatePileUpsByWeek(facility.value.term_from, facility.value.term_to, pileUpsByPerson.value, pileUpsByDepartment.value)
-        }
-        syncDepartmentStyleByPerson();
-        refreshPileUpByPersonExclusive = false
-    }
-
-    /**
-     * 人の積み上げを行う。
-     * 工数 / 営業日 / 人数 で均等に分配する
-     * 期間が十分でない場合は最後の人に全て割り当てる。
-     * 期間が十分で余りが出る場合は稼働予定が少ない順、チケットに割り当て順で積み上げる。
-     * @param pileUpsByPerson
-     * @param pileUpByDepartment
-     * @param row
-     * @param facilityStartDate
-     * @param holidays
-     */
-    const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
-                         row: GanttRow,
-                         facilityStartDate: string,
-                         holidays: Holiday[]) => {
-        // validation
-        if (row.ticket?.start_date == null || row.ticket?.end_date == null || row.ticket.estimate == null ||
-            (row.ticketUsers == null || row.ticketUsers?.length <= 0)) {
-            return
-        }
-        const dayjsFacilityStartDate = dayjs(facilityStartDate)
-        const dayjsStartDate = dayjs(row.ticket?.start_date)
-        const dayjsEndDate = dayjs(row.ticket?.end_date)
-        const startIndex = getIndexByDate(dayjsFacilityStartDate, dayjsStartDate)
-        const endIndex = getIndexByDate(dayjsFacilityStartDate, dayjsEndDate)
-        // 営業日の取得
-        const numberOfBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
-        const workHour = row.ticket?.estimate / numberOfBusinessDays / row.ticketUsers.length
-        let estimate = row.ticket?.estimate
-        const holidayIndexes = holidays.filter(v => {
-            return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
-        }).map(v => getIndexByDate(dayjsFacilityStartDate, dayjs(v.date)))
-        // 有効なIndexを設定する
-        const validIndexes: number[] = []
-        for (let i = 0; i + startIndex <= endIndex; i++) {
-            validIndexes.push(i + startIndex)
-        }
-        // 祝日を削除する
-        holidayIndexes.forEach(v => {
-            const i = validIndexes.indexOf(v)
-            if (i > -1) {
-                validIndexes.splice(i, 1)
-            }
-        })
-        const lastIndex = validIndexes[validIndexes.length - 1]
-        // 対象の取得
-        const ticketUserIds = row.ticketUsers?.map(v => v.user_id)
-        const targets = pileUpsByPerson.filter(v => ticketUserIds.includes(v.user.id!))
-        // 並び替える (末端の予定工数が少ない順, チケットにアサインされた順)
-        targets.sort((a, b) => {
-            if (a.labels[lastIndex] < b.labels[lastIndex]) return -1;
-            if (a.labels[lastIndex] > b.labels[lastIndex]) return 1;
-            if (ticketUserIds.indexOf(a.user.id!) < ticketUserIds.indexOf(b.user.id!)) return -1;
-            if (ticketUserIds.indexOf(a.user.id!) > ticketUserIds.indexOf(b.user.id!)) return 1;
-            return 0
-        })
-        // 対象部署を取得
-        const departmentTarget = pileUpByDepartment.find(v => v.departmentId === row.ticket?.department_id)
-        // 稼働時間を加算する。
-        validIndexes.forEach((validIndex, index) => {
-            targets.forEach((v, targetIndex) => {
-                if (estimate < 0) {
-                    return
-                }
-                // 最終行かつ最終の人で予定工数が余っていた場合は全て割り当てる。
-                if (index === (validIndexes.length - 1) && targetIndex === (targets.length - 1)) {
-                    if (estimate - workHour > 0) {
-                        v.labels[validIndex] += estimate
-                        if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
-                            departmentTarget.users[validIndex].push(v.user.id!)
-                        }
-                        return
-                    }
-                }
-                if (estimate - workHour < 0) {
-                    v.labels[validIndex] += estimate
-                } else {
-                    v.labels[validIndex] += workHour
-                }
-                if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
-                    departmentTarget.users[validIndex].push(v.user.id!)
-                }
-                estimate -= workHour
-            })
-        })
-    }
-    // 日付からどのindexに該当するか取得する
-    const getIndexByDate = (facilityStartDate: Dayjs, date: Dayjs) => {
-        return date.diff(facilityStartDate, 'days')
-    }
-    const aggregatePileUpsByWeek = (term_from: string, term_to: string, pileUpsByPerson: PileUpByPerson[], pileUpsByDepartment: PileUpByDepartment[]) => {
-        // 日毎で計算された結果を週ごとに集約する。
-        // 集約元のIndexと集約先のIndexをマッピングする
-        const dayjsEndDate = dayjs(term_to)
-        let currentDate = dayjs(term_from)
-        let currentStartOfWeek = dayjs(term_from).startOf("week")
-        let currentWeekIndex = 0
-        let currentDayIndex = 0
-        const indexMap: { [index: number]: number[] } = {}
-        while (currentDate.isBefore(dayjsEndDate)) {
-            // 週が異なっていれば次の週とする
-            if (!currentStartOfWeek.isSame(currentDate.startOf("week"))) {
-                currentWeekIndex++
-                currentStartOfWeek = currentDate.startOf("week")
-            }
-            // 週のマップがなければ初期化
-            if (indexMap[currentWeekIndex] == null) {
-                indexMap[currentWeekIndex] = []
-            }
-            // その週に紐づく日付のindexを追加する
-            indexMap[currentWeekIndex].push(currentDayIndex)
-            // シーケンスを進める
-            currentDate = currentDate.add(1, "day")
-            currentDayIndex++
-        }
-        pileUpsByPerson.forEach(v => {
-            const labelsByDay = v.labels.concat()
-            v.labels.length = 0
-            v.styles.length = 0
-            let hasError = false
-            for (const key in indexMap) {
-                v.labels.push(indexMap[key].reduce((p, c) => {
-                    return p + labelsByDay[c]
-                }, 0))
-                hasError = indexMap[key].some(vv => labelsByDay[vv] > v.user.limit_of_operation)
-                v.styles.push(hasError ? {color: BAR_DANGER_COLOR} : {})
-                v.hasError = v.hasError || hasError // 一度trueになるとtrueになり続けるやつ
-            }
-        })
-        pileUpsByDepartment.forEach(v => {
-            // ユーザーを集約する
-            const usersByDay = v.users.concat()
-            v.users.length = 0
-            for (const key in indexMap) {
-                const r: number[] = []
-                indexMap[key].forEach(v => {
-                    r.push(...usersByDay[v])
-                })
-                // unique
-                v.users.push(Array.from(new Set(r)))
-            }
-        })
-
-    }
-    await refreshPileUps()
-
-    // 山積みの並び順通りに配列を返す
-    const displayPileUps = computed(() => {
-        const result: DisplayPileUp[] = []
-        pileUpFilters.value.forEach(f => {
-            // 部署の追加、ユーザー数を追加する。
-            const v = pileUpsByDepartment.value.find(v => v.departmentId === f.departmentId)!
-            result.push(
-                {
-                    labels: v.users.map(vv => vv.length === 0 ? '' : vv.length.toString()),
-                    hasError: v.hasError,
-                    styles: v.styles
-                })
-            if (f.displayUsers) {
-                const v = pileUpsByPerson.value.filter(v => v.user.department_id === f.departmentId)
-                v.forEach(user => {
-                    result.push(
-                        {
-                            labels: user.labels.map(vv => vv === 0 ? '' : round(vv).toString()),
-                            styles: user.styles,
-                            hasError: user.hasError,
-                        }
-                    )
-                })
-            }
-        })
-        return result
-    })
-
-
     return {
         GanttHeader,
         bars,
@@ -693,22 +404,17 @@ export async function useGantt() {
         chartStart,
         displayType,
         facility,
-        format,
         getHolidaysForGantt,
         ganttChartGroup,
         getDepartmentName,
         getGanttChartWidth,
         getUnitName,
-        pileUpFilters,
-        pileUpsByDepartment,
-        pileUpsByPerson,
-        displayPileUps,
+        getOperationList,
+        getHolidays,
         addNewTicket,
         adjustBar,
         deleteTicket,
-        getOperationList,
-        getUserList,
-        refreshPileUps,
+        getUserListByDepartmentId,
         setScheduleByFromTo,
         setScheduleByPersonDay,
         ticketUserUpdate,
@@ -748,8 +454,8 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGro
 
     const result: GanttRow = {
         bar: {
-            beginDate: dayjs(ticket.start_date!).format(format.value),
-            endDate: dayjs(ticket.end_date!).format(format.value),
+            beginDate: dayjs(ticket.start_date!).format(DAYJS_FORMAT),
+            endDate: dayjs(ticket.end_date!).format(DAYJS_FORMAT),
             ganttBarConfig: {
                 hasHandles: true,
                 id: ticket.id!.toString(), // TODO: まあIDが数字でもいっか
@@ -763,60 +469,4 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGro
     return result
 }
 
-const ganttDateToYMDDate = (date: string) => {
-    const e = date.split(" ")[0].split(".")
-    return `${e[2]}-${e[1]}-${e[0]}`
-}
 
-
-const endOfDay = (dateString: string) => {
-    return dayjs(dateString).add(1, 'day').add(-1, 'minute').format(format.value)
-}
-/**
- * 開始日・終了日に祝日が含まれていれば終了日をその分ずらす
- * @param startDate
- * @param endDate
- * @param holidays
- */
-const getNumberOfBusinessDays = (startDate: Dayjs, endDate: Dayjs, holidays: Holiday[]) => {
-    // 差がない場合は1営業日になる
-    const result = endDate.diff(startDate, 'days') + 1
-    // 開始日と終了日の内、祝日を除いた日数を返す
-    const includes = holidays.filter(holiday => {
-        const dayjsHoliday = dayjs(holiday.date)
-        return dayBetween(dayjsHoliday, startDate, endDate)
-    })
-    return result - includes.length
-}
-
-const getEndDateByRequiredBusinessDay = (startDate: Dayjs, requiredNumberOfBusinessDays: number, holidays: Holiday[]) => {
-    let currentDate = startDate
-    const dayjsHolidays = holidays.map(v => dayjs(v.date))
-    // 1営業日だとしたらstartDateを返せばよい
-    while (requiredNumberOfBusinessDays > 1) {
-        currentDate = currentDate.add(1, 'day')
-        if (dayjsHolidays.some(v => v.isSame(currentDate))) continue
-        requiredNumberOfBusinessDays--
-    }
-    return currentDate.endOf('day')
-}
-
-const dayBetween = (day: Dayjs, form: Dayjs, to: Dayjs) => {
-    return (form.isSame(day) || to.isSame(day)) ||
-        (day.isAfter(form) && day.isBefore(to))
-}
-
-/**
- * 開始日が祝日だった場合開始日をずらす
- * @param startDate
- * @param holidays
- */
-const adjustStartDateByHolidays = (startDate: Dayjs, holidays: Holiday[]) => {
-    let result = startDate
-    let endCheck = holidays.find(v => dayjs(v.date).isSame(result))
-    while (endCheck) {
-        result = result.add(1, "day")
-        endCheck = holidays.find(v => dayjs(v.date).isSame(result))
-    }
-    return result
-}

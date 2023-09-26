@@ -1,0 +1,1 @@
+export const DAYJS_FORMAT = "DD.MM.YYYY HH:mm"
