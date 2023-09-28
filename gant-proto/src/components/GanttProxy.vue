@@ -11,10 +11,14 @@
           <span class="material-symbols-outlined">menu_open</span>
         </template>
         <template v-slot:body>
-          <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
-                 @click="setScheduleByPersonDayProxy()">
-          <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
-                 @click="setScheduleByFromToProxy()">
+          <tippy content="（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
+            <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
+                   @click="setScheduleByPersonDayProxy()">
+          </tippy>
+          <tippy content="開始日・終了日・工数・工程が入力されている行が対象です。担当所が入力されている行は無視されます。">
+            <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
+                   @click="setScheduleByFromToProxy()">
+          </tippy>
         </template>
       </AccordionHorizontal>
       <AccordionHorizontal class="justify-middle">
@@ -201,6 +205,7 @@ import {usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
 import {StyleValue} from "vue/dist/vue";
+import {Tippy} from "vue-tippy";
 
 type GanttProxyProps = {
   facilityId: number

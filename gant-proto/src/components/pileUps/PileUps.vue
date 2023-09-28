@@ -22,9 +22,10 @@
             <tr>
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="true" class="justify-middle">
-                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
-                            class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
-                <span>{{ getDepartmentName(item.departmentId) }}(人)</span>
+                <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" content="稼働上限を超えている担当者がいます。">
+                  <span class="error-over-work-hour">{{ getDepartmentName(item.departmentId) }}(人)</span>
+                </tippy>
+                <span v-else>{{ getDepartmentName(item.departmentId) }}(人)</span>
                 <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
                       @click="item.displayUsers = true">add</span>
                 <span class="material-symbols-outlined pointer" v-else
@@ -37,8 +38,10 @@
                 :key="user.user.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="true" class="justify-middle">
-                <span v-if="user.hasError" class="error-over-work-hour">稼働上限を超えている日があります。</span>
-                <span>{{ user.user.name }}(h)</span>
+                <tippy v-if="user.hasError" content="稼働上限を超えている日があります。">
+                  <span class="error-over-work-hour">{{ user.user.name }}(h)</span>
+                </tippy>
+                <span v-else>{{ user.user.name }}(h)</span>
               </gantt-td>
             </tr>
           </template>
@@ -64,6 +67,7 @@ import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
 import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
 import {Api} from "@/api/axios";
+import {Tippy} from "vue-tippy";
 
 type PileUpsProps = {
   tickets: Ticket[],

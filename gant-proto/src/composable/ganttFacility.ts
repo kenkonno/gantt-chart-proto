@@ -10,6 +10,7 @@ import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
+    addBusinessDays,
     adjustStartDateByHolidays,
     dayBetween,
     endOfDay,
@@ -317,39 +318,59 @@ export async function useGanttFacility() {
         const holidays = toValue(getHolidays)
         const operationSettings = toValue(getOperationList)
         let prevEndDate: Dayjs
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
             let startDate: Dayjs
-            // 開始日・工数・工程・担当者が未設定の場合はスキップする
-            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length || !row.ticket?.process_id) {
-                if (row.ticket?.end_date != null) {
-                    prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
+            // 先頭行の場合
+            console.log("########### setScheduleByPersonDay")
+            if(index === 0 ) {
+                // 開始日・工数・工程・人数が未設定の場合はスキップする
+                if(!row.ticket?.start_date || !row.ticket?.estimate ||
+                    !row.ticket?.number_of_worker || !row.ticket?.process_id
+                ) {
+                    console.log("###### SKIP due to first row")
+                    return;
                 }
-                return;
-            }
-            if (row.ticket.days_after != null && row.ticket.days_after! >= 0 && prevEndDate != null) {
-                startDate = prevEndDate.add(row.ticket.days_after!, 'day') // 現在日を最後に１日足しているため。
-            } else {
                 startDate = dayjs(row.ticket!.start_date)
+            } else {
+                // 先頭行以降は (開始日 or days_after)・工数・工程・人数が未設定の場合はスキップする
+                if(!row.ticket?.estimate || !row.ticket?.number_of_worker || !row.ticket?.process_id){
+                    console.log("###### SKIP due to after first row pt1")
+                    return;
+                } else {
+                    // 開始日も日後も設定がなければスキップ
+                    if (!row.ticket?.start_date || !row.ticket?.days_after) {
+                        console.log("###### SKIP due to after first row pt2")
+                        return;
+                    } else {
+                        // 日後が0でなければ優先
+                        console.log("################# days_after", row.ticket?.days_after)
+                        if(row.ticket?.days_after != 0) {
+                            console.log("################# days_after", row.ticket?.days_after)
+                            startDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
+                        } else {
+                            // 開始日をそのまま利用する
+                            startDate = dayjs(row.ticket!.start_date)
+                        }
+                    }
+                }
             }
-            // 開始日が祝日だった場合ずらす
-            startDate = adjustStartDateByHolidays(startDate, holidays)
-
+            console.log("########### 工数重視の実行", startDate.format(DAYJS_FORMAT))
             // 工程から総稼働予定時間を取得する
-            const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row) * row.ticketUsers.length
+            const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row) * row.ticket.number_of_worker
             // 必要日数。少数が出たら最小の整数にする。例：二人で5人日の場合 3日必要 5/2 = 2.5 つまり少数が出たら整数に足す
             const numberOfDaysRequired = Math.ceil(row.ticket.estimate! / scheduledOperatingHours)
             // 開始日を設定する
             row.ticket.start_date = ganttDateToYMDDate(startDate.format(DAYJS_FORMAT))
             // 終了日を決定する、祝日が含まれている場合終了日をずらす。
             row.ticket.end_date = ganttDateToYMDDate(
-                getEndDateByRequiredBusinessDay(startDate, numberOfDaysRequired, holidays)
+                addBusinessDays(startDate, numberOfDaysRequired, holidays, true)
                     .add(-1, 'minute').format(DAYJS_FORMAT)
             )
             // ガントに反映する
             reflectTicketToGantt(row.ticket)
             updateTicket(row.ticket)
             // 前回の終了日を設定する
-            prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
+            prevEndDate = dayjs(row.ticket.end_date)
         })
     }
 
@@ -375,21 +396,19 @@ export async function useGanttFacility() {
                 row.ticket?.process_id && row.ticket?.process_id > 0 &&
                 row.ticket?.start_date && row.ticket?.end_date) {
                 // 日後の処理
-                if (row.ticket.days_after != null && row.ticket.days_after >= 0 && prevEndDate != null) {
+                if (row.ticket.days_after != null && prevEndDate != null) {
                     // 現在設定されている営業日を計算する
                     let dayjsStartDate = dayjs(row.ticket.start_date)
                     let dayjsEndDate = dayjs(row.ticket.end_date)
                     const numberOfRequiredBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
                     // 開始日を日後分ずらした日付に設定する
-                    dayjsStartDate = prevEndDate.add(row.ticket.days_after, 'days')
+                    dayjsStartDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
                     // 終了日を設定されている営業日分確保する
                     dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, numberOfRequiredBusinessDays, holidays)
-                    console.log("##############", numberOfRequiredBusinessDays)
                     // チケットに反映させる
                     row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(DAYJS_FORMAT))
                     row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(DAYJS_FORMAT))
                 }
-
                 // 工数(h)
                 const estimate = row.ticket.estimate
                 // 労働予定時間 ユニット & 工程 に紐づく稼働予定時間を取得
@@ -404,7 +423,7 @@ export async function useGanttFacility() {
                 // 前回の終了日を設定する
                 updateTicket(row.ticket)
             }
-            prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket?.end_date).add(1, 'day'), holidays)
+            prevEndDate = dayjs(row.ticket?.end_date)
         })
     }
     return {

@@ -54,3 +54,44 @@ export const adjustStartDateByHolidays = (startDate: Dayjs, holidays: Holiday[])
     }
     return result
 }
+
+/**
+ * 営業日分日にちを計算する
+ * @param startDate
+ * @param numberOfBusinessDays
+ * @param holidays
+ */
+export const addBusinessDays = (startDate: Dayjs, numberOfBusinessDays: number, holidays: Holiday[], wantEndDate = false) => {
+    let result = startDate
+    // 0営業日の場合は開始を返す
+    if(numberOfBusinessDays === 0 ) {
+        return result
+    }
+    // 進める方向の決定
+    let direction = 1
+    if(numberOfBusinessDays < 0 ) {
+        direction = -1
+    }
+
+    // 1日進める
+    let recursiveLimit = 10
+    while(numberOfBusinessDays !== 0 && recursiveLimit !== 0) {
+        result = result.add(direction, "day")
+        let isHoliday = false
+        if(direction > 0 && wantEndDate) {
+            // +方向の時は1minuteマイナスする
+            isHoliday = holidays.find(v => dayjs(v.date).isSame(result.add(-1,'minute').startOf('day'))) != undefined
+        } else {
+            isHoliday = holidays.find(v => dayjs(v.date).isSame(result)) != undefined
+        }
+        // 祝日でなければ必要営業日を１減らす。末尾の時は祝日でも許可する
+        if(!isHoliday) {
+            numberOfBusinessDays -= direction
+        } else {
+            // 無限ループ用に再起回数の最大を制御
+            recursiveLimit--
+        }
+    }
+
+    return result
+}
