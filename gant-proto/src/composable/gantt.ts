@@ -342,39 +342,59 @@ export async function useGantt() {
         const holidays = getHolidays()
         const operationSettings = getOperationList()
         let prevEndDate: Dayjs
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
             let startDate: Dayjs
-            // 開始日・工数・工程・担当者が未設定の場合はスキップする
-            if (!row.ticket?.start_date || !row.ticket?.estimate || !row.ticketUsers?.length || !row.ticket?.process_id) {
-                if (row.ticket?.end_date != null) {
-                    prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
+            // 先頭行の場合
+            console.log("########### setScheduleByPersonDay")
+            if(index === 0 ) {
+                // 開始日・工数・工程・人数が未設定の場合はスキップする
+                if(!row.ticket?.start_date || !row.ticket?.estimate ||
+                    !row.ticket?.number_of_worker || !row.ticket?.process_id
+                ) {
+                    console.log("###### SKIP due to first row")
+                    return;
                 }
-                return;
-            }
-            if (row.ticket.days_after != null && prevEndDate != null) {
-                startDate = prevEndDate.add(row.ticket.days_after!, 'day') // 現在日を最後に１日足しているため。
-            } else {
                 startDate = dayjs(row.ticket!.start_date)
+            } else {
+                // 先頭行以降は (開始日 or days_after)・工数・工程・人数が未設定の場合はスキップする
+                if(!row.ticket?.estimate || !row.ticket?.number_of_worker || !row.ticket?.process_id){
+                    console.log("###### SKIP due to after first row pt1")
+                    return;
+                } else {
+                    // 開始日も日後も設定がなければスキップ
+                    if (!row.ticket?.start_date || !row.ticket?.days_after) {
+                        console.log("###### SKIP due to after first row pt2")
+                        return;
+                    } else {
+                        // 日後が0でなければ優先
+                        console.log("################# days_after", row.ticket?.days_after)
+                        if(row.ticket?.days_after != 0) {
+                            console.log("################# days_after", row.ticket?.days_after)
+                            startDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
+                        } else {
+                            // 開始日をそのまま利用する
+                            startDate = dayjs(row.ticket!.start_date)
+                        }
+                    }
+                }
             }
-            // 開始日が祝日だった場合ずらす
-            startDate = adjustStartDateByHolidays(startDate, holidays)
-
+            console.log("########### 工数重視の実行", startDate.format(format.value))
             // 工程から総稼働予定時間を取得する
-            const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row) * row.ticketUsers.length
+            const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row) * row.ticket.number_of_worker
             // 必要日数。少数が出たら最小の整数にする。例：二人で5人日の場合 3日必要 5/2 = 2.5 つまり少数が出たら整数に足す
             const numberOfDaysRequired = Math.ceil(row.ticket.estimate! / scheduledOperatingHours)
             // 開始日を設定する
             row.ticket.start_date = ganttDateToYMDDate(startDate.format(format.value))
             // 終了日を決定する、祝日が含まれている場合終了日をずらす。
             row.ticket.end_date = ganttDateToYMDDate(
-                getEndDateByRequiredBusinessDay(startDate, numberOfDaysRequired, holidays)
+                addBusinessDays(startDate, numberOfDaysRequired, holidays)
                     .add(-1, 'minute').format(format.value)
             )
             // ガントに反映する
             reflectTicketToGantt(row.ticket)
             updateTicket(row.ticket)
             // 前回の終了日を設定する
-            prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket.end_date).add(1, 'day'), holidays)
+            prevEndDate = dayjs(row.ticket.end_date)
         })
     }
 
@@ -407,7 +427,6 @@ export async function useGantt() {
                     const numberOfRequiredBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
                     // 開始日を日後分ずらした日付に設定する
                     dayjsStartDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
-                    // dayjsStartDate = prevEndDate.add(row.ticket.days_after, 'days')
                     // 終了日を設定されている営業日分確保する
                     dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, numberOfRequiredBusinessDays, holidays)
                     // チケットに反映させる
@@ -429,7 +448,7 @@ export async function useGantt() {
                 // 前回の終了日を設定する
                 updateTicket(row.ticket)
             }
-            prevEndDate = adjustStartDateByHolidays(dayjs(row.ticket?.end_date).add(1, 'day'), holidays)
+            prevEndDate = dayjs(row.ticket?.end_date)
         })
     }
     /**********************************************************
@@ -794,7 +813,7 @@ const getNumberOfBusinessDays = (startDate: Dayjs, endDate: Dayjs, holidays: Hol
  * @param numberOfBusinessDays
  * @param holidays
  */
-const addBusinessDays = (startDate: Dayjs, numberOfBusinessDays: number, holidays: Holiday[]) => {
+const addBusinessDays = (startDate: Dayjs, numberOfBusinessDays: number, holidays: Holiday[], wantEndDate = false) => {
     let result = startDate
     // 0営業日の場合は開始を返す
     if(numberOfBusinessDays === 0 ) {
@@ -810,8 +829,14 @@ const addBusinessDays = (startDate: Dayjs, numberOfBusinessDays: number, holiday
     let recursiveLimit = 10
     while(numberOfBusinessDays !== 0 && recursiveLimit !== 0) {
         result = result.add(direction, "day")
-        const isHoliday = holidays.find(v => dayjs(v.date).isSame(result)) != undefined
-        // 祝日でなければ必要営業日を１減らす
+        let isHoliday = false
+        if(direction > 0 && wantEndDate) {
+            // +方向の時は1minuteマイナスする
+            isHoliday = holidays.find(v => dayjs(v.date).isSame(result.add(-1,'minute').startOf('day'))) != undefined
+        } else {
+            isHoliday = holidays.find(v => dayjs(v.date).isSame(result)) != undefined
+        }
+        // 祝日でなければ必要営業日を１減らす。末尾の時は祝日でも許可する
         if(!isHoliday) {
             numberOfBusinessDays -= direction
         } else {
