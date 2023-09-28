@@ -57,6 +57,7 @@ export async function postHoliday(holiday: Holiday, facilityId: number, emit: Em
 }
 
 export async function postHolidayById(holiday: Holiday, facilityId: number, emit: Emit) {
+    holiday.date = holiday.date + "T00:00:00.00000+09:00"
     holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
         holiday: holiday,

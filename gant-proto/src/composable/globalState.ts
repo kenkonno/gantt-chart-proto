@@ -22,6 +22,7 @@ type GlobalState = {
 export const GLOBAL_STATE_KEY = Symbol() as InjectionKey<GlobalState>
 export const GLOBAL_ACTION_KEY = Symbol() as InjectionKey<Actions>
 export const GLOBAL_MUTATION_KEY = Symbol() as InjectionKey<Mutations>
+export const GLOBAL_GETTER_KEY = Symbol() as InjectionKey<Getters>
 
 interface Actions {
     refreshFacilityList: () => Promise<void>;
@@ -40,6 +41,11 @@ interface Actions {
 interface Mutations {
     updateCurrentFacilityId: (id: number) => void;
 }
+
+interface Getters {
+    getDepartmentName: (departmentId: number) => string;
+}
+
 
 export const useGlobalState = async () => {
     const globalState = ref<GlobalState>({
@@ -129,6 +135,12 @@ export const useGlobalState = async () => {
         }
     }
 
+    const getters: Getters = {
+        getDepartmentName: (departmentId: number) => {
+            return globalState.value.departmentList.find(v => v.id === departmentId)!.name
+        }
+    }
+
     await init()
-    return {globalState, actions, mutations}
+    return {globalState, actions, mutations, getters}
 }

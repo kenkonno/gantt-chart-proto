@@ -14,6 +14,7 @@ import (
 )
 
 type Unit struct {
+
 	Id *int32 `json:"id,omitempty"`
 
 	FacilityId int32 `json:"facility_id"`

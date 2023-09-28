@@ -135,6 +135,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetAllTickets",
+		http.MethodGet,
+		"/api/all-tickets",
+		GetAllTickets,
+	},
+
+	{
 		"GetDepartments",
 		http.MethodGet,
 		"/api/departments",

@@ -159,57 +159,18 @@
       <!-- 山積み部分 -->
       <hr>
       <div class="d-flex overflow-x-scroll" ref="childGanttWrapperElement">
-        <g-gantt-chart
-            :chart-start="chartStart"
-            :chart-end="chartEnd"
-            :precision="displayType"
-            :row-height="40"
-            grid
-            :width="getGanttChartWidth"
-            bar-start="beginDate"
-            bar-end="endDate"
-            :date-format="DAYJS_FORMAT"
-            color-scheme="creamy"
-            :hide-timeaxis="true"
+        <PileUps :chart-start="chartStart"
+                 :chart-end="chartEnd"
+                 :display-type="displayType"
+                 :holidays="getHolidays"
+                 :tickets="getTickets"
+                 :ticket-users="ticketUserList"
+                 :width="getGanttChartWidth"
+                 :highlightedDates="getHolidaysForGantt"
+                 :syncWidth="syncWidth"
 
-            :highlighted-dates="getHolidaysForGantt"
-            sticky
         >
-          <template #side-menu>
-            <table class="side-menu" :style="syncWidth">
-              <tbody>
-              <gantt-nested-row v-for="item in pileUpFilters" :key="item.departmentId">
-                <template #parent>
-                  <tr>
-                    <td class="side-menu-cell"></td><!-- css hack min-height -->
-                    <gantt-td :visible="true" class="justify-middle">
-                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
-                            class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
-                      <span>{{ getDepartmentName(item.departmentId) }}(人)</span>
-                      <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
-                            @click="item.displayUsers = true">add</span>
-                      <span class="material-symbols-outlined pointer" v-else
-                            @click="item.displayUsers = false">remove</span>
-                    </gantt-td>
-                  </tr>
-                </template>
-                <template #child v-if="item.displayUsers">
-                  <tr v-for="user in pileUpsByPerson.filter(v => v.user.department_id === item.departmentId)"
-                      :key="user.user.id">
-                    <td class="side-menu-cell"></td><!-- css hack min-height -->
-                    <gantt-td :visible="true" class="justify-middle">
-                      <span v-if="user.hasError" class="error-over-work-hour">稼働上限を超えている日があります。</span>
-                      <span>{{ user.user.name }}(h)</span>
-                    </gantt-td>
-                  </tr>
-                </template>
-              </gantt-nested-row>
-              </tbody>
-            </table>
-          </template>
-          <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels"
-                             :styles="item.styles"></g-gantt-label-row>
-        </g-gantt-chart>
+        </PileUps>
       </div>
     </div>
   </div>
@@ -223,125 +184,7 @@
 }
 </style>
 <style lang="scss" scoped>
-// TODO: ツールチップか何かでエラー表示を代替すべき。見にくすぎる。
-.error-over-work-hour {
-  font-size: 50%;
-  color: red
-}
-
-.pointer {
-  cursor: pointer;
-}
-
-.justify-middle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.filter {
-  label {
-    display: inline-block;
-    position: relative;
-    padding-left: 1em;
-  }
-
-  label input {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-  }
-}
-
-
-.action-menu {
-  height: 32px;
-
-  > div {
-    border-right: 1px solid #eaeaea;
-    padding: 0 5px;
-  }
-}
-
-.row-wrapper {
-  display: table;
-
-  > .g-gantt-row {
-    display: table-row;
-
-    > div {
-      padding: 0.5rem;
-      white-space: nowrap;
-      display: table-cell;
-    }
-  }
-}
-
-.gantt-wrapper {
-  width: 100%;
-  overflow-x: scroll;
-}
-
-.side-menu {
-  white-space: nowrap;
-  text-align: center;
-
-  td, th {
-    height: 100%;
-    border: solid 1px #eaeaea;
-    box-sizing: border-box;
-  }
-
-  tbody tr, tbody td {
-    vertical-align: middle;
-    height: 40px;
-    padding: 0;
-  }
-
-  .side-menu-header {
-    box-shadow: 0px 8px 4px -5px rgba(50, 50, 50, 0.5);
-    background: rgb(255, 246, 240);
-    color: rgb(84, 45, 5);
-  }
-
-  > tbody > tr > td:first-child {
-    border: none;
-  }
-
-  .side-menu-header > tr {
-    height: 37.5px;
-  }
-
-  .side-menu-header > tr > th:first-child {
-    border: none;
-    display: block;
-    float: left;
-    content: "";
-    min-height: 37.5px;
-    height: 4vh;
-  }
-
-  .small-numeric {
-    width: 3rem;
-  }
-
-  .middle-numeric {
-    width: 4rem;
-  }
-}
-
-.hide-scroll {
-  scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
-  -ms-overflow-style: none; /*Internet Explore対応のスクロールバー非表示コード*/
-}
-
-.hide-scroll::-webkit-scrollbar {
-  display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
-}
-
+@import '@/assets/gantt.scss';
 </style>
 
 <script setup lang="ts">
@@ -356,6 +199,8 @@ import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 import {usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
+import PileUps from "@/components/pileUps/PileUps.vue";
+import {StyleValue} from "vue/dist/vue";
 
 type GanttProxyProps = {
   facilityId: number
@@ -373,11 +218,12 @@ const {
   facility,
   getHolidaysForGantt,
   ganttChartGroup,
-  getDepartmentName,
   getGanttChartWidth,
   getUnitName,
   getOperationList,
   getHolidays,
+  getTickets,
+  ticketUserList,
   addNewTicket,
   adjustBar,
   deleteTicket,
@@ -390,27 +236,7 @@ const {
   updateTicket,
 } = await useGanttFacility()
 
-// FIXME: pileUpsに渡すときに、ほかの設備の奴らも渡してあげれば全体積み上げにできる。
-const rows =
-    computed(() => {
-      const result: GanttRow[] = []
-      ganttChartGroup.value.forEach(v => result.push(...v.rows))
-      return result
-    })
-const {
-  pileUpFilters,
-  pileUpsByDepartment,
-  pileUpsByPerson,
-  displayPileUps,
-  refreshPileUps,
-} = usePielUps(
-    chartStart.value,
-    chartEnd.value,
-    rows,
-    displayType,
-    getHolidays
-)
-
+// リスケ関連
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
     setScheduleByPersonDay(v.rows)
@@ -422,6 +248,8 @@ const setScheduleByFromToProxy = () => {
     setScheduleByFromTo(v.rows)
   })
 }
+
+
 
 // スクロールや大きさの同期系
 const ganttSideMenuElement = ref<HTMLDivElement>()
@@ -437,11 +265,6 @@ watch(GanttHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
 
-// 一旦積み上げの更新を全体ウォッチにしておく。 パフォーマンス的には何かしら考慮が必要
-// watch(ganttChartGroup, async () => {
-//   await refreshPileUps()
-// },{deep: true})
-
 onMounted(() => {
   resizeSyncWidth()
   nextTick(resizeSyncWidth) // たまに上手くいかないので念のため
@@ -456,6 +279,8 @@ onUnmounted(() => {
   ganttWrapperElement.value?.removeEventListener("scroll")
   childGanttWrapperElement.value?.removeEventListener("scroll")
 })
+
+
 
 // ここからイベントフック
 const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {

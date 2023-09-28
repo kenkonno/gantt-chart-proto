@@ -1,6 +1,6 @@
-import {computed, ComputedRef, inject, Ref, ref, watch} from "vue";
+import {computed, ComputedRef, inject, ref, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
-import {Holiday, User} from "@/api";
+import {Holiday, Ticket, TicketUser, User} from "@/api";
 import {round} from "@/utils/math";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {DisplayType, GanttRow} from "@/composable/ganttFacility";
@@ -34,7 +34,10 @@ type DisplayPileUp = {
 
 const PILEUP_DANGER_COLOR = "rgb(255 89 89)"
 
-export const usePielUps = (startDate: string, endDate: string, ganttRows: ComputedRef<GanttRow[]>, displayType: Ref<DisplayType>, holidays: ComputedRef<Holiday[]>) => {
+export const usePielUps = (
+    startDate: string, endDate: string,
+    tickets: ComputedRef<Ticket[]>, ticketUsers: ComputedRef<TicketUser[]>,
+    displayType: ComputedRef<DisplayType>, holidays: ComputedRef<Holiday[]>) => {
     // ガントチャート描画用の日付だとフォーマットが違うので変換しておく
     startDate = ganttDateToYMDDate(startDate)
     endDate = ganttDateToYMDDate(endDate)
@@ -50,12 +53,11 @@ export const usePielUps = (startDate: string, endDate: string, ganttRows: Comput
         }
     }))
     let refreshPileUpByPersonExclusive = false
-    watch([displayType, ganttRows], () => {
-        refreshPileUps() // TODO: 本当はwatchでやるのは良くないかも。
+    watch([displayType, tickets, ticketUsers, holidays], () => {
+        refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？
     }, {
         deep: true
     })
-
 
     // 人単位・部署単位ともに更新する
     const refreshPileUps = () => {
@@ -94,8 +96,13 @@ export const usePielUps = (startDate: string, endDate: string, ganttRows: Comput
         })
 
         // 全てのチケットから積み上げを更新する
-        ganttRows.value.forEach(row => {
-            setWorkHour(pileUpsByPerson.value, pileUpsByDepartment.value, row, startDate, holidays.value)
+        tickets.value.forEach(ticket => {
+            setWorkHour(
+                pileUpsByPerson.value, pileUpsByDepartment.value,
+                ticket,
+                ticketUsers.value.filter(v => v.ticket_id === ticket.id),
+                startDate, holidays.value
+            )
         })
         // 稼働上限のスタイルを適応する
         pileUpsByPerson.value.forEach(v => {
@@ -122,28 +129,30 @@ export const usePielUps = (startDate: string, endDate: string, ganttRows: Comput
      * 期間が十分で余りが出る場合は稼働予定が少ない順、チケットに割り当て順で積み上げる。
      * @param pileUpsByPerson
      * @param pileUpByDepartment
-     * @param row
+     * @param ticket
+     * @param ticketUsers
      * @param facilityStartDate
      * @param holidays
      */
     const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
-                         row: GanttRow,
+                         ticket: Ticket,
+                         ticketUsers: TicketUser[],
                          facilityStartDate: string,
                          holidays: Holiday[]) => {
         // validation
-        if (row.ticket?.start_date == null || row.ticket?.end_date == null || row.ticket.estimate == null ||
-            (row.ticketUsers == null || row.ticketUsers?.length <= 0)) {
+        if (ticket.start_date == null || ticket.end_date == null || ticket.estimate == null ||
+            (ticketUsers == null || ticketUsers.length <= 0)) {
             return
         }
         const dayjsFacilityStartDate = dayjs(facilityStartDate)
-        const dayjsStartDate = dayjs(row.ticket?.start_date)
-        const dayjsEndDate = dayjs(row.ticket?.end_date)
+        const dayjsStartDate = dayjs(ticket.start_date)
+        const dayjsEndDate = dayjs(ticket.end_date)
         const startIndex = getIndexByDate(dayjsFacilityStartDate, dayjsStartDate)
         const endIndex = getIndexByDate(dayjsFacilityStartDate, dayjsEndDate)
         // 営業日の取得
         const numberOfBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
-        const workHour = row.ticket?.estimate / numberOfBusinessDays / row.ticketUsers.length
-        let estimate = row.ticket?.estimate
+        const workHour = ticket.estimate / numberOfBusinessDays / ticketUsers.length
+        let estimate = ticket.estimate
         const holidayIndexes = holidays.filter(v => {
             return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
         }).map(v => getIndexByDate(dayjsFacilityStartDate, dayjs(v.date)))
@@ -161,7 +170,7 @@ export const usePielUps = (startDate: string, endDate: string, ganttRows: Comput
         })
         const lastIndex = validIndexes[validIndexes.length - 1]
         // 対象の取得
-        const ticketUserIds = row.ticketUsers?.map(v => v.user_id)
+        const ticketUserIds = ticketUsers.map(v => v.user_id)
         const targets = pileUpsByPerson.filter(v => ticketUserIds.includes(v.user.id!))
         // 並び替える (末端の予定工数が少ない順, チケットにアサインされた順)
         targets.sort((a, b) => {
@@ -172,7 +181,7 @@ export const usePielUps = (startDate: string, endDate: string, ganttRows: Comput
             return 0
         })
         // 対象部署を取得
-        const departmentTarget = pileUpByDepartment.find(v => v.departmentId === row.ticket?.department_id)
+        const departmentTarget = pileUpByDepartment.find(v => v.departmentId === ticket.department_id)
         // 稼働時間を加算する。
         validIndexes.forEach((validIndex, index) => {
             targets.forEach((v, targetIndex) => {

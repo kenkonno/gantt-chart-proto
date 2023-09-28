@@ -665,6 +665,22 @@ paths:
         '200':
           description: OK
       description: ''
+  /api/all-tickets:
+    get:
+      summary: GetAllTicket
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllTicketsResponse'
+              examples: {}
+      operationId: get-all-tickets
+      description: ''
+      parameters: []
+    parameters: []
 components:
   schemas:
     User:
@@ -1452,6 +1468,11 @@ components:
     GetTicketsRequest:
       title: GetTicketsRequest
       type: object
+    GetAllTicketsRequest:
+      title: GetTicketsRequest
+      type: object
+      x-stoplight:
+        id: 98d5b9fbccc01
     GetTicketsResponse:
       title: GetTicketsResponse
       type: object
@@ -1462,6 +1483,18 @@ components:
             $ref: '#/components/schemas/Ticket'
       required:
         - list
+    GetAllTicketsResponse:
+      title: GetTicketsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+      required:
+        - list
+      x-stoplight:
+        id: 3602e5924e7ec
     GetTicketsIdRequest:
       title: GetTicketsIdRequest
       type: object

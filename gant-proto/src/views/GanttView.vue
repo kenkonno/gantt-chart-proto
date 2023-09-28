@@ -73,12 +73,19 @@ import OperationSettingView from "@/views/OperationSettingView.vue";
 import HolidayView from "@/views/HolidayView.vue";
 import {nextTick, provide} from "vue";
 import GanttProxy from "@/components/GanttProxy.vue";
-import {GLOBAL_ACTION_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY, useGlobalState} from "@/composable/globalState";
+import {
+  GLOBAL_ACTION_KEY,
+  GLOBAL_GETTER_KEY,
+  GLOBAL_MUTATION_KEY,
+  GLOBAL_STATE_KEY,
+  useGlobalState
+} from "@/composable/globalState";
 
-const {globalState, actions, mutations} = await useGlobalState()
+const {globalState, actions, mutations, getters} = await useGlobalState()
 provide(GLOBAL_STATE_KEY, globalState.value)
 provide(GLOBAL_ACTION_KEY, actions)
 provide(GLOBAL_MUTATION_KEY, mutations)
+provide(GLOBAL_GETTER_KEY, getters)
 
 const {facilityList} = globalState.value
 const {refreshFacilityList} = actions

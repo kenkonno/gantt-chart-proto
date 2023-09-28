@@ -19,7 +19,7 @@ import {
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
 
-type GanttChartGroup = {
+export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
     rows: GanttRow[]
 }
@@ -104,6 +104,16 @@ export async function useGanttFacility() {
         return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType.value) + 1) * 30 + "px"
     })
 
+    // 積み上げに渡すよう
+    const getTickets = computed(() => {
+        const result: Ticket[] = []
+        ganttChartGroup.value.forEach(v => v.rows.forEach(vv => {
+            if(vv.ticket != null){
+                result.push(vv.ticket)
+            }
+        }))
+        return result
+    })
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -411,6 +421,8 @@ export async function useGanttFacility() {
         getUnitName,
         getOperationList,
         getHolidays,
+        getTickets,
+        ticketUserList,
         addNewTicket,
         adjustBar,
         deleteTicket,

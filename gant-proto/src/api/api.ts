@@ -409,6 +409,19 @@ export interface GanttGroup {
 /**
  * 
  * @export
+ * @interface GetAllTicketsResponse
+ */
+export interface GetAllTicketsResponse {
+    /**
+     * 
+     * @type {Array<Ticket>}
+     * @memberof GetAllTicketsResponse
+     */
+    'list': Array<Ticket>;
+}
+/**
+ * 
+ * @export
  * @interface GetDepartmentsIdRequest
  */
 export interface GetDepartmentsIdRequest {
@@ -2045,6 +2058,36 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetAllTicket
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllTickets: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/all-tickets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetDepartments
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3458,6 +3501,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetAllTicket
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllTickets(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetDepartments
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3980,6 +4033,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetAllTicket
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllTickets(options?: any): AxiosPromise<GetAllTicketsResponse> {
+            return localVarFp.getAllTickets(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetDepartments
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4481,6 +4543,17 @@ export class DefaultApi extends BaseAPI {
      */
     public deleteUsersId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).deleteUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetAllTicket
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getAllTickets(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getAllTickets(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
