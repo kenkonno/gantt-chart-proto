@@ -207,6 +207,8 @@ import PileUps from "@/components/pileUps/PileUps.vue";
 import {StyleValue} from "vue/dist/vue";
 import {Tippy} from "vue-tippy";
 
+import {Tippy} from 'vue-tippy'
+
 type GanttProxyProps = {
   facilityId: number
 }
