@@ -192,22 +192,17 @@
 </style>
 
 <script setup lang="ts">
-import {GanttBarObject, GGanttChart, GGanttLabelRow, GGanttRow} from "@infectoone/vue-ganttastic";
-import {GanttRow, useGanttFacility} from "@/composable/ganttFacility";
+import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
+import {useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
-import {usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
-import {StyleValue} from "vue/dist/vue";
 import {Tippy} from "vue-tippy";
-
-import {Tippy} from 'vue-tippy'
 
 type GanttProxyProps = {
   facilityId: number
@@ -257,7 +252,6 @@ const setScheduleByFromToProxy = () => {
 }
 
 
-
 // スクロールや大きさの同期系
 const ganttSideMenuElement = ref<HTMLDivElement>()
 const syncWidth = ref<CSSStyleDeclaration>()
@@ -286,7 +280,6 @@ onUnmounted(() => {
   ganttWrapperElement.value?.removeEventListener("scroll")
   childGanttWrapperElement.value?.removeEventListener("scroll")
 })
-
 
 
 // ここからイベントフック
