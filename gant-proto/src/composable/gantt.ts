@@ -387,7 +387,7 @@ export async function useGantt() {
             row.ticket.start_date = ganttDateToYMDDate(startDate.format(format.value))
             // 終了日を決定する、祝日が含まれている場合終了日をずらす。
             row.ticket.end_date = ganttDateToYMDDate(
-                addBusinessDays(startDate, numberOfDaysRequired, holidays)
+                addBusinessDays(startDate, numberOfDaysRequired, holidays, true)
                     .add(-1, 'minute').format(format.value)
             )
             // ガントに反映する
