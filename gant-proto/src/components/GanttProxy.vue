@@ -11,10 +11,14 @@
           <span class="material-symbols-outlined">menu_open</span>
         </template>
         <template v-slot:body>
-          <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
-                 @click="setScheduleByPersonDayProxy()">
-          <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
-                 @click="setScheduleByFromToProxy()">
+          <tippy content="（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
+            <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
+                   @click="setScheduleByPersonDayProxy()">
+          </tippy>
+          <tippy content="開始日・終了日・工数・工程が入力されている行が対象です。担当所が入力されている行は無視されます。">
+            <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
+                   @click="setScheduleByFromToProxy()">
+          </tippy>
         </template>
       </AccordionHorizontal>
       <AccordionHorizontal class="justify-middle">
@@ -182,8 +186,10 @@
                   <tr>
                     <td class="side-menu-cell"></td><!-- css hack min-height -->
                     <gantt-td :visible="true" class="justify-middle">
-                      <span v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" class="error-over-work-hour">稼働上限を超えている担当者がいます。</span>
-                      <span>{{ getDepartmentName(item.departmentId) }}(人)</span>
+                      <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" content="稼働上限を超えている担当者がいます。">
+                        <span class="error-over-work-hour">{{ getDepartmentName(item.departmentId) }}(人)</span>
+                      </tippy>
+                      <span v-else>{{ getDepartmentName(item.departmentId) }}(人)</span>
                       <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
                             @click="item.displayUsers = true">add</span>
                       <span class="material-symbols-outlined pointer" v-else
@@ -196,8 +202,10 @@
                       :key="user.user.id">
                     <td class="side-menu-cell"></td><!-- css hack min-height -->
                     <gantt-td :visible="true" class="justify-middle">
-                      <span v-if="user.hasError" class="error-over-work-hour">稼働上限を超えている日があります。</span>
-                      <span>{{ user.user.name }}(h)</span>
+                      <tippy v-if="user.hasError" content="稼働上限を超えている日があります。">
+                        <span class="error-over-work-hour">{{ user.user.name }}(h)</span>
+                      </tippy>
+                      <span v-else>{{ user.user.name }}(h)</span>
                     </gantt-td>
                   </tr>
                 </template>
@@ -222,7 +230,6 @@
 <style lang="scss" scoped>
 // TODO: ツールチップか何かでエラー表示を代替すべき。見にくすぎる。
 .error-over-work-hour {
-  font-size: 50%;
   color: red
 }
 .pointer {
@@ -351,6 +358,8 @@ import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {round} from "@/utils/math";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
+
+import {Tippy} from 'vue-tippy'
 
 type GanttProxyProps = {
   facilityId: number
