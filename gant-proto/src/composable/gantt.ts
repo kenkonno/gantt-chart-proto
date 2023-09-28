@@ -351,7 +351,7 @@ export async function useGantt() {
                 }
                 return;
             }
-            if (row.ticket.days_after != null && row.ticket.days_after! >= 0 && prevEndDate != null) {
+            if (row.ticket.days_after != null && prevEndDate != null) {
                 startDate = prevEndDate.add(row.ticket.days_after!, 'day') // 現在日を最後に１日足しているため。
             } else {
                 startDate = dayjs(row.ticket!.start_date)
@@ -400,16 +400,16 @@ export async function useGantt() {
                 row.ticket?.process_id && row.ticket?.process_id > 0 &&
                 row.ticket?.start_date && row.ticket?.end_date) {
                 // 日後の処理
-                if (row.ticket.days_after != null && row.ticket.days_after >= 0 && prevEndDate != null) {
+                if (row.ticket.days_after != null && prevEndDate != null) {
                     // 現在設定されている営業日を計算する
                     let dayjsStartDate = dayjs(row.ticket.start_date)
                     let dayjsEndDate = dayjs(row.ticket.end_date)
                     const numberOfRequiredBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
                     // 開始日を日後分ずらした日付に設定する
-                    dayjsStartDate = prevEndDate.add(row.ticket.days_after, 'days')
+                    dayjsStartDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
+                    // dayjsStartDate = prevEndDate.add(row.ticket.days_after, 'days')
                     // 終了日を設定されている営業日分確保する
                     dayjsEndDate = getEndDateByRequiredBusinessDay(dayjsStartDate, numberOfRequiredBusinessDays, holidays)
-                    console.log("##############", numberOfRequiredBusinessDays)
                     // チケットに反映させる
                     row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(format.value))
                     row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(format.value))
@@ -787,6 +787,40 @@ const getNumberOfBusinessDays = (startDate: Dayjs, endDate: Dayjs, holidays: Hol
         return dayBetween(dayjsHoliday, startDate, endDate)
     })
     return result - includes.length
+}
+/**
+ * 営業日分日にちを計算する
+ * @param startDate
+ * @param numberOfBusinessDays
+ * @param holidays
+ */
+const addBusinessDays = (startDate: Dayjs, numberOfBusinessDays: number, holidays: Holiday[]) => {
+    let result = startDate
+    // 0営業日の場合は開始を返す
+    if(numberOfBusinessDays === 0 ) {
+        return result
+    }
+    // 進める方向の決定
+    let direction = 1
+    if(numberOfBusinessDays < 0 ) {
+        direction = -1
+    }
+
+    // 1日進める
+    let recursiveLimit = 10
+    while(numberOfBusinessDays !== 0 && recursiveLimit !== 0) {
+        result = result.add(direction, "day")
+        const isHoliday = holidays.find(v => dayjs(v.date).isSame(result)) != undefined
+        // 祝日でなければ必要営業日を１減らす
+        if(!isHoliday) {
+            numberOfBusinessDays -= direction
+        } else {
+            // 無限ループ用に再起回数の最大を制御
+            recursiveLimit--
+        }
+    }
+
+    return result
 }
 
 const getEndDateByRequiredBusinessDay = (startDate: Dayjs, requiredNumberOfBusinessDays: number, holidays: Holiday[]) => {
