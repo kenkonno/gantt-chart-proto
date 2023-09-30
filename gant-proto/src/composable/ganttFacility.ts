@@ -338,13 +338,13 @@ export async function useGanttFacility() {
                     return;
                 } else {
                     // 開始日も日後も設定がなければスキップ
-                    if (!row.ticket?.start_date || !row.ticket?.days_after) {
+                    if (!row.ticket?.start_date && !row.ticket?.days_after) {
                         console.log("###### SKIP due to after first row pt2")
                         return;
                     } else {
                         // 日後が0でなければ優先
                         console.log("################# days_after", row.ticket?.days_after)
-                        if(row.ticket?.days_after != 0) {
+                        if(row.ticket?.days_after != null) {
                             console.log("################# days_after", row.ticket?.days_after)
                             startDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
                         } else {

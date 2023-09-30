@@ -22,7 +22,8 @@
             <tr>
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="true" class="justify-middle">
-                <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError" content="稼働上限を超えている担当者がいます。">
+                <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
+                       content="稼働上限を超えている担当者がいます。">
                   <span class="error-over-work-hour">{{ getDepartmentName(item.departmentId) }}(人)</span>
                 </tippy>
                 <span v-else>{{ getDepartmentName(item.departmentId) }}(人)</span>
@@ -58,15 +59,14 @@
 </style>
 <script setup lang="ts">
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
-import {DisplayType, GanttChartGroup, GanttRow} from "@/composable/ganttFacility";
+import {DisplayType} from "@/composable/ganttFacility";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, ComputedRef, inject, StyleValue, watch} from "vue";
+import {computed, inject, toValue} from "vue";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
-import {usePielUps} from "@/composable/pileUps";
+import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
-import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
-import {Api} from "@/api/axios";
+import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {Tippy} from "vue-tippy";
 
 type PileUpsProps = {
@@ -81,29 +81,29 @@ type PileUpsProps = {
   syncWidth: CSSStyleDeclaration | undefined,
 }
 const props = defineProps<PileUpsProps>()
+const {currentFacilityId, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
 const {getDepartmentName} = inject(GLOBAL_GETTER_KEY)!
-// FIXME: pileUpsに渡すときに、ほかの設備の奴らも渡してあげれば全体積み上げにできる。
-// TODO: と思ったけど、やってみたら祝日問題とか色々有るので、全部の設備分計算してデフォルトのラベルを作ってあげるのがよさそう。結局全体ビューではやることになるので内部実装とする。祝日の概念がグローバルになれば処理としては簡単。
-// TODO: 仮にやるとしたら。start, endはfacilityの全体。ticket,holiday,ticketUsersは各facility毎、でいい感じにindex操作してデフォルトの積み上げを用意しておくこと。
-// TODO: API通信は増えるけど、一旦パフォーマンス無視して全部通信させてフロントだけで完結させよう。
-// 設備一覧の取得
-// 全チケット情報を取得するAPIの追加
-// 全担当者情報を取得するAPIの追加
-const {data: allTickets} = await Api.getAllTickets()
-const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
 
 const tickets = computed(() => {
-  const currentTicketIds = props.tickets.map(v => v.id)
-  return props.tickets.concat(allTickets.list.filter(allTicket => !currentTicketIds.includes(allTicket.gantt_group_id)))
-
+  return props.tickets
 })
 const ticketUsers = computed(() => {
-  const currentTicketIds = props.tickets.map(v => v.id)
-  return props.ticketUsers.concat(allTicketUsers.list.filter(allTicketUser => !currentTicketIds.includes(allTicketUser.ticket_id)))
-
+  return props.ticketUsers
 })
 const displayType = computed(() => props.displayType)
 const holidays = computed(() => props.holidays)
+
+// 結論
+// usePileUpsを全ての設備で実行。
+// 開始日、終了日は現在の設備。
+// DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
+const {
+  globalStartDate,
+  defaultPileUpsByPerson,
+  defaultPileUpsByDepartment
+} = await getDefaultPileUps(currentFacilityId, displayType)
+
+console.log("####### start main usePileUps", globalStartDate)
 const {
   pileUpFilters,
   pileUpsByDepartment,
@@ -116,7 +116,12 @@ const {
     tickets,
     ticketUsers,
     displayType,
-    holidays
+    holidays,
+    departmentList,
+    userList,
+    toValue(defaultPileUpsByPerson),
+    toValue(defaultPileUpsByDepartment),
+    globalStartDate
 )
 
 </script>

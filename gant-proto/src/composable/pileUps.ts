@@ -1,10 +1,12 @@
-import {computed, ComputedRef, inject, ref, watch} from "vue";
+import {computed, ComputedRef, inject, Ref, ref, toValue, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
-import {Holiday, Ticket, TicketUser, User} from "@/api";
+import {Department, Holiday, Ticket, TicketUser, User} from "@/api";
 import {round} from "@/utils/math";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {DisplayType, GanttRow} from "@/composable/ganttFacility";
+import {DisplayType} from "@/composable/ganttFacility";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
+import {useGanttGroupTable} from "@/composable/ganttGroup";
+import {Api} from "@/api/axios";
 
 type PileUpByPerson = {
     user: User,
@@ -33,16 +35,86 @@ type DisplayPileUp = {
 }
 
 const PILEUP_DANGER_COLOR = "rgb(255 89 89)"
+const PILEUP_MERGE_COLOR = "rgb(68 141 255)"
+
+function initPileUps(
+    endDate: string, startDate: string,
+    userList: User[], pileUpsByPerson: Ref<UnwrapRef<PileUpByPerson[]>>, departmentList: Department[],
+    pileUpsByDepartment: Ref<UnwrapRef<PileUpByDepartment[]>>,
+    defaultPileUpsByPerson: PileUpByPerson[] = [], defaultPileUpsByDepartment: PileUpByDepartment[] = [],
+    globalStartDate?: string,) {
+
+    pileUpsByPerson.value.length = 0
+    pileUpsByDepartment.value.length = 0
+
+    // 開始日・終了日は表示中の設備にする
+    const duration = dayjs(endDate).diff(dayjs(startDate), 'day')
+    // 全ユーザー分初期化する
+    userList.forEach(v => {
+        pileUpsByPerson.value.push({
+            labels: Array(duration).fill(0),
+            user: v,
+            styles: Array(duration).fill({}),
+            hasError: false,
+        })
+    })
+    // 部署ごとの初期化
+    departmentList.forEach(v => {
+        pileUpsByDepartment.value.push({
+            departmentId: v.id!,
+            users: Array(duration).fill([]),
+            styles: Array(duration).fill({}),
+            hasError: false,
+        })
+    })
+    // fillは同じオブジェクトを参照するため上書きする。
+    pileUpsByDepartment.value.forEach(v => {
+        v.users.forEach((vv, ii) => {
+            v.users[ii] = []
+        })
+    })
+
+    // defaultがある場合はindexを計算してつけなおす。大小関係がるのでマージする必要がある。
+    // マージし始めるindexを計算する
+    if (globalStartDate != null) {
+        const mergeStartIndex = dayjs(startDate).diff(dayjs(globalStartDate), 'day')
+        // 人の積み上げ
+        pileUpsByPerson.value.forEach(row => {
+            const target = defaultPileUpsByPerson.find(v => v.user.id === row.user.id)!
+            row.labels.forEach((v, index) => {
+                const targetIndex = mergeStartIndex + index
+                console.log("###############", mergeStartIndex, index, targetIndex)
+                if (0 <= targetIndex && targetIndex < target.labels.length && target.labels[mergeStartIndex + index] != 0) {
+                    row.labels[index] += target.labels[mergeStartIndex + index]
+                    row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                }
+            })
+        })
+        // 部署の積み上げ
+        pileUpsByDepartment.value.forEach(row => {
+            const target = defaultPileUpsByDepartment.find(v => v.departmentId === row.departmentId)!
+            row.users.forEach((v, index) => {
+                const targetIndex = mergeStartIndex + index
+                if (0 <= targetIndex && targetIndex < target.users.length && target.users[mergeStartIndex + index].length > 0) {
+                    row.users[index].push(...target.users[mergeStartIndex + index])
+                }
+            })
+        })
+    }
+
+}
 
 export const usePielUps = (
     startDate: string, endDate: string,
     tickets: ComputedRef<Ticket[]>, ticketUsers: ComputedRef<TicketUser[]>,
-    displayType: ComputedRef<DisplayType>, holidays: ComputedRef<Holiday[]>) => {
+    displayType: ComputedRef<DisplayType>,
+    holidays: ComputedRef<Holiday[]>, departmentList: Department[], userList: User[],
+    defaultPileUpsByPerson: PileUpByPerson[] = [], defaultPileUpsByDepartment: PileUpByDepartment[] = [],
+    globalStartDate?: string,
+) => {
     // ガントチャート描画用の日付だとフォーマットが違うので変換しておく
     startDate = ganttDateToYMDDate(startDate)
     endDate = ganttDateToYMDDate(endDate)
-
-    const {userList, departmentList} = inject(GLOBAL_STATE_KEY)!
 
     const pileUpsByPerson = ref<PileUpByPerson[]>([])
     const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
@@ -66,34 +138,7 @@ export const usePielUps = (
         } else {
             refreshPileUpByPersonExclusive = true
         }
-        pileUpsByPerson.value.length = 0
-        pileUpsByDepartment.value.length = 0
-        // 開始日・終了日は表示中の設備にする
-        const duration = dayjs(endDate).diff(dayjs(startDate), 'day')
-        // 全ユーザー分初期化する
-        userList.forEach(v => {
-            pileUpsByPerson.value.push({
-                labels: Array(duration).fill(0),
-                user: v,
-                styles: Array(duration).fill({}),
-                hasError: false,
-            })
-        })
-        // 部署ごとの初期化
-        departmentList.forEach(v => {
-            pileUpsByDepartment.value.push({
-                departmentId: v.id!,
-                users: Array(duration).fill([]),
-                styles: Array(duration).fill({}),
-                hasError: false,
-            })
-        })
-        // fillは同じオブジェクトを参照するため上書きする。
-        pileUpsByDepartment.value.forEach(v => {
-            v.users.forEach((vv, ii) => {
-                v.users[ii] = []
-            })
-        })
+        initPileUps(endDate, startDate, userList, pileUpsByPerson, departmentList, pileUpsByDepartment, defaultPileUpsByPerson, defaultPileUpsByDepartment, globalStartDate);
 
         // 全てのチケットから積み上げを更新する
         tickets.value.forEach(ticket => {
@@ -106,12 +151,12 @@ export const usePielUps = (
         })
         // 稼働上限のスタイルを適応する
         pileUpsByPerson.value.forEach(v => {
-            v.styles = v.labels.map(workHour => {
+            v.styles = v.labels.map((workHour, index) => {
                 if (v.user.limit_of_operation < workHour) {
                     v.hasError = v.hasError || true
                     return {color: PILEUP_DANGER_COLOR}
                 } else {
-                    return {}
+                    return v.styles[index]
                 }
             })
         })
@@ -139,6 +184,7 @@ export const usePielUps = (
                          ticketUsers: TicketUser[],
                          facilityStartDate: string,
                          holidays: Holiday[]) => {
+
         // validation
         if (ticket.start_date == null || ticket.end_date == null || ticket.estimate == null ||
             (ticketUsers == null || ticketUsers.length <= 0)) {
@@ -241,6 +287,7 @@ export const usePielUps = (
         }
         pileUpsByPerson.forEach(v => {
             const labelsByDay = v.labels.concat()
+            const stylesByDay = v.styles.concat()
             v.labels.length = 0
             v.styles.length = 0
             let hasError = false
@@ -249,7 +296,9 @@ export const usePielUps = (
                     return p + labelsByDay[c]
                 }, 0))
                 hasError = indexMap[key].some(vv => labelsByDay[vv] > v.user.limit_of_operation)
-                v.styles.push(hasError ? {color: PILEUP_DANGER_COLOR} : {})
+                // 他設備データがあれば青にする
+                const defaultStyle = indexMap[key].some(vv => Object.keys(stylesByDay[vv]).includes('color') && stylesByDay[vv]['color'] == PILEUP_MERGE_COLOR) ? {color: PILEUP_MERGE_COLOR} : {};
+                v.styles.push(hasError ? {color: PILEUP_DANGER_COLOR} : defaultStyle)
                 v.hasError = v.hasError || hasError // 一度trueになるとtrueになり続けるやつ
             }
         })
@@ -262,7 +311,7 @@ export const usePielUps = (
                 indexMap[key].forEach(v => {
                     r.push(...usersByDay[v])
                 })
-                // unique
+                // FIXME: uniqueなんか間違ってね？
                 v.users.push(Array.from(new Set(r)))
             }
         })
@@ -306,7 +355,7 @@ export const usePielUps = (
             pileUpsByPerson.value.filter(vv => vv.user.department_id === v.departmentId).forEach(vv => {
                 vv.styles.forEach((vvv, index) => {
                     // FIXME: colorがあるときにするのはいまいち。運用的には期待値通りにはなる。
-                    if (Object.keys(vvv).includes("color")) v.styles[index] = {color: PILEUP_DANGER_COLOR}
+                    if (Object.keys(vvv).includes("color") && vvv["color"] === PILEUP_DANGER_COLOR) v.styles[index] = {color: PILEUP_DANGER_COLOR}
                 })
             })
         })
@@ -322,3 +371,78 @@ export const usePielUps = (
         refreshPileUps,
     }
 }
+/**
+ * FIXME: パフォーマンス的にこれはサーバーサイドでやるべきこと。設計をし直す。
+ * @param excludeFacilityId
+ * @param displayType
+ */
+export const getDefaultPileUps = async (excludeFacilityId: number, displayType: ComputedRef<DisplayType>) => {
+    const {facilityList, holidayMap, userList, departmentList} = inject(GLOBAL_STATE_KEY)!
+
+    const {data: allTickets} = await Api.getAllTickets()
+    const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
+    const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
+    // 全設備の最小
+    const startDate: string = facilityList.slice().sort((a, b) => {
+        return a.term_from > b.term_from ? 1 : -1
+    }).shift()!.term_from.substring(0, 10)
+    // 全設備の最大
+    const endDate: string = facilityList.slice().sort((a, b) => {
+        return a.term_to > b.term_to ? 1 : -1
+    }).pop()!.term_to.substring(0, 10)
+
+    const defaultPileUpsByPerson = ref<PileUpByPerson[]>([])
+    const defaultPileUpsByDepartment = ref<PileUpByDepartment[]>([])
+    initPileUps(endDate, startDate, userList, defaultPileUpsByPerson, departmentList, defaultPileUpsByDepartment);
+
+    for (const facility of facilityList) {
+        // 対象外の設備はスキップ
+        if (facility.id === excludeFacilityId) continue
+
+        const innerHolidays: Holiday[] = []
+        if (holidayMap[facility.id!] == undefined) {
+            const {data} = await Api.getHolidays(facility.id!)
+            innerHolidays.push(...data.list)
+        } else {
+            innerHolidays.push(...holidayMap[facility.id!])
+        }
+
+        const holidays = computed(() => {
+            return innerHolidays
+        })
+        await ganttGroupRefresh(facility.id!)
+        const tickets = computed(() => {
+            return allTickets.list.filter(v => ganttGroupList.value.map(vv => vv.id!).includes(v.gantt_group_id))
+        })
+        const ticketUsers = computed(() => {
+            return allTicketUsers.list.filter(v => tickets.value.map(vv => vv.id).includes(v.ticket_id))
+        })
+
+        const {pileUpsByPerson, pileUpsByDepartment} = usePielUps(startDate, endDate,
+            tickets, ticketUsers,
+            displayType,
+            holidays, departmentList, userList)
+
+        // defaultPileUpsに計上する, stylesとかは一旦無視でいいと思う。本チャンの方で着色するので。
+        pileUpsByPerson.value.forEach(pileUp => {
+            const target = defaultPileUpsByPerson.value.find(v => v.user === pileUp.user)!
+            target.labels.forEach((v, i) => {
+                target.labels[i] += pileUp.labels[i]
+            })
+        })
+        pileUpsByDepartment.value.forEach(pileUp => {
+            const target = defaultPileUpsByDepartment.value.find(v => v.departmentId === pileUp.departmentId)!
+            target.users.forEach((v, i) => {
+                const r: number[] = []
+                r.push(...v, ...pileUp.users[i])
+                target.users[i].push(...Array.from(new Set(r)))
+            })
+        })
+    }
+    return {
+        globalStartDate: startDate,
+        defaultPileUpsByPerson,
+        defaultPileUpsByDepartment
+    }
+}
+
