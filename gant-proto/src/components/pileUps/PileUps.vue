@@ -61,7 +61,7 @@
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import {DisplayType} from "@/composable/ganttFacility";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, toValue} from "vue";
+import {computed, inject, StyleValue, toValue} from "vue";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
@@ -78,7 +78,7 @@ type PileUpsProps = {
   holidays: Holiday[],
   width: string,
   highlightedDates: Date[],
-  syncWidth: CSSStyleDeclaration | undefined,
+  syncWidth: StyleValue | undefined,
 }
 const props = defineProps<PileUpsProps>()
 const {currentFacilityId, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
@@ -101,7 +101,7 @@ const {
   globalStartDate,
   defaultPileUpsByPerson,
   defaultPileUpsByDepartment
-} = await getDefaultPileUps(currentFacilityId, displayType)
+} = await getDefaultPileUps(currentFacilityId, "day")
 
 console.log("####### start main usePileUps", globalStartDate)
 const {

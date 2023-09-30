@@ -83,7 +83,6 @@ function initPileUps(
             const target = defaultPileUpsByPerson.find(v => v.user.id === row.user.id)!
             row.labels.forEach((v, index) => {
                 const targetIndex = mergeStartIndex + index
-                console.log("###############", mergeStartIndex, index, targetIndex)
                 if (0 <= targetIndex && targetIndex < target.labels.length && target.labels[mergeStartIndex + index] != 0) {
                     row.labels[index] += target.labels[mergeStartIndex + index]
                     row.styles[index] = {color: PILEUP_MERGE_COLOR}
@@ -376,7 +375,7 @@ export const usePielUps = (
  * @param excludeFacilityId
  * @param displayType
  */
-export const getDefaultPileUps = async (excludeFacilityId: number, displayType: ComputedRef<DisplayType>) => {
+export const getDefaultPileUps = async (excludeFacilityId: number, displayType: DisplayType) => {
     const {facilityList, holidayMap, userList, departmentList} = inject(GLOBAL_STATE_KEY)!
 
     const {data: allTickets} = await Api.getAllTickets()
@@ -420,7 +419,7 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
 
         const {pileUpsByPerson, pileUpsByDepartment} = usePielUps(startDate, endDate,
             tickets, ticketUsers,
-            displayType,
+            computed(() => displayType),
             holidays, departmentList, userList)
 
         // defaultPileUpsに計上する, stylesとかは一旦無視でいいと思う。本チャンの方で着色するので。

@@ -321,7 +321,6 @@ export async function useGanttFacility() {
         rows.forEach((row, index) => {
             let startDate: Dayjs
             // 先頭行の場合
-            console.log("########### setScheduleByPersonDay")
             if(index === 0 ) {
                 // 開始日・工数・工程・人数が未設定の場合はスキップする
                 if(!row.ticket?.start_date || !row.ticket?.estimate ||
@@ -343,9 +342,7 @@ export async function useGanttFacility() {
                         return;
                     } else {
                         // 日後が0でなければ優先
-                        console.log("################# days_after", row.ticket?.days_after)
                         if(row.ticket?.days_after != null) {
-                            console.log("################# days_after", row.ticket?.days_after)
                             startDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
                         } else {
                             // 開始日をそのまま利用する

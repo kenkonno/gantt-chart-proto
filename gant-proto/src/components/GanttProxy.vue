@@ -198,11 +198,12 @@ import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {inject, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
-import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {inject, nextTick, ref, watch} from "vue";
+import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
 import {Tippy} from "vue-tippy";
+import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 
 type GanttProxyProps = {
   facilityId: number
@@ -254,33 +255,17 @@ const setScheduleByFromToProxy = () => {
 
 // スクロールや大きさの同期系
 const ganttSideMenuElement = ref<HTMLDivElement>()
-const syncWidth = ref<CSSStyleDeclaration>()
 const ganttWrapperElement = ref<HTMLDivElement>()
 const childGanttWrapperElement = ref<HTMLDivElement>()
-const resizeSyncWidth = () => {
-  const parentWidth = ganttSideMenuElement.value?.clientWidth
-  syncWidth.value = {width: parentWidth + "px", overflow: 'scroll'}
-  console.log("resizeSyncWidth", parentWidth)
-}
+
+const {
+  syncWidth,
+  resizeSyncWidth
+} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
+
 watch(GanttHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
-
-onMounted(() => {
-  resizeSyncWidth()
-  nextTick(resizeSyncWidth) // たまに上手くいかないので念のため
-  ganttWrapperElement.value?.addEventListener("scroll", (event) => {
-    childGanttWrapperElement.value?.scrollTo(event.srcElement.scrollLeft, 0)
-  })
-  childGanttWrapperElement.value?.addEventListener("scroll", (event) => {
-    ganttWrapperElement.value?.scrollTo(event.srcElement.scrollLeft, 0)
-  })
-})
-onUnmounted(() => {
-  ganttWrapperElement.value?.removeEventListener("scroll")
-  childGanttWrapperElement.value?.removeEventListener("scroll")
-})
-
 
 // ここからイベントフック
 const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
