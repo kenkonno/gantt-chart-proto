@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
-import {useGantt} from "@/composable/gantt";
+import {useGanttFacility} from "@/composable/ganttFacility";
 
 const {
   rows,
@@ -84,7 +84,7 @@ const {
   slideSchedule,
   addRow,
   deleteRow
-} = useGantt()
+} = useGanttFacility()
 
 
 // ここからイベントフック

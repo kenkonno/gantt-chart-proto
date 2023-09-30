@@ -10,6 +10,7 @@
 package openapi
 
 import (
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
@@ -94,6 +95,13 @@ func DeleteUnitsId(c *gin.Context) {
 func DeleteUsersId(c *gin.Context) {
 	var r openapi_models.DeleteUsersIdResponse
 	r = users.DeleteUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetAllTickets - GetAllTicket
+func GetAllTickets(c *gin.Context) {
+	var r openapi_models.GetAllTicketsResponse
+	r = all_tickets.GetAllTicketsInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

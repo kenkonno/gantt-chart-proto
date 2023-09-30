@@ -13,8 +13,9 @@ import (
 	"time"
 )
 
-// Ticket -
+// Ticket - 
 type Ticket struct {
+
 	Id *int32 `json:"id,omitempty"`
 
 	GanttGroupId int32 `json:"gantt_group_id" binding:"min=1"`
