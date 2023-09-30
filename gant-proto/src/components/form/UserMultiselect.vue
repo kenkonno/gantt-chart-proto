@@ -16,9 +16,9 @@
           v-if="!disabled"
           class="multiselect-tag-remove multiselect-tag"
           @mousedown.prevent="handleTagRemove(option, $event)"
-          :style="getBgColor(option.value)"
+          style="background-color: inherit"
       >
-        {{ option.label.substring(0, 1) }}
+        <SingleRune :name="option.label" :id="option.value"></SingleRune>
       </div>
     </template>
   </Multiselect>
@@ -28,6 +28,7 @@
 import Multiselect from '@vueform/multiselect'
 import {TicketUser, User} from "@/api";
 import {computed} from "vue";
+import SingleRune from "@/components/form/SingleRune.vue";
 
 interface UserMultiselect {
   ticketUser: TicketUser[]
@@ -41,26 +42,6 @@ const options = computed(() => props.userList.map(v => {
   return {value: v.id, label: v.name}
 }))
 const value = computed(() => props.ticketUser.map(v => v.user_id))
-
-const getBgColor = (value: number) => {
-  const master = [
-    'background-color: #D97E4C;',
-    'background-color: #D18583;',
-    'background-color: #C7C9D1;',
-    'background-color: #817D5C;',
-    'background-color: #8B42D0;',
-    'background-color: #557470;',
-    'background-color: #55567E;',
-    'background-color: #DB7C49;',
-    'background-color: #E58376;',
-    'background-color: #7C8E58;',
-    'background-color: #7B93B3;',
-  ]
-
-  return master[value % 11]
-}
-
-
 </script>
 
 <style>
@@ -82,24 +63,9 @@ const getBgColor = (value: number) => {
 .multiselect-tags {
   margin: 0;
 }
-
 .multiselect-tag {
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  border-radius: 50%;
-  color: #fff;
-  text-align: center;
   position: absolute;
-  z-index: 10;
-  border: solid 1px white;
 }
-
-.multiselect-tag:hover {
-  opacity: 0.8;
-}
-
-
 .multiselect-tag:nth-child(1) {
   left: 0%
 }

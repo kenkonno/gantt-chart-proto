@@ -72,10 +72,14 @@
             <tr v-for="item in ganttAllRow" :key="item.facility.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="GanttHeader[0].visible">{{ item.facility.name }}</gantt-td>
-              <gantt-td :visible="GanttHeader[1].visible">{{ item.users.map(v => v.name).join(',') }}</gantt-td>
-              <gantt-td :visible="GanttHeader[2].visible">{{ item.estimate }}</gantt-td>
-              <gantt-td :visible="GanttHeader[3].visible">{{ item.startDate }}</gantt-td>
-              <gantt-td :visible="GanttHeader[4].visible">{{ item.endDate }}</gantt-td>
+              <gantt-td :visible="GanttHeader[1].visible">
+                <div class="user-wrapper">
+                  <SingleRune v-for="user in item.users" :key="user.id" :name="user.name" :id="user.id"></SingleRune>
+                </div>
+              </gantt-td>
+              <gantt-td :visible="GanttHeader[2].visible">{{ item.startDate }}</gantt-td>
+              <gantt-td :visible="GanttHeader[3].visible">{{ item.endDate }}</gantt-td>
+              <gantt-td :visible="GanttHeader[4].visible">{{ item.estimate }}</gantt-td>
               <gantt-td :visible="GanttHeader[5].visible">{{ item.progress_percent }}</gantt-td>
             </tr>
             </tbody>
@@ -130,6 +134,17 @@ nav {
     }
   }
 }
+
+.user-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  > div {
+    margin: auto 0 auto -10px;
+  }
+}
+
 </style>
 <script setup lang="ts">
 import {nextTick} from "vue";
@@ -141,6 +156,7 @@ import {useGanttAll} from "@/composable/ganttAll";
 import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {ref, watch} from "vue";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
+import SingleRune from "@/components/form/SingleRune.vue";
 
 const {
   GanttHeader,

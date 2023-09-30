@@ -3,7 +3,7 @@ import {GanttBarObject} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref} from "vue";
 import {Facility, Holiday, Ticket, User} from "@/api";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
-import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
     endOfDay,
 } from "@/coreFunctions/manHourCalculation";
@@ -36,15 +36,19 @@ type GanttAllRow = {
 export async function useGanttAll() {
     // injectはsetupと同期的に呼び出す必要あり
     const {facilityList, userList, processList} = inject(GLOBAL_STATE_KEY)!
+    const {refreshFacilityList, refreshUserList, refreshProcessList} = inject(GLOBAL_ACTION_KEY)!
+    await refreshFacilityList()
+    await refreshUserList()
+    await refreshProcessList()
 
     const displayType = ref<DisplayType>("week")
 
     const GanttHeader = ref<Header[]>([
         {name: "設備名", visible: true},
-        {name: "担当者", visible: true},
+        {name: "担当者", visible: false},
+        {name: "開始日", visible: true},
+        {name: "終了日", visible: true},
         {name: "工数(h)", visible: true},
-        {name: "開始日", visible: false},
-        {name: "終了日", visible: false},
         {name: "進捗", visible: true},
     ])
     const holidays: Holiday[] = []
@@ -90,9 +94,13 @@ export async function useGanttAll() {
             }
         }, 0) / estimate * 100
 
-        const users = ticketUsers.map(ticketUser => {
-            return userList.find(v => v.id === ticketUser.user_id)
-        })
+        const users: User[] = []
+        {
+            const r = ticketUsers.map(ticketUser => {
+                return userList.find(v => v.id === ticketUser.user_id)!
+            })
+            users.push(...Array.from(new Set(r)))
+        }
 
         return <GanttAllRow>{
             facility: facility,
@@ -107,7 +115,7 @@ export async function useGanttAll() {
     const createBars = (tickets: Ticket[]) => {
         const bars: GanttBarObject[] = []
         bars.push(
-            ...tickets.map(ticket => {
+            ...tickets.filter(v => v.process_id ).map(ticket => {
                 return <GanttBarObject>{
                     beginDate: dayjs(ticket.start_date!).format(DAYJS_FORMAT),
                     endDate: endOfDay(ticket!.end_date!),
@@ -133,8 +141,11 @@ export async function useGanttAll() {
 
     const chartStart = ref(dayjs(startDate).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(endDate).format(DAYJS_FORMAT))
-    const holidaysAsDate = holidays.map(v => new Date(v.date))
-    holidaysAsDate.push(...Array.from(new Set(holidaysAsDate)))
+    const holidaysAsDate: Date[] = []
+    {
+        const r = holidays.map(v => new Date(v.date))
+        holidaysAsDate.push(...Array.from(new Set(r)))
+    }
 
     return {
         GanttHeader,
