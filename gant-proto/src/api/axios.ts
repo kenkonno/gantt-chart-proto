@@ -6,8 +6,9 @@ import {toast} from 'vue3-toastify';
 const param: ConfigurationParameters = {}
 const configuration = new Configuration(param);
 const basePath = ""
+const host = process.env.VUE_APP_API_BASE
 const axiosConfig: CreateAxiosDefaults = {
-    baseURL: "http://localhost:8081",
+    baseURL: host,
     // baseURL: "https://d1s0zfb8ghpffs.cloudfront.net",
     headers: {
         // 'Access-Control-Allow-Origin': '*',
