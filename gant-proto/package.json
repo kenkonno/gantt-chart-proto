@@ -19,7 +19,8 @@
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.3",
     "vue-tippy": "^6.3.1",
-    "vue3-toastify": "^0.1.11"
+    "vue3-toastify": "^0.1.11",
+    "@vue/compiler-sfc": "^3.3.4"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",
