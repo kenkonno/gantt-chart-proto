@@ -10,6 +10,7 @@ import (
 func DeleteDepartmentsIdInvoke(c *gin.Context) openapi_models.DeleteDepartmentsIdResponse {
 
 	departmentRep := repository.NewDepartmentRepository()
+	ticketRep := repository.NewTicketRepository()
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -17,6 +18,15 @@ func DeleteDepartmentsIdInvoke(c *gin.Context) openapi_models.DeleteDepartmentsI
 	}
 
 	departmentRep.Delete(int32(id))
+
+	// 関連チケットの削除 FIXME: 全件操作なのでパフォーマンス問題がある
+	allTickets := ticketRep.FindAll()
+	for _, item := range allTickets {
+		if item.DepartmentId != nil && *item.DepartmentId == int32(id) {
+			item.DepartmentId = nil
+			ticketRep.Upsert(item)
+		}
+	}
 
 	return openapi_models.DeleteDepartmentsIdResponse{}
 
