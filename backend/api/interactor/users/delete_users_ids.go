@@ -10,6 +10,7 @@ import (
 func DeleteUsersIdInvoke(c *gin.Context) openapi_models.DeleteUsersIdResponse {
 
 	userRep := repository.NewUserRepository()
+	ticketUserRep := repository.NewTicketUserRepository()
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -17,6 +18,13 @@ func DeleteUsersIdInvoke(c *gin.Context) openapi_models.DeleteUsersIdResponse {
 	}
 
 	userRep.Delete(int32(id))
+
+	allTicketUser := ticketUserRep.FindAll()
+	for _, item := range allTicketUser {
+		if item.UserId == int32(id) {
+			ticketUserRep.Delete(*item.Id)
+		}
+	}
 
 	return openapi_models.DeleteUsersIdResponse{}
 
