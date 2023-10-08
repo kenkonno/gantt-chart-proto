@@ -78,6 +78,8 @@
 
             :highlighted-dates="getHolidaysForGantt"
             sticky
+            :display-today-line="true"
+            @today-line-position-x="initScroll($event, ganttWrapperElement)"
         >
           <template #side-menu>
             <table class="side-menu" ref="ganttSideMenuElement">
@@ -172,7 +174,7 @@
                  :width="getGanttChartWidth"
                  :highlightedDates="getHolidaysForGantt"
                  :syncWidth="syncWidth"
-
+                 @on-mounted="forceScroll"
         >
         </PileUps>
       </div>
@@ -183,9 +185,7 @@
   </div>
 </template>
 <style>
-.g-gantt-chart {
-  flex-shrink: 0;
-}
+@import '@/assets/gantt-override.scss';
 </style>
 <style lang="scss" scoped>
 @import '@/assets/gantt.scss';
@@ -204,6 +204,7 @@ import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
 import {Tippy} from "vue-tippy";
 import {useSyncWidthAndScroll} from "@/composable/syncWidth";
+import {initScroll} from "@/utils/initScroll";
 
 type GanttProxyProps = {
   facilityId: number
@@ -260,12 +261,14 @@ const childGanttWrapperElement = ref<HTMLDivElement>()
 
 const {
   syncWidth,
-  resizeSyncWidth
+  resizeSyncWidth,
+  forceScroll
 } = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
 
 watch(GanttHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
+
 
 // ここからイベントフック
 const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {

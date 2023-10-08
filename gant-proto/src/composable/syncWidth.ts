@@ -11,6 +11,9 @@ export function useSyncWidthAndScroll(
         const parentWidth = widthElement.value?.clientWidth
         syncWidth.value = {width: parentWidth + "px", overflow: 'scroll'}
     }
+    const forceScroll = () => {
+        parentElement.value?.dispatchEvent(new Event('scroll'))
+    }
     onMounted(() => {
         resizeSyncWidth()
         nextTick(resizeSyncWidth) // たまに上手くいかないので念のため
@@ -31,6 +34,7 @@ export function useSyncWidthAndScroll(
     })
     return {
         syncWidth,
-        resizeSyncWidth
+        resizeSyncWidth,
+        forceScroll
     }
 }
