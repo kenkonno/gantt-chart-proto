@@ -1,0 +1,12 @@
+.g-gantt-chart {
+  flex-shrink: 0;
+}
+.g-timeaxis {
+  z-index: 200;
+}
+.today-line {
+  z-index: 101;
+}
+.g-gantt-wrapper {
+  z-index: 201 !important;
+}

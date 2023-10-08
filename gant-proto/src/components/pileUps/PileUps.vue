@@ -13,6 +13,7 @@
       :hide-timeaxis="true"
       :highlighted-dates="highlightedDates"
       sticky
+      :display-today-line="true"
   >
     <template #side-menu>
       <table class="side-menu" :style="syncWidth">
@@ -61,7 +62,7 @@
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import {DisplayType} from "@/composable/ganttFacility";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, StyleValue, toValue} from "vue";
+import {computed, inject, onMounted, StyleValue, toValue} from "vue";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
@@ -123,5 +124,9 @@ const {
     toValue(defaultPileUpsByDepartment),
     globalStartDate
 )
+const emit = defineEmits(["onMounted"])
+onMounted(() => {
+  emit("onMounted")
+})
 
 </script>

@@ -51,6 +51,8 @@
           color-scheme="creamy"
           :highlighted-dates="holidaysAsDate"
           sticky
+          :display-today-line="true"
+          @today-line-position-x="initScroll($event, ganttWrapperElement)"
       >
         <template #side-menu>
           <table class="side-menu" ref="ganttSideMenuElement">
@@ -100,15 +102,14 @@
                :width="getGanttChartWidth"
                :highlightedDates="holidaysAsDate"
                :syncWidth="syncWidth"
+               @on-mounted="forceScroll"
       >
       </PileUps>
     </div>
   </div>
 </template>
 <style>
-.g-gantt-chart {
-  flex-shrink: 0;
-}
+@import '@/assets/gantt-override.scss';
 </style>
 <style lang="scss" scoped>
 @import '@/assets/gantt.scss';
@@ -157,6 +158,7 @@ import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {ref, watch} from "vue";
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import SingleRune from "@/components/form/SingleRune.vue";
+import {initScroll} from "@/utils/initScroll";
 
 const {
   GanttHeader,
@@ -180,7 +182,8 @@ const childGanttWrapperElement = ref<HTMLDivElement>()
 
 const {
   syncWidth,
-  resizeSyncWidth
+  resizeSyncWidth,
+  forceScroll
 } = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
 watch(GanttHeader, () => {
   nextTick(resizeSyncWidth)
