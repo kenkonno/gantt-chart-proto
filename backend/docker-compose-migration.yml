@@ -12,7 +12,9 @@ services:
     # フォルダ共有（ホストOS:コンテナ）
     volumes:
       - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
-    # docker-compose run 実行時に実行されるコマンド
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     tty:
       true
+    # docker-compose run 実行時に実行されるコマンド
     command: go run ./main.go
