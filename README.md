@@ -38,3 +38,38 @@
 2. twipのapiサーバーだけは落としたまま。batchとpostgresは共存
 3. gantt側のコンテナ名を変更した
 4. postgresはhost側のポートを5433にした（コンテナ側は変わらず5432）
+
+
+## 環境増設したときのメモ
+環境増やした時のメモ
+・ボリュームの作成
+[ec2-user@ip-172-31-16-212 gantt-chart-proto]$ docker volume create dbdata_gantt_2
+dbdata_gantt_2
+
+・docker-compose.yamlの変更（portsの変更。volumesの変更）
+ports:
+- "5434:5432"
+volumes:
+- dbdata_gantt_2:/var/lib/postgresql/data
+
+    # golang アプリケーション
+gantt_api:
+container_name: gantt_api
+ports:
+- "8082:8081"
+
+volumes:
+dbdata_gantt_2:
+external: true
+
+・.envの変更
+ENVIROMENT=DEVELPMENT
+
+## Postgresql
+POSTGRES_PORT=5434
+
+## Api
+API_PORT=8081
+
+
+色々やったけど、結局IAM周りとかでだるくなったのでteraform化したいですね。

@@ -368,6 +368,7 @@ export async function useGanttFacility() {
             updateTicket(row.ticket)
             // 前回の終了日を設定する
             prevEndDate = dayjs(row.ticket.end_date)
+            console.log("########### 工数重視の完了", startDate.format(DAYJS_FORMAT))
         })
     }
 
