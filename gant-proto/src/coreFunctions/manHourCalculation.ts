@@ -74,7 +74,7 @@ export const addBusinessDays = (startDate: Dayjs, numberOfBusinessDays: number, 
     }
 
     // 1日進める
-    let recursiveLimit = 10
+    let recursiveLimit = 365
     while(numberOfBusinessDays !== 0 && recursiveLimit !== 0) {
         result = result.add(direction, "day")
         let isHoliday = false
