@@ -6,6 +6,7 @@ services:
 
   # postgres サービス
   gantt_postgres:
+    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_postgres
     # コンテナの名前
     container_name: gantt_postgres
     # Dockerfile のディレクトリパス
@@ -18,42 +19,29 @@ services:
     env_file: .env
     volumes:
       - dbdata_gantt:/var/lib/postgresql/data
-  #      - ./docker/postgres/init/:/docker-entrypoint-initdb.d/
+    #      - ./docker/postgres/init/:/docker-entrypoint-initdb.d/
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # golang アプリケーション
+    healthcheck:
+      #CHANGE 1: this command checks if the database is ready, right on the source db server
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # golang アプリケーション
   gantt_api:
+    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
     container_name: gantt_api
     ports:
-      - "8081:8081"
-    # postgres をビルドした後に app をビルド
-#    depends_on:
-#      - postgres
-    # Dockerfile を指定
+      - "443:443"
+    depends_on:
+      #CHANGE 2: it prevents issuing a request while the server is starting to depend on the healthy status of postgres-db
+      gantt_postgres:
+        condition: service_healthy
     build:
       context: .
       dockerfile: ./docker/api/Dockerfile
-    env_file: .env
-    # フォルダ共有（ホストOS:コンテナ）
-    volumes:
-      - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
-    # docker-compose run 実行時に実行されるコマンド
-    tty:
-      true
-    command: CompileDaemon -command="./api" -include="*.go" -polling
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  # golang   batch
-  gantt_batch:
-    container_name: gantt_batch
-    # postgres をビルドした後に app をビルド
-#    depends_on:
-#      - postgres
-    # Dockerfile を指定
-    build:
-      context: .
-      dockerfile: ./docker/batch/Dockerfile
     env_file: .env
     # フォルダ共有（ホストOS:コンテナ）
     volumes:
@@ -65,6 +53,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   gantt_migration:
+    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration
     container_name: gantt_migration
     build:
       context: .

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"github.com/samber/lo"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,16 +13,14 @@ var con *gorm.DB
 
 func init() {
 
-	err := godotenv.Load("../.env")
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println("INITIALIZE DB CONNECTION")
 	// connectionの取得
 	host := os.Getenv("POSTGRES_HOST")
 	user := os.Getenv("POSTGRES_USER")
 	password := os.Getenv("POSTGRES_PASSWORD")
 	dbname := os.Getenv("POSTGRES_DB")
 	port := os.Getenv("POSTGRES_PORT")
+	fmt.Println(fmt.Sprintf("host=%s user=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo", host, user, dbname, port))
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo", host, user, password, dbname, port)
 	d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
