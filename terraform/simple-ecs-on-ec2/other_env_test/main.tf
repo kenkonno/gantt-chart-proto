@@ -42,19 +42,6 @@ resource "aws_service_discovery_private_dns_namespace" "service_discovery_privat
   vpc  = var.vpc
 }
 
-#// TODO: これはECSの増減で変更されるのでなんか違う気がする。ECS側でなんかあるのかも。
-#resource "aws_service_discovery_instance" "service_discovery_instance" {
-#  attributes  = {
-#    "AWS_INSTANCE_IPV4" = "10.0.151.133"
-#    "AWS_INSTANCE_PORT" = "80"
-#    "AvailabilityZone"  = "ap-northeast-1c"
-#    "DeploymentId"      = "arn:aws:ecs:ap-northeast-1:866026585491:task-set/env-manual-ecs-cluster-2/env-manual-ecs-service-api/ecs-svc/2975638815985384527"
-#  }
-#  id          = "8bd80673b23d4e25b490566049dc9d33"
-#  instance_id = "8bd80673b23d4e25b490566049dc9d33"
-#  service_id  = "srv-b2qqtese6yf7ulnt"
-#}
-
 ####################################################
 #                  API Gateway
 ####################################################
@@ -269,8 +256,6 @@ resource "aws_autoscaling_group" "api_autoscaling_group" {
   min_size                  = 0
   name                      = "Infra-ECS-Cluster-${var.env}-${var.serviceName}-ecs-cluster"
   protect_from_scale_in     = false
-  # default Role だから指定なしでもOKっぽい
-  #  service_linked_role_arn   = "arn:aws:iam::866026585491:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
   service_linked_role_arn   = aws_iam_service_linked_role.autoscaling_group.arn
   suspended_processes       = []
   target_group_arns         = []
@@ -296,7 +281,6 @@ resource "aws_ecs_task_definition" "api_ecs_task_definition" {
         ]
         essential        = true
         image            = "${aws_ecr_repository.api_ecr_repository.arn}:latest"
-        # "866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api:latest"
         logConfiguration = {
           logDriver = "awslogs"
           options   = {
@@ -392,7 +376,6 @@ resource "aws_ecs_capacity_provider" "api_capacity_provider_strategy" {
   name = "Infra-ECS-Cluster-${aws_ecs_cluster.api_ecs_cluster.name}-EC2CapacityProvider"
 
   auto_scaling_group_provider {
-    # ちょっとあやしい   auto_scaling_group_arn         = "arn:aws:autoscaling:ap-northeast-1:866026585491:autoScalingGroup:e6e021cd-745a-49b3-a910-8c14dc03c8c3:autoScalingGroupName/Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-ECSAutoScalingGroup-MryMg96oA9LO"
     auto_scaling_group_arn         = aws_autoscaling_group.api_autoscaling_group.arn
     managed_termination_protection = "DISABLED"
 
@@ -412,11 +395,6 @@ resource "aws_ecs_cluster" "api_ecs_cluster" {
       logging = "DEFAULT"
     }
   }
-  # たぶんすでに存在していないから消してもOK
-  #  service_connect_defaults {
-  #    namespace = "arn:aws:servicediscovery:ap-northeast-1:866026585491:namespace/ns-bpkknzb2qai7kmyi"
-  #  }
-
   setting {
     name  = "containerInsights"
     value = "disabled"
