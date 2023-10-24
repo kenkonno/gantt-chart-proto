@@ -1,0 +1,527 @@
+[0m[1maws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace: Refreshing state... [id=ns-jvcxb2ely7ewkskj][0m
+[0m[1maws_apigatewayv2_route.route: Refreshing state... [id=g0az5th][0m
+[0m[1maws_ecs_cluster.api_ecs_cluster: Refreshing state... [id=arn:aws:ecs:ap-northeast-1:866026585491:cluster/env-manual-ecs-cluster-2][0m
+[0m[1maws_apigatewayv2_api.api_gateway: Refreshing state... [id=u90s3jbw2h][0m
+[0m[1maws_service_discovery_instance.service_discovery_instance: Refreshing state... [id=8bd80673b23d4e25b490566049dc9d33][0m
+[0m[1maws_apigatewayv2_vpc_link.api_vpc_link: Refreshing state... [id=rhdah7][0m
+[0m[1maws_iam_role.ecsTaskExecutionRole: Refreshing state... [id=ecsTaskExecutionRole][0m
+[0m[1maws_service_discovery_http_namespace.service_discovery_http_namespace: Refreshing state... [id=ns-jvcxb2ely7ewkskj][0m
+[0m[1maws_iam_role.ecsInstanceRole: Refreshing state... [id=ecsInstanceRole][0m
+[0m[1maws_ecr_repository.api_ecr_repository: Refreshing state... [id=dev-manual-test/gantt_api][0m
+[0m[1maws_service_discovery_service.service_discovery_service: Refreshing state... [id=srv-b2qqtese6yf7ulnt][0m
+[0m[1maws_apigatewayv2_stage.api_stage: Refreshing state... [id=api][0m
+[0m[1maws_apigatewayv2_integration.api_integration: Refreshing state... [id=xz2ib34][0m
+[0m[1maws_ecs_capacity_provider.api_capacity_provider_strategy: Refreshing state... [id=arn:aws:ecs:ap-northeast-1:866026585491:capacity-provider/Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-EC2CapacityProvider-lBoxExbVXogj][0m
+[0m[1maws_ecs_task_definition.api_ecs_task_definition: Refreshing state... [id=dev-manual-ecs-service-task-definition-api][0m
+[0m[1maws_ecs_task_definition.migration_ecs_task_definition: Refreshing state... [id=dev-manual-ecs-service-task-definition-migration][0m
+[0m[1maws_launch_template.api_launch_template: Refreshing state... [id=lt-04a2c640944efe5e0][0m
+[0m[1maws_ecs_service.api_ecs_service: Refreshing state... [id=arn:aws:ecs:ap-northeast-1:866026585491:service/env-manual-ecs-cluster-2/env-manual-ecs-service-api][0m
+[0m[1maws_autoscaling_group.api_autoscaling_group: Refreshing state... [id=Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-ECSAutoScalingGroup-MryMg96oA9LO][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+  [33m~[0m update in-place[0m
+  [31m-[0m destroy[0m
+[31m-[0m/[32m+[0m destroy and then create replacement[0m
+
+Terraform will perform the following actions:
+
+[1m  # aws_apigatewayv2_api.api_gateway[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_apigatewayv2_api" "api_gateway" {
+        id                           = "u90s3jbw2h"
+      [33m~[0m[0m name                         = "env-manual-api" [33m->[0m[0m "dev-laurentia-api"
+        tags                         = {}
+      [33m~[0m[0m tags_all                     = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (7 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # aws_apigatewayv2_integration.api_integration[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_apigatewayv2_integration" "api_integration" {
+        id                     = "xz2ib34"
+      [33m~[0m[0m integration_uri        = "arn:aws:servicediscovery:ap-northeast-1:866026585491:service/srv-b2qqtese6yf7ulnt" -> (known after apply)
+        [90m# (9 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # aws_apigatewayv2_route.api_route[0m will be created
+[0m  [32m+[0m[0m resource "aws_apigatewayv2_route" "api_route" {
+      [32m+[0m[0m api_id             = "u90s3jbw2h"
+      [32m+[0m[0m api_key_required   = false
+      [32m+[0m[0m authorization_type = "NONE"
+      [32m+[0m[0m id                 = (known after apply)
+      [32m+[0m[0m route_key          = "ANY /{proxy+}"
+      [32m+[0m[0m target             = "integrations/xz2ib34"
+    }
+
+[1m  # aws_apigatewayv2_route.route[0m will be [1m[31mdestroyed[0m
+  # (because aws_apigatewayv2_route.route is not in configuration)
+[0m  [31m-[0m[0m resource "aws_apigatewayv2_route" "route" {
+      [31m-[0m[0m api_id               = "u90s3jbw2h" [90m-> null[0m[0m
+      [31m-[0m[0m api_key_required     = false [90m-> null[0m[0m
+      [31m-[0m[0m authorization_scopes = [] [90m-> null[0m[0m
+      [31m-[0m[0m authorization_type   = "NONE" [90m-> null[0m[0m
+      [31m-[0m[0m id                   = "g0az5th" [90m-> null[0m[0m
+      [31m-[0m[0m request_models       = {} [90m-> null[0m[0m
+      [31m-[0m[0m route_key            = "ANY /{proxy+}" [90m-> null[0m[0m
+      [31m-[0m[0m target               = "integrations/xz2ib34" [90m-> null[0m[0m
+    }
+
+[1m  # aws_apigatewayv2_stage.api_stage[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_apigatewayv2_stage" "api_stage" {
+        id              = "api"
+        name            = "api"
+        tags            = {}
+      [33m~[0m[0m tags_all        = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (7 unchanged attributes hidden)[0m[0m
+
+      [33m~[0m[0m access_log_settings {
+          [33m~[0m[0m destination_arn = "arn:aws:logs:ap-northeast-1:866026585491:log-group:/aws/apigateway/welcome2" -> (known after apply)
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+        [90m# (1 unchanged block hidden)[0m[0m
+    }
+
+[1m  # aws_apigatewayv2_vpc_link.api_vpc_link[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_apigatewayv2_vpc_link" "api_vpc_link" {
+        id                 = "rhdah7"
+      [33m~[0m[0m name               = "env-manual-apigateway-for-ecs-vpc-link" [33m->[0m[0m "dev-laurentia-apigateway-for-ecs-vpc-link"
+        tags               = {}
+      [33m~[0m[0m tags_all           = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (3 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # aws_autoscaling_group.api_autoscaling_group[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_autoscaling_group" "api_autoscaling_group" {
+      [33m~[0m[0m arn                              = "arn:aws:autoscaling:ap-northeast-1:866026585491:autoScalingGroup:e6e021cd-745a-49b3-a910-8c14dc03c8c3:autoScalingGroupName/Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-ECSAutoScalingGroup-MryMg96oA9LO" -> (known after apply)
+      [33m~[0m[0m availability_zones               = [
+          [31m-[0m[0m "ap-northeast-1a",
+          [31m-[0m[0m "ap-northeast-1c",
+        ] -> (known after apply)
+      [31m-[0m[0m enabled_metrics                  = [] [90m-> null[0m[0m
+      [32m+[0m[0m force_delete                     = false
+      [32m+[0m[0m force_delete_warm_pool           = false
+      [33m~[0m[0m id                               = "Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-ECSAutoScalingGroup-MryMg96oA9LO" -> (known after apply)
+      [32m+[0m[0m ignore_failed_scaling_activities = false
+      [33m~[0m[0m load_balancers                   = [] -> (known after apply)
+      [33m~[0m[0m name                             = "Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-ECSAutoScalingGroup-MryMg96oA9LO" [33m->[0m[0m "Infra-ECS-Cluster-dev-laurentia-ecs-cluster" [31m# forces replacement[0m[0m
+      [32m+[0m[0m name_prefix                      = (known after apply)
+      [33m~[0m[0m predicted_capacity               = 0 -> (known after apply)
+      [33m~[0m[0m service_linked_role_arn          = "arn:aws:iam::866026585491:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling" -> (known after apply)
+      [31m-[0m[0m suspended_processes              = [] [90m-> null[0m[0m
+      [33m~[0m[0m target_group_arns                = [] -> (known after apply)
+      [32m+[0m[0m wait_for_capacity_timeout        = "10m"
+      [33m~[0m[0m warm_pool_size                   = 0 -> (known after apply)
+        [90m# (13 unchanged attributes hidden)[0m[0m
+
+      [33m~[0m[0m launch_template {
+            id      = "lt-04a2c640944efe5e0"
+          [33m~[0m[0m name    = "ECSLaunchTemplate_VHarcV9p2XzU" -> (known after apply)
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [31m-[0m[0m tag {
+          [31m-[0m[0m key                 = "AmazonECSManaged" [90m-> null[0m[0m
+          [31m-[0m[0m propagate_at_launch = true [90m-> null[0m[0m
+        }
+      [31m-[0m[0m tag {
+          [31m-[0m[0m key                 = "Name" [90m-> null[0m[0m
+          [31m-[0m[0m propagate_at_launch = true [90m-> null[0m[0m
+          [31m-[0m[0m value               = "ECS Instance - env-manual-ecs-cluster-2" [90m-> null[0m[0m
+        }
+    }
+
+[1m  # aws_cloudwatch_log_group.api_capacity_provider_gateway_log_group[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_log_group" "api_capacity_provider_gateway_log_group" {
+      [32m+[0m[0m arn               = (known after apply)
+      [32m+[0m[0m id                = (known after apply)
+      [32m+[0m[0m name              = "/aws/capacity-provider/dev-laurentia-api"
+      [32m+[0m[0m name_prefix       = (known after apply)
+      [32m+[0m[0m retention_in_days = 0
+      [32m+[0m[0m skip_destroy      = false
+      [32m+[0m[0m tags_all          = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+    }
+
+[1m  # aws_cloudwatch_log_group.api_gateway_log_group[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_log_group" "api_gateway_log_group" {
+      [32m+[0m[0m arn               = (known after apply)
+      [32m+[0m[0m id                = (known after apply)
+      [32m+[0m[0m name              = "/aws/apigateway/dev-laurentia-api_gateway_log_group"
+      [32m+[0m[0m name_prefix       = (known after apply)
+      [32m+[0m[0m retention_in_days = 0
+      [32m+[0m[0m skip_destroy      = false
+      [32m+[0m[0m tags_all          = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+    }
+
+[1m  # aws_ecr_repository.api_ecr_repository[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecr_repository" "api_ecr_repository" {
+      [33m~[0m[0m arn                  = "arn:aws:ecr:ap-northeast-1:866026585491:repository/dev-manual-test/gantt_api" -> (known after apply)
+      [33m~[0m[0m id                   = "dev-manual-test/gantt_api" -> (known after apply)
+      [33m~[0m[0m image_tag_mutability = "MUTABLE" [33m->[0m[0m "IMMUTABLE"
+      [33m~[0m[0m name                 = "dev-manual-test/gantt_api" [33m->[0m[0m "dev-laurentia/api" [31m# forces replacement[0m[0m
+      [33m~[0m[0m registry_id          = "866026585491" -> (known after apply)
+      [33m~[0m[0m repository_url       = "866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api" -> (known after apply)
+      [31m-[0m[0m tags                 = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all             = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+
+      [33m~[0m[0m encryption_configuration {
+          [32m+[0m[0m kms_key         = (known after apply)
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+        [90m# (1 unchanged block hidden)[0m[0m
+    }
+
+[1m  # aws_ecr_repository.migration_ecr_repository[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecr_repository" "migration_ecr_repository" {
+      [32m+[0m[0m arn                  = (known after apply)
+      [32m+[0m[0m id                   = (known after apply)
+      [32m+[0m[0m image_tag_mutability = "IMMUTABLE"
+      [32m+[0m[0m name                 = "dev-laurentia/migration"
+      [32m+[0m[0m registry_id          = (known after apply)
+      [32m+[0m[0m repository_url       = (known after apply)
+      [32m+[0m[0m tags_all             = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+
+      [32m+[0m[0m encryption_configuration {
+          [32m+[0m[0m encryption_type = "AES256"
+          [32m+[0m[0m kms_key         = (known after apply)
+        }
+
+      [32m+[0m[0m image_scanning_configuration {
+          [32m+[0m[0m scan_on_push = false
+        }
+    }
+
+[1m  # aws_ecs_capacity_provider.api_capacity_provider_strategy[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_capacity_provider" "api_capacity_provider_strategy" {
+      [33m~[0m[0m arn      = "arn:aws:ecs:ap-northeast-1:866026585491:capacity-provider/Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-EC2CapacityProvider-lBoxExbVXogj" -> (known after apply)
+      [33m~[0m[0m id       = "arn:aws:ecs:ap-northeast-1:866026585491:capacity-provider/Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-EC2CapacityProvider-lBoxExbVXogj" -> (known after apply)
+      [33m~[0m[0m name     = "Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-EC2CapacityProvider-lBoxExbVXogj" [33m->[0m[0m "Infra-ECS-Cluster-dev-laurentia-ecs-cluster-api-EC2CapacityProvider" [31m# forces replacement[0m[0m
+      [31m-[0m[0m tags     = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+
+      [33m~[0m[0m auto_scaling_group_provider {
+          [33m~[0m[0m auto_scaling_group_arn         = "arn:aws:autoscaling:ap-northeast-1:866026585491:autoScalingGroup:e6e021cd-745a-49b3-a910-8c14dc03c8c3:autoScalingGroupName/Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-ECSAutoScalingGroup-MryMg96oA9LO" [31m# forces replacement[0m[0m -> (known after apply) [31m# forces replacement[0m[0m
+            [90m# (1 unchanged attribute hidden)[0m[0m
+
+            [90m# (1 unchanged block hidden)[0m[0m
+        }
+    }
+
+[1m  # aws_ecs_cluster.api_ecs_cluster[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_cluster" "api_ecs_cluster" {
+      [33m~[0m[0m arn      = "arn:aws:ecs:ap-northeast-1:866026585491:cluster/env-manual-ecs-cluster-2" -> (known after apply)
+      [33m~[0m[0m id       = "arn:aws:ecs:ap-northeast-1:866026585491:cluster/env-manual-ecs-cluster-2" -> (known after apply)
+      [33m~[0m[0m name     = "env-manual-ecs-cluster-2" [33m->[0m[0m "dev-laurentia-ecs-cluster-api" [31m# forces replacement[0m[0m
+      [31m-[0m[0m tags     = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+
+      [31m-[0m[0m service_connect_defaults {
+          [31m-[0m[0m namespace = "arn:aws:servicediscovery:ap-northeast-1:866026585491:namespace/ns-bpkknzb2qai7kmyi" [90m-> null[0m[0m
+        }
+
+        [90m# (2 unchanged blocks hidden)[0m[0m
+    }
+
+[1m  # aws_ecs_service.api_ecs_service[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_service" "api_ecs_service" {
+      [33m~[0m[0m cluster                            = "arn:aws:ecs:ap-northeast-1:866026585491:cluster/env-manual-ecs-cluster-2" [31m# forces replacement[0m[0m -> (known after apply) [31m# forces replacement[0m[0m
+      [33m~[0m[0m id                                 = "arn:aws:ecs:ap-northeast-1:866026585491:service/env-manual-ecs-cluster-2/env-manual-ecs-service-api" -> (known after apply)
+      [32m+[0m[0m launch_type                        = (known after apply)
+      [33m~[0m[0m name                               = "env-manual-ecs-service-api" [33m->[0m[0m "dev-laurentia-ecs-service-api" [31m# forces replacement[0m[0m
+      [32m+[0m[0m platform_version                   = (known after apply)
+      [31m-[0m[0m tags                               = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all                           = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+      [33m~[0m[0m task_definition                    = "dev-manual-ecs-service-task-definition-api:12" -> (known after apply)
+      [33m~[0m[0m triggers                           = {} -> (known after apply)
+      [32m+[0m[0m wait_for_steady_state              = false
+        [90m# (9 unchanged attributes hidden)[0m[0m
+
+      [31m-[0m[0m capacity_provider_strategy { [31m# forces replacement[0m[0m
+          [31m-[0m[0m base              = 0 [90m-> null[0m[0m
+          [31m-[0m[0m capacity_provider = "Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-EC2CapacityProvider-lBoxExbVXogj" [90m-> null[0m[0m
+          [31m-[0m[0m weight            = 1 [90m-> null[0m[0m
+        }
+      [32m+[0m[0m capacity_provider_strategy { [31m# forces replacement[0m[0m
+          [32m+[0m[0m base              = 0
+          [32m+[0m[0m capacity_provider = "Infra-ECS-Cluster-dev-laurentia-ecs-cluster-api-EC2CapacityProvider"
+          [32m+[0m[0m weight            = 1
+        }
+
+        [90m# (5 unchanged blocks hidden)[0m[0m
+    }
+
+[1m  # aws_ecs_task_definition.api_ecs_task_definition[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_task_definition" "api_ecs_task_definition" {
+      [33m~[0m[0m arn                      = "arn:aws:ecs:ap-northeast-1:866026585491:task-definition/dev-manual-ecs-service-task-definition-api:12" -> (known after apply)
+      [33m~[0m[0m arn_without_revision     = "arn:aws:ecs:ap-northeast-1:866026585491:task-definition/dev-manual-ecs-service-task-definition-api" -> (known after apply)
+      [33m~[0m[0m container_definitions    = jsonencode(
+            [
+              [31m-[0m[0m {
+                  [31m-[0m[0m cpu              = 0
+                  [31m-[0m[0m environment      = []
+                  [31m-[0m[0m environmentFiles = [
+                      [31m-[0m[0m {
+                          [31m-[0m[0m type  = "s3"
+                          [31m-[0m[0m value = "arn:aws:s3:::env-manual-service-env-1/.env"
+                        },
+                    ]
+                  [31m-[0m[0m essential        = true
+                  [31m-[0m[0m image            = "866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api:latest"
+                  [31m-[0m[0m logConfiguration = {
+                      [31m-[0m[0m logDriver     = "awslogs"
+                      [31m-[0m[0m options       = {
+                          [31m-[0m[0m awslogs-create-group  = "true"
+                          [31m-[0m[0m awslogs-group         = "/ecs/dev-manual-service-task-api"
+                          [31m-[0m[0m awslogs-region        = "ap-northeast-1"
+                          [31m-[0m[0m awslogs-stream-prefix = "ecs"
+                        }
+                      [31m-[0m[0m secretOptions = []
+                    }
+                  [31m-[0m[0m mountPoints      = []
+                  [31m-[0m[0m name             = "api"
+                  [31m-[0m[0m portMappings     = [
+                      [31m-[0m[0m {
+                          [31m-[0m[0m appProtocol   = "http"
+                          [31m-[0m[0m containerPort = 80
+                          [31m-[0m[0m hostPort      = 80
+                          [31m-[0m[0m name          = "api-80-tcp"
+                          [31m-[0m[0m protocol      = "tcp"
+                        },
+                    ]
+                  [31m-[0m[0m ulimits          = []
+                  [31m-[0m[0m volumesFrom      = []
+                },
+            ] [31m# forces replacement[0m[0m
+        ) -> (known after apply) [31m# forces replacement[0m[0m
+      [33m~[0m[0m execution_role_arn       = "arn:aws:iam::866026585491:role/ecsTaskExecutionRole" [33m->[0m[0m "arn:aws:iam::866026585491:role/ecsInstanceRole" [31m# forces replacement[0m[0m
+      [33m~[0m[0m family                   = "dev-manual-ecs-service-task-definition-api" [33m->[0m[0m "dev-laurentia-ecs-service-task-definition-api" [31m# forces replacement[0m[0m
+      [33m~[0m[0m id                       = "dev-manual-ecs-service-task-definition-api" -> (known after apply)
+      [33m~[0m[0m revision                 = 12 -> (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [31m-[0m[0m tags                     = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all                 = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+      [33m~[0m[0m task_role_arn            = "arn:aws:iam::866026585491:role/ecsTaskExecutionRole" [33m->[0m[0m "arn:aws:iam::866026585491:role/ecsInstanceRole" [31m# forces replacement[0m[0m
+        [90m# (4 unchanged attributes hidden)[0m[0m
+
+        [90m# (1 unchanged block hidden)[0m[0m
+    }
+
+[1m  # aws_ecs_task_definition.migration_ecs_task_definition[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_task_definition" "migration_ecs_task_definition" {
+      [33m~[0m[0m arn                      = "arn:aws:ecs:ap-northeast-1:866026585491:task-definition/dev-manual-ecs-service-task-definition-migration:2" -> (known after apply)
+      [33m~[0m[0m arn_without_revision     = "arn:aws:ecs:ap-northeast-1:866026585491:task-definition/dev-manual-ecs-service-task-definition-migration" -> (known after apply)
+      [33m~[0m[0m container_definitions    = jsonencode(
+            [
+              [31m-[0m[0m {
+                  [31m-[0m[0m cpu              = 0
+                  [31m-[0m[0m environment      = []
+                  [31m-[0m[0m environmentFiles = [
+                      [31m-[0m[0m {
+                          [31m-[0m[0m type  = "s3"
+                          [31m-[0m[0m value = "arn:aws:s3:::env-manual-service-env-1/.env"
+                        },
+                    ]
+                  [31m-[0m[0m essential        = true
+                  [31m-[0m[0m image            = "866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration"
+                  [31m-[0m[0m logConfiguration = {
+                      [31m-[0m[0m logDriver     = "awslogs"
+                      [31m-[0m[0m options       = {
+                          [31m-[0m[0m awslogs-create-group  = "true"
+                          [31m-[0m[0m awslogs-group         = "/ecs/dev-manual-ecs-service-task-definition-migration"
+                          [31m-[0m[0m awslogs-region        = "ap-northeast-1"
+                          [31m-[0m[0m awslogs-stream-prefix = "ecs"
+                        }
+                      [31m-[0m[0m secretOptions = []
+                    }
+                  [31m-[0m[0m mountPoints      = []
+                  [31m-[0m[0m name             = "migration"
+                  [31m-[0m[0m portMappings     = []
+                  [31m-[0m[0m ulimits          = []
+                  [31m-[0m[0m volumesFrom      = []
+                },
+            ] [31m# forces replacement[0m[0m
+        ) -> (known after apply) [31m# forces replacement[0m[0m
+      [33m~[0m[0m execution_role_arn       = "arn:aws:iam::866026585491:role/ecsTaskExecutionRole" [33m->[0m[0m "arn:aws:iam::866026585491:role/ecsInstanceRole" [31m# forces replacement[0m[0m
+      [33m~[0m[0m family                   = "dev-manual-ecs-service-task-definition-migration" [33m->[0m[0m "dev-laurentia-ecs-service-task-definition-migration" [31m# forces replacement[0m[0m
+      [33m~[0m[0m id                       = "dev-manual-ecs-service-task-definition-migration" -> (known after apply)
+      [33m~[0m[0m revision                 = 2 -> (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [31m-[0m[0m tags                     = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all                 = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+      [33m~[0m[0m task_role_arn            = "arn:aws:iam::866026585491:role/ecsTaskExecutionRole" [33m->[0m[0m "arn:aws:iam::866026585491:role/ecsInstanceRole" [31m# forces replacement[0m[0m
+        [90m# (4 unchanged attributes hidden)[0m[0m
+
+        [90m# (1 unchanged block hidden)[0m[0m
+    }
+
+[1m  # aws_iam_role.ecsInstanceRole[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_iam_role" "ecsInstanceRole" {
+        id                    = "ecsInstanceRole"
+        name                  = "ecsInstanceRole"
+        tags                  = {}
+      [33m~[0m[0m tags_all              = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (8 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # aws_iam_role.ecsTaskExecutionRole[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_iam_role" "ecsTaskExecutionRole" {
+        id                    = "ecsTaskExecutionRole"
+        name                  = "ecsTaskExecutionRole"
+        tags                  = {}
+      [33m~[0m[0m tags_all              = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (8 unchanged attributes hidden)[0m[0m
+
+        [90m# (1 unchanged block hidden)[0m[0m
+    }
+
+[1m  # aws_launch_template.api_launch_template[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_launch_template" "api_launch_template" {
+      [33m~[0m[0m default_version         = 3 [33m->[0m[0m 1
+        id                      = "lt-04a2c640944efe5e0"
+      [33m~[0m[0m latest_version          = 3 -> (known after apply)
+        name                    = "ECSLaunchTemplate_VHarcV9p2XzU"
+        tags                    = {}
+      [33m~[0m[0m tags_all                = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (9 unchanged attributes hidden)[0m[0m
+
+      [33m~[0m[0m iam_instance_profile {
+          [33m~[0m[0m arn = "arn:aws:iam::866026585491:instance-profile/ecsInstanceRole" [33m->[0m[0m "arn:aws:iam::866026585491:role/ecsInstanceRole"
+        }
+    }
+
+[1m  # aws_s3_bucket.ecs_env_bucket[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket" "ecs_env_bucket" {
+      [32m+[0m[0m acceleration_status         = (known after apply)
+      [32m+[0m[0m acl                         = (known after apply)
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m bucket                      = "dev-laurentia-service-env"
+      [32m+[0m[0m bucket_domain_name          = (known after apply)
+      [32m+[0m[0m bucket_prefix               = (known after apply)
+      [32m+[0m[0m bucket_regional_domain_name = (known after apply)
+      [32m+[0m[0m force_destroy               = false
+      [32m+[0m[0m hosted_zone_id              = (known after apply)
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m object_lock_enabled         = (known after apply)
+      [32m+[0m[0m policy                      = (known after apply)
+      [32m+[0m[0m region                      = (known after apply)
+      [32m+[0m[0m request_payer               = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+      [32m+[0m[0m website_domain              = (known after apply)
+      [32m+[0m[0m website_endpoint            = (known after apply)
+    }
+
+[1m  # aws_service_discovery_http_namespace.service_discovery_http_namespace[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_service_discovery_http_namespace" "service_discovery_http_namespace" {
+      [33m~[0m[0m arn       = "arn:aws:servicediscovery:ap-northeast-1:866026585491:namespace/ns-jvcxb2ely7ewkskj" -> (known after apply)
+      [33m~[0m[0m http_name = "dev-manual-ecs-namespace" -> (known after apply)
+      [33m~[0m[0m id        = "ns-jvcxb2ely7ewkskj" -> (known after apply)
+      [33m~[0m[0m name      = "dev-manual-ecs-namespace" [33m->[0m[0m "dev-laurentia-ecs-namespace" [31m# forces replacement[0m[0m
+      [31m-[0m[0m tags      = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all  = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+    }
+
+[1m  # aws_service_discovery_instance.service_discovery_instance[0m will be [1m[31mdestroyed[0m
+  # (because aws_service_discovery_instance.service_discovery_instance is not in configuration)
+[0m  [31m-[0m[0m resource "aws_service_discovery_instance" "service_discovery_instance" {
+      [31m-[0m[0m attributes  = {
+          [31m-[0m[0m "AWS_INSTANCE_IPV4" = "10.0.151.133"
+          [31m-[0m[0m "AWS_INSTANCE_PORT" = "80"
+          [31m-[0m[0m "AvailabilityZone"  = "ap-northeast-1c"
+          [31m-[0m[0m "DeploymentId"      = "arn:aws:ecs:ap-northeast-1:866026585491:task-set/env-manual-ecs-cluster-2/env-manual-ecs-service-api/ecs-svc/2975638815985384527"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m id          = "8bd80673b23d4e25b490566049dc9d33" [90m-> null[0m[0m
+      [31m-[0m[0m instance_id = "8bd80673b23d4e25b490566049dc9d33" [90m-> null[0m[0m
+      [31m-[0m[0m service_id  = "srv-b2qqtese6yf7ulnt" [90m-> null[0m[0m
+    }
+
+[1m  # aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_service_discovery_private_dns_namespace" "service_discovery_private_dns_namespace" {
+      [33m~[0m[0m arn         = "arn:aws:servicediscovery:ap-northeast-1:866026585491:namespace/ns-jvcxb2ely7ewkskj" -> (known after apply)
+      [33m~[0m[0m hosted_zone = "Z051555121PM6LOF4CWKN" -> (known after apply)
+      [33m~[0m[0m id          = "ns-jvcxb2ely7ewkskj" -> (known after apply)
+      [33m~[0m[0m name        = "dev-manual-ecs-namespace" [33m->[0m[0m "dev-laurentia-ecs-namespace" [31m# forces replacement[0m[0m
+      [31m-[0m[0m tags        = {} [90m-> null[0m[0m
+      [33m~[0m[0m tags_all    = {
+          [32m+[0m[0m "env"     = "dev"
+          [32m+[0m[0m "service" = "laurentia"
+        }
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # aws_service_discovery_service.service_discovery_service[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_service_discovery_service" "service_discovery_service" {
+      [33m~[0m[0m arn           = "arn:aws:servicediscovery:ap-northeast-1:866026585491:service/srv-b2qqtese6yf7ulnt" -> (known after apply)
+      [31m-[0m[0m description   = "Managed by arn:aws:ecs:ap-northeast-1:866026585491:service/env-manual-ecs-cluster-2/env-manual-ecs-service-api" [90m-> null[0m[0m
+      [32m+[0m[0m force_destroy = false
+      [33m~[0m[0m id            = "srv-b2qqtese6yf7ulnt" -> (known after apply)
+        name          = "api-80-tcp"
+      [33m~[0m[0m namespace_id  = "ns-jvcxb2ely7ewkskj" [31m# forces replacement[0m[0m -> (known after apply) [31m# forces replacement[0m[0m
+      [31m-[0m[0m tags          = {
+          [31m-[0m[0m "AmazonECSManaged" = "true"
+        } [90m-> null[0m[0m
+      [33m~[0m[0m tags_all      = {
+          [31m-[0m[0m "AmazonECSManaged" = "true" [90m-> null[0m[0m
+          [32m+[0m[0m "env"              = "dev"
+          [32m+[0m[0m "service"          = "laurentia"
+        }
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1mPlan:[0m 15 to add, 7 to change, 12 to destroy.
+[0m[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
