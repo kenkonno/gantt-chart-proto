@@ -14,8 +14,8 @@
       <tr v-for="item in list" :key="item.id">
         <td>{{ item.id }}</td>
         <td>{{ unitMap[item.unit_id] }}</td>
-        <td v-for="v in item.workHours" :key="v.process_id">
-          <input type="number" v-model="v.work_hour">
+        <td v-for="process in processList" :key="process.id">
+          <input type="number" v-model="getWorkHour(item.unit_id!, process.id!).work_hour">
         </td>
       </tr>
       </tbody>
@@ -43,6 +43,9 @@ const unitMap: { [x: number]: string; } = {}
 props.unitList.forEach(v => {
   unitMap[v.id!] = v.name
 })
+const getWorkHour = (unitId: number, processId: number) => {
+  return props.list.find(v => v.unit_id === unitId)!.workHours.find(v => v.process_id === processId)
+}
 
 </script>
 
