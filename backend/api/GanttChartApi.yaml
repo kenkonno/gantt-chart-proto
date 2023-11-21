@@ -681,6 +681,26 @@ paths:
       description: ''
       parameters: []
     parameters: []
+  /api/pileUps:
+    get:
+      summary: GetPileUps
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPileUpsResponse'
+              examples: {}
+      operationId: get-pileUps
+      description: ''
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: facilityId
+          required: true
 components:
   schemas:
     User:
@@ -1644,4 +1664,47 @@ components:
       properties:
         ticketUser:
           $ref: '#/components/schemas/TicketUser'
-  parameters: {}
+    PileUp:
+      title: PileUp
+      type: object
+      properties:
+        gantt_groups:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        holidays:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+      required:
+        - gantt_groups
+        - holidays
+      description: ''
+      x-tags:
+        - PileUp
+    GetPileUpsRequest:
+      title: GetPileUpsRequest
+      type: object
+    GetPileUpsResponse:
+      title: GetPileUpsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              facilityId:
+                type: integer
+              holidays:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Holiday'
+              ganttGroups:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GanttGroup'
+            required:
+              - facilityId
+              - holidays
+              - ganttGroups
+      required:
+        - list
