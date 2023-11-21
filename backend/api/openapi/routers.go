@@ -205,6 +205,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetPileUps",
+		http.MethodGet,
+		"/api/pileUps",
+		GetPileUps,
+	},
+
+	{
 		"GetProcesses",
 		http.MethodGet,
 		"/api/processes",

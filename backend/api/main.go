@@ -10,7 +10,8 @@ import (
 func main() {
 	r := gin.Default()
 	cfg := cors.DefaultConfig()
-	cfg.AllowOrigins = []string{"http://localhost:8080"}
+	//cfg.AllowOrigins = []string{"http://localhost:8080"}
+	cfg.AllowOrigins = []string{os.Getenv("ORIGIN")}
 	cfg.AllowMethods = []string{
 		"POST",
 		"GET",
