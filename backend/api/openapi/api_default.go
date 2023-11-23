@@ -11,18 +11,19 @@ package openapi
 
 import (
 
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -244,6 +245,13 @@ func GetUsers(c *gin.Context) {
 func GetUsersId(c *gin.Context) {
 	var r openapi_models.GetUsersIdResponse
 	r = users.GetUsersIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostCopyFacilitys - PostCopyFacilitys
+func PostCopyFacilitys(c *gin.Context) {
+	var r openapi_models.PostCopyFacilitysResponse
+	r = copy_facilitys.PostCopyFacilitysInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

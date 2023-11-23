@@ -701,6 +701,20 @@ paths:
           in: query
           name: facilityId
           required: true
+  /api/copyFacilitys:
+    post:
+      summary: PostCopyFacilitys
+      operationId: post-copyFacilitys
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCopyFacilitysRequest'
+    parameters: []
 components:
   schemas:
     User:
@@ -1708,3 +1722,20 @@ components:
               - ganttGroups
       required:
         - list
+    PostCopyFacilitysRequest:
+      title: PostCopyFacilitysRequest
+      type: object
+      properties:
+        facilityId:
+          type: integer
+        facility:
+          $ref: '#/components/schemas/Facility'
+      required:
+        - facilityId
+        - facility
+    PostCopyFacilitysResponse:
+      title: PostCopyFacilitysResponse
+      type: object
+      properties:
+        '':
+          type: string
