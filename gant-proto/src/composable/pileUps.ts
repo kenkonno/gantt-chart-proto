@@ -379,8 +379,9 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
     const {facilityList, holidayMap, userList, departmentList} = inject(GLOBAL_STATE_KEY)!
 
     const {data: allTickets} = await Api.getAllTickets()
-    const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
+    const {data: allData} = await Api.getPileUps(excludeFacilityId)
+
     // 全設備の最小
     const startDate: string = facilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
@@ -397,21 +398,18 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
     for (const facility of facilityList) {
         // 対象外の設備はスキップ
         if (facility.id === excludeFacilityId) continue
+        const targetData = allData.list.find(v => v.facilityId === facility.id)
+        // 対象データなしの場合もスキップ
+        if (targetData == undefined) continue
 
         const innerHolidays: Holiday[] = []
-        if (holidayMap[facility.id!] == undefined) {
-            const {data} = await Api.getHolidays(facility.id!)
-            innerHolidays.push(...data.list)
-        } else {
-            innerHolidays.push(...holidayMap[facility.id!])
-        }
+        innerHolidays.push(...targetData.holidays)
 
         const holidays = computed(() => {
             return innerHolidays
         })
-        await ganttGroupRefresh(facility.id!)
         const tickets = computed(() => {
-            return allTickets.list.filter(v => ganttGroupList.value.map(vv => vv.id!).includes(v.gantt_group_id))
+            return allTickets.list.filter(v => targetData.ganttGroups.map(vv => vv.id!).includes(v.gantt_group_id))
         })
         const ticketUsers = computed(() => {
             return allTicketUsers.list.filter(v => tickets.value.map(vv => vv.id).includes(v.ticket_id))

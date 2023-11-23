@@ -617,6 +617,44 @@ export interface GetOperationSettingsResponse {
 /**
  * 
  * @export
+ * @interface GetPileUpsResponse
+ */
+export interface GetPileUpsResponse {
+    /**
+     * 
+     * @type {Array<GetPileUpsResponseListInner>}
+     * @memberof GetPileUpsResponse
+     */
+    'list': Array<GetPileUpsResponseListInner>;
+}
+/**
+ * 
+ * @export
+ * @interface GetPileUpsResponseListInner
+ */
+export interface GetPileUpsResponseListInner {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetPileUpsResponseListInner
+     */
+    'facilityId': number;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetPileUpsResponseListInner
+     */
+    'holidays': Array<Holiday>;
+    /**
+     * 
+     * @type {Array<GanttGroup>}
+     * @memberof GetPileUpsResponseListInner
+     */
+    'ganttGroups': Array<GanttGroup>;
+}
+/**
+ * 
+ * @export
  * @interface GetProcessesIdRequest
  */
 export interface GetProcessesIdRequest {
@@ -894,6 +932,57 @@ export interface OperationSetting {
      * @memberof OperationSetting
      */
     'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface PileUp
+ */
+export interface PileUp {
+    /**
+     * 
+     * @type {string}
+     * @memberof PileUp
+     */
+    'gantt_groups': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PileUp
+     */
+    'holidays': number;
+}
+/**
+ * 
+ * @export
+ * @interface PostCopyFacilitysRequest
+ */
+export interface PostCopyFacilitysRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof PostCopyFacilitysRequest
+     */
+    'facilityId': number;
+    /**
+     * 
+     * @type {Facility}
+     * @memberof PostCopyFacilitysRequest
+     */
+    'facility': Facility;
+}
+/**
+ * 
+ * @export
+ * @interface PostCopyFacilitysResponse
+ */
+export interface PostCopyFacilitysResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostCopyFacilitysResponse
+     */
+    ''?: string;
 }
 /**
  * 
@@ -2392,6 +2481,43 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetPileUps
+         * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPileUps: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'facilityId' is not null or undefined
+            assertParamExists('getPileUps', 'facilityId', facilityId)
+            const localVarPath = `/api/pileUps`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (facilityId !== undefined) {
+                localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetProcesses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2725,6 +2851,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostCopyFacilitys
+         * @param {PostCopyFacilitysRequest} [postCopyFacilitysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postCopyFacilitys: async (postCopyFacilitysRequest?: PostCopyFacilitysRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/copyFacilitys`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postCopyFacilitysRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -3608,6 +3768,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetPileUps
+         * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPileUps(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetPileUpsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPileUps(facilityId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetProcesses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3712,6 +3883,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getUsersId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUsersIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUsersId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostCopyFacilitys
+         * @param {PostCopyFacilitysRequest} [postCopyFacilitysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postCopyFacilitys(postCopyFacilitysRequest?: PostCopyFacilitysRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postCopyFacilitys(postCopyFacilitysRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4130,6 +4312,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetPileUps
+         * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPileUps(facilityId: number, options?: any): AxiosPromise<GetPileUpsResponse> {
+            return localVarFp.getPileUps(facilityId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetProcesses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4225,6 +4417,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getUsersId(id: number, options?: any): AxiosPromise<GetUsersIdResponse> {
             return localVarFp.getUsersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostCopyFacilitys
+         * @param {PostCopyFacilitysRequest} [postCopyFacilitysRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postCopyFacilitys(postCopyFacilitysRequest?: PostCopyFacilitysRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postCopyFacilitys(postCopyFacilitysRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4664,6 +4866,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary GetPileUps
+     * @param {number} facilityId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getPileUps(facilityId: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getPileUps(facilityId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary GetProcesses
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -4778,6 +4992,18 @@ export class DefaultApi extends BaseAPI {
      */
     public getUsersId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostCopyFacilitys
+     * @param {PostCopyFacilitysRequest} [postCopyFacilitysRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postCopyFacilitys(postCopyFacilitysRequest?: PostCopyFacilitysRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postCopyFacilitys(postCopyFacilitysRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

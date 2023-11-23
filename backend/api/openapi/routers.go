@@ -282,6 +282,13 @@ var routes = Routes{
 	},
 
 	{
+		"PostCopyFacilitys",
+		http.MethodPost,
+		"/api/copyFacilitys",
+		PostCopyFacilitys,
+	},
+
+	{
 		"PostDepartments",
 		http.MethodPost,
 		"/api/departments",

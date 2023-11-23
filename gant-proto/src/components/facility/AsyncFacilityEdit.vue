@@ -33,7 +33,10 @@
              :disabled="true">
     </div>
 
-    <template v-if="id == null">
+    <template v-if="id != null && originalId != null">
+      <button type="submit" class="btn btn-primary" @click="copyFacility(facility, order, originalId, emit)">コピー</button>
+    </template>
+    <template v-else-if="id == null">
       <button type="submit" class="btn btn-primary" @click="postFacility(facility, order, emit)">更新</button>
     </template>
     <template v-else>
@@ -44,10 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import {useFacility, postFacilityById, postFacility, deleteFacilityById} from "@/composable/facility";
+import {useFacility, postFacilityById, postFacility, copyFacility,deleteFacilityById} from "@/composable/facility";
 
 interface AsyncFacilityEdit {
   id: number | undefined,
+  originalId: number | undefined,
   order?: number
 }
 
@@ -55,6 +59,12 @@ const props = defineProps<AsyncFacilityEdit>()
 const emit = defineEmits(['closeEditModal', 'update'])
 
 const {facility} = await useFacility(props.id)
+
+if(props.originalId != null) {
+  facility.value.name = facility.value.name + "のコピー"
+  facility.value.created_at = ""
+  facility.value.updated_at = 0
+}
 
 </script>
 

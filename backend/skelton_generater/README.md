@@ -49,7 +49,7 @@ go run ./main.go "../models/db/user"
 ```
 go run ./main.go "../models/db/[モデルへのパス(.goは除く)]"
 ```
-
+go run ./main.go "../models/db/copy_facility"
 
 1. 実行ディレクトリはskelton_generater直下
 2. 必要があれば Migrationをする

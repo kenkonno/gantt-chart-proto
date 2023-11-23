@@ -36,11 +36,12 @@ func (r *ganttGroupRepository) Find(id int32) db.GanttGroup {
 	return ganttGroup
 }
 
-func (r *ganttGroupRepository) Upsert(m db.GanttGroup) {
+func (r *ganttGroupRepository) Upsert(m db.GanttGroup) db.GanttGroup {
 	r.con.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
+	return m
 }
 
 func (r *ganttGroupRepository) Delete(id int32) {
