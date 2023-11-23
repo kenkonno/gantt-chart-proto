@@ -62,7 +62,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 	for _, unit := range orgUnits {
 		newUnit := unitRep.Upsert(db.Unit{
 			Id:         nil,
-			Name:       unit.Name,
+			Name:       unit.Name + "のコピー",
 			FacilityId: *newFacility.Id,
 			Order:      unit.Order,
 			CreatedAt:  time.Time{},
