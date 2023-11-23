@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {Facility, PostFacilitiesRequest} from "@/api";
+import {Facility, PostCopyFacilitysRequest, PostFacilitiesRequest} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
@@ -65,6 +65,24 @@ export async function postFacility(facility: Facility, order: number, emit: Emit
         facility: facility
     }
     await Api.postFacilities(req).then(() => {
+        toast("成功しました。")
+    }).finally(() => {
+        emit('closeEditModal')
+        emit('update')
+    })
+}
+
+export async function copyFacility(facility: Facility, order: number, originalFacilityId: number, emit: Emit) {
+    facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
+    facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
+    delete(facility.created_at)
+    delete(facility.updated_at)
+    facility.order = order
+    const req: PostCopyFacilitysRequest = {
+        facility: facility,
+        facilityId: originalFacilityId
+    }
+    await Api.postCopyFacilitys(req).then(() => {
         toast("成功しました。")
     }).finally(() => {
         emit('closeEditModal')

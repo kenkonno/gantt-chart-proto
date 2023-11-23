@@ -17,6 +17,8 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 	ganttGroupRep := repository.NewGanttGroupRepository()
 	unitRep := repository.NewUnitRepository()
 	ticketRep := repository.NewTicketRepository()
+	holidayRep := repository.NewHolidayRepository()
+	operationSettingRep := repository.NewOperationSettingRepository()
 
 	var copyFacilityReq openapi_models.PostCopyFacilitysRequest
 	if err := c.ShouldBindJSON(&copyFacilityReq); err != nil {
@@ -28,11 +30,14 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 	orgFacility := facilityRep.Find(copyFacilityReq.FacilityId)
 	// コピー元のGanttGroups
 	orgGanttGroups := ganttGroupRep.FindByFacilityId(*orgFacility.Id)
+	// コピー元の稼働設定
+	orgOperationSettings := operationSettingRep.FindByFacilityId(*orgFacility.Id)
+
 	// コピー元のunit
 	orgUnits := unitRep.FindByFacilityId(*orgFacility.Id)
 	// コピー元のTicket
 	orgTickets := ticketRep.FindByGanttGroupIds(lo.Map(orgGanttGroups, func(item db.GanttGroup, index int) int32 {
-		return item.FacilityId
+		return *item.Id
 	}))
 
 	// コピーを実施する、順番は Facility -> Unit | GanttGroups -> (Ticket)
@@ -74,8 +79,24 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 		ganttGroupMap[*group.Id] = *newGanttGroup.Id
 	}
 
+	// 稼働設定のコピー
+	for _, setting := range orgOperationSettings {
+		operationSettingRep.Upsert(db.OperationSetting{
+			Id:         nil,
+			FacilityId: *newFacility.Id,
+			UnitId:     unitMap[setting.UnitId],
+			ProcessId:  setting.ProcessId,
+			WorkHour:   setting.WorkHour,
+			CreatedAt:  time.Time{},
+			UpdatedAt:  0,
+		})
+	}
+
 	// Ticketのコピー
+	currentFrom := newFacility.TermFrom
 	for _, ticket := range orgTickets {
+		from := currentFrom
+		to := from.Add(time.Hour * 24 * 7)
 		ticketRep.Upsert(db.Ticket{
 			Id:              nil,
 			GanttGroupId:    ganttGroupMap[ticket.GanttGroupId],
@@ -85,14 +106,18 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 			Estimate:        nil,
 			NumberOfWorker:  nil,
 			DaysAfter:       nil,
-			StartDate:       &newFacility.TermFrom,
-			EndDate:         &newFacility.TermTo,
+			StartDate:       &from,
+			EndDate:         &to,
 			ProgressPercent: nil,
 			Order:           ticket.Order,
 			CreatedAt:       time.Time{},
 			UpdatedAt:       0,
 		})
+		currentFrom = from.Add(time.Hour * 24)
 	}
+
+	// 祝日の投入
+	holidayRep.InsertByFacilityId(*newFacility.Id)
 
 	return openapi_models.PostCopyFacilitysResponse{}
 

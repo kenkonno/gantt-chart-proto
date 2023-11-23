@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)">新規追加</button>
+    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined, undefined)">新規追加</button>
     <table class="table">
       <thead>
       <tr>
@@ -10,17 +10,21 @@
         <th>終了日</th>
         <th>作成日</th>
         <th>更新日</th>
+        <th>コピー</th>
         <th>並び替え</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="(item, index) in list" :key="item.id">
-        <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
+        <td @click="$emit('openEditModal', item.id, undefined)">{{ item.id }}</td>
         <td>{{ item.name }}</td>
         <td>{{ $filters.dateFormatYMD(item.term_from) }}</td>
         <td>{{ $filters.dateFormatYMD(item.term_to) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
+        <td>
+          <a href="#" @click="$emit('openEditModal',item.id, item.id)"><span class="material-symbols-outlined">note</span></a>
+        </td>
         <td>
           <a href="#" @click="$emit('moveUp', index)"><span class="material-symbols-outlined">arrow_upward</span></a>
           <a href="#" @click="$emit('moveDown', index)"><span class="material-symbols-outlined">arrow_downward</span></a>
