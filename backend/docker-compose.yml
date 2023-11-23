@@ -34,7 +34,7 @@ services:
     image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
     container_name: gantt_api
     ports:
-      - "80:80"
+      - "443:443"
     depends_on:
       #CHANGE 2: it prevents issuing a request while the server is starting to depend on the healthy status of postgres-db
       gantt_postgres:
