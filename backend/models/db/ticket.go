@@ -16,5 +16,5 @@ type Ticket struct {
 	ProgressPercent *int32
 	Order           int32
 	CreatedAt       time.Time
-	UpdatedAt       int
+	UpdatedAt       int32
 }

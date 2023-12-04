@@ -81,19 +81,8 @@ import {
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const facilityList = globalState.facilityList
-const {refreshFacilityList, refreshHolidayMap, refreshUnitMap, refreshOperationSettingMap} = inject(GLOBAL_ACTION_KEY)!
-const {updateCurrentFacilityId} = inject(GLOBAL_MUTATION_KEY)!
+const {refreshFacilityList} = inject(GLOBAL_ACTION_KEY)!
+const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
 // たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
-const refreshGantt = async (facilityId: number) => {
-  updateCurrentFacilityId(0)
-  // facility紐づくデータを初期化する
-  await refreshHolidayMap(facilityId)
-  await refreshUnitMap(facilityId)
-  await refreshOperationSettingMap(facilityId)
-  nextTick(() => {
-    updateCurrentFacilityId(facilityId)
-  })
-}
-
 </script>

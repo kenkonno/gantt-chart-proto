@@ -10,6 +10,7 @@
         <span class="material-symbols-outlined">travel_explore</span>
         <span class="text">全体ビュー</span>
       </router-link>
+      <schedule-alert></schedule-alert>
     </div>
   </nav>
   <Suspense>
@@ -49,6 +50,7 @@ import {
   useGlobalState
 } from "@/composable/globalState";
 import {provide} from "vue";
+import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
 
 const {globalState, actions, mutations, getters} = await useGlobalState()
 provide(GLOBAL_STATE_KEY, globalState.value)

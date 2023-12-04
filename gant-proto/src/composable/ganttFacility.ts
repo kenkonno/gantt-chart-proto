@@ -8,7 +8,7 @@ import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
 import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
-import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
     addBusinessDays,
     adjustStartDateByHolidays,
@@ -57,6 +57,7 @@ function getScheduledOperatingHours(operationSettings: OperationSetting[], row: 
 export async function useGanttFacility() {
     // injectはsetupと同期的に呼び出す必要あり
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
+    const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
     const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
 
     const GanttHeader = ref<Header[]>([
@@ -109,7 +110,7 @@ export async function useGanttFacility() {
     const getTickets = computed(() => {
         const result: Ticket[] = []
         ganttChartGroup.value.forEach(v => v.rows.forEach(vv => {
-            if(vv.ticket != null){
+            if (vv.ticket != null) {
                 result.push(vv.ticket)
             }
         }))
@@ -223,6 +224,7 @@ export async function useGanttFacility() {
         }
         await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
         reflectTicketToGantt(reqTicket)
+        await getScheduleAlert()
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -321,9 +323,9 @@ export async function useGanttFacility() {
         rows.forEach((row, index) => {
             let startDate: Dayjs
             // 先頭行の場合
-            if(index === 0 ) {
+            if (index === 0) {
                 // 開始日・工数・工程・人数が未設定の場合はスキップする
-                if(!row.ticket?.start_date || !row.ticket?.estimate ||
+                if (!row.ticket?.start_date || !row.ticket?.estimate ||
                     !row.ticket?.number_of_worker || !row.ticket?.process_id
                 ) {
                     console.log("###### SKIP due to first row")
@@ -332,7 +334,7 @@ export async function useGanttFacility() {
                 startDate = dayjs(row.ticket!.start_date)
             } else {
                 // 先頭行以降は (開始日 or days_after)・工数・工程・人数が未設定の場合はスキップする
-                if(!row.ticket?.estimate || !row.ticket?.number_of_worker || !row.ticket?.process_id){
+                if (!row.ticket?.estimate || !row.ticket?.number_of_worker || !row.ticket?.process_id) {
                     console.log("###### SKIP due to after first row pt1")
                     return;
                 } else {
@@ -342,7 +344,7 @@ export async function useGanttFacility() {
                         return;
                     } else {
                         // 日後が0でなければ優先
-                        if(row.ticket?.days_after != null) {
+                        if (row.ticket?.days_after != null) {
                             startDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
                         } else {
                             // 開始日をそのまま利用する

@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import 'vue3-toastify/dist/index.css';
 import '@vueform/multiselect/themes/default.css'
 import 'tippy.js/dist/tippy.css' // optional for styling
+import '@kouts/vue-modal/dist/vue-modal.css'
 
 import {createApp} from 'vue'
 import App from './App.vue'

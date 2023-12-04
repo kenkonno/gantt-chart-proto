@@ -226,6 +226,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetScheduleAlerts",
+		http.MethodGet,
+		"/api/scheduleAlerts",
+		GetScheduleAlerts,
+	},
+
+	{
 		"GetTicketUsers",
 		http.MethodGet,
 		"/api/ticketUsers",
