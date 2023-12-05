@@ -715,6 +715,22 @@ paths:
             schema:
               $ref: '#/components/schemas/PostCopyFacilitysRequest'
     parameters: []
+  /api/scheduleAlerts:
+    get:
+      summary: GetScheduleAlerts
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleAlertsResponse'
+              examples: {}
+      operationId: get-scheduleAlerts
+      description: ''
+      parameters: []
+    parameters: []
 components:
   schemas:
     User:
@@ -743,13 +759,15 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int64
       required:
         - department_id
         - limit_of_operation
         - name
         - password
         - email
+      description: ''
     GetUsersRequest:
       title: GetUsersRequest
       type: object
@@ -831,7 +849,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - name
         - order
@@ -922,7 +941,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - name
         - term_from
@@ -1010,7 +1030,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
         facility_id:
           type: integer
       required:
@@ -1105,7 +1126,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - workHours
     GetOperationSettingsRequest:
@@ -1195,7 +1217,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - name
     GetProcessesRequest:
@@ -1281,7 +1304,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - facility_id
         - name
@@ -1379,7 +1403,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - facility_id
         - unit_id
@@ -1495,7 +1520,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - gantt_group_id
         - order
@@ -1600,7 +1626,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - ticket_id
         - user_id
@@ -1739,3 +1766,61 @@ components:
       properties:
         '':
           type: string
+    ScheduleAlert:
+      title: ScheduleAlert
+      type: object
+      x-tags:
+        - ScheduleAlert
+      properties:
+        facility_id:
+          type: integer
+        facility_name:
+          type: string
+        unit_id:
+          type: integer
+        unit_name:
+          type: string
+        process_id:
+          type: integer
+        process_name:
+          type: string
+        end_date:
+          type: string
+          format: date-time
+        start_date:
+          type: string
+          format: date-time
+        actual_progress_date:
+          type: string
+          format: date-time
+        progress_percent:
+          x-go-custom-tag: 'binding:"min=1"'
+          type: number
+        delay_days:
+          type: number
+        ticket_id:
+          type: integer
+      required:
+        - facility_id
+        - facility_name
+        - unit_id
+        - unit_name
+        - process_id
+        - process_name
+        - end_date
+        - start_date
+        - progress_percent
+        - delay_days
+    GetScheduleAlertsRequest:
+      title: GetScheduleAlertsRequest
+      type: object
+    GetScheduleAlertsResponse:
+      title: GetScheduleAlertsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleAlert'
+      required:
+        - list

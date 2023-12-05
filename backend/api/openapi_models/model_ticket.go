@@ -42,5 +42,5 @@ type Ticket struct {
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
-	UpdatedAt int `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty"`
 }

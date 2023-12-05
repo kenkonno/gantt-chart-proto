@@ -9,5 +9,5 @@ type Holiday struct {
 	Date       time.Time
 
 	CreatedAt time.Time
-	UpdatedAt int
+	UpdatedAt int32
 }

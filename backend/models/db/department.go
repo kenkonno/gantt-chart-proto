@@ -8,5 +8,5 @@ type Department struct {
 	Order int
 
 	CreatedAt time.Time
-	UpdatedAt int
+	UpdatedAt int32
 }

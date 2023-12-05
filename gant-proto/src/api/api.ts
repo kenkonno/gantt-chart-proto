@@ -694,6 +694,19 @@ export interface GetProcessesResponse {
 /**
  * 
  * @export
+ * @interface GetScheduleAlertsResponse
+ */
+export interface GetScheduleAlertsResponse {
+    /**
+     * 
+     * @type {Array<ScheduleAlert>}
+     * @memberof GetScheduleAlertsResponse
+     */
+    'list': Array<ScheduleAlert>;
+}
+/**
+ * 
+ * @export
  * @interface GetTicketUsersIdRequest
  */
 export interface GetTicketUsersIdRequest {
@@ -1546,6 +1559,85 @@ export interface Process {
      * @memberof Process
      */
     'updated_at'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface ScheduleAlert
+ */
+export interface ScheduleAlert {
+    /**
+     * 
+     * @type {number}
+     * @memberof ScheduleAlert
+     */
+    'facility_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScheduleAlert
+     */
+    'facility_name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ScheduleAlert
+     */
+    'unit_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScheduleAlert
+     */
+    'unit_name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ScheduleAlert
+     */
+    'process_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScheduleAlert
+     */
+    'process_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScheduleAlert
+     */
+    'end_date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScheduleAlert
+     */
+    'start_date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScheduleAlert
+     */
+    'actual_progress_date'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ScheduleAlert
+     */
+    'progress_percent': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ScheduleAlert
+     */
+    'delay_days': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ScheduleAlert
+     */
+    'ticket_id'?: number;
 }
 /**
  * 
@@ -2558,6 +2650,36 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             assertParamExists('getProcessesId', 'id', id)
             const localVarPath = `/api/processes/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetScheduleAlerts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getScheduleAlerts: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/scheduleAlerts`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3800,6 +3922,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetScheduleAlerts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getScheduleAlerts(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetScheduleAlertsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getScheduleAlerts(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetTicketUsers
          * @param {Array<number>} ticketIds 
          * @param {*} [options] Override http request option.
@@ -4338,6 +4470,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getProcessesId(id: number, options?: any): AxiosPromise<GetProcessesIdResponse> {
             return localVarFp.getProcessesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetScheduleAlerts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getScheduleAlerts(options?: any): AxiosPromise<GetScheduleAlertsResponse> {
+            return localVarFp.getScheduleAlerts(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4897,6 +5038,17 @@ export class DefaultApi extends BaseAPI {
      */
     public getProcessesId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getProcessesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetScheduleAlerts
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getScheduleAlerts(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getScheduleAlerts(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

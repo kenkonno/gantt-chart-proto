@@ -9,19 +9,7 @@
 
 package openapi_models
 
-import (
-	"time"
-)
+type GetScheduleAlertsResponse struct {
 
-type Process struct {
-
-	Id *int32 `json:"id,omitempty"`
-
-	Name string `json:"name" binding:"min=1"`
-
-	Order int32 `json:"order,omitempty"`
-
-	CreatedAt time.Time `json:"created_at,omitempty"`
-
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	List []ScheduleAlert `json:"list"`
 }
