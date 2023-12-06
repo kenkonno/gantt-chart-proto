@@ -1219,6 +1219,8 @@ components:
         updated_at:
           type: integer
           format: int
+        color:
+          type: string
       required:
         - name
     GetProcessesRequest:

@@ -1559,6 +1559,12 @@ export interface Process {
      * @memberof Process
      */
     'updated_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Process
+     */
+    'color'?: string;
 }
 /**
  * 

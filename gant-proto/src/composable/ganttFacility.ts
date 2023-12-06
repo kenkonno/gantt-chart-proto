@@ -88,6 +88,12 @@ export async function useGanttFacility() {
     const getProcessName = (id: number) => {
         return processList.find(v => v.id === id)?.name
     }
+    const getProcessColor = (id?: number | null) => {
+        if (id == null) {
+            return DEFAULT_PROCESS_COLOR
+        }
+        return processList.find(v => v.id === id)?.color
+    }
     const getOperationList = computed(() => {
         return operationSettingMap[currentFacilityId]
     })
@@ -163,7 +169,7 @@ export async function useGanttFacility() {
                     hasHandles: true,
                     id: task.ticket?.id!.toString(),
                     label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
-                    style: {backgroundColor: BAR_NORMAL_COLOR},
+                    style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
                     progress: task.ticket?.progress_percent,
                     progressColor: BAR_COMPLETE_COLOR
                 }

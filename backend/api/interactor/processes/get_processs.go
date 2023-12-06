@@ -19,6 +19,7 @@ func GetProcessesInvoke(c *gin.Context) openapi_models.GetProcessesResponse {
 				Id:        item.Id,
 				Name:      item.Name,
 				Order:     int32(item.Order),
+				Color:     item.Color,
 				CreatedAt: item.CreatedAt,
 				UpdatedAt: item.UpdatedAt,
 			}

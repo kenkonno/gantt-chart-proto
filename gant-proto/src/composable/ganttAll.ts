@@ -58,6 +58,13 @@ export async function useGanttAll() {
         return (dayjs(endDate).diff(dayjs(startDate), displayType.value) + 1) * 30 + "px"
     })
 
+    const getProcessColor = (id?: number | null) => {
+        if (id == null) {
+            return DEFAULT_PROCESS_COLOR
+        }
+        return processList.find(v => v.id === id)?.color
+    }
+
     const {data: allTickets} = await Api.getAllTickets()
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
     // 全設備の最小
@@ -130,7 +137,7 @@ export async function useGanttAll() {
                         progress: ticket.progress_percent,
                         progressColor: BAR_COMPLETE_COLOR,
                         pushOnOverlap: false,
-                        style: {backgroundColor: BAR_NORMAL_COLOR},
+                        style: {backgroundColor: getProcessColor(ticket.process_id)},
                     }
                 }
             })

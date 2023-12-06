@@ -24,4 +24,6 @@ type Process struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
 	UpdatedAt int32 `json:"updated_at,omitempty"`
+
+	Color string `json:"color,omitempty"`
 }

@@ -11,13 +11,20 @@
     </div>
 
     <div class="mb-2">
+      <p class="form-label">色</p>
+      <div><color-picker :disableAlpha="true" v-model:pure-color="process.color"/></div>
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">作成日</label>
-      <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="process.created_at" :disabled="true">
+      <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="process.created_at"
+             :disabled="true">
     </div>
 
     <div class="mb-2">
       <label class="form-label" for="id">更新日</label>
-      <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="process.updated_at" :disabled="true">
+      <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="process.updated_at"
+             :disabled="true">
     </div>
 
     <template v-if="id == null">
@@ -31,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import {ColorPicker} from "vue3-colorpicker";
 import {useProcess, postProcessById, postProcess, deleteProcessById} from "@/composable/process";
 
 interface AsyncProcessEdit {

@@ -73,3 +73,14 @@ API_PORT=8081
 
 
 色々やったけど、結局IAM周りとかでだるくなったのでteraform化したいですね。
+
+
+
+docker-compose -p env1 down
+docker-compose -p env1 up -d gantt_postgres
+docker-compose -p env1 up -d gantt_api
+docker-compose -p env1 logs gantt_api
+
+docker-compose -p env2 down
+docker-compose -p env2 up -d gantt_postgres_2
+docker-compose -p env2 up -d gantt_api_2
