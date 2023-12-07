@@ -3,6 +3,7 @@ import {PostProcessesRequest, Process} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
+import {DEFAULT_PROCESS_COLOR, Emit} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。

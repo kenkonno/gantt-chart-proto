@@ -98,6 +98,7 @@ const holidays = computed(() => props.holidays)
 // usePileUpsを全ての設備で実行。
 // 開始日、終了日は現在の設備。
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
+console.log("####### start main getDefaultPileUps")
 const {
   globalStartDate,
   defaultPileUpsByPerson,
@@ -110,7 +111,6 @@ const {
   pileUpsByDepartment,
   pileUpsByPerson,
   displayPileUps,
-  refreshPileUps,
 } = usePielUps(
     props.chartStart,
     props.chartEnd,

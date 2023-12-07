@@ -28,4 +28,8 @@ type Facility struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
 	UpdatedAt int32 `json:"updated_at,omitempty"`
+
+	Status string `json:"status"`
+
+	Type string `json:"type"`
 }

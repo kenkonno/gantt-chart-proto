@@ -679,7 +679,13 @@ paths:
               examples: {}
       operationId: get-all-tickets
       description: ''
-      parameters: []
+      parameters:
+        - schema:
+            type: array
+            items:
+              type: string
+          in: query
+          name: facilityTypes
     parameters: []
   /api/pileUps:
     get:
@@ -701,6 +707,12 @@ paths:
           in: query
           name: facilityId
           required: true
+        - schema:
+            type: array
+            items:
+              type: string
+          in: query
+          name: facilityTypes
   /api/copyFacilitys:
     post:
       summary: PostCopyFacilitys
@@ -943,10 +955,16 @@ components:
         updated_at:
           type: integer
           format: int
+        status:
+          type: string
+        type:
+          type: string
       required:
         - name
         - term_from
         - term_to
+        - status
+        - type
     GetFacilitiesRequest:
       title: GetFacilitiesRequest
       type: object

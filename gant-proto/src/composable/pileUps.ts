@@ -1,12 +1,12 @@
-import {computed, ComputedRef, inject, Ref, ref, toValue, UnwrapRef, watch} from "vue";
+import {computed, ComputedRef, inject, Ref, ref,  UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
 import {Department, Holiday, Ticket, TicketUser, User} from "@/api";
 import {round} from "@/utils/math";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {DisplayType} from "@/composable/ganttFacility";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
-import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {Api} from "@/api/axios";
+import {FacilityStatus, FacilityType} from "@/const/common";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 type PileUpByPerson = {
     user: User,
@@ -376,18 +376,19 @@ export const usePielUps = (
  * @param displayType
  */
 export const getDefaultPileUps = async (excludeFacilityId: number, displayType: DisplayType) => {
-    const {facilityList, holidayMap, userList, departmentList} = inject(GLOBAL_STATE_KEY)!
+    const {facilityList, userList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
+    const filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
 
-    const {data: allTickets} = await Api.getAllTickets()
+    const {data: allTickets} = await Api.getAllTickets(facilityTypes)
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
-    const {data: allData} = await Api.getPileUps(excludeFacilityId)
+    const {data: allData} = await Api.getPileUps(excludeFacilityId, facilityTypes)
 
     // 全設備の最小
-    const startDate: string = facilityList.slice().sort((a, b) => {
+    const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
     }).shift()!.term_from.substring(0, 10)
     // 全設備の最大
-    const endDate: string = facilityList.slice().sort((a, b) => {
+    const endDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_to > b.term_to ? 1 : -1
     }).pop()!.term_to.substring(0, 10)
 
@@ -395,7 +396,7 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
     const defaultPileUpsByDepartment = ref<PileUpByDepartment[]>([])
     initPileUps(endDate, startDate, userList, defaultPileUpsByPerson, departmentList, defaultPileUpsByDepartment);
 
-    for (const facility of facilityList) {
+    for (const facility of filteredFacilityList) {
         // 対象外の設備はスキップ
         if (facility.id === excludeFacilityId) continue
         const targetData = allData.list.find(v => v.facilityId === facility.id)

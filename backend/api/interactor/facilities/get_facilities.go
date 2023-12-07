@@ -11,7 +11,7 @@ import (
 func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
 	facilityRep := repository.NewFacilityRepository()
 
-	facilityList := facilityRep.FindAll()
+	facilityList := facilityRep.FindAll([]string{}, []string{})
 
 	return openapi_models.GetFacilitiesResponse{
 		List: lo.Map(facilityList, func(item db.Facility, index int) openapi_models.Facility {
@@ -23,6 +23,8 @@ func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
 				Order:     int32(item.Order),
 				CreatedAt: item.CreatedAt,
 				UpdatedAt: item.UpdatedAt,
+				Status:    item.Status,
+				Type:      item.Type,
 			}
 		}),
 	}

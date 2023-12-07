@@ -3,6 +3,7 @@ import {PostDepartmentsRequest, Department} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
+import {Emit} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。

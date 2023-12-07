@@ -8,6 +8,8 @@
         <th>名称</th>
         <th>開始日</th>
         <th>終了日</th>
+        <th>ステータス</th>
+        <th>受注状況</th>
         <th>作成日</th>
         <th>更新日</th>
         <th>コピー</th>
@@ -20,6 +22,8 @@
         <td>{{ item.name }}</td>
         <td>{{ $filters.dateFormatYMD(item.term_from) }}</td>
         <td>{{ $filters.dateFormatYMD(item.term_to) }}</td>
+        <td>{{ FacilityStatusMap[item.status]}}</td>
+        <td>{{ FacilityTypeMap[item.type]}}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
         <td>
@@ -37,6 +41,7 @@
 
 <script setup lang="ts">
 import {Facility} from "@/api";
+import {FacilityStatus, FacilityStatusMap, FacilityType, FacilityTypeMap} from "@/const/common";
 
 defineEmits(['openEditModal', 'moveUp', 'moveDown'])
 

@@ -11,7 +11,6 @@ import {changeSort} from "@/utils/sort";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
     addBusinessDays,
-    adjustStartDateByHolidays,
     dayBetween,
     endOfDay,
     ganttDateToYMDDate,
@@ -19,6 +18,8 @@ import {
     getNumberOfBusinessDays
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
+import {DEFAULT_PROCESS_COLOR} from "@/const/common";
+import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -31,18 +32,8 @@ export type GanttRow = {
     ticket?: Ticket
     ticketUsers?: TicketUser[]
 }
-
-type Header = {
-    name: string,
-    visible: boolean
-}
-
-export type DisplayType = "day" | "week" | "hour" | "month"
-
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
-const BAR_DANGER_COLOR = "rgb(255 89 89)"
-
 
 function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
     return operationSettings.filter(operationSetting => {
@@ -59,22 +50,6 @@ export async function useGanttFacility() {
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
     const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
     const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
-
-    const GanttHeader = ref<Header[]>([
-        {name: "ユニット", visible: true},
-        {name: "工程", visible: true},
-        {name: "部署", visible: true},
-        {name: "担当者", visible: true},
-        {name: "人数", visible: false},
-        {name: "期日", visible: false},
-        {name: "工数(h)", visible: true},
-        {name: "日後", visible: false},
-        {name: "開始日", visible: false},
-        {name: "終了日", visible: false},
-        {name: "進捗", visible: true},
-        {name: "操作", visible: false},
-    ])
-    const displayType = ref<DisplayType>("day")
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
@@ -97,20 +72,20 @@ export async function useGanttFacility() {
     const getOperationList = computed(() => {
         return operationSettingMap[currentFacilityId]
     })
-    const getHolidaysForGantt = computed(() => {
-        if (displayType.value === "day") {
+    const getHolidaysForGantt = (displayType: DisplayType) => {
+        if (displayType === "day") {
             return holidayMap[currentFacilityId].map(v => new Date(v.date))
         } else {
             return []
         }
-    })
+    }
     const getHolidays = computed(() => {
         return holidayMap[currentFacilityId]
     })
-    const getGanttChartWidth = computed<string>(() => {
+    const getGanttChartWidth = (displayType: DisplayType) => {
         // 1日30pxとして計算する
-        return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType.value) + 1) * 30 + "px"
-    })
+        return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType) + 1) * 30 + "px"
+    }
 
     // 積み上げに渡すよう
     const getTickets = computed(() => {
@@ -433,11 +408,9 @@ export async function useGanttFacility() {
         })
     }
     return {
-        GanttHeader,
         bars,
         chartEnd,
         chartStart,
-        displayType,
         facility,
         getHolidaysForGantt,
         ganttChartGroup,

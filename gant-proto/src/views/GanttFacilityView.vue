@@ -17,7 +17,8 @@
     </div>
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>設備設定</b>
-      <select style="display: inline" v-model.number="globalState.currentFacilityId" @input="refreshGantt(Number($event.target.value))">
+      <select style="display: inline" v-model.number="globalState.currentFacilityId"
+              @input="refreshGantt(Number($event.target.value))">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
       <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
@@ -34,10 +35,31 @@
     </div>
     <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
   </nav>
-  <gantt-proxy :facilityId="globalState.currentFacilityId" v-if="globalState.currentFacilityId > 0"></gantt-proxy>
-  <div v-else>
-    ユニットを選択してください。
+  <div style="display:none">{{gantFacility}} vuejshack</div>
+  <div v-show="globalState.currentFacilityId > 0">
+    <gantt-facility-menu
+        :gantt-facility-header="GanttHeader"
+        :display-type="displayType"
+        @set-schedule-by-from-to="gantFacility.setScheduleByFromToProxy()"
+        @set-schedule-by-person-day="gantFacility.setScheduleByPersonDayProxy()"
+        @updateDisplayType="updateDisplayType"
+    ></gantt-facility-menu>
   </div>
+  <Suspense>
+    <gantt-facility
+        ref="gantFacility"
+        v-if="globalState.currentFacilityId > 0 && globalState.ganttFacilityRefresh"
+        :gantt-facility-header="GanttHeader"
+        :display-type="displayType"
+    >
+    </gantt-facility>
+    <div v-else>
+      ユニットを選択してください。
+    </div>
+    <template #fallback>
+      Loading...
+    </template>
+  </Suspense>
 </template>
 <style lang="scss" scoped>
 nav {
@@ -71,18 +93,29 @@ import UserView from "@/views/UserView.vue";
 import UnitView from "@/views/UnitView.vue";
 import OperationSettingView from "@/views/OperationSettingView.vue";
 import HolidayView from "@/views/HolidayView.vue";
-import {inject, nextTick} from "vue";
-import GanttProxy from "@/components/GanttProxy.vue";
+import {computed, inject, ref} from "vue";
+import GanttFacility from "@/components/ganttFacility/GanttFacility.vue";
 import {
   GLOBAL_ACTION_KEY,
   GLOBAL_MUTATION_KEY,
   GLOBAL_STATE_KEY,
 } from "@/composable/globalState";
+import {FacilityStatus} from "@/const/common";
+import GanttFacilityMenu from "@/components/ganttFacility/GanttFacilityMenu.vue";
+import {DisplayType, useGanttFacilityMenu} from "@/composable/ganttFacilityMenu";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
-const facilityList = globalState.facilityList
+const facilityList = computed(() => {
+  return globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled)
+})
 const {refreshFacilityList} = inject(GLOBAL_ACTION_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
+
+const {GanttHeader, displayType} = useGanttFacilityMenu()
+const gantFacility = ref(null)
+const updateDisplayType = (v: DisplayType) => {
+  displayType.value = v
+}
 
 // たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
 </script>

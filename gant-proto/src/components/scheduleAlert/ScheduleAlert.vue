@@ -5,30 +5,39 @@
     <span class="text-bg-danger">{{ scheduleAlert.length }}</span>
   </a>
   <div class="schedule-alert-table" v-if="tableIsOpen">
-    <div>
-      <label>
-        遅延
-        <input type="number" v-model="filterNumber">
-        日以上を表示
-      </label>
+    <div class="clearfix">
       <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"
               @click="tableIsOpen = false"></button>
     </div>
     <div>
+      <label>
+        遅延
+        <input type="number" v-model="filterDelayDays" style="width: 3rem">
+        日以上を表示
+      </label>
+      <label>
+        進捗
+        <input type="number" v-model="filterProgressNumber" style="width: 3rem">
+        %以下を表示
+      </label>
+    </div>
+    <div>
       <div v-for="[key, item] in Array.from(cScheduleAlert)" :key="key">
         <hr>
-        <u>{{ item[0].facility_name }}</u>
+        <u class="link" @click="refreshGantt(item[0].facility_id)">{{ item[0].facility_name }}</u>
         <table style="width: 100%; table-layout: fixed">
           <thead>
           <tr>
             <th width="40%">ユニット名</th>
             <th width="40%">工程名</th>
+            <th width="20%">進捗</th>
             <th width="20%">遅延日数</th>
           </tr>
           </thead>
           <tr v-for="i in item" :key="i.ticket_id">
             <td class="text-overflow">{{ i.unit_name }}</td>
-            <td class="link" @click="refreshGantt(i.facility_id)">{{ i.process_name }}</td>
+            <td>{{ i.process_name }}</td>
+            <td>{{ i.progress_percent }}%</td>
             <td>{{ i.delay_days }}</td>
           </tr>
         </table>
@@ -48,16 +57,21 @@ const {scheduleAlert} = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
 const tableIsOpen = ref<boolean>(false)
-const emit = defineEmits(["selectUnit"])
-const filterNumber = ref<number | undefined>(undefined)
+defineEmits(["selectUnit"])
+const filterDelayDays = ref<number | undefined>(undefined)
+const filterProgressNumber = ref<number | undefined>(undefined)
 const cScheduleAlert = computed(() => {
   const result: Map<number, ScheduleAlert[]> = new Map()
   var filtered: ScheduleAlert[]
-  if (filterNumber.value != undefined) {
-    filtered = scheduleAlert.filter(v => v.delay_days > filterNumber.value)
+  if (filterDelayDays.value != undefined) {
+    filtered = scheduleAlert.filter(v => v.delay_days >= filterDelayDays.value)
   } else {
     filtered = scheduleAlert
   }
+  if (filterProgressNumber.value != undefined && filterProgressNumber.value > 0) {
+    filtered = filtered.filter(v => v.progress_percent <= filterProgressNumber.value)
+  }
+
   filtered.forEach((v => {
     if (result.get(v.facility_id) == undefined) {
       result.set(v.facility_id, [])

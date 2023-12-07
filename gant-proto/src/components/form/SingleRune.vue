@@ -8,16 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import Multiselect from '@vueform/multiselect'
-import {TicketUser, User} from "@/api";
-import {computed} from "vue";
 
 interface SingleRuneProps {
   name: string
   id: number
 }
 
-const props = defineProps<SingleRuneProps>()
+defineProps<SingleRuneProps>()
 const getBgColor = (value: number) => {
   const master = [
     'background-color: #D97E4C;',
