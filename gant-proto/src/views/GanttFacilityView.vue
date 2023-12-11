@@ -35,7 +35,7 @@
     </div>
     <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
   </nav>
-  <div style="display:none">{{gantFacility}} vuejshack</div>
+  <div style="display:none">{{gantFacility != undefined}} vuejshack</div>
   <div v-show="globalState.currentFacilityId > 0">
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
