@@ -368,6 +368,18 @@ export interface Facility {
      * @memberof Facility
      */
     'updated_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'status': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'type': string;
 }
 /**
  * 
@@ -1559,6 +1571,12 @@ export interface Process {
      * @memberof Process
      */
     'updated_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Process
+     */
+    'color'?: string;
 }
 /**
  * 
@@ -2240,10 +2258,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary GetAllTicket
+         * @param {Array<string>} [facilityTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllTickets: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllTickets: async (facilityTypes?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/all-tickets`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2255,6 +2274,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (facilityTypes) {
+                localVarQueryParameter['facilityTypes'] = facilityTypes;
+            }
 
 
     
@@ -2575,10 +2598,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetPileUps
          * @param {number} facilityId 
+         * @param {Array<string>} [facilityTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getPileUps: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getPileUps: async (facilityId: number, facilityTypes?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'facilityId' is not null or undefined
             assertParamExists('getPileUps', 'facilityId', facilityId)
             const localVarPath = `/api/pileUps`;
@@ -2595,6 +2619,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityId !== undefined) {
                 localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+            if (facilityTypes) {
+                localVarQueryParameter['facilityTypes'] = facilityTypes;
             }
 
 
@@ -3784,11 +3812,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary GetAllTicket
+         * @param {Array<string>} [facilityTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllTickets(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(options);
+        async getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(facilityTypes, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3892,11 +3921,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetPileUps
          * @param {number} facilityId 
+         * @param {Array<string>} [facilityTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getPileUps(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetPileUpsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getPileUps(facilityId, options);
+        async getPileUps(facilityId: number, facilityTypes?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetPileUpsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPileUps(facilityId, facilityTypes, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4348,11 +4378,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary GetAllTicket
+         * @param {Array<string>} [facilityTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllTickets(options?: any): AxiosPromise<GetAllTicketsResponse> {
-            return localVarFp.getAllTickets(options).then((request) => request(axios, basePath));
+        getAllTickets(facilityTypes?: Array<string>, options?: any): AxiosPromise<GetAllTicketsResponse> {
+            return localVarFp.getAllTickets(facilityTypes, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4446,11 +4477,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetPileUps
          * @param {number} facilityId 
+         * @param {Array<string>} [facilityTypes] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getPileUps(facilityId: number, options?: any): AxiosPromise<GetPileUpsResponse> {
-            return localVarFp.getPileUps(facilityId, options).then((request) => request(axios, basePath));
+        getPileUps(facilityId: number, facilityTypes?: Array<string>, options?: any): AxiosPromise<GetPileUpsResponse> {
+            return localVarFp.getPileUps(facilityId, facilityTypes, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4891,12 +4923,13 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary GetAllTicket
+     * @param {Array<string>} [facilityTypes] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getAllTickets(options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getAllTickets(options).then((request) => request(this.axios, this.basePath));
+    public getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getAllTickets(facilityTypes, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5009,12 +5042,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetPileUps
      * @param {number} facilityId 
+     * @param {Array<string>} [facilityTypes] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getPileUps(facilityId: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getPileUps(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getPileUps(facilityId: number, facilityTypes?: Array<string>, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getPileUps(facilityId, facilityTypes, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

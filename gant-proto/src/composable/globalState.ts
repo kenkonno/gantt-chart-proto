@@ -4,9 +4,10 @@
  * facilityに紐づくものは連想はれいつとして持つ。
  */
 import {Department, Facility, Holiday, OperationSetting, Process, ScheduleAlert, Unit, User} from "@/api";
-import {InjectionKey, ref,nextTick} from "vue";
+import {InjectionKey, ref, nextTick} from "vue";
 import {Api} from "@/api/axios";
 import {changeSort} from "@/utils/sort";
+import {FacilityType} from "@/const/common";
 
 type GlobalState = {
     currentFacilityId: number,
@@ -18,6 +19,10 @@ type GlobalState = {
     operationSettingMap: { [key: number]: OperationSetting[] }
     holidayMap: { [key: number]: Holiday[] }
     scheduleAlert: ScheduleAlert[]
+    facilityTypes: string[]
+    ganttFacilityRefresh: boolean
+    ganttAllRefresh: boolean
+    pileUpsRefresh: boolean
 }
 
 export const GLOBAL_STATE_KEY = Symbol() as InjectionKey<GlobalState>
@@ -45,6 +50,13 @@ interface Mutations {
     updateCurrentFacilityId: (id: number) => void;
 
     refreshGantt(id: number): void;
+
+    setFacilityTypes(facilityType: string[]): void;
+
+    refreshPileUpsRefresh(): void;
+
+    refreshGanttAll(): void;
+
 }
 
 interface Getters {
@@ -63,6 +75,10 @@ export const useGlobalState = async () => {
         unitMap: {},
         userList: [],
         scheduleAlert: [],
+        facilityTypes: [FacilityType.Ordered], // TODO: 初期値を記憶するようにする
+        ganttFacilityRefresh: true, // refreshさせるだけのフラグ
+        ganttAllRefresh: true,
+        pileUpsRefresh: true,
     })
     const init = async () => {
         await actions.refreshFacilityList()
@@ -145,14 +161,31 @@ export const useGlobalState = async () => {
             globalState.value.currentFacilityId = id
         },
         refreshGantt: async (facilityId: number) => {
-            globalState.value.currentFacilityId = 0
+            globalState.value.currentFacilityId = facilityId
+            globalState.value.ganttFacilityRefresh = false
             // facility紐づくデータを初期化する
             await actions.refreshHolidayMap(facilityId)
             await actions.refreshUnitMap(facilityId)
             await actions.refreshOperationSettingMap(facilityId)
             nextTick(() => {
-                globalState.value.currentFacilityId = facilityId
+                globalState.value.ganttFacilityRefresh = true
             })
+        },
+        refreshPileUpsRefresh: async () => {
+            globalState.value.pileUpsRefresh = false
+            nextTick(() => {
+                globalState.value.pileUpsRefresh = true
+            })
+        },
+        refreshGanttAll: () => {
+            globalState.value.ganttAllRefresh = false
+            nextTick(() => {
+                globalState.value.ganttAllRefresh = true
+            })
+        },
+        setFacilityTypes: (facilityTypes: string[]) => {
+            globalState.value.facilityTypes.length = 0
+            globalState.value.facilityTypes = facilityTypes
         }
     }
 

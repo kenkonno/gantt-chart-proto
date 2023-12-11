@@ -26,6 +26,8 @@ func GetFacilitiesIdInvoke(c *gin.Context) openapi_models.GetFacilitiesIdRespons
 			Order:     int32(facility.Order),
 			CreatedAt: facility.CreatedAt,
 			UpdatedAt: facility.UpdatedAt,
+			Status:    facility.Status,
+			Type:      facility.Type,
 		},
 	}
 }

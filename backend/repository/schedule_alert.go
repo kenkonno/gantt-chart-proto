@@ -75,6 +75,8 @@ func (r *scheduleAlertRepository) FindAll() []db.ScheduleAlert {
 		  AND t.end_date IS NOT NULL
 		  AND t.process_id IS NOT NULL
 		  AND t.start_date < NOW() -- まだ開始していないもの除外
+		  AND f.status = 'Enabled'
+          AND f.type = 'Ordered'
 	)
 	-- 対象のチケットから計算を行う
 	-- 開始日から終了日の内休日を取り除く。

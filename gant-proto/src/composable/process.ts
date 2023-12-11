@@ -3,6 +3,7 @@ import {PostProcessesRequest, Process} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
+import {DEFAULT_PROCESS_COLOR, Emit} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -33,6 +34,7 @@ export async function useProcess(processId?: number) {
     const process = ref<Process>({
         id: null,
         name: "",
+        color: DEFAULT_PROCESS_COLOR,
         created_at: undefined,
         updated_at: undefined
     })
@@ -42,6 +44,7 @@ export async function useProcess(processId?: number) {
             process.value.id = data.process.id
             process.value.name = data.process.name
             process.value.order = data.process.order
+            process.value.color = data.process.color
             process.value.created_at = data.process.created_at
             process.value.updated_at = data.process.updated_at
         }

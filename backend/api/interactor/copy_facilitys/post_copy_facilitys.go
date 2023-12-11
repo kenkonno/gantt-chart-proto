@@ -41,7 +41,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 	}))
 
 	// コピーを実施する、順番は Facility -> Unit | GanttGroups -> (Ticket)
-	allFacility := facilityRep.FindAll()
+	allFacility := facilityRep.FindAll([]string{}, []string{})
 	order := lo.MaxBy(allFacility,func(a db.Facility, b db.Facility) bool {
 		return a.Order > b.Order
 	}).Order + 1

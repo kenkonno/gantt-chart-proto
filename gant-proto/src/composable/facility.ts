@@ -3,6 +3,7 @@ import {Facility, PostCopyFacilitysRequest, PostFacilitiesRequest} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
+import {Emit, FacilityStatus, FacilityType} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -38,7 +39,9 @@ export async function useFacility(facilityId?: number) {
         term_to: "",
         order: 0,
         created_at: undefined,
-        updated_at: undefined
+        updated_at: undefined,
+        status: FacilityStatus.Enabled,
+        type: FacilityType.Ordered
     })
     if (facilityId !== undefined) {
         const {data} = await Api.getFacilitiesId(facilityId)
@@ -50,6 +53,8 @@ export async function useFacility(facilityId?: number) {
             facility.value.order = data.facility.order
             facility.value.created_at = data.facility.created_at
             facility.value.updated_at = data.facility.updated_at
+            facility.value.status = data.facility.status
+            facility.value.type = data.facility.type
         }
     }
 

@@ -11,6 +11,15 @@
         <span class="text">全体ビュー</span>
       </router-link>
       <schedule-alert></schedule-alert>
+      <div>
+        <label>
+          受注状況
+          <label v-for="(name, code) in FacilityTypeMap" :key="code" >
+            {{name}}
+            <input type="checkbox" name="facilityType" :value="code" v-model="globalState.facilityTypes" @change="changeFacilityType"/>
+          </label>
+        </label>
+      </div>
     </div>
   </nav>
   <Suspense>
@@ -23,20 +32,26 @@
   padding: 0;
   height: 30px;
   font-size: 0.8rem;
-  > div > a {
-    display: block;
-    margin-left: 5px;
-    color: inherit;
-    padding: 0;
-    text-decoration: inherit;
-    border-bottom: 1px solid black;
-    > .material-symbols-outlined {
-      vertical-align: middle;
-      font-size: 1rem;
+
+  > div {
+    > a, div {
+      display: block;
+      margin-left: 5px;
+      color: inherit;
+      padding: 0;
+      text-decoration: inherit;
+      border-bottom: 1px solid black;
+
+      > .material-symbols-outlined {
+        vertical-align: middle;
+        font-size: 1rem;
+      }
+
+      .text {
+        vertical-align: middle;
+      }
     }
-    .text {
-      vertical-align: middle;
-    }
+
   }
 }
 </style>
@@ -51,12 +66,24 @@ import {
 } from "@/composable/globalState";
 import {provide} from "vue";
 import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
+import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
+import router from "@/router";
 
 const {globalState, actions, mutations, getters} = await useGlobalState()
 provide(GLOBAL_STATE_KEY, globalState.value)
 provide(GLOBAL_ACTION_KEY, actions)
 provide(GLOBAL_MUTATION_KEY, mutations)
 provide(GLOBAL_GETTER_KEY, getters)
-
-
+const changeFacilityType = () => {
+  // 設備ビューの時はpileUpsだけ
+  if (router.currentRoute.value.name == "gantt") {
+    console.log(router.currentRoute.value.name)
+    console.log(globalState.value.pileUpsRefresh)
+    mutations.refreshPileUpsRefresh()
+    console.log(globalState.value.pileUpsRefresh)
+  }
+  if (router.currentRoute.value.name == "gantt-all-view") {
+    mutations.refreshGanttAll()
+  }
+}
 </script>
