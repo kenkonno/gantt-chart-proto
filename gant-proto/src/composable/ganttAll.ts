@@ -13,7 +13,7 @@ import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
 import {DisplayType, Header} from "@/composable/ganttAllMenu";
 
-const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
+const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
 type GanttAllRow = {
     facility: Facility,
