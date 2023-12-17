@@ -13,7 +13,7 @@ import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
 import {DisplayType, Header} from "@/composable/ganttAllMenu";
 
-const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
+const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
 type GanttAllRow = {
     facility: Facility,
@@ -97,6 +97,7 @@ export async function useGanttAll() {
             users.push(...Array.from(new Set(r)))
         }
 
+        // ここのbarsが複数なので１つにして日付を最小最大にする。
         return <GanttAllRow>{
             facility: facility,
             startDate: facility.term_from.substring(0, 10),
@@ -104,9 +105,30 @@ export async function useGanttAll() {
             users: users,
             estimate: estimate,
             progress_percent: round(progress_percent),
-            bars: createBars(tickets),
+            bars: [createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to)],
         }
     })
+    const createBar = (progressPercent: number, facilityName: string, facilityId: number, startDate: string, endDate: string) => {
+        return <GanttBarObject>{
+            beginDate: dayjs(startDate).format(DAYJS_FORMAT),
+            endDate: endOfDay(endDate),
+            ganttBarConfig: <GanttBarConfig>{
+                bundle: "",
+                dragLimitLeft: 0,
+                dragLimitRight: 0,
+                hasHandles: false,
+                id: facilityId.toString(),
+                immobile: false,
+                label: facilityName, // 工程名
+                progress: progressPercent,
+                progressColor: BAR_COMPLETE_COLOR,
+                pushOnOverlap: false,
+                style: {backgroundColor: DEFAULT_PROCESS_COLOR},
+            }
+        }
+    }
+
+    // １本に各工程を混ぜるのは未使用になった。一旦残しておく。
     const createBars = (tickets: Ticket[]) => {
         const bars: GanttBarObject[] = []
         bars.push(

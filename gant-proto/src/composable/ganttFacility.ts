@@ -33,7 +33,7 @@ export type GanttRow = {
     ticketUsers?: TicketUser[]
 }
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
-const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
+const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
 function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
     return operationSettings.filter(operationSetting => {
