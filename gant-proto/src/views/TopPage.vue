@@ -12,14 +12,17 @@
       </router-link>
       <schedule-alert></schedule-alert>
       <div>
+      </div>
+      <div>
         <label>
-          受注状況
+          受注状況：
           <label v-for="(name, code) in FacilityTypeMap" :key="code" >
             {{name}}
             <input type="checkbox" name="facilityType" :value="code" v-model="globalState.facilityTypes" @change="changeFacilityType"/>
           </label>
         </label>
       </div>
+      <DepartmentUserFilter></DepartmentUserFilter>
     </div>
   </nav>
   <nav class="navbar navbar-light bg-light">
@@ -91,6 +94,8 @@ import FacilityView from "@/views/FacilityView.vue";
 import ProcessView from "@/views/ProcessView.vue";
 import ModalWithLink from "@/components/modal/ModalWithLink.vue";
 import DepartmentView from "@/views/DepartmentView.vue";
+import DepartmentUserFilter from "@/components/departmentUserFilter/DepartmentUserFilter.vue";
+import {GLOBAL_DEPARTMENT_USER_FILTER_KEY, useDepartmentUserFilter} from "@/composable/departmentUserFilter";
 
 // GlobalStateのProvide
 const {globalState, actions, mutations, getters} = await useGlobalState()
@@ -101,6 +106,9 @@ provide(GLOBAL_GETTER_KEY, getters)
 
 const globalScheduleAlert = useScheduleAlert(globalState.value.scheduleAlert)
 provide(GLOBAL_SCHEDULE_ALERT_KEY, globalScheduleAlert)
+
+const globalDepartmentUserFilter = useDepartmentUserFilter()
+provide(GLOBAL_DEPARTMENT_USER_FILTER_KEY, globalDepartmentUserFilter)
 
 const changeFacilityType = () => {
   // 設備ビューの時はpileUpsだけ

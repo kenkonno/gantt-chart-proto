@@ -20,6 +20,7 @@ import {
 import {DAYJS_FORMAT} from "@/utils/day";
 import {DEFAULT_PROCESS_COLOR} from "@/const/common";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
+import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -49,6 +50,7 @@ export async function useGanttFacility() {
     // injectはsetupと同期的に呼び出す必要あり
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
     const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
+    const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
     const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
@@ -112,11 +114,23 @@ export async function useGanttFacility() {
     const refreshLocalGantt = () => {
         ganttChartGroup.value.length = 0
         ganttGroupList.value.forEach(ganttGroup => {
+            let filteredTicketList = ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
+                .sort(v => v.order)
+            if (selectedDepartment.value != undefined) {
+                filteredTicketList = filteredTicketList.filter(ticket => ticket.department_id == selectedDepartment.value)
+            }
+            if (selectedUser.value != undefined) {
+                // 選択されたユーザーだけに絞り込む
+                const targetTicketIds = ticketUserList.value.filter(ticketUser => ticketUser.user_id == selectedUser.value).map(v => v.ticket_id)
+                console.log()
+                filteredTicketList = filteredTicketList.filter(ticket => {
+                    return targetTicketIds.includes(ticket.id!)
+                })
+            }
             ganttChartGroup.value.push(
                 {
                     ganttGroup: ganttGroup,
-                    rows: ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
-                        .sort(v => v.order)
+                    rows: filteredTicketList
                         .map(ticket => ticketToGanttRow(ticket, ticketUserList.value, ganttGroup))
                 }
             )
