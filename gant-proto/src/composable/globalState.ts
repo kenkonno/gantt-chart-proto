@@ -8,6 +8,7 @@ import {InjectionKey, ref, nextTick} from "vue";
 import {Api} from "@/api/axios";
 import {changeSort} from "@/utils/sort";
 import {FacilityType} from "@/const/common";
+import router from "@/router";
 
 type GlobalState = {
     currentFacilityId: number,
@@ -168,6 +169,7 @@ export const useGlobalState = async () => {
             await actions.refreshUnitMap(facilityId)
             await actions.refreshOperationSettingMap(facilityId)
             nextTick(() => {
+                router.push("/")
                 globalState.value.ganttFacilityRefresh = true
             })
         },

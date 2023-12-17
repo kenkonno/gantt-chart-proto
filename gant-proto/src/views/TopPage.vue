@@ -68,12 +68,18 @@ import {provide} from "vue";
 import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
 import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
 import router from "@/router";
+import {GLOBAL_SCHEDULE_ALERT_KEY, useScheduleAlert} from "@/composable/scheduleAlert";
 
 const {globalState, actions, mutations, getters} = await useGlobalState()
 provide(GLOBAL_STATE_KEY, globalState.value)
 provide(GLOBAL_ACTION_KEY, actions)
 provide(GLOBAL_MUTATION_KEY, mutations)
 provide(GLOBAL_GETTER_KEY, getters)
+
+const globalScheduleAlert = useScheduleAlert(globalState.value.scheduleAlert)
+provide(GLOBAL_SCHEDULE_ALERT_KEY, globalScheduleAlert)
+
+
 const changeFacilityType = () => {
   // 設備ビューの時はpileUpsだけ
   if (router.currentRoute.value.name == "gantt") {

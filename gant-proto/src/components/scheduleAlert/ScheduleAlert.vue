@@ -9,7 +9,13 @@
       <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"
               @click="tableIsOpen = false"></button>
     </div>
-    <div>
+    <div class="d-flex flex-column">
+      <label>
+        設備
+        <select v-model="filterFacility">
+          <option v-for="item in facilityList" :key="item.code" :value="item.code">{{ item.name }}</option>
+        </select>
+      </label>
       <label>
         遅延
         <input type="number" v-model="filterDelayDays" style="width: 3rem">
@@ -49,38 +55,25 @@
 
 <script setup lang="ts">
 
-import {computed, inject, ref} from "vue";
+import {inject} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {ScheduleAlert} from "@/api";
+import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 
 const {scheduleAlert} = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
-const tableIsOpen = ref<boolean>(false)
-defineEmits(["selectUnit"])
-const filterDelayDays = ref<number | undefined>(undefined)
-const filterProgressNumber = ref<number | undefined>(undefined)
-const cScheduleAlert = computed(() => {
-  const result: Map<number, ScheduleAlert[]> = new Map()
-  var filtered: ScheduleAlert[]
-  if (filterDelayDays.value != undefined) {
-    filtered = scheduleAlert.filter(v => v.delay_days >= filterDelayDays.value)
-  } else {
-    filtered = scheduleAlert
-  }
-  if (filterProgressNumber.value != undefined && filterProgressNumber.value > 0) {
-    filtered = filtered.filter(v => v.progress_percent <= filterProgressNumber.value)
-  }
+const {
+  facilityList,
+  filterFacility,
+  filterProgressNumber,
+  filterDelayDays,
+  cScheduleAlert,
+  tableIsOpen
+} = inject(GLOBAL_SCHEDULE_ALERT_KEY)!
 
-  filtered.forEach((v => {
-    if (result.get(v.facility_id) == undefined) {
-      result.set(v.facility_id, [])
-    }
-    result.get(v.facility_id)!.push(v)
-  }))
-  console.log("###########", result)
-  return result
-})
+defineEmits(["selectUnit"])
+
+
 getScheduleAlert()
 
 </script>
@@ -135,6 +128,7 @@ a {
   border-bottom: 1px solid black;
   cursor: pointer;
 }
+
 .text-overflow {
   text-overflow: ellipsis;
   overflow: hidden;

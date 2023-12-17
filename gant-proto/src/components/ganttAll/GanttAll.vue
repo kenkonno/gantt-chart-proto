@@ -16,6 +16,7 @@
           sticky
           :display-today-line="true"
           @today-line-position-x="initScroll($event, ganttWrapperElement)"
+          @click-bar="onClickBar($event.bar, $event.e, $event.datetime)"
       >
         <template #side-menu>
           <table class="side-menu" ref="ganttSideMenuElement">
@@ -122,7 +123,7 @@ nav {
 
 </style>
 <script setup lang="ts">
-import {GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
 import {DAYJS_FORMAT} from "@/utils/day";
 import GanttTd from "@/components/gantt/GanttTd.vue";
 import PileUps from "@/components/pileUps/PileUps.vue";
@@ -130,8 +131,9 @@ import {useGanttAll} from "@/composable/ganttAll";
 import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 import SingleRune from "@/components/form/SingleRune.vue";
 import {initScroll} from "@/utils/initScroll";
-import {nextTick, ref, watch} from "vue";
+import {inject, nextTick, ref, watch} from "vue";
 import {DisplayType, Header} from "@/composable/ganttAllMenu";
+import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 
 
 type GanttAllProps = {
@@ -164,5 +166,14 @@ const {
 watch(props.ganttAllHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
+
+// 全体ビューの場合は遅延通知をフィルタして開く
+const {tableIsOpen, filterFacility} = inject(GLOBAL_SCHEDULE_ALERT_KEY)!
+
+const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
+  console.log("click-bar", bar, e, datetime)
+  tableIsOpen.value = true
+  filterFacility.value = Number(bar.ganttBarConfig.id)
+}
 
 </script>
