@@ -30,7 +30,7 @@
     <div>
       <div v-for="[key, item] in Array.from(cScheduleAlert)" :key="key">
         <hr>
-        <u class="link" @click="refreshGantt(item[0].facility_id)">{{ item[0].facility_name }}</u>
+        <u class="link" @click="refreshGantt(item[0].facility_id, true)">{{ item[0].facility_name }}</u>
         <table style="width: 100%; table-layout: fixed">
           <thead>
           <tr>

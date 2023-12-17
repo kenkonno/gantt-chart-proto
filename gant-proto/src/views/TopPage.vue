@@ -22,6 +22,23 @@
       </div>
     </div>
   </nav>
+  <nav class="navbar navbar-light bg-light">
+    <div>
+      <b>全体設定</b>
+      <ModalWithLink title="設備一覧" icon="precision_manufacturing">
+        <facility-view @update="updateFacility"></facility-view>
+      </ModalWithLink>
+      <ModalWithLink title="工程一覧" icon="account_tree">
+        <process-view></process-view>
+      </ModalWithLink>
+      <ModalWithLink title="部署一覧" icon="settings_accessibility">
+        <department-view></department-view>
+      </ModalWithLink>
+      <ModalWithLink title="担当者一覧" icon="person">
+        <user-view></user-view>
+      </ModalWithLink>
+    </div>
+  </nav>
   <Suspense>
     <router-view/>
   </Suspense>
@@ -66,10 +83,16 @@ import {
 } from "@/composable/globalState";
 import {provide} from "vue";
 import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
-import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
+import {FacilityTypeMap} from "@/const/common";
 import router from "@/router";
 import {GLOBAL_SCHEDULE_ALERT_KEY, useScheduleAlert} from "@/composable/scheduleAlert";
+import UserView from "@/views/UserView.vue";
+import FacilityView from "@/views/FacilityView.vue";
+import ProcessView from "@/views/ProcessView.vue";
+import ModalWithLink from "@/components/modal/ModalWithLink.vue";
+import DepartmentView from "@/views/DepartmentView.vue";
 
+// GlobalStateのProvide
 const {globalState, actions, mutations, getters} = await useGlobalState()
 provide(GLOBAL_STATE_KEY, globalState.value)
 provide(GLOBAL_ACTION_KEY, actions)
@@ -78,7 +101,6 @@ provide(GLOBAL_GETTER_KEY, getters)
 
 const globalScheduleAlert = useScheduleAlert(globalState.value.scheduleAlert)
 provide(GLOBAL_SCHEDULE_ALERT_KEY, globalScheduleAlert)
-
 
 const changeFacilityType = () => {
   // 設備ビューの時はpileUpsだけ
@@ -92,4 +114,15 @@ const changeFacilityType = () => {
     mutations.refreshGanttAll()
   }
 }
+
+const updateFacility = () => {
+  actions.refreshFacilityList();
+  if (router.currentRoute.value.name == "gantt") {
+    mutations.refreshGantt(globalState.value.currentFacilityId, false)
+  }
+  if (router.currentRoute.value.name == "gantt-all-view") {
+    mutations.refreshGanttAll()
+  }
+}
+
 </script>

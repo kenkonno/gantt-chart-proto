@@ -50,7 +50,7 @@ interface Actions {
 interface Mutations {
     updateCurrentFacilityId: (id: number) => void;
 
-    refreshGantt(id: number): void;
+    refreshGantt(id: number, moveFacilityView: boolean): void;
 
     setFacilityTypes(facilityType: string[]): void;
 
@@ -161,7 +161,7 @@ export const useGlobalState = async () => {
             console.log("CHANGE FACILITY ID")
             globalState.value.currentFacilityId = id
         },
-        refreshGantt: async (facilityId: number) => {
+        refreshGantt: async (facilityId: number, moveFacilityView = false) => {
             globalState.value.currentFacilityId = facilityId
             globalState.value.ganttFacilityRefresh = false
             // facility紐づくデータを初期化する
@@ -169,7 +169,9 @@ export const useGlobalState = async () => {
             await actions.refreshUnitMap(facilityId)
             await actions.refreshOperationSettingMap(facilityId)
             nextTick(() => {
-                router.push("/")
+                if (moveFacilityView) {
+                    router.push("/")
+                }
                 globalState.value.ganttFacilityRefresh = true
             })
         },
