@@ -1,4 +1,4 @@
-import {computed, ComputedRef, inject, Ref, ref,  UnwrapRef, watch} from "vue";
+import {computed, ComputedRef, inject, Ref, ref, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
 import {Department, Holiday, Ticket, TicketUser, User} from "@/api";
 import {round} from "@/utils/math";
@@ -108,6 +108,8 @@ export const usePielUps = (
     tickets: ComputedRef<Ticket[]>, ticketUsers: ComputedRef<TicketUser[]>,
     displayType: ComputedRef<DisplayType>,
     holidays: ComputedRef<Holiday[]>, departmentList: Department[], userList: User[],
+    selectedDepartment: Ref<number | undefined>,
+    selectedUser: Ref<number | undefined>,
     defaultPileUpsByPerson: PileUpByPerson[] = [], defaultPileUpsByDepartment: PileUpByDepartment[] = [],
     globalStartDate?: string,
 ) => {
@@ -319,10 +321,34 @@ export const usePielUps = (
 
     // 山積みの並び順通りに配列を返す
     const displayPileUps = computed(() => {
+        // TODO: こことvue側が重複コードになっている
+        let targetDepartmentId = selectedDepartment.value
+        if (selectedUser.value != undefined) {
+            targetDepartmentId = userList.find( v => v.id == selectedUser.value)?.department_id
+        } else {
+            targetDepartmentId = selectedDepartment.value
+        }
+        const filteredPileUpsByDepartment = pileUpsByDepartment.value.filter(v => {
+            if (targetDepartmentId == undefined) {
+                return true
+            } else {
+                return v.departmentId == targetDepartmentId
+            }
+        })
+        const filteredPileUpsByPerson = pileUpsByPerson.value.filter(v => {
+            if (selectedUser.value == undefined) {
+                return true
+            } else {
+                return v.user.id == selectedUser.value
+            }
+        })
         const result: DisplayPileUp[] = []
         pileUpFilters.value.forEach(f => {
             // 部署の追加、ユーザー数を追加する。
-            const v = pileUpsByDepartment.value.find(v => v.departmentId === f.departmentId)!
+            const v = filteredPileUpsByDepartment.find(v => v.departmentId === f.departmentId)!
+            if ( v == undefined) {
+                return
+            }
             result.push(
                 {
                     labels: v.users.map(vv => vv.length === 0 ? '' : vv.length.toString()),
@@ -330,7 +356,7 @@ export const usePielUps = (
                     styles: v.styles
                 })
             if (f.displayUsers) {
-                const v = pileUpsByPerson.value.filter(v => v.user.department_id === f.departmentId)
+                const v = filteredPileUpsByPerson.filter(v => v.user.department_id === f.departmentId)
                 v.forEach(user => {
                     result.push(
                         {
@@ -375,7 +401,12 @@ export const usePielUps = (
  * @param excludeFacilityId
  * @param displayType
  */
-export const getDefaultPileUps = async (excludeFacilityId: number, displayType: DisplayType) => {
+export const getDefaultPileUps = async (
+    excludeFacilityId: number,
+    displayType: DisplayType,
+    selectedDepartment: Ref<number | undefined>,
+    selectedUser: Ref<number | undefined>,
+) => {
     const {facilityList, userList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
     const filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
 
@@ -419,7 +450,7 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
         const {pileUpsByPerson, pileUpsByDepartment} = usePielUps(startDate, endDate,
             tickets, ticketUsers,
             computed(() => displayType),
-            holidays, departmentList, userList)
+            holidays, departmentList, userList, selectedDepartment, selectedUser)
 
         // defaultPileUpsに計上する, stylesとかは一旦無視でいいと思う。本チャンの方で着色するので。
         pileUpsByPerson.value.forEach(pileUp => {

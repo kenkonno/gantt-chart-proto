@@ -18,7 +18,7 @@
     <template #side-menu>
       <table class="side-menu" :style="syncWidth">
         <tbody>
-        <gantt-nested-row v-for="item in pileUpFilters" :key="item.departmentId">
+        <gantt-nested-row v-for="item in cPileUpFilters" :key="item.departmentId">
           <template #parent>
             <tr>
               <td class="side-menu-cell"></td><!-- css hack min-height -->
@@ -36,7 +36,7 @@
             </tr>
           </template>
           <template #child v-if="item.displayUsers">
-            <tr v-for="user in pileUpsByPerson.filter(v => v.user.department_id === item.departmentId)"
+            <tr v-for="user in cPileUpsPerson.filter(v => v.user.department_id === item.departmentId)"
                 :key="user.user.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="true" class="justify-middle">
@@ -69,6 +69,7 @@ import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
 import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {Tippy} from "vue-tippy";
+import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 
 type PileUpsProps = {
   tickets: Ticket[],
@@ -84,6 +85,7 @@ type PileUpsProps = {
 const props = defineProps<PileUpsProps>()
 const {currentFacilityId, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
 const {getDepartmentName} = inject(GLOBAL_GETTER_KEY)!
+const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
 
 const tickets = computed(() => {
   return props.tickets
@@ -102,8 +104,8 @@ console.log("####### start main getDefaultPileUps")
 const {
   globalStartDate,
   defaultPileUpsByPerson,
-  defaultPileUpsByDepartment
-} = await getDefaultPileUps(currentFacilityId, "day")
+  defaultPileUpsByDepartment,
+} = await getDefaultPileUps(currentFacilityId, "day", selectedDepartment, selectedUser,)
 
 console.log("####### start main usePileUps", globalStartDate)
 const {
@@ -120,10 +122,36 @@ const {
     holidays,
     departmentList,
     userList,
+    selectedDepartment,
+    selectedUser,
     toValue(defaultPileUpsByPerson),
     toValue(defaultPileUpsByDepartment),
     globalStartDate
 )
+
+// TODO: フィルタ処理が分散してわかりにくい。
+const cPileUpFilters = computed(() => {
+  let targetDepartmentId = selectedDepartment.value
+  if (selectedUser.value != undefined) {
+    targetDepartmentId = userList.find( v => v.id == selectedUser.value)?.department_id
+  } else {
+    targetDepartmentId = selectedDepartment.value
+  }
+  if ( targetDepartmentId == undefined) {
+    return pileUpFilters.value
+  } else {
+    return pileUpFilters.value.filter(v => v.departmentId == targetDepartmentId)
+  }
+})
+
+const cPileUpsPerson = computed(() => {
+  if ( selectedUser.value == undefined) {
+    return pileUpsByPerson.value
+  } else {
+    return pileUpsByPerson.value.filter(v => v.user.id == selectedUser.value)
+  }
+})
+
 const emit = defineEmits(["onMounted"])
 onMounted(() => {
   emit("onMounted")
