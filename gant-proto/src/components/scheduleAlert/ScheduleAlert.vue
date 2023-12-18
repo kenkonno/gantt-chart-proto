@@ -85,11 +85,11 @@ getScheduleAlert()
 }
 
 .schedule-alert-container {
-  z-index: 9999;
+  z-index: 999;
 }
 
 .table {
-  z-index: 9999;
+  z-index: 999;
 }
 
 .schedule-alert-table {
@@ -97,7 +97,7 @@ getScheduleAlert()
   top: 0;
   left: 70%;
   width: 30%;
-  z-index: 201;
+  z-index: 401;
   height: 100%;
   overflow: scroll;
   background: white;
