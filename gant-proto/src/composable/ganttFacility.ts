@@ -239,7 +239,8 @@ export async function useGanttFacility() {
             process_id: undefined,
             progress_percent: undefined,
             start_date: undefined,
-            updated_at: 0
+            updated_at: 0,
+            number_of_worker: 1
         }
         const {data} = await Api.postTickets({ticket: newTicket})
         ticketList.value.push(data.ticket!)
