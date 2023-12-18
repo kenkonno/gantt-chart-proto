@@ -5,7 +5,7 @@
       <input class="form-control" type="text" name="id" id="id" v-model="holiday.id" :disabled="true">
     </div>
 
-    <div class="mb-2">
+    <div class="mb-2" v-if="false">
       <label class="form-label" for="id">名称</label>
       <input class="form-control" type="text" name="name" id="name" v-model="holiday.name" :disabled="false">
     </div>

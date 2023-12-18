@@ -23,7 +23,7 @@ export async function useHoliday(holidayId?: number) {
     const holiday = ref<Holiday>({
         id: null,
         facility_id: 0,
-        name: "",
+        name: "dummy",
         date: "",
         created_at: undefined,
         updated_at: undefined
