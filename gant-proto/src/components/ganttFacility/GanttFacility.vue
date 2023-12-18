@@ -52,6 +52,7 @@
                   <gantt-td :visible="props.ganttFacilityHeader[0].visible">{{
                       getUnitName(item.ganttGroup.unit_id)
                     }}
+                    {{row.ticket.id}}/{{row.ticket.order}}
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[1].visible">
                     <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">

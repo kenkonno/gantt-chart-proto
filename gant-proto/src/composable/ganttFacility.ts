@@ -115,14 +115,13 @@ export async function useGanttFacility() {
         ganttChartGroup.value.length = 0
         ganttGroupList.value.forEach(ganttGroup => {
             let filteredTicketList = ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
-                .sort(v => v.order)
+                .sort((a, b) => a.order < b.order ? -1 : 1)
             if (selectedDepartment.value != undefined) {
                 filteredTicketList = filteredTicketList.filter(ticket => ticket.department_id == selectedDepartment.value)
             }
             if (selectedUser.value != undefined) {
                 // 選択されたユーザーだけに絞り込む
                 const targetTicketIds = ticketUserList.value.filter(ticketUser => ticketUser.user_id == selectedUser.value).map(v => v.ticket_id)
-                console.log()
                 filteredTicketList = filteredTicketList.filter(ticket => {
                     return targetTicketIds.includes(ticket.id!)
                 })
