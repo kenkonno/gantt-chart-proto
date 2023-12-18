@@ -171,12 +171,17 @@ export async function useGanttFacility() {
     refreshBars()
 
     const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
-        changeSort(ganttRows, index, direction)
-        // ガントチャートのオブジェクトと同期をとる
-        changeSort(bars.value, index, direction)
-        for (const v of ganttRows) {
-            v.ticket!.order = ganttRows.indexOf(v)
-            await updateTicket(v.ticket!)
+        // ソート前にガントチャート上のIndexを検索しておく。
+        const barIndex = bars.value.findIndex(v => v.ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
+        const sorted = changeSort(ganttRows, index, direction)
+        // 変更がった場合はガントチャートのオブジェクトと同期をとる
+        if (sorted) {
+            // bars.valueは全体から見たIndexを指定する必要があった。
+            changeSort(bars.value, barIndex, direction)
+            for (const v of ganttRows) {
+                v.ticket!.order = ganttRows.indexOf(v)
+                await updateTicket(v.ticket!)
+            }
         }
     }
 

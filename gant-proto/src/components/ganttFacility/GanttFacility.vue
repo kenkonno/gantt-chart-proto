@@ -93,9 +93,9 @@
                                 @change="updateTicket(row.ticket)"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[11].visible">
-                    <a href="#" @click="updateOrder(item.rows,index, -1)"><span class="material-symbols-outlined">arrow_upward</span></a>
-                    <a href="#" @click="updateOrder(item.rows, index,1)"><span class="material-symbols-outlined">arrow_downward</span></a>
-                    <a href="#" @click="deleteTicket(row.ticket)"><span class="material-symbols-outlined">delete</span></a>
+                    <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span class="material-symbols-outlined">arrow_upward</span></a>
+                    <a href="#" @click.prevent="updateOrder(item.rows, index,1)"><span class="material-symbols-outlined">arrow_downward</span></a>
+                    <a href="#" @click.prevent="deleteTicket(row.ticket)"><span class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
                 <tr>
