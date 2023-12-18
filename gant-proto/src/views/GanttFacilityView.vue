@@ -31,19 +31,18 @@
         @updateDisplayType="updateDisplayType"
     ></gantt-facility-menu>
   </div>
-  <Suspense>
+  <div v-if="globalState.currentFacilityId <= 0">
+    設備を選択してください。
+  </div>
+  <Suspense v-if="globalState.currentFacilityId > 0 && globalState.ganttFacilityRefresh">
     <gantt-facility
         ref="gantFacility"
-        v-if="globalState.currentFacilityId > 0 && globalState.ganttFacilityRefresh"
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
     >
     </gantt-facility>
-    <div v-else>
-      ユニットを選択してください。
-    </div>
     <template #fallback>
-      Loading...
+      <default-spinner></default-spinner>
     </template>
   </Suspense>
 </template>
@@ -112,6 +111,7 @@ import UnitView from "@/views/UnitView.vue";
 import HolidayView from "@/views/HolidayView.vue";
 import {computed} from "vue";
 import {FacilityStatus} from "@/const/common";
+import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!

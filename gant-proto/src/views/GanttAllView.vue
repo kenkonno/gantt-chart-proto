@@ -5,14 +5,13 @@
       @update-display-type="updateDisplayType"
   >
   </gantt-all-menu>
-  <Suspense>
+  <Suspense v-if="globalState.ganttAllRefresh">
     <gantt-all
-        v-if="globalState.ganttAllRefresh"
         :gantt-all-header="GanttHeader"
         :display-type="displayType">
     </gantt-all>
     <template #fallback>
-      Loading...
+      <DefaultSpinner></DefaultSpinner>
     </template>
   </Suspense>
 </template>
@@ -23,6 +22,8 @@ import GanttAll from "@/components/ganttAll/GanttAll.vue";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
+
 const globalState = inject(GLOBAL_STATE_KEY)!
 
 const {
