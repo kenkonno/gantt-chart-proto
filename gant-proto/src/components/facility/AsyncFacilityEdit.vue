@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import {useFacility, postFacilityById, postFacility, copyFacility,deleteFacilityById} from "@/composable/facility";
-import {FacilityStatus, FacilityStatusMap, FacilityType, FacilityTypeMap} from "@/const/common";
+import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
 
 interface AsyncFacilityEdit {
   id: number | undefined,

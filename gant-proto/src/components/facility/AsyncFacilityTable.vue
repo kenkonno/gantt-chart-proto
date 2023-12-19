@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import {Facility} from "@/api";
-import {FacilityStatus, FacilityStatusMap, FacilityType, FacilityTypeMap} from "@/const/common";
+import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
 
 defineEmits(['openEditModal', 'moveUp', 'moveDown'])
 

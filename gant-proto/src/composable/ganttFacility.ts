@@ -19,7 +19,7 @@ import {
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {DEFAULT_PROCESS_COLOR} from "@/const/common";
-import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 
 export type GanttChartGroup = {

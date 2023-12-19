@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {computed, inject, ref} from "vue";
+import {inject, ref} from "vue";
 import {Facility, Holiday, Ticket, User} from "@/api";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
@@ -11,7 +11,7 @@ import {Api} from "@/api/axios";
 import {GanttBarConfig} from "@infectoone/vue-ganttastic/lib_types/types";
 import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
-import {DisplayType, Header} from "@/composable/ganttAllMenu";
+import {DisplayType} from "@/composable/ganttAllMenu";
 
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
