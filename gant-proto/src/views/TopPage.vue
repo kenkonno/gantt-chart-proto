@@ -17,8 +17,8 @@
         <label>
           受注状況：
           <label v-for="(name, code) in FacilityTypeMap" :key="code" >
-            {{name}}
             <input type="checkbox" name="facilityType" :value="code" v-model="globalState.facilityTypes" @change="changeFacilityType"/>
+            {{name}}
           </label>
         </label>
       </div>

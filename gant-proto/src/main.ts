@@ -15,6 +15,7 @@ import {dateFormat, dateFormatYMD, unixTimeFormat} from "@/utils/filters";
 
 import dayjs from "dayjs";
 import 'dayjs/locale/ja'
+
 // locale & 月曜日始まり対応
 dayjs.locale('ja')
 dayjs.Ls.ja.weekStart=1

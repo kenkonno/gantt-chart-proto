@@ -4,7 +4,7 @@
         @open-edit-modal="openEditModal"
         @move-up="updateFacilityOrder($event, -1)"
         @move-down="updateFacilityOrder($event, 1)"
-        :list="facilityList"
+        :list="sortedFacilityList"
     />
     <template #fallback>
       Loading...
@@ -30,7 +30,7 @@ import AsyncFacilityEdit from "@/components/facility/AsyncFacilityEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {inject} from "vue";
+import {computed, inject} from "vue";
 
 const {facilityList} = inject(GLOBAL_STATE_KEY)!
 const {updateFacilityOrder} = inject(GLOBAL_ACTION_KEY)!
@@ -40,5 +40,7 @@ defineEmits(["update"])
 const closeModalProxy = async () => {
   closeEditModal()
 }
-
+const sortedFacilityList = computed(() => {
+  return [...facilityList].sort((a, b) => b.order! - a.order!);
+});
 </script>

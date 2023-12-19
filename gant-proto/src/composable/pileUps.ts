@@ -5,7 +5,7 @@ import {round} from "@/utils/math";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
 import {Api} from "@/api/axios";
-import {FacilityStatus, FacilityType} from "@/const/common";
+import {FacilityStatus} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 type PileUpByPerson = {

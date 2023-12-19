@@ -19,7 +19,7 @@ import {
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {DEFAULT_PROCESS_COLOR} from "@/const/common";
-import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 
 export type GanttChartGroup = {
@@ -115,14 +115,13 @@ export async function useGanttFacility() {
         ganttChartGroup.value.length = 0
         ganttGroupList.value.forEach(ganttGroup => {
             let filteredTicketList = ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
-                .sort(v => v.order)
+                .sort((a, b) => a.order < b.order ? -1 : 1)
             if (selectedDepartment.value != undefined) {
                 filteredTicketList = filteredTicketList.filter(ticket => ticket.department_id == selectedDepartment.value)
             }
             if (selectedUser.value != undefined) {
                 // 選択されたユーザーだけに絞り込む
                 const targetTicketIds = ticketUserList.value.filter(ticketUser => ticketUser.user_id == selectedUser.value).map(v => v.ticket_id)
-                console.log()
                 filteredTicketList = filteredTicketList.filter(ticket => {
                     return targetTicketIds.includes(ticket.id!)
                 })
@@ -171,12 +170,17 @@ export async function useGanttFacility() {
     refreshBars()
 
     const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
-        changeSort(ganttRows, index, direction)
-        // ガントチャートのオブジェクトと同期をとる
-        changeSort(bars.value, index, direction)
-        for (const v of ganttRows) {
-            v.ticket!.order = ganttRows.indexOf(v)
-            await updateTicket(v.ticket!)
+        // ソート前にガントチャート上のIndexを検索しておく。
+        const barIndex = bars.value.findIndex(v => v.ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
+        const sorted = changeSort(ganttRows, index, direction)
+        // 変更がった場合はガントチャートのオブジェクトと同期をとる
+        if (sorted) {
+            // bars.valueは全体から見たIndexを指定する必要があった。
+            changeSort(bars.value, barIndex, direction)
+            for (const v of ganttRows) {
+                v.ticket!.order = ganttRows.indexOf(v)
+                await updateTicket(v.ticket!)
+            }
         }
     }
 
@@ -184,10 +188,11 @@ export async function useGanttFacility() {
     const updateDepartment = async (ticket: Ticket) => {
         // 担当者をすべて外す。
         const ticketUsers = ticketUserList.value.filter(v => v.ticket_id === ticket.id)
-        if (ticketUsers != null) {
+        if (ticketUsers.length > 0) {
             ticketUsers.length = 0
         }
-        await ticketUserUpdate(ticket, [])
+        // 部署替えの時は人数を変更しない
+        await ticketUserUpdate(ticket, [], false)
     }
     const getUserListByDepartmentId = (departmentId?: number) => {
         if (departmentId == null) {
@@ -238,7 +243,8 @@ export async function useGanttFacility() {
             process_id: undefined,
             progress_percent: undefined,
             start_date: undefined,
-            updated_at: 0
+            updated_at: 0,
+            number_of_worker: 1
         }
         const {data} = await Api.postTickets({ticket: newTicket})
         ticketList.value.push(data.ticket!)
@@ -246,7 +252,7 @@ export async function useGanttFacility() {
         refreshBars()
     }
     // DBへのストア及びローカルのガントに情報を反映する
-    const ticketUserUpdate = async (ticket: Ticket, userIds: number[]) => {
+    const ticketUserUpdate = async (ticket: Ticket, userIds: number[], updateNoW = true) => {
         const {data} = await Api.postTicketUsers({ticketId: ticket.id!, userIds: userIds})
         // ticketUserList から TicketId をつけなおす
         const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticket.id!)
@@ -255,7 +261,9 @@ export async function useGanttFacility() {
         ticketUserList.value.push(...newTicketUserList)
 
         // 人数を更新する
-        ticket.number_of_worker = data.ticketUsers.length
+        if (updateNoW) {
+            ticket.number_of_worker = data.ticketUsers.length
+        }
         await updateTicket(ticket)
         // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
         refreshLocalGantt()
