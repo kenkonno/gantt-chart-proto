@@ -2,8 +2,8 @@
   <Suspense>
     <async-facility-table
         @open-edit-modal="openEditModal"
-        @move-up="updateFacilityOrder($event, -1)"
-        @move-down="updateFacilityOrder($event, 1)"
+        @move-up="innerUpdateFacilityOrder($event, -1)"
+        @move-down="innerUpdateFacilityOrder($event, 1)"
         :list="sortedFacilityList"
     />
     <template #fallback>
@@ -41,6 +41,16 @@ const closeModalProxy = async () => {
   closeEditModal()
 }
 const sortedFacilityList = computed(() => {
-  return [...facilityList].sort((a, b) => b.order! - a.order!);
+  // TODO: 0がレスポンスから消えている
+  return [...facilityList].sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1: 1);
 });
+
+// 降順で渡しているのでindexと方向を逆転させる
+const innerUpdateFacilityOrder = (index: number, direction: number) => {
+  // index は 0番目の時に最大、 最大の時に0
+  // 方向は正と負を逆転させる。
+  updateFacilityOrder((facilityList.length - 1) - index, direction * -1)
+}
+
+
 </script>
