@@ -1,5 +1,5 @@
 <template>
-  <div class="gantt-wrapper" id="gantt-all-view">
+  <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter()}">
     <div class="d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
       <g-gantt-chart
           :chart-start="chartStart"
@@ -74,17 +74,17 @@
 </template>
 <style>
 @import '@/assets/gantt-override.scss';
-/*#gantt-all-view .g-gantt-row-bars-container .g-gantt-bar{*/
-/*  height: 33% !important;*/
-/*}*/
-/*#gantt-all-view .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n) {*/
-/*  top: 33% !important;*/
-/*  height: 33% !important;*/
-/*}*/
-/*#gantt-all-view .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {*/
-/*  top: 66% !important;*/
-/*  height: 33% !important;*/
-/*}*/
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar{
+  height: 33% !important;
+}
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n) {
+  top: 33% !important;
+  height: 33% !important;
+}
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {
+  top: 66% !important;
+  height: 33% !important;
+}
 </style>
 <style lang="scss" scoped>
 @import '@/assets/gantt.scss';
@@ -116,6 +116,7 @@ nav {
   width: 100%;
   height: 100%;
   padding-left: 10px;
+
   > div {
     margin: auto 0 auto -10px;
   }
@@ -150,7 +151,8 @@ const {
   getGanttChartWidth,
   holidays,
   chartStart,
-  chartEnd
+  chartEnd,
+  hasFilter
 } = await useGanttAll()
 
 // スクロールや大きさの同期系
