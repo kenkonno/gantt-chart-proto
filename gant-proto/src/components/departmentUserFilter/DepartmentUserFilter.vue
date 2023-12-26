@@ -26,10 +26,11 @@ import {computed, inject} from "vue";
 import {GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import Multiselect from "@vueform/multiselect";
+import router from "@/router";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {selectedUser, selectedDepartment} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
-const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
+const {refreshGantt, refreshGanttAll} = inject(GLOBAL_MUTATION_KEY)!
 
 const departmentOptions = computed(() => {
   return globalState.departmentList.map(v => {
@@ -38,7 +39,7 @@ const departmentOptions = computed(() => {
 })
 const userOptions = computed(() => {
   return globalState.userList.filter(v => {
-    if ( selectedDepartment.value == undefined) {
+    if (selectedDepartment.value == undefined) {
       return true
     } else {
       return v.department_id == selectedDepartment.value
@@ -49,8 +50,12 @@ const userOptions = computed(() => {
 })
 
 const refresh = () => {
-  console.log(globalState.currentFacilityId)
-  refreshGantt(globalState.currentFacilityId, false)
+  if (router.currentRoute.value.name == "gantt") {
+    refreshGantt(globalState.currentFacilityId, false)
+  }
+  if (router.currentRoute.value.name == "gantt-all-view") {
+    refreshGanttAll()
+  }
 }
 
 </script>
@@ -60,6 +65,7 @@ const refresh = () => {
 .wrapper {
   white-space: nowrap;
 }
+
 .select-box {
   min-width: 12rem;
   z-index: 301;

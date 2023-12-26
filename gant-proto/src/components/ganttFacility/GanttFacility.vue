@@ -99,7 +99,7 @@
                     <a href="#" @click.prevent="deleteTicket(row.ticket)"><span class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr>
+                <tr v-if="!hasFilter">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -189,6 +189,7 @@ const {
   updateDepartment,
   updateOrder,
   updateTicket,
+  hasFilter
 } = await useGanttFacility()
 
 // リスケ関連 親から呼び出される

@@ -12,6 +12,7 @@ import {GanttBarConfig} from "@infectoone/vue-ganttastic/lib_types/types";
 import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
 import {DisplayType} from "@/composable/ganttAllMenu";
+import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
@@ -29,6 +30,7 @@ export async function useGanttAll() {
     // injectはsetupと同期的に呼び出す必要あり
     const {facilityList, userList, processList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
     const {refreshFacilityList, refreshUserList, refreshProcessList} = inject(GLOBAL_ACTION_KEY)!
+    const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
     await refreshFacilityList()
     await refreshUserList()
     await refreshProcessList()
@@ -55,6 +57,33 @@ export async function useGanttAll() {
         filteredFacilityList = filteredFacilityList.filter(v => facilityTypes.includes(v.type) )
     }
 
+    const filteredAllTickets = allTickets
+    const filteredAllTicketUsers = allTicketUsers
+    // チケット、設備の絞り込みを実施する
+    if (selectedDepartment.value != undefined) {
+        filteredAllTickets.list = filteredAllTickets.list.filter( v => v.department_id == selectedDepartment.value)
+        const ticketIds = filteredAllTickets.list.map(v => v.id)
+        filteredAllTicketUsers.list = filteredAllTicketUsers.list.filter(v => ticketIds.includes(v.ticket_id))
+    }
+    if (selectedUser.value != undefined) {
+        filteredAllTicketUsers.list = filteredAllTicketUsers.list.filter(v => v.user_id == selectedUser.value)
+        const ticketIds = filteredAllTicketUsers.list.map(v => v.ticket_id)
+        filteredAllTickets.list = filteredAllTickets.list.filter(v => ticketIds.includes(v.id!))
+    }
+    const hasFilter = () => {
+        return selectedDepartment.value != undefined || selectedUser.value != undefined
+    }
+    // TODO: ここでチケットから 設備が絞り込めれば長楽 コードに違和感があるがAPI呼び出しをする
+    if (hasFilter()) {
+        const ganttGroupIds = Array.from(new Set(filteredAllTickets.list.map(v => v.gantt_group_id)))
+        const facilityIds = await Promise.all(ganttGroupIds.map(async ganttGroupId => {
+            const {data} = await Api.getGanttGroupsId(ganttGroupId)
+            return data.ganttGroup?.facility_id
+        }))
+        const facilityIdFlat = facilityIds.flat()
+        filteredFacilityList = filteredFacilityList.filter(v => facilityIdFlat.includes(v.id!))
+    }
+
     // 全設備の最小
     const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
@@ -70,8 +99,9 @@ export async function useGanttAll() {
         const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
         const {data} = await Api.getHolidays(facility.id!)
         holidays.push(...data.list)
-        const tickets = allTickets.list.filter(v => ganttGroups.list.map(v => v.id!).includes(v.gantt_group_id))
-        const ticketUsers = allTicketUsers.list.filter(v => tickets.map(vv => vv.id!).includes(v.ticket_id))
+        const tickets = filteredAllTickets.list.filter(v => ganttGroups.list.map(v => v.id!).includes(v.gantt_group_id))
+        const ticketUsers = filteredAllTicketUsers.list.filter(v => tickets.map(vv => vv.id!).includes(v.ticket_id))
+        console.log("###### ",filteredAllTickets, ganttGroups)
         // 全てのチケットの予定工数を計上する
         const estimate = tickets.reduce((p, c) => {
             if (c.estimate != null) {
@@ -105,7 +135,7 @@ export async function useGanttAll() {
             users: users,
             estimate: estimate,
             progress_percent: round(progress_percent),
-            bars: [createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to)],
+            bars: hasFilter() ? createBars(tickets) : [createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to)],
         }
     })
     const createBar = (progressPercent: number, facilityName: string, facilityId: number, startDate: string, endDate: string) => {
@@ -128,8 +158,9 @@ export async function useGanttAll() {
         }
     }
 
-    // １本に各工程を混ぜるのは未使用になった。一旦残しておく。
+    // フィルタ済みの場合はこちらを利用する。
     const createBars = (tickets: Ticket[]) => {
+        console.log("#create Bars", tickets)
         const bars: GanttBarObject[] = []
         bars.push(
             ...tickets.filter(v => v.process_id ).map(ticket => {
@@ -170,11 +201,12 @@ export async function useGanttAll() {
         ganttAllRow,
         holidaysAsDate,
         getGanttChartWidth,
-        tickets: allTickets.list,
-        ticketUsers: allTicketUsers.list,
+        tickets: filteredAllTickets.list,
+        ticketUsers: filteredAllTicketUsers.list,
         holidays,
         chartStart,
-        chartEnd
+        chartEnd,
+        hasFilter
     }
 }
 

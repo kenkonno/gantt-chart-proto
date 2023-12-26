@@ -135,6 +135,11 @@ export async function useGanttFacility() {
             )
         })
     }
+    const hasFilter = computed(() => {
+        return selectedDepartment.value != undefined || selectedUser.value
+    })
+
+
     // computedだとドラッグ関連が上手くいかない為やはりオブジェクトとして双方向に同期をとるようにする。
     const bars = ref<GanttBarObject[]>([])
     // ガントチャート描画用のオブジェクトの生成
@@ -163,7 +168,9 @@ export async function useGanttFacility() {
                 }
             }))
             // ボタン用の空行を追加する
-            bars.value.push(emptyRow)
+            if (!hasFilter.value) {
+                bars.value.push(emptyRow)
+            }
         })
     }
     refreshLocalGantt()
@@ -453,6 +460,7 @@ export async function useGanttFacility() {
         updateDepartment,
         updateOrder,
         updateTicket,
+        hasFilter
     }
 }
 
