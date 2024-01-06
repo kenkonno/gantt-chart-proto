@@ -40,6 +40,7 @@ export async function useUser(userId?: number) {
             user.value.limit_of_operation = data.user.limit_of_operation
             user.value.password = data.user.password
             user.value.email = data.user.email
+            user.value.role = data.user.role
             user.value.created_at = data.user.created_at
             user.value.updated_at = data.user.updated_at
         }

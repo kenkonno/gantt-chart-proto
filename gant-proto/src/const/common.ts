@@ -28,9 +28,9 @@ export const RoleType = {
     Viewer: "viewer",
 }
 export const RoleTypeMap = {
-    Admin: "管理者",
-    Manager: "マネージャー",
-    Worker: "作業者",
-    Viewer: "閲覧者",
+    admin: "管理者",
+    manager: "マネージャー",
+    worker: "作業者",
+    viewer: "閲覧者",
 }
 
