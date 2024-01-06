@@ -35,6 +35,16 @@ func (r *userRepository) Find(id int32) db.User {
 	return user
 }
 
+func (r *userRepository) FindByAuth(email string, password string) db.User {
+	var user db.User
+
+	result := r.con.Where("email = ? AND password = ?", email, password).Find(&user)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return user
+}
+
 func (r *userRepository) Upsert(m db.User) {
 	r.con.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},

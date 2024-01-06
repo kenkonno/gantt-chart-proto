@@ -2,7 +2,7 @@ import {Api} from "@/api/axios";
 import {PostUsersRequest, User} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
-import {Emit} from "@/const/common";
+import {Emit, RoleType} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -27,6 +27,7 @@ export async function useUser(userId?: number) {
         limit_of_operation: 8.0,
         password: "",
         email: "",
+        role: RoleType.Viewer,
         created_at: undefined,
         updated_at: undefined
     })

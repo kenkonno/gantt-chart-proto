@@ -20,3 +20,17 @@ export const FacilityTypeMap = {
     Ordered: "受注済み",
     Prepared: "非受注",
 }
+
+export const RoleType = {
+    Admin: "admin",
+    Manager: "manager",
+    Worker: "worker",
+    Viewer: "viewer",
+}
+export const RoleTypeMap = {
+    Admin: "管理者",
+    Manager: "マネージャー",
+    Worker: "作業者",
+    Viewer: "閲覧者",
+}
+

@@ -1,6 +1,6 @@
 <template>
   <Suspense>
-    <TopPage></TopPage>
+    <router-view></router-view>
   </Suspense>
 </template>
 

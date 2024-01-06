@@ -22,12 +22,15 @@ const axiosConfig: CreateAxiosDefaults = {
 const axiosInstance = axios.create(axiosConfig)
 axiosInstance.interceptors.response.use(response => response, error => {
     switch (error.response?.status) {
-        case 500:
-            return Promise.reject(error.response?.data)
+        case 401:
+            // Handle 401 error
+            toast("ログイン情報に誤りがあります。", {autoClose: 1000,})
+            break;
+        default:
+            toast("エラーが発生しました。\n" + error.response?.data, {
+                autoClose: 1000,
+            })
     }
-    toast("エラーが発生しました。\n" + error.response?.data, {
-        autoClose: 1000,
-    })
-    return Promise.reject(error.response?.data)
+    return Promise.reject(error)
 })
 export const Api = DefaultApiFactory(configuration, basePath, axiosInstance)

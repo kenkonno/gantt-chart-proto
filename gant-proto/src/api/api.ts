@@ -836,6 +836,19 @@ export interface GetUnitsResponse {
 /**
  * 
  * @export
+ * @interface GetUserInfoResponse
+ */
+export interface GetUserInfoResponse {
+    /**
+     * 
+     * @type {User}
+     * @memberof GetUserInfoResponse
+     */
+    'user'?: User;
+}
+/**
+ * 
+ * @export
  * @interface GetUsersIdRequest
  */
 export interface GetUsersIdRequest {
@@ -1216,6 +1229,38 @@ export interface PostHolidaysResponse {
      * @memberof PostHolidaysResponse
      */
     'holiday'?: Holiday;
+}
+/**
+ * 
+ * @export
+ * @interface PostLoginRequest
+ */
+export interface PostLoginRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostLoginRequest
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PostLoginRequest
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface PostLoginResponse
+ */
+export interface PostLoginResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostLoginResponse
+     */
+    ''?: string;
 }
 /**
  * 
@@ -1888,6 +1933,12 @@ export interface User {
      * @memberof User
      */
     'updated_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'role': string;
 }
 /**
  * 
@@ -2945,6 +2996,36 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetUserInfo
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/userInfo`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetUsers
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3323,6 +3404,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(postHolidaysRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary 
+         * @param {PostLoginRequest} [postLoginRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postLogin: async (postLoginRequest?: PostLoginRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/login`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postLoginRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -4028,6 +4143,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetUserInfo
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUserInfo(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserInfoResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserInfo(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetUsers
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4148,6 +4273,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postHolidaysId(id: number, postHolidaysRequest?: PostHolidaysRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postHolidaysId(id, postHolidaysRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary 
+         * @param {PostLoginRequest} [postLoginRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postLogin(postLoginRequest?: PostLoginRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postLogin(postLoginRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4574,6 +4710,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetUserInfo
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo(options?: any): AxiosPromise<GetUserInfoResponse> {
+            return localVarFp.getUserInfo(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetUsers
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4684,6 +4829,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postHolidaysId(id: number, postHolidaysRequest?: PostHolidaysRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postHolidaysId(id, postHolidaysRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary 
+         * @param {PostLoginRequest} [postLoginRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postLogin(postLoginRequest?: PostLoginRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postLogin(postLoginRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5159,6 +5314,17 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary GetUserInfo
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getUserInfo(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getUserInfo(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary GetUsers
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -5290,6 +5456,18 @@ export class DefaultApi extends BaseAPI {
      */
     public postHolidaysId(id: number, postHolidaysRequest?: PostHolidaysRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postHolidaysId(id, postHolidaysRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {PostLoginRequest} [postLoginRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postLogin(postLoginRequest?: PostLoginRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postLogin(postLoginRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

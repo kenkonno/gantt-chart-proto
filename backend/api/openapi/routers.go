@@ -275,6 +275,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetUserInfo",
+		http.MethodGet,
+		"/api/userInfo",
+		GetUserInfo,
+	},
+
+	{
 		"GetUsers",
 		http.MethodGet,
 		"/api/users",
@@ -349,6 +356,13 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/holidays/:id",
 		PostHolidaysId,
+	},
+
+	{
+		"PostLogin",
+		http.MethodPost,
+		"/api/login",
+		PostLogin,
 	},
 
 	{
