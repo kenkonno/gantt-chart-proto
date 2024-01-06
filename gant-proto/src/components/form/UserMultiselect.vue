@@ -13,7 +13,6 @@
           :class="{
           'is-disabled': disabled
         }"
-          v-if="!disabled"
           class="multiselect-tag-remove multiselect-tag"
           @mousedown.prevent="handleTagRemove(option, $event)"
           style="background-color: inherit"

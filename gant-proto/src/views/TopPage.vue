@@ -25,7 +25,7 @@
       <DepartmentUserFilter></DepartmentUserFilter>
     </div>
   </nav>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light bg-light" v-if="allowed('ALL_SETTINGS')">
     <div>
       <b>全体設定</b>
       <ModalWithLink title="設備一覧" icon="precision_manufacturing">
@@ -96,6 +96,7 @@ import ModalWithLink from "@/components/modal/ModalWithLink.vue";
 import DepartmentView from "@/views/DepartmentView.vue";
 import DepartmentUserFilter from "@/components/departmentUserFilter/DepartmentUserFilter.vue";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY, useDepartmentUserFilter} from "@/composable/departmentUserFilter";
+import {allowed} from "@/composable/role";
 
 // GlobalStateのProvide
 const {globalState, actions, mutations, getters} = await useGlobalState()

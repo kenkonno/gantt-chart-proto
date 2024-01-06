@@ -147,12 +147,12 @@ export async function useGanttAll() {
                 dragLimitLeft: 0,
                 dragLimitRight: 0,
                 hasHandles: false,
-                id: facilityId.toString(),
                 immobile: false,
+                pushOnOverlap: false,
+                id: facilityId.toString(),
                 label: facilityName, // 工程名
                 progress: progressPercent,
                 progressColor: BAR_COMPLETE_COLOR,
-                pushOnOverlap: false,
                 style: {backgroundColor: DEFAULT_PROCESS_COLOR},
             }
         }

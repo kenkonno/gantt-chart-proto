@@ -6,17 +6,20 @@
               @input="refreshGantt(Number($event.target.value))">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-      <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
-        <unit-view></unit-view>
-      </ModalWithLink>
-      <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1">
-        <operation-setting-view></operation-setting-view>
-      </ModalWithLink>
-      <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
-        <holiday-view></holiday-view>
-      </ModalWithLink>
-      <ModalWithLink title="権限設定" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
-      </ModalWithLink>
+      <template v-if="allowed('FACILITY_SETTINGS')">
+        <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
+          <unit-view></unit-view>
+        </ModalWithLink>
+        <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1">
+          <operation-setting-view></operation-setting-view>
+        </ModalWithLink>
+        <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
+          <holiday-view></holiday-view>
+        </ModalWithLink>
+        <ModalWithLink title="権限設定" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
+        </ModalWithLink>
+
+      </template>
     </div>
     <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
   </nav>
@@ -112,6 +115,7 @@ import HolidayView from "@/views/HolidayView.vue";
 import {computed} from "vue";
 import {FacilityStatus} from "@/const/common";
 import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
+import {allowed} from "@/composable/role";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!

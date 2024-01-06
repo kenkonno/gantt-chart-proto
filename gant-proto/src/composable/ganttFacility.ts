@@ -21,6 +21,7 @@ import {DAYJS_FORMAT} from "@/utils/day";
 import {DEFAULT_PROCESS_COLOR} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {allowed} from "@/composable/role";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -159,7 +160,10 @@ export async function useGanttFacility() {
                 endDate: endOfDay(task.ticket!.end_date!),
                 ganttGroupId: unit.ganttGroup.id,
                 ganttBarConfig: {
-                    hasHandles: true,
+                    dragLimitLeft: 0,
+                    dragLimitRight: 0,
+                    hasHandles: allowed('UPDATE_TICKET'),
+                    immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
                     id: task.ticket?.id!.toString(),
                     label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
                     style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
@@ -168,7 +172,7 @@ export async function useGanttFacility() {
                 }
             }))
             // ボタン用の空行を追加する
-            if (!hasFilter.value) {
+            if (!hasFilter.value && allowed('UPDATE_TICKET')) {
                 bars.value.push(emptyRow)
             }
         })
@@ -499,6 +503,7 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGro
             ganttBarConfig: {
                 hasHandles: true,
                 id: ticket.id!.toString(), // TODO: まあIDが数字でもいっか
+                immobile: false,
                 label: "", // TODO: コメントをラベルにする
             },
         },
