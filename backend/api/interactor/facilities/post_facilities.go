@@ -15,6 +15,8 @@ func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse 
 	holidayRep := repository.NewHolidayRepository()
 	unitRep := repository.NewUnitRepository()
 	ganttGroupsRep := repository.NewGanttGroupRepository()
+	processRep := repository.NewProcessRepository()
+	ticketRep := repository.NewTicketRepository()
 
 	var facilityReq openapi_models.PostFacilitiesRequest
 	if err := c.ShouldBindJSON(&facilityReq); err != nil {
@@ -40,15 +42,43 @@ func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse 
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})
-
-	ganttGroupsRep.Upsert(db.GanttGroup{
+	newGanttGroup := ganttGroupsRep.Upsert(db.GanttGroup{
 		Id:         nil,
 		FacilityId: *newFacility.Id,
 		UnitId:     *r.Id,
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})
-
+	// 全行程を登録して、お尻から登録する。開始日終了日は工程の数の設備の期間で決定する
+	// 1週刊づつずらして、開始日はMAX(開始日, 設備開始日）とする。
+	allProcess := processRep.FindAll()
+	for i, v := range allProcess {
+		index := len(allProcess) - 1 - i
+		endDate := newFacility.TermTo.Add(-1 * (time.Hour * 24) * (7 * time.Duration(index)))
+		startDate := endDate.Add(-1 * (time.Hour * 24) * 6)
+		if newFacility.TermFrom.After(endDate) {
+			endDate = newFacility.TermFrom
+		}
+		if newFacility.TermFrom.After(startDate) {
+			startDate = newFacility.TermFrom
+		}
+		nOfW := int32(1) // 人数はデフォルト1
+		ticketRep.Upsert(db.Ticket{
+			GanttGroupId:    *newGanttGroup.Id,
+			ProcessId:       v.Id,
+			DepartmentId:    nil,
+			LimitDate:       nil,
+			Estimate:        nil,
+			NumberOfWorker:  &nOfW,
+			DaysAfter:       nil,
+			StartDate:       &startDate,
+			EndDate:         &endDate,
+			ProgressPercent: nil,
+			Order:           int32(i),
+			CreatedAt:       time.Time{},
+			UpdatedAt:       0,
+		})
+	}
 	return openapi_models.PostFacilitiesResponse{}
 
 }
