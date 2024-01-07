@@ -464,6 +464,7 @@ export const getDefaultPileUps = async (
             target.users.forEach((v, i) => {
                 const r: number[] = []
                 r.push(...v, ...pileUp.users[i])
+                target.users[i].length = 0
                 target.users[i].push(...Array.from(new Set(r)))
             })
         })

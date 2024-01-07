@@ -140,6 +140,7 @@
             :width="getGanttChartWidth(displayType)"
             :highlightedDates="getHolidaysForGantt(displayType)"
             :syncWidth="syncWidth"
+            :current-facility-id="currentFacilityId"
             @on-mounted="forceScroll"
         >
         </PileUps>
@@ -178,6 +179,7 @@ type GanttProxyProps = {
 }
 const props = defineProps<GanttProxyProps>()
 const globalState = inject(GLOBAL_STATE_KEY)!
+const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
 const {
   bars,

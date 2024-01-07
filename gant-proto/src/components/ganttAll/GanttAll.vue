@@ -66,6 +66,7 @@
                :width="getGanttChartWidth(displayType)"
                :highlightedDates="holidaysAsDate"
                :syncWidth="syncWidth"
+               :current-facility-id="-1"
                @on-mounted="forceScroll"
       >
       </PileUps>
