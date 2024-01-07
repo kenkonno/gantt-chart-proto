@@ -3,7 +3,7 @@
       v-model="value"
       mode="tags"
       placeholder="担当者を追加"
-      :close-on-select="false"
+      :close-on-select="true"
       :search="true"
       :options="options"
       @input="$emit('update:modelValue', $event)"
