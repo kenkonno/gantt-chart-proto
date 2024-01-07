@@ -5,16 +5,16 @@
         <div>メニュー</div>
       </div>
     </div>
-    <AccordionHorizontal class="justify-middle">
+    <AccordionHorizontal class="justify-middle" v-if="allowed('UPDATE_TICKET')">
       <template v-slot:icon>
         <span class="material-symbols-outlined">menu_open</span>
       </template>
       <template v-slot:body>
-        <tippy content="（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
+        <tippy content="工数と日後から日付を変更します。対象は（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
           <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
                  @click="emits('setScheduleByPersonDay')">
         </tippy>
-        <tippy content="開始日・終了日・工数・工程が入力されている行が対象です。担当者が入力されている行は無視されます。">
+        <tippy content="現在設定されている期間をもとに日後を適応させます。">
           <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
                  @click="emits('setScheduleByFromTo')">
         </tippy>
@@ -56,6 +56,7 @@ import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHoriz
 import {Tippy} from "vue-tippy";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {ref} from "vue";
+import {allowed} from "@/composable/role";
 
 type GanttFacilityMenuProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
