@@ -23,6 +23,10 @@
         </label>
       </div>
       <DepartmentUserFilter></DepartmentUserFilter>
+      <a href="#" @click.prevent="updateFacility">
+        <span class="material-symbols-outlined">refresh</span>
+        <span class="text">リロード</span>
+      </a>
     </div>
   </nav>
   <nav class="navbar navbar-light bg-light" v-if="allowed('ALL_SETTINGS')">
@@ -114,10 +118,7 @@ provide(GLOBAL_DEPARTMENT_USER_FILTER_KEY, globalDepartmentUserFilter)
 const changeFacilityType = () => {
   // 設備ビューの時はpileUpsだけ
   if (router.currentRoute.value.name == "gantt") {
-    console.log(router.currentRoute.value.name)
-    console.log(globalState.value.pileUpsRefresh)
     mutations.refreshPileUpsRefresh()
-    console.log(globalState.value.pileUpsRefresh)
   }
   if (router.currentRoute.value.name == "gantt-all-view") {
     mutations.refreshGanttAll()
