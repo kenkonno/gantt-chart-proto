@@ -22,9 +22,11 @@
     "vite": "^3.2.7",
     "vue": "^3.3.4",
     "vue-class-component": "^8.0.0-0",
+    "vue-final-modal": "^4.5.3",
     "vue-router": "^4.0.3",
     "vue-tippy": "^6.3.1",
     "vue3-colorpicker": "^2.2.3",
+    "vue3-drag-resize": "^2.0.5",
     "vue3-spinners": "^1.2.2",
     "vue3-toastify": "^0.1.11"
   },
