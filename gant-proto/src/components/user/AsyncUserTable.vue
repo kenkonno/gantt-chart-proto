@@ -8,6 +8,7 @@
         <th>部署</th>
         <th>氏名</th>
         <th>稼働上限</th>
+        <th>Role</th>
         <th v-if="false">Password</th>
         <th>Email</th>
         <th>作成日</th>
@@ -20,6 +21,7 @@
         <td>{{ getDepartmentName(item.department_id) }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.limit_of_operation }}</td>
+        <td>{{ RoleTypeMap[item.role] }}</td>
         <td v-if="false">{{ item.password }}</td>
         <td>{{ item.email }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
@@ -34,6 +36,7 @@
 import {User} from "@/api";
 import {inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {RoleTypeMap} from "../../const/common";
 
 defineEmits(['openEditModal'])
 const {departmentList} = inject(GLOBAL_STATE_KEY)!

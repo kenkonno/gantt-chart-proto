@@ -1,4 +1,5 @@
 import {ref} from "vue";
+import {allowed} from "@/composable/role";
 
 export type GanttFacilityHeader = {
     name: string,
@@ -21,8 +22,10 @@ export function useGanttFacilityMenu() {
         {name: "開始日", visible: false},
         {name: "終了日", visible: false},
         {name: "進捗", visible: true},
-        {name: "操作", visible: false},
     ])
+    if (allowed('UPDATE_TICKET')) {
+        GanttHeader.value.push({name: "操作", visible: false})
+    }
     const displayType = ref<DisplayType>("day")
     return {
         GanttHeader,

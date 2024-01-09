@@ -52,54 +52,66 @@
                   <gantt-td :visible="props.ganttFacilityHeader[0].visible">{{
                       getUnitName(item.ganttGroup.unit_id)
                     }}
-                    {{row.ticket.id}}/{{row.ticket.order}}
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[1].visible">
-                    <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
+                    <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)"
+                            :disabled="!allowed('UPDATE_TICKET')">
                       <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[2].visible">
-                    <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)">
+                    <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)"
+                            :disabled="!allowed('UPDATE_TICKET')">
                       <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
                     <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id)"
                                      :ticketUser="row.ticketUsers"
+                                     :disabled="!allowed('UPDATE_TICKET')"
                                      @update:modelValue="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[4].visible">
                     <FormNumber class="small-numeric" v-model="row.ticket.number_of_worker"
-                                @change="updateTicket(row.ticket)" :disabled="row.ticketUsers?.length > 0"/>
+                                @change="updateTicket(row.ticket)"
+                                :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[5].visible">
-                    <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/>
+                    <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"
+                           :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[6].visible">
-                    <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
+                    <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"
+                                :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[7].visible">
                     <FormNumber class="small-numeric" v-model="row.ticket.days_after"
-                                @change="updateTicket(row.ticket)"/>
+                                @change="updateTicket(row.ticket)"
+                                :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[8].visible">
-                    <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
+                    <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"
+                           :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[9].visible">
-                    <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/>
+                    <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"
+                           :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[10].visible">
                     <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
-                                @change="updateTicket(row.ticket)"/>
+                                @change="updateTicket(row.ticket)"
+                                :disabled="!allowed('UPDATE_PROGRESS')"/>
                   </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[11].visible">
-                    <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span class="material-symbols-outlined">arrow_upward</span></a>
-                    <a href="#" @click.prevent="updateOrder(item.rows, index,1)"><span class="material-symbols-outlined">arrow_downward</span></a>
-                    <a href="#" @click.prevent="deleteTicket(row.ticket)"><span class="material-symbols-outlined">delete</span></a>
+                  <gantt-td :visible="props.ganttFacilityHeader[11].visible" v-if="allowed('UPDATE_TICKET')">
+                    <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span
+                        class="material-symbols-outlined">arrow_upward</span></a>
+                    <a href="#" @click.prevent="updateOrder(item.rows, index,1)"><span
+                        class="material-symbols-outlined">arrow_downward</span></a>
+                    <a href="#" @click.prevent="deleteTicket(row.ticket)"><span
+                        class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr v-if="!hasFilter">
+                <tr v-if="!hasFilter && allowed('UPDATE_TICKET')">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -128,6 +140,7 @@
             :width="getGanttChartWidth(displayType)"
             :highlightedDates="getHolidaysForGantt(displayType)"
             :syncWidth="syncWidth"
+            :current-facility-id="currentFacilityId"
             @on-mounted="forceScroll"
         >
         </PileUps>
@@ -158,6 +171,7 @@ import PileUps from "@/components/pileUps/PileUps.vue";
 import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
+import {allowed} from "@/composable/role";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -165,6 +179,7 @@ type GanttProxyProps = {
 }
 const props = defineProps<GanttProxyProps>()
 const globalState = inject(GLOBAL_STATE_KEY)!
+const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
 const {
   bars,

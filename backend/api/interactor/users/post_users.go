@@ -24,6 +24,7 @@ func PostUsersInvoke(c *gin.Context) openapi_models.PostUsersResponse {
 		Name:             userReq.User.Name,
 		Password:         userReq.User.Password,
 		Email:            userReq.User.Email,
+		Role:             userReq.User.Role,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        0,
 	})

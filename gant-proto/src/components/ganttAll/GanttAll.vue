@@ -66,6 +66,7 @@
                :width="getGanttChartWidth(displayType)"
                :highlightedDates="holidaysAsDate"
                :syncWidth="syncWidth"
+               :current-facility-id="-1"
                @on-mounted="forceScroll"
       >
       </PileUps>
@@ -170,11 +171,11 @@ watch(props.ganttAllHeader, () => {
 }, {deep: true})
 
 // 全体ビューの場合は遅延通知をフィルタして開く
-const {tableIsOpen, filterFacility} = inject(GLOBAL_SCHEDULE_ALERT_KEY)!
+const {open, filterFacility} = inject(GLOBAL_SCHEDULE_ALERT_KEY)!
 
 const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  tableIsOpen.value = true
+  open()
   filterFacility.value = Number(bar.ganttBarConfig.id)
 }
 

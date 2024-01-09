@@ -25,6 +25,7 @@ func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
 			Name:             user.Name,
 			Password:         user.Password,
 			Email:            user.Email,
+			Role:             user.Role,
 			CreatedAt:        user.CreatedAt,
 			UpdatedAt:        user.UpdatedAt,
 		},

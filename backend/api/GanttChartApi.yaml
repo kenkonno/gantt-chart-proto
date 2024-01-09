@@ -743,6 +743,39 @@ paths:
       description: ''
       parameters: []
     parameters: []
+  /api/userInfo:
+    get:
+      summary: GetUserInfo
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserInfoResponse'
+      operationId: get-userInfo
+      parameters: []
+  /api/login:
+    post:
+      summary: ''
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                password:
+                  type: string
+              required:
+                - id
+                - password
 components:
   schemas:
     User:
@@ -773,13 +806,15 @@ components:
         updated_at:
           type: integer
           format: int64
+        role:
+          type: string
       required:
         - department_id
         - limit_of_operation
         - name
         - password
         - email
-      description: ''
+        - role
     GetUsersRequest:
       title: GetUsersRequest
       type: object
@@ -1786,6 +1821,14 @@ components:
       properties:
         '':
           type: string
+    PostLoginResponse:
+      title: PostLoginResponse
+      type: object
+      properties:
+        '':
+          type: string
+      x-stoplight:
+        id: 092f8edf825cf
     ScheduleAlert:
       title: ScheduleAlert
       type: object
@@ -1844,3 +1887,25 @@ components:
             $ref: '#/components/schemas/ScheduleAlert'
       required:
         - list
+    GetUserInfoResponse:
+      title: GetUserInfoResponse
+      x-stoplight:
+        id: vu4rjgwhwviqz
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    PostLoginRequest:
+      title: PostLoginRequest
+      x-stoplight:
+        id: 26mxo5zdv02sl
+      type: object
+      properties:
+        id:
+          type: string
+        password:
+          type: string
+      required:
+        - id
+        - password
+  securitySchemes: {}

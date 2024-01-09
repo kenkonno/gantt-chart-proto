@@ -3,7 +3,7 @@
       v-model="value"
       mode="tags"
       placeholder="担当者を追加"
-      :close-on-select="false"
+      :close-on-select="true"
       :search="true"
       :options="options"
       @input="$emit('update:modelValue', $event)"
@@ -13,7 +13,6 @@
           :class="{
           'is-disabled': disabled
         }"
-          v-if="!disabled"
           class="multiselect-tag-remove multiselect-tag"
           @mousedown.prevent="handleTagRemove(option, $event)"
           style="background-color: inherit"

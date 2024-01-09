@@ -81,9 +81,10 @@ type PileUpsProps = {
   width: string,
   highlightedDates: Date[],
   syncWidth: StyleValue | undefined,
+  currentFacilityId: number,
 }
 const props = defineProps<PileUpsProps>()
-const {currentFacilityId, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
+const {departmentList, userList} = inject(GLOBAL_STATE_KEY)!
 const {getDepartmentName} = inject(GLOBAL_GETTER_KEY)!
 const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
 
@@ -105,7 +106,8 @@ const {
   globalStartDate,
   defaultPileUpsByPerson,
   defaultPileUpsByDepartment,
-} = await getDefaultPileUps(currentFacilityId, "day", selectedDepartment, selectedUser,)
+} = await getDefaultPileUps(props.currentFacilityId, "day", selectedDepartment, selectedUser,)
+console.log("####### start main getDefaultPileUps", defaultPileUpsByPerson, defaultPileUpsByDepartment)
 
 console.log("####### start main usePileUps", globalStartDate)
 const {

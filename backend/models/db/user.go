@@ -1,6 +1,8 @@
 package db
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	Id               *int32 `gorm:"primaryKey;autoIncrement"`
@@ -9,6 +11,7 @@ type User struct {
 	Name             string
 	Password         string
 	Email            string
+	Role             string
 
 	CreatedAt time.Time
 	UpdatedAt int64

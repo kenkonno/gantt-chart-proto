@@ -1,10 +1,12 @@
 import {ScheduleAlert} from "@/api";
-import {computed, ComputedRef, InjectionKey, Ref, ref} from "vue";
+import {computed, ComputedRef, defineAsyncComponent, InjectionKey, Ref, ref} from "vue";
+import {useModal} from "vue-final-modal";
 
 export const GLOBAL_SCHEDULE_ALERT_KEY = Symbol() as InjectionKey<GlobalScheduleAlert>
 
 export type GlobalScheduleAlert = {
-    tableIsOpen: Ref<boolean>,
+    open: () => Promise<string>,
+    destroy: () => void,
     filterDelayDays: Ref<number | undefined>,
     filterProgressNumber: Ref<number | undefined>,
     filterFacility: Ref<number | undefined>,
@@ -13,8 +15,12 @@ export type GlobalScheduleAlert = {
 }
 
 // ユーザー一覧。特別ref系は必要ない。
-export function useScheduleAlert(scheduleAlert: ScheduleAlert[]) {
-    const tableIsOpen = ref<boolean>(false)
+export function useScheduleAlert(scheduleAlert: ScheduleAlert[]): GlobalScheduleAlert {
+
+    const {open, destroy} = useModal({
+        keepAlive: true,
+        component: defineAsyncComponent(() => import('@/components/modal/ScheduleAlertDragResizeModal.vue')),
+    })
 
     const filterDelayDays = ref<number | undefined>(undefined)
     const filterProgressNumber = ref<number | undefined>(undefined)
@@ -56,6 +62,6 @@ export function useScheduleAlert(scheduleAlert: ScheduleAlert[]) {
         return result
     })
     return {
-        tableIsOpen, filterDelayDays, filterProgressNumber, filterFacility, cScheduleAlert, facilityList
+        open, destroy, filterDelayDays, filterProgressNumber, filterFacility, cScheduleAlert, facilityList
     }
 }

@@ -21,6 +21,7 @@ import {DAYJS_FORMAT} from "@/utils/day";
 import {DEFAULT_PROCESS_COLOR} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {allowed} from "@/composable/role";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -159,7 +160,10 @@ export async function useGanttFacility() {
                 endDate: endOfDay(task.ticket!.end_date!),
                 ganttGroupId: unit.ganttGroup.id,
                 ganttBarConfig: {
-                    hasHandles: true,
+                    dragLimitLeft: 0,
+                    dragLimitRight: 0,
+                    hasHandles: allowed('UPDATE_TICKET'),
+                    immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
                     id: task.ticket?.id!.toString(),
                     label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
                     style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
@@ -168,7 +172,7 @@ export async function useGanttFacility() {
                 }
             }))
             // ボタン用の空行を追加する
-            if (!hasFilter.value) {
+            if (!hasFilter.value && allowed('UPDATE_TICKET')) {
                 bars.value.push(emptyRow)
             }
         })
@@ -386,25 +390,15 @@ export async function useGanttFacility() {
 
     /**
      * リスケ（日付）重視
-     * 開始日・終了日重視で人数を設定する
-     * 期間で満了できるように人数を割り当てる
-     * ※担当者が入っていたとしても人数は必ず入っているので、人数列で参照する。
+     * 現在設定されている日付に日後を適応させる。
      *
      * @param rows
      */
     const setScheduleByFromTo = (rows: GanttRow[]) => {
-        // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
-        // 担当者が未定の時に人数を計算する
-        // 必要日数 = 工数 / 労働時間
-        // 必要人数 = 必要日数 / 期間日数 の数値は上に寄せる
         const holidays = toValue(getHolidays)
-        const operationSettings = toValue(getOperationList)
         let prevEndDate: Dayjs
         rows.forEach(row => {
-            if (row.ticket && row.ticketUsers?.length == 0 &&
-                row.ticket?.estimate && row.ticket?.estimate > 0 &&
-                row.ticket?.process_id && row.ticket?.process_id > 0 &&
-                row.ticket?.start_date && row.ticket?.end_date) {
+            if (row.ticket && row.ticket?.start_date && row.ticket?.end_date) {
                 // 日後の処理
                 if (row.ticket.days_after != null && prevEndDate != null) {
                     // 現在設定されている営業日を計算する
@@ -419,18 +413,6 @@ export async function useGanttFacility() {
                     row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(DAYJS_FORMAT))
                     row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(DAYJS_FORMAT))
                 }
-                // 工数(h)
-                const estimate = row.ticket.estimate
-                // 労働予定時間 ユニット & 工程 に紐づく稼働予定時間を取得
-                console.log(operationSettings)
-                const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row)
-                // 必要日数
-                const requiredNumberOfDays = estimate / scheduledOperatingHours
-                // 日数（期間）
-                const numberOfDays = getNumberOfDays(row, holidays)
-                // 必要人数
-                row.ticket.number_of_worker = Math.ceil(requiredNumberOfDays / numberOfDays)
-                // 前回の終了日を設定する
                 updateTicket(row.ticket)
             }
             prevEndDate = dayjs(row.ticket?.end_date)
@@ -499,6 +481,7 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGro
             ganttBarConfig: {
                 hasHandles: true,
                 id: ticket.id!.toString(), // TODO: まあIDが数字でもいっか
+                immobile: false,
                 label: "", // TODO: コメントをラベルにする
             },
         },
