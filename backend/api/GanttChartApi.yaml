@@ -796,7 +796,7 @@ components:
           x-go-custom-tag: 'binding:"min=1"'
         password:
           type: string
-          x-go-custom-tag: 'binding:"min=1"'
+          x-go-custom-tag: 'binding:"min=0"'
         email:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
