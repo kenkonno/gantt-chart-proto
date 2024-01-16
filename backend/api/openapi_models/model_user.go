@@ -23,7 +23,7 @@ type User struct {
 
 	Name string `json:"name" binding:"min=1"`
 
-	Password string `json:"password" binding:"min=1"`
+	Password string `json:"password" binding:"min=0"`
 
 	Email string `json:"email" binding:"min=1"`
 

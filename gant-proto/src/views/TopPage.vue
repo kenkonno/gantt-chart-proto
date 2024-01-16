@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-light bg-light">
-    <div class="d-flex">
+    <div class="d-flex w-100">
       <b class="d-flex align-items-center">ビューの選択</b>
       <router-link to="/">
         <span class="material-symbols-outlined">edit</span>
@@ -27,6 +27,10 @@
         <span class="material-symbols-outlined">refresh</span>
         <span class="text">リロード</span>
       </a>
+      <a href="#" @click.prevent="modalIsOpen = true" style="margin-left: auto;">
+        <span class="material-symbols-outlined">person</span>
+        <span class="text">{{ userInfo.name }}</span>
+      </a>
     </div>
   </nav>
   <nav class="navbar navbar-light bg-light" v-if="allowed('ALL_SETTINGS')">
@@ -46,6 +50,14 @@
       </ModalWithLink>
     </div>
   </nav>
+  <Suspense v-if="modalIsOpen">
+    <default-modal title="担当者" @close-edit-modal="closeModalProxy">
+      <async-user-edit :id="userInfo.id" @close-edit-modal="closeModalProxy"></async-user-edit>
+    </default-modal>
+    <template #fallback>
+      Loading...
+    </template>
+  </Suspense>
   <Suspense>
     <router-view/>
   </Suspense>
@@ -101,6 +113,10 @@ import DepartmentView from "@/views/DepartmentView.vue";
 import DepartmentUserFilter from "@/components/departmentUserFilter/DepartmentUserFilter.vue";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY, useDepartmentUserFilter} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
+import {getUserInfo, loggedIn} from "@/composable/auth";
+import DefaultModal from "@/components/modal/DefaultModal.vue";
+import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
+import {useModalWithId} from "@/composable/modalWIthId";
 
 // GlobalStateのProvide
 const {globalState, actions, mutations, getters} = await useGlobalState()
@@ -114,6 +130,8 @@ provide(GLOBAL_SCHEDULE_ALERT_KEY, globalScheduleAlert)
 
 const globalDepartmentUserFilter = useDepartmentUserFilter()
 provide(GLOBAL_DEPARTMENT_USER_FILTER_KEY, globalDepartmentUserFilter)
+
+const userInfo = await getUserInfo()!
 
 const changeFacilityType = () => {
   // 設備ビューの時はpileUpsだけ
@@ -132,6 +150,16 @@ const updateFacility = () => {
   }
   if (router.currentRoute.value.name == "gantt-all-view") {
     mutations.refreshGanttAll()
+  }
+}
+
+// profile関連
+const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+const closeModalProxy = async () => {
+  closeEditModal()
+  const {user} = await loggedIn()
+  if (user != undefined) {
+    userInfo.name = user.name
   }
 }
 

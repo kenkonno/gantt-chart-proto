@@ -1,11 +1,13 @@
 package login
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
 )
@@ -19,9 +21,11 @@ func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
+	user := userRep.FindByEmail(userReq.Id) // IDといいつつEmail
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.Password), bcrypt.DefaultCost)
+	fmt.Println(string(hashedPassword), err)
 
-	user := userRep.FindByAuth(userReq.Id, userReq.Password)
-	if user.Id == nil {
+	if !VerifyPassword(userReq.Password, user.Password) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
 	} else {
 		sessionId := uuid.New().String()
@@ -41,4 +45,13 @@ func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 
 	return openapi_models.PostLoginResponse{}
 
+}
+
+
+func VerifyPassword(inputPassword string, hashedPassword string) bool {
+	// ハッシュと入力されたパスワードを比較
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(inputPassword))
+
+	// エラーがない場合、パスワードは一致している
+	return err == nil
 }

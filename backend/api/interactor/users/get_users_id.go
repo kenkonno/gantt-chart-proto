@@ -23,7 +23,7 @@ func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
 			DepartmentId:     user.DepartmentId,
 			LimitOfOperation: user.LimitOfOperation,
 			Name:             user.Name,
-			Password:         user.Password,
+			Password:         "", // Passwordはユーザーに含めない
 			Email:            user.Email,
 			Role:             user.Role,
 			CreatedAt:        user.CreatedAt,

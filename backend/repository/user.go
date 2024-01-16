@@ -44,6 +44,15 @@ func (r *userRepository) FindByAuth(email string, password string) db.User {
 	}
 	return user
 }
+func (r *userRepository) FindByEmail(email string) db.User {
+	var user db.User
+
+	result := r.con.Where("email = ?", email).Find(&user)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return user
+}
 
 func (r *userRepository) Upsert(m db.User) {
 	r.con.Clauses(clause.OnConflict{
