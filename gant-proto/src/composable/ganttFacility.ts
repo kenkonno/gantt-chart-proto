@@ -207,7 +207,7 @@ export async function useGanttFacility() {
     }
     const getUserListByDepartmentId = (departmentId?: number) => {
         if (departmentId == null) {
-            return []
+            return userList
         }
         return userList.filter(v => v.department_id === departmentId)
     }

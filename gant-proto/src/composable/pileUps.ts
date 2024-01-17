@@ -147,7 +147,7 @@ export const usePielUps = (
                 pileUpsByPerson.value, pileUpsByDepartment.value,
                 ticket,
                 ticketUsers.value.filter(v => v.ticket_id === ticket.id),
-                startDate, holidays.value
+                startDate, holidays.value, userList
             )
         })
         // 稼働上限のスタイルを適応する
@@ -179,12 +179,13 @@ export const usePielUps = (
      * @param ticketUsers
      * @param facilityStartDate
      * @param holidays
+     * @param userList
      */
     const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
                          ticket: Ticket,
                          ticketUsers: TicketUser[],
                          facilityStartDate: string,
-                         holidays: Holiday[]) => {
+                         holidays: Holiday[], userList: User[]) => {
 
         // validation
         if (ticket.start_date == null || ticket.end_date == null || ticket.estimate == null ||
@@ -227,8 +228,6 @@ export const usePielUps = (
             if (ticketUserIds.indexOf(a.user.id!) > ticketUserIds.indexOf(b.user.id!)) return 1;
             return 0
         })
-        // 対象部署を取得
-        const departmentTarget = pileUpByDepartment.find(v => v.departmentId === ticket.department_id)
         // 稼働時間を加算する。
         validIndexes.forEach((validIndex, index) => {
             targets.forEach((v, targetIndex) => {
@@ -239,9 +238,6 @@ export const usePielUps = (
                 if (index === (validIndexes.length - 1) && targetIndex === (targets.length - 1)) {
                     if (estimate - workHour > 0) {
                         v.labels[validIndex] += estimate
-                        if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
-                            departmentTarget.users[validIndex].push(v.user.id!)
-                        }
                         return
                     }
                 }
@@ -250,10 +246,15 @@ export const usePielUps = (
                 } else {
                     v.labels[validIndex] += workHour
                 }
-                if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
-                    departmentTarget.users[validIndex].push(v.user.id!)
-                }
                 estimate -= workHour
+            })
+            // このチケットに登場した人から部署の設定を行う。ユーザーから部署を引いて足す
+            ticketUserIds.map( v => userList.find(user => user.id == v )).forEach(user => {
+                if (user == undefined) return
+                const departmentTarget = pileUpByDepartment.find(v => v.departmentId === user.department_id)
+                if (departmentTarget != null && !departmentTarget.users[validIndex].includes(user.id!)) {
+                    departmentTarget.users[validIndex].push(user.id!)
+                }
             })
         })
     }

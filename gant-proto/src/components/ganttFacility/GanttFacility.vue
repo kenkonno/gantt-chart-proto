@@ -62,7 +62,7 @@
                   <gantt-td :visible="props.ganttFacilityHeader[2].visible">
                     <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)"
                             :disabled="!allowed('UPDATE_TICKET')">
-                      <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
+                      <option v-for="item in cDepartmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
@@ -164,7 +164,7 @@ import {useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {inject, nextTick, ref, watch} from "vue";
+import {computed, inject, nextTick, ref, watch} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
@@ -172,6 +172,7 @@ import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
+import {Department} from "@/api";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -181,6 +182,11 @@ const props = defineProps<GanttProxyProps>()
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
+const cDepartmentList = computed(() => {
+  const result: Department[] = [{created_at: "", id: undefined, name: "", order: 0, updated_at: 0}]
+  result.push(...departmentList)
+  return result
+})
 const {
   bars,
   chartEnd,
