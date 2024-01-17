@@ -42,7 +42,6 @@ const Worker = {
 
 export function allowed(section: Section) {
     const role = getUserInfo()?.role
-    console.log(role)
     if (role === RoleType.Admin) {
         return true
     }
