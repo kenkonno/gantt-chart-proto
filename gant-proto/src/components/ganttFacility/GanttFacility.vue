@@ -150,6 +150,15 @@
   <div v-else>
     ユニットを追加してください。
   </div>
+  <Suspense v-if="modalIsOpen">
+    <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
+      <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId"  :facility-id="currentFacilityId"
+                          @close-edit-modal="closeModalProxy"></async-ticket-edit>
+    </default-modal>
+    <template #fallback>
+      Loading...
+    </template>
+  </Suspense>
 </template>
 <style>
 @import '@/assets/gantt-override.scss';
@@ -173,6 +182,10 @@ import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
 import {Department} from "@/api";
+import {useModalWithId} from "@/composable/modalWIthId";
+import DefaultModal from "@/components/modal/DefaultModal.vue";
+import AsyncHolidayEdit from "@/components/holiday/AsyncHolidayEdit.vue";
+import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -241,11 +254,33 @@ watch(props.ganttFacilityHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
 
+// チケット更新モーダル
+const {modalIsOpen, id: modalTicketId, openEditModal, closeEditModal} = useModalWithId()
+const modalUnitId = ref(0)
+const emit = defineEmits(["update"])
+
+const closeModalProxy = async () => {
+  // await refreshHolidayMap(currentFacilityId)
+  closeEditModal()
+  emit("update")
+}
+
+const openTicketDetail = (ticketId: number, unitId: number) => {
+  modalTicketId.value = ticketId
+  modalUnitId.value = unitId
+  modalIsOpen.value = true
+}
+
+let isDragged = false;
 
 // ここからイベントフック
 const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   await adjustBar(bar)
+  if(!isDragged) {
+    openTicketDetail(Number(bar.ganttBarConfig.id), 1)
+  }
+  isDragged = false
 }
 
 const onMousedownBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
@@ -269,6 +304,7 @@ const onDragstartBar = (bar: GanttBarObject, e: MouseEvent) => {
 }
 
 const onDragBar = (bar: GanttBarObject, e: MouseEvent) => {
+  isDragged = true
   console.log("drag-bar", bar, e)
 }
 

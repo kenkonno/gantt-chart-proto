@@ -11,22 +11,23 @@ package openapi
 
 import (
 
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -202,6 +203,13 @@ func GetScheduleAlerts(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
+// GetTicketMemoId - GetTicketMemoId
+func GetTicketMemoId(c *gin.Context) {
+	var r openapi_models.GetTicketMemoIdResponse
+	r = ticket_memo.GetTicketMemoIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
 // GetTicketUsers - GetTicketUsers
 func GetTicketUsers(c *gin.Context) {
 	var r openapi_models.GetTicketUsersResponse
@@ -353,6 +361,13 @@ func PostProcesses(c *gin.Context) {
 func PostProcessesId(c *gin.Context) {
 	var r openapi_models.PostProcessesIdResponse
 	r = processes.PostProcessesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostTicketMemoId - PostTicketMemoId
+func PostTicketMemoId(c *gin.Context) {
+	var r openapi_models.PostTicketMemoIdResponse
+	r = ticket_memo.PostTicketMemoIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

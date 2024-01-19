@@ -14,6 +14,7 @@ type Ticket struct {
 	StartDate       *time.Time
 	EndDate         *time.Time
 	ProgressPercent *int32
+	Memo            string `gorm:"type:text"`
 	Order           int32
 	CreatedAt       time.Time
 	UpdatedAt       int32

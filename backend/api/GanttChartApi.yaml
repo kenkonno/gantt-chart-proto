@@ -599,6 +599,37 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostTicketsRequest'
+  '/api/ticket-memo/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketMemoId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketMemoIdResponse'
+              examples: {}
+      operationId: get-ticket-memo-id
+      description: ''
+    post:
+      summary: PostTicketMemoId
+      operationId: post-ticket-memo-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketMemoIdRequest'
   /api/ticketUsers:
     get:
       summary: GetTicketUsers
@@ -1529,7 +1560,6 @@ components:
     Ticket:
       title: Ticket
       type: object
-      description: ''
       x-tags:
         - Ticket
       properties:
@@ -1569,6 +1599,8 @@ components:
         progress_percent:
           type: integer
           nullable: true
+        memo:
+          type: string
         order:
           type: integer
         created_at:
@@ -1623,6 +1655,21 @@ components:
       properties:
         ticket:
           $ref: '#/components/schemas/Ticket'
+    GetTicketMemoIdRequest:
+      title: GetTicketMemoIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetTicketMemoIdResponse:
+      title: GetTicketMemoIdResponse
+      type: object
+      properties:
+        memo:
+          type: string
+      required:
+        - memo
     DeleteTicketsIdRequest:
       title: DeleteTicketsIdRequest
       type: object
@@ -1660,6 +1707,22 @@ components:
       properties:
         ticket:
           $ref: '#/components/schemas/Ticket'
+    PostTicketMemoIdRequest:
+      title: PostTicketMemoIdRequest
+      type: object
+      properties:
+        memo:
+          type: string
+      required:
+        - memo
+    PostTicketMemoIdResponse:
+      title: PostTicketMemoIdResponse
+      type: object
+      x-stoplight:
+        id: 35b5e2c39f317
+      properties:
+        msg:
+          type: string
     TicketUser:
       title: TicketUser
       type: object

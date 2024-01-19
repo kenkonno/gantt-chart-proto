@@ -719,6 +719,32 @@ export interface GetScheduleAlertsResponse {
 /**
  * 
  * @export
+ * @interface GetTicketMemoIdRequest
+ */
+export interface GetTicketMemoIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetTicketMemoIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketMemoIdResponse
+ */
+export interface GetTicketMemoIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetTicketMemoIdResponse
+     */
+    'memo': string;
+}
+/**
+ * 
+ * @export
  * @interface GetTicketUsersIdRequest
  */
 export interface GetTicketUsersIdRequest {
@@ -1369,6 +1395,32 @@ export interface PostProcessesResponse {
 /**
  * 
  * @export
+ * @interface PostTicketMemoIdRequest
+ */
+export interface PostTicketMemoIdRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostTicketMemoIdRequest
+     */
+    'memo': string;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketMemoIdResponse
+ */
+export interface PostTicketMemoIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostTicketMemoIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
  * @interface PostTicketUsersIdRequest
  */
 export interface PostTicketUsersIdRequest {
@@ -1774,6 +1826,12 @@ export interface Ticket {
      * @memberof Ticket
      */
     'progress_percent'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Ticket
+     */
+    'memo'?: string;
     /**
      * 
      * @type {number}
@@ -2783,6 +2841,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetTicketMemoId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketMemoId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTicketMemoId', 'id', id)
+            const localVarPath = `/api/ticket-memo/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetTicketUsers
          * @param {Array<number>} ticketIds 
          * @param {*} [options] Override http request option.
@@ -3556,6 +3648,44 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostTicketMemoId
+         * @param {number} id 
+         * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketMemoId: async (id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postTicketMemoId', 'id', id)
+            const localVarPath = `/api/ticket-memo/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketMemoIdRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostTicketUsers
          * @param {PostTicketUsersRequest} [postTicketUsersRequest] 
          * @param {*} [options] Override http request option.
@@ -4077,6 +4207,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetTicketMemoId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketMemoId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketMemoIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketMemoId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetTicketUsers
          * @param {Array<number>} ticketIds 
          * @param {*} [options] Override http request option.
@@ -4319,6 +4460,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postProcessesId(id, postProcessesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostTicketMemoId
+         * @param {number} id 
+         * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketMemoId(id, postTicketMemoIdRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4650,6 +4803,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetTicketMemoId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketMemoId(id: number, options?: any): AxiosPromise<GetTicketMemoIdResponse> {
+            return localVarFp.getTicketMemoId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetTicketUsers
          * @param {Array<number>} ticketIds 
          * @param {*} [options] Override http request option.
@@ -4871,6 +5034,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postProcessesId(id, postProcessesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostTicketMemoId
+         * @param {number} id 
+         * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketMemoId(id, postTicketMemoIdRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5242,6 +5416,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary GetTicketMemoId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketMemoId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketMemoId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary GetTicketUsers
      * @param {Array<number>} ticketIds 
      * @param {*} [options] Override http request option.
@@ -5506,6 +5692,19 @@ export class DefaultApi extends BaseAPI {
      */
     public postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postProcessesId(id, postProcessesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostTicketMemoId
+     * @param {number} id 
+     * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketMemoId(id, postTicketMemoIdRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -61,6 +61,8 @@ interface Mutations {
 }
 
 interface Getters {
+    getUnitName: (unitId: number) => string;
+    getProcessName: (processId: number) => string;
     getDepartmentName: (departmentId: number) => string;
 }
 
@@ -194,8 +196,32 @@ export const useGlobalState = async () => {
     }
 
     const getters: Getters = {
+        getUnitName: (unitId: number) => {
+            let result = ""
+            try {
+                result = globalState.value.unitMap[globalState.value.currentFacilityId][unitId].name
+            } catch {
+                console.warn("unit not found", unitId)
+            }
+            return result
+        },
+        getProcessName: (processId: number) => {
+            let result = ""
+            try {
+                result = globalState.value.processList.find(v => v.id === processId)!.name
+            } catch {
+                console.warn("process not found", processId)
+            }
+            return result
+        },
         getDepartmentName: (departmentId: number) => {
-            return globalState.value.departmentList.find(v => v.id === departmentId)!.name
+            let result = ""
+            try {
+                result = globalState.value.departmentList.find(v => v.id === departmentId)!.name
+            } catch {
+                console.warn("department not found", departmentId)
+            }
+            return result
         }
     }
 

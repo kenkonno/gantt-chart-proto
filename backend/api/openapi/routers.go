@@ -233,6 +233,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetTicketMemoId",
+		http.MethodGet,
+		"/api/ticket-memo/:id",
+		GetTicketMemoId,
+	},
+
+	{
 		"GetTicketUsers",
 		http.MethodGet,
 		"/api/ticketUsers",
@@ -384,6 +391,13 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/processes/:id",
 		PostProcessesId,
+	},
+
+	{
+		"PostTicketMemoId",
+		http.MethodPost,
+		"/api/ticket-memo/:id",
+		PostTicketMemoId,
 	},
 
 	{
