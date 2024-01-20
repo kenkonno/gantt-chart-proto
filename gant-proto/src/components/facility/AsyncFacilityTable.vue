@@ -8,6 +8,7 @@
         <th>名称</th>
         <th>開始日</th>
         <th>終了日</th>
+        <th>出荷期日</th>
         <th>ステータス</th>
         <th>受注状況</th>
         <th>作成日</th>
@@ -22,6 +23,7 @@
         <td>{{ item.name }}</td>
         <td>{{ $filters.dateFormatYMD(item.term_from) }}</td>
         <td>{{ $filters.dateFormatYMD(item.term_to) }}</td>
+        <td>{{ $filters.dateFormatYMD(item.shipment_due_date) }}</td>
         <td>{{ FacilityStatusMap[item.status]}}</td>
         <td>{{ FacilityTypeMap[item.type]}}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>

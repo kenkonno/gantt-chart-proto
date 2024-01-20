@@ -7,7 +7,7 @@
     <span class="material-symbols-outlined" v-if="icon != null">{{ icon }}</span>
     <span>{{ title }}</span>
   </p>
-  <DefaultModal v-if="open" @close-edit-modal="open=false" title="">
+  <DefaultModal :title="title" v-if="open" @close-edit-modal="open=false">
     <slot/>
   </DefaultModal>
 </template>

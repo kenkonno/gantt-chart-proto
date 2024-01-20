@@ -22,6 +22,11 @@
     </div>
 
     <div class="mb-2">
+      <label class="form-label" for="shipmentDueDate">出荷期日</label>
+      <input class="form-control" type="date" name="shipmentDueDate" id="shipmentDueDate" v-model="facility.shipment_due_date" :disabled="false">
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">ステータス</label>
       <select class="form-control" name="status" id="status" v-model="facility.status" :disabled="false">
         <option v-for="(name, code) in FacilityStatusMap" :value="code" :key="code">{{name}}</option>

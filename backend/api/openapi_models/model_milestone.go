@@ -13,25 +13,19 @@ import (
 	"time"
 )
 
-type Facility struct {
+type Milestone struct {
 
 	Id *int32 `json:"id,omitempty"`
 
-	Name string `json:"name" binding:"min=1"`
+	FacilityId int32 `json:"facility_id" binding:"min=1"`
 
-	TermFrom time.Time `json:"term_from"`
+	Date time.Time `json:"date"`
 
-	TermTo time.Time `json:"term_to"`
+	Description string `json:"description" binding:"min=1"`
 
-	Order int32 `json:"order,omitempty"`
+	Order int32 `json:"order" binding:"min=1"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty"`
-
-	Status string `json:"status"`
-
-	Type string `json:"type"`
-
-	ShipmentDueDate time.Time `json:"shipment_due_date"`
+	UpdatedAt int `json:"updated_at,omitempty"`
 }

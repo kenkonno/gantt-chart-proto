@@ -37,6 +37,7 @@ export async function useFacility(facilityId?: number) {
         name: "",
         term_from: "",
         term_to: "",
+        shipment_due_date: "",
         order: 0,
         created_at: undefined,
         updated_at: undefined,
@@ -50,6 +51,7 @@ export async function useFacility(facilityId?: number) {
             facility.value.name = data.facility.name
             facility.value.term_from = data.facility.term_from.substring(0, 10)
             facility.value.term_to = data.facility.term_to.substring(0, 10)
+            facility.value.shipment_due_date = data.facility.shipment_due_date.substring(0, 10)
             facility.value.order = data.facility.order
             facility.value.created_at = data.facility.created_at
             facility.value.updated_at = data.facility.updated_at
@@ -65,6 +67,7 @@ export async function useFacility(facilityId?: number) {
 export async function postFacility(facility: Facility, order: number, emit: Emit) {
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
+    facility.shipment_due_date = facility.shipment_due_date + "T00:00:00.00000+09:00"
     facility.order = order
     const req: PostFacilitiesRequest = {
         facility: facility
@@ -80,6 +83,7 @@ export async function postFacility(facility: Facility, order: number, emit: Emit
 export async function copyFacility(facility: Facility, order: number, originalFacilityId: number, emit: Emit) {
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
+    facility.shipment_due_date = facility.shipment_due_date + "T00:00:00.00000+09:00"
     delete(facility.created_at)
     delete(facility.updated_at)
     facility.order = order
@@ -98,6 +102,7 @@ export async function copyFacility(facility: Facility, order: number, originalFa
 export async function postFacilityById(facility: Facility, emit: Emit) {
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
+    facility.shipment_due_date = facility.shipment_due_date + "T00:00:00.00000+09:00"
     const req: PostFacilitiesRequest = {
         facility: facility
     }

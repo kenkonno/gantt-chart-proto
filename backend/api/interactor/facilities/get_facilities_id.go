@@ -28,6 +28,7 @@ func GetFacilitiesIdInvoke(c *gin.Context) openapi_models.GetFacilitiesIdRespons
 			UpdatedAt: facility.UpdatedAt,
 			Status:    facility.Status,
 			Type:      facility.Type,
+			ShipmentDueDate: facility.ShipmentDueDate,
 		},
 	}
 }

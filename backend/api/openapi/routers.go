@@ -93,6 +93,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteMilestonesId",
+		http.MethodDelete,
+		"/api/milestones/:id",
+		DeleteMilestonesId,
+	},
+
+	{
 		"DeleteOperationSettingsId",
 		http.MethodDelete,
 		"/api/operationSettings/:id",
@@ -195,6 +202,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/holidays/:id",
 		GetHolidaysId,
+	},
+
+	{
+		"GetMilestones",
+		http.MethodGet,
+		"/api/milestones",
+		GetMilestones,
+	},
+
+	{
+		"GetMilestonesId",
+		http.MethodGet,
+		"/api/milestones/:id",
+		GetMilestonesId,
 	},
 
 	{
@@ -370,6 +391,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/login",
 		PostLogin,
+	},
+
+	{
+		"PostMilestones",
+		http.MethodPost,
+		"/api/milestones",
+		PostMilestones,
+	},
+
+	{
+		"PostMilestonesId",
+		http.MethodPost,
+		"/api/milestones/:id",
+		PostMilestonesId,
 	},
 
 	{

@@ -27,6 +27,7 @@
             sticky
             :display-today-line="true"
             @today-line-position-x="initScroll($event, ganttWrapperElement)"
+            :mile-stone-list="milestones"
         >
           <template #side-menu>
             <table class="side-menu" ref="ganttSideMenuElement">
@@ -168,7 +169,7 @@
 </style>
 
 <script setup lang="ts">
-import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, GGanttChart, GGanttRow, MileStone} from "@infectoone/vue-ganttastic";
 import {useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
@@ -223,7 +224,8 @@ const {
   updateDepartment,
   updateOrder,
   updateTicket,
-  hasFilter
+  hasFilter,
+  milestones
 } = await useGanttFacility()
 
 // リスケ関連 親から呼び出される
