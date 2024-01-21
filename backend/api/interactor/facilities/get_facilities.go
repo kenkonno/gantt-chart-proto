@@ -16,15 +16,16 @@ func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
 	return openapi_models.GetFacilitiesResponse{
 		List: lo.Map(facilityList, func(item db.Facility, index int) openapi_models.Facility {
 			return openapi_models.Facility{
-				Id:        item.Id,
-				Name:      item.Name,
-				TermFrom:  item.TermFrom,
-				TermTo:    item.TermTo,
-				Order:     int32(item.Order),
-				CreatedAt: item.CreatedAt,
-				UpdatedAt: item.UpdatedAt,
-				Status:    item.Status,
-				Type:      item.Type,
+				Id:              item.Id,
+				Name:            item.Name,
+				TermFrom:        item.TermFrom,
+				TermTo:          item.TermTo,
+				Order:           int32(item.Order),
+				CreatedAt:       item.CreatedAt,
+				UpdatedAt:       item.UpdatedAt,
+				Status:          item.Status,
+				Type:            item.Type,
+				ShipmentDueDate: item.ShipmentDueDate,
 			}
 		}),
 	}

@@ -24,14 +24,15 @@ func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse 
 		panic(err)
 	}
 	newFacility := facilityRep.Upsert(db.Facility{
-		Name:      facilityReq.Facility.Name,
-		TermFrom:  facilityReq.Facility.TermFrom,
-		TermTo:    facilityReq.Facility.TermTo,
-		Order:     int(facilityReq.Facility.Order),
-		Status:    facilityReq.Facility.Status,
-		Type:      facilityReq.Facility.Type,
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
+		Name:            facilityReq.Facility.Name,
+		TermFrom:        facilityReq.Facility.TermFrom,
+		TermTo:          facilityReq.Facility.TermTo,
+		Order:           int(facilityReq.Facility.Order),
+		Status:          facilityReq.Facility.Status,
+		Type:            facilityReq.Facility.Type,
+		ShipmentDueDate: facilityReq.Facility.ShipmentDueDate,
+		CreatedAt:       time.Time{},
+		UpdatedAt:       0,
 	})
 	holidayRep.InsertByFacilityId(*newFacility.Id)
 	// TODO: post_units.goと重複コード 本体ユニットをデフォルトで登録する

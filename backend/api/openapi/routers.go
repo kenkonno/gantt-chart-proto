@@ -93,6 +93,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteMilestonesId",
+		http.MethodDelete,
+		"/api/milestones/:id",
+		DeleteMilestonesId,
+	},
+
+	{
 		"DeleteOperationSettingsId",
 		http.MethodDelete,
 		"/api/operationSettings/:id",
@@ -198,6 +205,20 @@ var routes = Routes{
 	},
 
 	{
+		"GetMilestones",
+		http.MethodGet,
+		"/api/milestones",
+		GetMilestones,
+	},
+
+	{
+		"GetMilestonesId",
+		http.MethodGet,
+		"/api/milestones/:id",
+		GetMilestonesId,
+	},
+
+	{
 		"GetOperationSettingsId",
 		http.MethodGet,
 		"/api/operationSettings/:id",
@@ -230,6 +251,13 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/scheduleAlerts",
 		GetScheduleAlerts,
+	},
+
+	{
+		"GetTicketMemoId",
+		http.MethodGet,
+		"/api/ticket-memo/:id",
+		GetTicketMemoId,
 	},
 
 	{
@@ -366,6 +394,20 @@ var routes = Routes{
 	},
 
 	{
+		"PostMilestones",
+		http.MethodPost,
+		"/api/milestones",
+		PostMilestones,
+	},
+
+	{
+		"PostMilestonesId",
+		http.MethodPost,
+		"/api/milestones/:id",
+		PostMilestonesId,
+	},
+
+	{
 		"PostOperationSettingsId",
 		http.MethodPost,
 		"/api/operationSettings/:id",
@@ -384,6 +426,13 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/processes/:id",
 		PostProcessesId,
+	},
+
+	{
+		"PostTicketMemoId",
+		http.MethodPost,
+		"/api/ticket-memo/:id",
+		PostTicketMemoId,
 	},
 
 	{

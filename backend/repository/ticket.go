@@ -54,10 +54,15 @@ func (r *ticketRepository) Find(id int32) db.Ticket {
 }
 
 func (r *ticketRepository) Upsert(m db.Ticket) db.Ticket {
-	r.con.Clauses(clause.OnConflict{
+	r.con.Omit("memo").Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
+	return m
+}
+
+func (r *ticketRepository) UpdateMemo(m db.Ticket) db.Ticket {
+	r.con.Model(&m).Update("memo", m.Memo)
 	return m
 }
 

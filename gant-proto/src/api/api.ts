@@ -130,6 +130,32 @@ export interface DeleteHolidaysIdResponse {
 /**
  * 
  * @export
+ * @interface DeleteMilestonesIdRequest
+ */
+export interface DeleteMilestonesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteMilestonesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteMilestonesIdResponse
+ */
+export interface DeleteMilestonesIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteMilestonesIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeleteOperationSettingsIdRequest
  */
 export interface DeleteOperationSettingsIdRequest {
@@ -380,6 +406,12 @@ export interface Facility {
      * @memberof Facility
      */
     'type': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Facility
+     */
+    'shipment_due_date': string;
 }
 /**
  * 
@@ -590,6 +622,45 @@ export interface GetHolidaysResponse {
 /**
  * 
  * @export
+ * @interface GetMilestonesIdRequest
+ */
+export interface GetMilestonesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetMilestonesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetMilestonesIdResponse
+ */
+export interface GetMilestonesIdResponse {
+    /**
+     * 
+     * @type {Milestone}
+     * @memberof GetMilestonesIdResponse
+     */
+    'milestone'?: Milestone;
+}
+/**
+ * 
+ * @export
+ * @interface GetMilestonesResponse
+ */
+export interface GetMilestonesResponse {
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetMilestonesResponse
+     */
+    'list': Array<Milestone>;
+}
+/**
+ * 
+ * @export
  * @interface GetOperationSettingsIdRequest
  */
 export interface GetOperationSettingsIdRequest {
@@ -715,6 +786,32 @@ export interface GetScheduleAlertsResponse {
      * @memberof GetScheduleAlertsResponse
      */
     'list': Array<ScheduleAlert>;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketMemoIdRequest
+ */
+export interface GetTicketMemoIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetTicketMemoIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetTicketMemoIdResponse
+ */
+export interface GetTicketMemoIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetTicketMemoIdResponse
+     */
+    'memo': string;
 }
 /**
  * 
@@ -927,6 +1024,55 @@ export interface Holiday {
      * @memberof Holiday
      */
     'facility_id': number;
+}
+/**
+ * 
+ * @export
+ * @interface Milestone
+ */
+export interface Milestone {
+    /**
+     * 
+     * @type {number}
+     * @memberof Milestone
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Milestone
+     */
+    'facility_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Milestone
+     */
+    'date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Milestone
+     */
+    'description': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Milestone
+     */
+    'order': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Milestone
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Milestone
+     */
+    'updated_at'?: number;
 }
 /**
  * 
@@ -1265,6 +1411,58 @@ export interface PostLoginResponse {
 /**
  * 
  * @export
+ * @interface PostMilestonesIdRequest
+ */
+export interface PostMilestonesIdRequest {
+    /**
+     * 
+     * @type {Milestone}
+     * @memberof PostMilestonesIdRequest
+     */
+    'milestone'?: Milestone;
+}
+/**
+ * 
+ * @export
+ * @interface PostMilestonesIdResponse
+ */
+export interface PostMilestonesIdResponse {
+    /**
+     * 
+     * @type {Milestone}
+     * @memberof PostMilestonesIdResponse
+     */
+    'milestone'?: Milestone;
+}
+/**
+ * 
+ * @export
+ * @interface PostMilestonesRequest
+ */
+export interface PostMilestonesRequest {
+    /**
+     * 
+     * @type {Milestone}
+     * @memberof PostMilestonesRequest
+     */
+    'milestone'?: Milestone;
+}
+/**
+ * 
+ * @export
+ * @interface PostMilestonesResponse
+ */
+export interface PostMilestonesResponse {
+    /**
+     * 
+     * @type {Milestone}
+     * @memberof PostMilestonesResponse
+     */
+    'milestone'?: Milestone;
+}
+/**
+ * 
+ * @export
  * @interface PostOperationSettingsIdRequest
  */
 export interface PostOperationSettingsIdRequest {
@@ -1365,6 +1563,32 @@ export interface PostProcessesResponse {
      * @memberof PostProcessesResponse
      */
     'process'?: Process;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketMemoIdRequest
+ */
+export interface PostTicketMemoIdRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostTicketMemoIdRequest
+     */
+    'memo': string;
+}
+/**
+ * 
+ * @export
+ * @interface PostTicketMemoIdResponse
+ */
+export interface PostTicketMemoIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostTicketMemoIdResponse
+     */
+    'msg'?: string;
 }
 /**
  * 
@@ -1776,6 +2000,12 @@ export interface Ticket {
     'progress_percent'?: number | null;
     /**
      * 
+     * @type {string}
+     * @memberof Ticket
+     */
+    'memo'?: string;
+    /**
+     * 
      * @type {number}
      * @memberof Ticket
      */
@@ -2079,6 +2309,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteHolidaysId', 'id', id)
             const localVarPath = `/api/holidays/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary DeleteMilestonesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteMilestonesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteMilestonesId', 'id', id)
+            const localVarPath = `/api/milestones/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2613,6 +2877,75 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetMilestones
+         * @param {number} [facilityId] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMilestones: async (facilityId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/milestones`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (facilityId !== undefined) {
+                localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetMilestonesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMilestonesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getMilestonesId', 'id', id)
+            const localVarPath = `/api/milestones/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetOperationSettingsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -2759,6 +3092,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          */
         getScheduleAlerts: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/scheduleAlerts`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetTicketMemoId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketMemoId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTicketMemoId', 'id', id)
+            const localVarPath = `/api/ticket-memo/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3446,6 +3813,78 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostMilestones
+         * @param {PostMilestonesRequest} [postMilestonesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postMilestones: async (postMilestonesRequest?: PostMilestonesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/milestones`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postMilestonesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostMilestonesId
+         * @param {number} id 
+         * @param {PostMilestonesRequest} [postMilestonesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postMilestonesId: async (id: number, postMilestonesRequest?: PostMilestonesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postMilestonesId', 'id', id)
+            const localVarPath = `/api/milestones/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postMilestonesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostOperationSettingsId
          * @param {number} id 
          * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
@@ -3548,6 +3987,44 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(postProcessesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostTicketMemoId
+         * @param {number} id 
+         * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketMemoId: async (id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postTicketMemoId', 'id', id)
+            const localVarPath = `/api/ticket-memo/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketMemoIdRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -3860,6 +4337,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary DeleteMilestonesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteMilestonesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteMilestonesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary DeleteOperationSettingsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -4023,6 +4511,28 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetMilestones
+         * @param {number} [facilityId] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMilestones(facilityId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetMilestonesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMilestonesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestonesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetOperationSettingsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -4073,6 +4583,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getScheduleAlerts(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetScheduleAlertsResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getScheduleAlerts(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetTicketMemoId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketMemoId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketMemoIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketMemoId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4288,6 +4809,29 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary PostMilestones
+         * @param {PostMilestonesRequest} [postMilestonesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postMilestones(postMilestonesRequest?: PostMilestonesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostMilestonesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postMilestones(postMilestonesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostMilestonesId
+         * @param {number} id 
+         * @param {PostMilestonesRequest} [postMilestonesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postMilestonesId(id: number, postMilestonesRequest?: PostMilestonesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postMilestonesId(id, postMilestonesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostOperationSettingsId
          * @param {number} id 
          * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
@@ -4319,6 +4863,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postProcessesId(id, postProcessesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostTicketMemoId
+         * @param {number} id 
+         * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketMemoId(id, postTicketMemoIdRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4450,6 +5006,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         deleteHolidaysId(id: number, options?: any): AxiosPromise<void> {
             return localVarFp.deleteHolidaysId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary DeleteMilestonesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteMilestonesId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteMilestonesId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4601,6 +5167,26 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetMilestones
+         * @param {number} [facilityId] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMilestones(facilityId?: number, options?: any): AxiosPromise<GetMilestonesResponse> {
+            return localVarFp.getMilestones(facilityId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetMilestonesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMilestonesId(id: number, options?: any): AxiosPromise<GetMilestonesIdResponse> {
+            return localVarFp.getMilestonesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetOperationSettingsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -4647,6 +5233,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getScheduleAlerts(options?: any): AxiosPromise<GetScheduleAlertsResponse> {
             return localVarFp.getScheduleAlerts(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetTicketMemoId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketMemoId(id: number, options?: any): AxiosPromise<GetTicketMemoIdResponse> {
+            return localVarFp.getTicketMemoId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -4842,6 +5438,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary PostMilestones
+         * @param {PostMilestonesRequest} [postMilestonesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postMilestones(postMilestonesRequest?: PostMilestonesRequest, options?: any): AxiosPromise<PostMilestonesResponse> {
+            return localVarFp.postMilestones(postMilestonesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostMilestonesId
+         * @param {number} id 
+         * @param {PostMilestonesRequest} [postMilestonesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postMilestonesId(id: number, postMilestonesRequest?: PostMilestonesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postMilestonesId(id, postMilestonesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary PostOperationSettingsId
          * @param {number} id 
          * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
@@ -4871,6 +5488,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postProcessesId(id, postProcessesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostTicketMemoId
+         * @param {number} id 
+         * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketMemoId(id, postTicketMemoIdRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5001,6 +5629,18 @@ export class DefaultApi extends BaseAPI {
      */
     public deleteHolidaysId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).deleteHolidaysId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary DeleteMilestonesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteMilestonesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteMilestonesId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5183,6 +5823,30 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary GetMilestones
+     * @param {number} [facilityId] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getMilestones(facilityId?: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getMilestones(facilityId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetMilestonesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getMilestonesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getMilestonesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary GetOperationSettingsId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -5238,6 +5902,18 @@ export class DefaultApi extends BaseAPI {
      */
     public getScheduleAlerts(options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getScheduleAlerts(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetTicketMemoId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketMemoId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketMemoId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5472,6 +6148,31 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary PostMilestones
+     * @param {PostMilestonesRequest} [postMilestonesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postMilestones(postMilestonesRequest?: PostMilestonesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postMilestones(postMilestonesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostMilestonesId
+     * @param {number} id 
+     * @param {PostMilestonesRequest} [postMilestonesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postMilestonesId(id: number, postMilestonesRequest?: PostMilestonesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postMilestonesId(id, postMilestonesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary PostOperationSettingsId
      * @param {number} id 
      * @param {PostOperationSettingsRequest} [postOperationSettingsRequest] 
@@ -5506,6 +6207,19 @@ export class DefaultApi extends BaseAPI {
      */
     public postProcessesId(id: number, postProcessesRequest?: PostProcessesRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postProcessesId(id, postProcessesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostTicketMemoId
+     * @param {number} id 
+     * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketMemoId(id, postTicketMemoIdRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -16,7 +16,8 @@
         <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
           <holiday-view></holiday-view>
         </ModalWithLink>
-        <ModalWithLink title="権限設定" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
+        <ModalWithLink title="マイルストーン" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
+          <milestone-view></milestone-view>
         </ModalWithLink>
 
       </template>
@@ -116,6 +117,7 @@ import {computed} from "vue";
 import {FacilityStatus} from "@/const/common";
 import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
 import {allowed} from "@/composable/role";
+import MilestoneView from "@/views/MilestoneView.vue";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!

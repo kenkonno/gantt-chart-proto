@@ -599,6 +599,37 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostTicketsRequest'
+  '/api/ticket-memo/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketMemoId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketMemoIdResponse'
+              examples: {}
+      operationId: get-ticket-memo-id
+      description: ''
+    post:
+      summary: PostTicketMemoId
+      operationId: post-ticket-memo-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketMemoIdRequest'
   /api/ticketUsers:
     get:
       summary: GetTicketUsers
@@ -776,6 +807,80 @@ paths:
               required:
                 - id
                 - password
+  /api/milestones:
+    get:
+      summary: GetMilestones
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMilestonesResponse'
+              examples: {}
+      operationId: get-milestones
+      description: ''
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: facilityId
+    post:
+      summary: PostMilestones
+      operationId: post-milestones
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMilestonesResponse'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMilestonesRequest'
+    parameters: []
+  '/api/milestones/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetMilestonesId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMilestonesIdResponse'
+              examples: {}
+      operationId: get-milestones-id
+      description: ''
+    delete:
+      summary: DeleteMilestonesId
+      operationId: delete-milestones-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostMilestonesId
+      operationId: post-milestones-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMilestonesRequest'
 components:
   schemas:
     User:
@@ -994,12 +1099,16 @@ components:
           type: string
         type:
           type: string
+        shipment_due_date:
+          type: string
+          format: date-time
       required:
         - name
         - term_from
         - term_to
         - status
         - type
+        - shipment_due_date
     GetFacilitiesRequest:
       title: GetFacilitiesRequest
       type: object
@@ -1529,7 +1638,6 @@ components:
     Ticket:
       title: Ticket
       type: object
-      description: ''
       x-tags:
         - Ticket
       properties:
@@ -1569,6 +1677,8 @@ components:
         progress_percent:
           type: integer
           nullable: true
+        memo:
+          type: string
         order:
           type: integer
         created_at:
@@ -1623,6 +1733,21 @@ components:
       properties:
         ticket:
           $ref: '#/components/schemas/Ticket'
+    GetTicketMemoIdRequest:
+      title: GetTicketMemoIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetTicketMemoIdResponse:
+      title: GetTicketMemoIdResponse
+      type: object
+      properties:
+        memo:
+          type: string
+      required:
+        - memo
     DeleteTicketsIdRequest:
       title: DeleteTicketsIdRequest
       type: object
@@ -1660,6 +1785,22 @@ components:
       properties:
         ticket:
           $ref: '#/components/schemas/Ticket'
+    PostTicketMemoIdRequest:
+      title: PostTicketMemoIdRequest
+      type: object
+      properties:
+        memo:
+          type: string
+      required:
+        - memo
+    PostTicketMemoIdResponse:
+      title: PostTicketMemoIdResponse
+      type: object
+      x-stoplight:
+        id: 35b5e2c39f317
+      properties:
+        msg:
+          type: string
     TicketUser:
       title: TicketUser
       type: object
@@ -1908,4 +2049,97 @@ components:
       required:
         - id
         - password
-  securitySchemes: {}
+    Milestone:
+      title: Milestone
+      type: object
+      x-tags:
+        - Milestone
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        date:
+          type: string
+          format: date-time
+        description:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+        - date
+        - description
+        - order
+    GetMilestonesRequest:
+      title: GetMilestonesRequest
+      type: object
+    GetMilestonesResponse:
+      title: GetMilestonesResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+      required:
+        - list
+    GetMilestonesIdRequest:
+      title: GetMilestonesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetMilestonesIdResponse:
+      title: GetMilestonesResponse
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    DeleteMilestonesIdRequest:
+      title: DeleteMilestonesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteMilestonesIdResponse:
+      title: DeleteMilestonesIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostMilestonesRequest:
+      title: PostMilestonesRequest
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    PostMilestonesResponse:
+      title: PostMilestonesResponse
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    PostMilestonesIdRequest:
+      title: PostMilestonesIdRequest
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    PostMilestonesIdResponse:
+      title: PostMilestonesIdResponse
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'

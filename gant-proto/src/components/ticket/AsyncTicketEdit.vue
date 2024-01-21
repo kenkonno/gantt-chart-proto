@@ -1,91 +1,95 @@
 <template>
   <div class="container">
-    <div class="mb-2">
-      <label class="form-label" for="id">Id</label>
-      <input class="form-control" type="text" name="id" id="id" v-model="ticket.id" :disabled="true">
+    <div class="d-flex flex-wrap conditions">
+      <p>
+        <b class="form-label">Id:</b>
+        <span>{{ ticket.id }}</span>
+      </p>
+      <p>
+        <b class="form-label">ユニット:</b>
+        <span>{{ getUnitName(props.unitId) }}</span>
+      </p>
+      <p>
+        <b class="form-label">工程:</b>
+        <span>{{ getProcessName(ticket.process_id) }}</span>
+      </p>
+      <p>
+        <b class="form-label">部署:</b>
+        <span>{{ getDepartmentName(ticket.department_id) }}</span>
+      </p>
+      <p v-if="false">
+        <b class="form-label">期日:</b>
+        <span>{{ ticket.limit_date }}</span>
+      </p>
+      <p>
+        <b class="form-label">工数:</b>
+        <span>{{ ticket.estimate }}</span>
+      </p>
+      <p>
+        <b class="form-label">日後:</b>
+        <span>{{ ticket.days_after }}</span>
+      </p>
+      <p>
+        <b class="form-label">開始日:</b>
+        <span>{{ $filters.dateFormatYMD(ticket.start_date) }}</span>
+      </p>
+      <p>
+        <b class="form-label">終了日:</b>
+        <span>{{ $filters.dateFormatYMD(ticket.end_date) }}</span>
+      </p>
+      <p>
+        <b class="form-label">進捗:</b>
+        <span>{{ ticket.progress_percent ? ticket.progress_percent : 0 }}%</span>
+      </p>
+      <p>
+        <b class="form-label">作成日:</b>
+        <span>{{ $filters.dateFormatYMD(ticket.created_at) }}</span>
+      </p>
+      <p>
+        <b class="form-label">更新日:</b>
+        <span>{{ $filters.unixTimeFormat(ticket.updated_at) }}</span>
+      </p>
     </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">GanttGroupId</label>
-      <input class="form-control" type="text" name="ganttGroupId" id="ganttGroupId" v-model="ticket.gantt_group_id" :disabled="false">
+    <div class="quill-editor">
+      <QuillEditor ref="myQuillEditor" theme="snow" v-model="memo"/>
     </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">ProcessId</label>
-      <input class="form-control" type="text" name="processId" id="processId" v-model="ticket.process_id" :disabled="false">
+    <div class="buttons">
+      <button type="submit" class="btn btn-primary" @click="updateTicketMemo()">更新</button>
     </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">DepartmentId</label>
-      <input class="form-control" type="text" name="departmentId" id="departmentId" v-model="ticket.department_id" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">LimitDate</label>
-      <input class="form-control" type="text" name="limitDate" id="limitDate" v-model="ticket.limit_date" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">Estimate</label>
-      <input class="form-control" type="text" name="estimate" id="estimate" v-model="ticket.estimate" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">DaysAfter</label>
-      <input class="form-control" type="text" name="daysAfter" id="daysAfter" v-model="ticket.days_after" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">StartDate</label>
-      <input class="form-control" type="text" name="startDate" id="startDate" v-model="ticket.start_date" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">EndDate</label>
-      <input class="form-control" type="text" name="endDate" id="endDate" v-model="ticket.end_date" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">ProgressPercent</label>
-      <input class="form-control" type="text" name="progressPercent" id="progressPercent" v-model="ticket.progress_percent" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">Order</label>
-      <input class="form-control" type="text" name="order" id="order" v-model="ticket.order" :disabled="false">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">作成日</label>
-      <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="ticket.created_at" :disabled="true">
-    </div>
-
-    <div class="mb-2">
-      <label class="form-label" for="id">更新日</label>
-      <input class="form-control" type="text" name="updatedAt" id="updatedAt" v-model="ticket.updated_at" :disabled="true">
-    </div>
-
-    <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postTicket(ticket, $emit)">更新</button>
-    </template>
-    <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postTicketById(ticket, $emit)">更新</button>
-      <button type="submit" class="btn btn-warning" @click="deleteTicketById(id, $emit)">削除</button>
-    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useTicket, postTicketById, postTicket, deleteTicketById} from "@/composable/ticket";
+import {useTicket, postTicketMemoById} from "@/composable/ticket";
+import {inject, onMounted, ref} from "vue";
+import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
+import {QuillEditor} from "@vueup/vue-quill";
+import {Api} from "@/api/axios";
+
+const {getUnitName, getDepartmentName, getProcessName} = inject(GLOBAL_GETTER_KEY)!
 
 interface AsyncTicketEdit {
   id: number | undefined
+  unitId: number
 }
 
 const props = defineProps<AsyncTicketEdit>()
-defineEmits(['closeEditModal'])
+const emit = defineEmits(['closeEditModal'])
 
 const {ticket} = await useTicket(props.id)
+const memo = ref<string>("")
+const {data} = await Api.getTicketMemoId(ticket.value.id!)
+memo.value = data.memo
+const myQuillEditor = ref(null)
+
+const updateTicketMemo = async () => {
+  await postTicketMemoById(ticket.value.id! ,myQuillEditor.value.getHTML(), emit)
+}
+
+onMounted(() => {
+  myQuillEditor.value.setHTML(memo.value)
+})
+
 
 </script>
 
@@ -93,6 +97,36 @@ const {ticket} = await useTicket(props.id)
 label {
   float: left;
 }
-</style>
 
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  height: 80%;
+  overflow: scroll;
+}
+
+.conditions {
+  border: 1px solid #aaaaaa;
+  border-radius: 10px;
+  flex: 1;
+  min-height: 80px;
+
+  > p {
+    margin: 5px;
+  }
+}
+
+.buttons {
+  flex: 1;
+  min-height: 50px;
+  margin-top: 50px;
+}
+
+</style>
+<style>
+.quill-editor, .ql-container, .ql-editor{
+  min-height: 10rem;
+}
+</style>
 

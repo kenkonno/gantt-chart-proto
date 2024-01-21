@@ -19,6 +19,7 @@ func main() {
 	migrate(db.GanttGroup{})
 	migrate(db.TicketUser{})
 	migrate(db.Ticket{})
+	migrate(db.Milestone{})
 }
 
 func migrate[T any](model T) {

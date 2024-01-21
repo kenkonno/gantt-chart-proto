@@ -1,5 +1,5 @@
 import dayjs, {Dayjs} from "dayjs";
-import {GanttBarObject} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref, toValue} from "vue";
 import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser} from "@/api";
 import {Api} from "@/api/axios";
@@ -22,6 +22,7 @@ import {DEFAULT_PROCESS_COLOR} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
+import {useMilestoneTable} from "@/composable/milestone";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -56,6 +57,7 @@ export async function useGanttFacility() {
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
+    const milestones = ref<MileStone[]>([])
 
     const getUnitName = computed(() => (id: number) => {
         return unitMap[currentFacilityId].find(v => v.id === id)?.name
@@ -100,6 +102,21 @@ export async function useGanttFacility() {
         }))
         return result
     })
+
+    const refreshMilestones = async () => {
+        const {list} = await useMilestoneTable(currentFacilityId)
+        milestones.value.length = 0
+        milestones.value.push(<MileStone>{
+            date: new Date(facility.value.shipment_due_date + " 00:00:00"),
+            description: "出荷期日"
+        })
+        milestones.value.push(
+            ...list.value.map(v => {
+                return <MileStone>{date: new Date(v.date), description: v.description}
+            })
+        )
+    }
+    await refreshMilestones()
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -442,7 +459,8 @@ export async function useGanttFacility() {
         updateDepartment,
         updateOrder,
         updateTicket,
-        hasFilter
+        hasFilter,
+        milestones
     }
 }
 

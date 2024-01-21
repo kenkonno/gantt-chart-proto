@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostTicketsRequest, Ticket} from "@/api";
+import {PostTicketMemoIdRequest, PostTicketsRequest, Ticket} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {Emit} from "@/const/common";
@@ -80,6 +80,18 @@ export async function postTicketById(ticket: Ticket, emit: Emit) {
         })
     }
 }
+
+export async function postTicketMemoById(ticketId: number, memo: string, emit: Emit) {
+    const req: PostTicketMemoIdRequest = {
+        memo: memo
+    }
+    await Api.postTicketMemoId(ticketId, req).then(() => {
+        toast("成功しました。")
+    }).finally(() => {
+        emit('closeEditModal')
+    })
+}
+
 
 export async function deleteTicketById(id: number, emit: Emit) {
     await Api.deleteTicketsId(id).then(() => {
