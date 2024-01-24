@@ -272,9 +272,8 @@ const openTicketDetail = (ticketId: number, unitId: number) => {
 let isDragged = false;
 
 // ここからイベントフック
-const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
+const onClickBar =  (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  await adjustBar(bar)
   if(!isDragged) {
     openTicketDetail(Number(bar.ganttBarConfig.id), 1)
   }
@@ -306,10 +305,11 @@ const onDragBar = (bar: GanttBarObject, e: MouseEvent) => {
   console.log("drag-bar", bar, e)
 }
 
-const onDragendBar = (
+const onDragendBar = async (
     bar: GanttBarObject,
     e: MouseEvent,
 ) => {
+  await adjustBar(bar)
   console.log("dragend-bar", bar, e)
 }
 
