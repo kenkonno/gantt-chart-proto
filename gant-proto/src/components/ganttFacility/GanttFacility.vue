@@ -78,32 +78,28 @@
                                 :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[5].visible">
-                    <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"
-                           :disabled="!allowed('UPDATE_TICKET')"/>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[6].visible">
                     <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"
                                 :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[7].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[6].visible">
                     <FormNumber class="small-numeric" v-model="row.ticket.days_after"
                                 @change="updateTicket(row.ticket)"
                                 :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[8].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[7].visible">
                     <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"
                            :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[9].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[8].visible">
                     <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"
                            :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[10].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[9].visible">
                     <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
                                 @change="updateTicket(row.ticket)"
                                 :disabled="!allowed('UPDATE_PROGRESS')"/>
                   </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[11].visible" v-if="allowed('UPDATE_TICKET')">
+                  <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
                     <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span
                         class="material-symbols-outlined">arrow_upward</span></a>
                     <a href="#" @click.prevent="updateOrder(item.rows, index,1)"><span

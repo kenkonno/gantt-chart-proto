@@ -16,7 +16,7 @@ export function useGanttFacilityMenu() {
         {name: "部署", visible: true},
         {name: "担当者", visible: true},
         {name: "人数", visible: false},
-        {name: "期日", visible: false},
+        // {name: "期日", visible: false},
         {name: "工数(h)", visible: true},
         {name: "日後", visible: false},
         {name: "開始日", visible: false},
