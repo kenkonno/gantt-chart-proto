@@ -1,12 +1,12 @@
-import {computed, ComputedRef, inject, Ref, ref, toValue, UnwrapRef, watch} from "vue";
+import {computed, ComputedRef, inject, Ref, ref, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
 import {Department, Holiday, Ticket, TicketUser, User} from "@/api";
 import {round} from "@/utils/math";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {DisplayType} from "@/composable/ganttFacility";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
-import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {Api} from "@/api/axios";
+import {FacilityStatus} from "@/const/common";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 type PileUpByPerson = {
     user: User,
@@ -108,6 +108,8 @@ export const usePielUps = (
     tickets: ComputedRef<Ticket[]>, ticketUsers: ComputedRef<TicketUser[]>,
     displayType: ComputedRef<DisplayType>,
     holidays: ComputedRef<Holiday[]>, departmentList: Department[], userList: User[],
+    selectedDepartment: Ref<number | undefined>,
+    selectedUser: Ref<number | undefined>,
     defaultPileUpsByPerson: PileUpByPerson[] = [], defaultPileUpsByDepartment: PileUpByDepartment[] = [],
     globalStartDate?: string,
 ) => {
@@ -145,7 +147,7 @@ export const usePielUps = (
                 pileUpsByPerson.value, pileUpsByDepartment.value,
                 ticket,
                 ticketUsers.value.filter(v => v.ticket_id === ticket.id),
-                startDate, holidays.value
+                startDate, holidays.value, userList
             )
         })
         // 稼働上限のスタイルを適応する
@@ -177,12 +179,13 @@ export const usePielUps = (
      * @param ticketUsers
      * @param facilityStartDate
      * @param holidays
+     * @param userList
      */
     const setWorkHour = (pileUpsByPerson: PileUpByPerson[], pileUpByDepartment: PileUpByDepartment[],
                          ticket: Ticket,
                          ticketUsers: TicketUser[],
                          facilityStartDate: string,
-                         holidays: Holiday[]) => {
+                         holidays: Holiday[], userList: User[]) => {
 
         // validation
         if (ticket.start_date == null || ticket.end_date == null || ticket.estimate == null ||
@@ -225,8 +228,6 @@ export const usePielUps = (
             if (ticketUserIds.indexOf(a.user.id!) > ticketUserIds.indexOf(b.user.id!)) return 1;
             return 0
         })
-        // 対象部署を取得
-        const departmentTarget = pileUpByDepartment.find(v => v.departmentId === ticket.department_id)
         // 稼働時間を加算する。
         validIndexes.forEach((validIndex, index) => {
             targets.forEach((v, targetIndex) => {
@@ -237,9 +238,6 @@ export const usePielUps = (
                 if (index === (validIndexes.length - 1) && targetIndex === (targets.length - 1)) {
                     if (estimate - workHour > 0) {
                         v.labels[validIndex] += estimate
-                        if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
-                            departmentTarget.users[validIndex].push(v.user.id!)
-                        }
                         return
                     }
                 }
@@ -248,10 +246,15 @@ export const usePielUps = (
                 } else {
                     v.labels[validIndex] += workHour
                 }
-                if (departmentTarget != null && !departmentTarget.users[validIndex].includes(v.user.id!)) {
-                    departmentTarget.users[validIndex].push(v.user.id!)
-                }
                 estimate -= workHour
+            })
+            // このチケットに登場した人から部署の設定を行う。ユーザーから部署を引いて足す
+            ticketUserIds.map( v => userList.find(user => user.id == v )).forEach(user => {
+                if (user == undefined) return
+                const departmentTarget = pileUpByDepartment.find(v => v.departmentId === user.department_id)
+                if (departmentTarget != null && !departmentTarget.users[validIndex].includes(user.id!)) {
+                    departmentTarget.users[validIndex].push(user.id!)
+                }
             })
         })
     }
@@ -319,10 +322,34 @@ export const usePielUps = (
 
     // 山積みの並び順通りに配列を返す
     const displayPileUps = computed(() => {
+        // TODO: こことvue側が重複コードになっている
+        let targetDepartmentId = selectedDepartment.value
+        if (selectedUser.value != undefined) {
+            targetDepartmentId = userList.find( v => v.id == selectedUser.value)?.department_id
+        } else {
+            targetDepartmentId = selectedDepartment.value
+        }
+        const filteredPileUpsByDepartment = pileUpsByDepartment.value.filter(v => {
+            if (targetDepartmentId == undefined) {
+                return true
+            } else {
+                return v.departmentId == targetDepartmentId
+            }
+        })
+        const filteredPileUpsByPerson = pileUpsByPerson.value.filter(v => {
+            if (selectedUser.value == undefined) {
+                return true
+            } else {
+                return v.user.id == selectedUser.value
+            }
+        })
         const result: DisplayPileUp[] = []
         pileUpFilters.value.forEach(f => {
             // 部署の追加、ユーザー数を追加する。
-            const v = pileUpsByDepartment.value.find(v => v.departmentId === f.departmentId)!
+            const v = filteredPileUpsByDepartment.find(v => v.departmentId === f.departmentId)!
+            if ( v == undefined) {
+                return
+            }
             result.push(
                 {
                     labels: v.users.map(vv => vv.length === 0 ? '' : vv.length.toString()),
@@ -330,7 +357,7 @@ export const usePielUps = (
                     styles: v.styles
                 })
             if (f.displayUsers) {
-                const v = pileUpsByPerson.value.filter(v => v.user.department_id === f.departmentId)
+                const v = filteredPileUpsByPerson.filter(v => v.user.department_id === f.departmentId)
                 v.forEach(user => {
                     result.push(
                         {
@@ -375,19 +402,25 @@ export const usePielUps = (
  * @param excludeFacilityId
  * @param displayType
  */
-export const getDefaultPileUps = async (excludeFacilityId: number, displayType: DisplayType) => {
-    const {facilityList, holidayMap, userList, departmentList} = inject(GLOBAL_STATE_KEY)!
+export const getDefaultPileUps = async (
+    excludeFacilityId: number,
+    displayType: DisplayType,
+    selectedDepartment: Ref<number | undefined>,
+    selectedUser: Ref<number | undefined>,
+) => {
+    const {facilityList, userList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
+    const filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
 
-    const {data: allTickets} = await Api.getAllTickets()
+    const {data: allTickets} = await Api.getAllTickets(facilityTypes)
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
-    const {data: allData} = await Api.getPileUps(excludeFacilityId)
+    const {data: allData} = await Api.getPileUps(excludeFacilityId, facilityTypes)
 
     // 全設備の最小
-    const startDate: string = facilityList.slice().sort((a, b) => {
+    const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
     }).shift()!.term_from.substring(0, 10)
     // 全設備の最大
-    const endDate: string = facilityList.slice().sort((a, b) => {
+    const endDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_to > b.term_to ? 1 : -1
     }).pop()!.term_to.substring(0, 10)
 
@@ -395,7 +428,7 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
     const defaultPileUpsByDepartment = ref<PileUpByDepartment[]>([])
     initPileUps(endDate, startDate, userList, defaultPileUpsByPerson, departmentList, defaultPileUpsByDepartment);
 
-    for (const facility of facilityList) {
+    for (const facility of filteredFacilityList) {
         // 対象外の設備はスキップ
         if (facility.id === excludeFacilityId) continue
         const targetData = allData.list.find(v => v.facilityId === facility.id)
@@ -418,7 +451,7 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
         const {pileUpsByPerson, pileUpsByDepartment} = usePielUps(startDate, endDate,
             tickets, ticketUsers,
             computed(() => displayType),
-            holidays, departmentList, userList)
+            holidays, departmentList, userList, selectedDepartment, selectedUser)
 
         // defaultPileUpsに計上する, stylesとかは一旦無視でいいと思う。本チャンの方で着色するので。
         pileUpsByPerson.value.forEach(pileUp => {
@@ -432,6 +465,7 @@ export const getDefaultPileUps = async (excludeFacilityId: number, displayType: 
             target.users.forEach((v, i) => {
                 const r: number[] = []
                 r.push(...v, ...pileUp.users[i])
+                target.users[i].length = 0
                 target.users[i].push(...Array.from(new Set(r)))
             })
         })

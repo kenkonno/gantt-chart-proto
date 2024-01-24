@@ -599,6 +599,37 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostTicketsRequest'
+  '/api/ticket-memo/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketMemoId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketMemoIdResponse'
+              examples: {}
+      operationId: get-ticket-memo-id
+      description: ''
+    post:
+      summary: PostTicketMemoId
+      operationId: post-ticket-memo-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketMemoIdRequest'
   /api/ticketUsers:
     get:
       summary: GetTicketUsers
@@ -679,7 +710,13 @@ paths:
               examples: {}
       operationId: get-all-tickets
       description: ''
-      parameters: []
+      parameters:
+        - schema:
+            type: array
+            items:
+              type: string
+          in: query
+          name: facilityTypes
     parameters: []
   /api/pileUps:
     get:
@@ -701,6 +738,12 @@ paths:
           in: query
           name: facilityId
           required: true
+        - schema:
+            type: array
+            items:
+              type: string
+          in: query
+          name: facilityTypes
   /api/copyFacilitys:
     post:
       summary: PostCopyFacilitys
@@ -715,6 +758,129 @@ paths:
             schema:
               $ref: '#/components/schemas/PostCopyFacilitysRequest'
     parameters: []
+  /api/scheduleAlerts:
+    get:
+      summary: GetScheduleAlerts
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleAlertsResponse'
+              examples: {}
+      operationId: get-scheduleAlerts
+      description: ''
+      parameters: []
+    parameters: []
+  /api/userInfo:
+    get:
+      summary: GetUserInfo
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserInfoResponse'
+      operationId: get-userInfo
+      parameters: []
+  /api/login:
+    post:
+      summary: ''
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                password:
+                  type: string
+              required:
+                - id
+                - password
+  /api/milestones:
+    get:
+      summary: GetMilestones
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMilestonesResponse'
+              examples: {}
+      operationId: get-milestones
+      description: ''
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: facilityId
+    post:
+      summary: PostMilestones
+      operationId: post-milestones
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMilestonesResponse'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMilestonesRequest'
+    parameters: []
+  '/api/milestones/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetMilestonesId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMilestonesIdResponse'
+              examples: {}
+      operationId: get-milestones-id
+      description: ''
+    delete:
+      summary: DeleteMilestonesId
+      operationId: delete-milestones-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostMilestonesId
+      operationId: post-milestones-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMilestonesRequest'
 components:
   schemas:
     User:
@@ -735,7 +901,7 @@ components:
           x-go-custom-tag: 'binding:"min=1"'
         password:
           type: string
-          x-go-custom-tag: 'binding:"min=1"'
+          x-go-custom-tag: 'binding:"min=0"'
         email:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
@@ -743,13 +909,17 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int64
+        role:
+          type: string
       required:
         - department_id
         - limit_of_operation
         - name
         - password
         - email
+        - role
     GetUsersRequest:
       title: GetUsersRequest
       type: object
@@ -831,7 +1001,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - name
         - order
@@ -922,11 +1093,22 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
+        status:
+          type: string
+        type:
+          type: string
+        shipment_due_date:
+          type: string
+          format: date-time
       required:
         - name
         - term_from
         - term_to
+        - status
+        - type
+        - shipment_due_date
     GetFacilitiesRequest:
       title: GetFacilitiesRequest
       type: object
@@ -1010,7 +1192,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
         facility_id:
           type: integer
       required:
@@ -1105,7 +1288,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - workHours
     GetOperationSettingsRequest:
@@ -1195,7 +1379,10 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
+        color:
+          type: string
       required:
         - name
     GetProcessesRequest:
@@ -1281,7 +1468,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - facility_id
         - name
@@ -1379,7 +1567,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - facility_id
         - unit_id
@@ -1449,7 +1638,6 @@ components:
     Ticket:
       title: Ticket
       type: object
-      description: ''
       x-tags:
         - Ticket
       properties:
@@ -1489,13 +1677,16 @@ components:
         progress_percent:
           type: integer
           nullable: true
+        memo:
+          type: string
         order:
           type: integer
         created_at:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - gantt_group_id
         - order
@@ -1542,6 +1733,21 @@ components:
       properties:
         ticket:
           $ref: '#/components/schemas/Ticket'
+    GetTicketMemoIdRequest:
+      title: GetTicketMemoIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetTicketMemoIdResponse:
+      title: GetTicketMemoIdResponse
+      type: object
+      properties:
+        memo:
+          type: string
+      required:
+        - memo
     DeleteTicketsIdRequest:
       title: DeleteTicketsIdRequest
       type: object
@@ -1579,6 +1785,22 @@ components:
       properties:
         ticket:
           $ref: '#/components/schemas/Ticket'
+    PostTicketMemoIdRequest:
+      title: PostTicketMemoIdRequest
+      type: object
+      properties:
+        memo:
+          type: string
+      required:
+        - memo
+    PostTicketMemoIdResponse:
+      title: PostTicketMemoIdResponse
+      type: object
+      x-stoplight:
+        id: 35b5e2c39f317
+      properties:
+        msg:
+          type: string
     TicketUser:
       title: TicketUser
       type: object
@@ -1600,7 +1822,8 @@ components:
           type: string
           format: date-time
         updated_at:
-          type: int
+          type: integer
+          format: int
       required:
         - ticket_id
         - user_id
@@ -1739,3 +1962,184 @@ components:
       properties:
         '':
           type: string
+    PostLoginResponse:
+      title: PostLoginResponse
+      type: object
+      properties:
+        '':
+          type: string
+      x-stoplight:
+        id: 092f8edf825cf
+    ScheduleAlert:
+      title: ScheduleAlert
+      type: object
+      x-tags:
+        - ScheduleAlert
+      properties:
+        facility_id:
+          type: integer
+        facility_name:
+          type: string
+        unit_id:
+          type: integer
+        unit_name:
+          type: string
+        process_id:
+          type: integer
+        process_name:
+          type: string
+        end_date:
+          type: string
+          format: date-time
+        start_date:
+          type: string
+          format: date-time
+        actual_progress_date:
+          type: string
+          format: date-time
+        progress_percent:
+          x-go-custom-tag: 'binding:"min=1"'
+          type: number
+        delay_days:
+          type: number
+        ticket_id:
+          type: integer
+      required:
+        - facility_id
+        - facility_name
+        - unit_id
+        - unit_name
+        - process_id
+        - process_name
+        - end_date
+        - start_date
+        - progress_percent
+        - delay_days
+    GetScheduleAlertsRequest:
+      title: GetScheduleAlertsRequest
+      type: object
+    GetScheduleAlertsResponse:
+      title: GetScheduleAlertsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleAlert'
+      required:
+        - list
+    GetUserInfoResponse:
+      title: GetUserInfoResponse
+      x-stoplight:
+        id: vu4rjgwhwviqz
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    PostLoginRequest:
+      title: PostLoginRequest
+      x-stoplight:
+        id: 26mxo5zdv02sl
+      type: object
+      properties:
+        id:
+          type: string
+        password:
+          type: string
+      required:
+        - id
+        - password
+    Milestone:
+      title: Milestone
+      type: object
+      x-tags:
+        - Milestone
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        date:
+          type: string
+          format: date-time
+        description:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        order:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+        - date
+        - description
+        - order
+    GetMilestonesRequest:
+      title: GetMilestonesRequest
+      type: object
+    GetMilestonesResponse:
+      title: GetMilestonesResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+      required:
+        - list
+    GetMilestonesIdRequest:
+      title: GetMilestonesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetMilestonesIdResponse:
+      title: GetMilestonesResponse
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    DeleteMilestonesIdRequest:
+      title: DeleteMilestonesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteMilestonesIdResponse:
+      title: DeleteMilestonesIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostMilestonesRequest:
+      title: PostMilestonesRequest
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    PostMilestonesResponse:
+      title: PostMilestonesResponse
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    PostMilestonesIdRequest:
+      title: PostMilestonesIdRequest
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'
+    PostMilestonesIdResponse:
+      title: PostMilestonesIdResponse
+      type: object
+      properties:
+        milestone:
+          $ref: '#/components/schemas/Milestone'

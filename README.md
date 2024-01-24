@@ -80,6 +80,7 @@ docker-compose -p env1 down
 docker-compose -p env1 up -d gantt_postgres
 docker-compose -p env1 up -d gantt_session
 docker-compose -p env1 up -d gantt_api
+
 docker-compose -p env1 logs gantt_api
 
 docker-compose -p env1 up gantt_migration

@@ -1,45 +1,83 @@
 <template>
   <nav class="navbar navbar-light bg-light">
-    <div>
-      <b>全体設定</b>
-      <ModalWithLink title="設備一覧" icon="precision_manufacturing">
-        <facility-view @update="refreshFacilityList(); refreshGantt(globalState.currentFacilityId)"></facility-view>
-      </ModalWithLink>
-      <ModalWithLink title="工程一覧" icon="account_tree">
-        <process-view></process-view>
-      </ModalWithLink>
-      <ModalWithLink title="部署一覧" icon="settings_accessibility">
-        <department-view></department-view>
-      </ModalWithLink>
-      <ModalWithLink title="担当者一覧" icon="person">
-        <user-view></user-view>
-      </ModalWithLink>
-    </div>
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>設備設定</b>
-      <select style="display: inline" v-model.number="globalState.currentFacilityId" @input="refreshGantt(Number($event.target.value))">
+      <select style="display: inline" v-model.number="globalState.currentFacilityId"
+              @input="refreshGantt(Number($event.target.value))">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-      <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
-        <unit-view></unit-view>
-      </ModalWithLink>
-      <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1">
-        <operation-setting-view></operation-setting-view>
-      </ModalWithLink>
-      <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
-        <holiday-view></holiday-view>
-      </ModalWithLink>
-      <ModalWithLink title="権限設定" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
-      </ModalWithLink>
+      <template v-if="allowed('FACILITY_SETTINGS')">
+        <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
+          <unit-view></unit-view>
+        </ModalWithLink>
+        <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1">
+          <operation-setting-view></operation-setting-view>
+        </ModalWithLink>
+        <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
+          <holiday-view></holiday-view>
+        </ModalWithLink>
+        <ModalWithLink title="マイルストーン" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
+          <milestone-view></milestone-view>
+        </ModalWithLink>
+
+      </template>
     </div>
     <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
   </nav>
-  <gantt-proxy :facilityId="globalState.currentFacilityId" v-if="globalState.currentFacilityId > 0"></gantt-proxy>
-  <div v-else>
-    ユニットを選択してください。
+
+  <div style="display:none">{{gantFacility != undefined}} vuejshack</div>
+  <div v-show="globalState.currentFacilityId > 0">
+    <gantt-facility-menu
+        :gantt-facility-header="GanttHeader"
+        :display-type="displayType"
+        @set-schedule-by-from-to="gantFacility.setScheduleByFromToProxy()"
+        @set-schedule-by-person-day="gantFacility.setScheduleByPersonDayProxy()"
+        @updateDisplayType="updateDisplayType"
+    ></gantt-facility-menu>
   </div>
+  <div v-if="globalState.currentFacilityId <= 0">
+    設備を選択してください。
+  </div>
+  <Suspense v-if="globalState.currentFacilityId > 0 && globalState.ganttFacilityRefresh">
+    <gantt-facility
+        ref="gantFacility"
+        :gantt-facility-header="GanttHeader"
+        :display-type="displayType"
+    >
+    </gantt-facility>
+    <template #fallback>
+      <default-spinner></default-spinner>
+    </template>
+  </Suspense>
 </template>
 <style lang="scss" scoped>
+.navbar {
+  padding: 0;
+  height: 30px;
+  font-size: 0.8rem;
+
+  > div {
+    > a, div {
+      display: block;
+      margin-left: 5px;
+      color: inherit;
+      padding: 0;
+      text-decoration: inherit;
+      border-bottom: 1px solid black;
+
+      > .material-symbols-outlined {
+        vertical-align: middle;
+        font-size: 1rem;
+      }
+
+      .text {
+        vertical-align: middle;
+      }
+    }
+
+  }
+}
+
 nav {
   padding: 0 0 5px 5px;
 
@@ -63,37 +101,37 @@ nav {
 }
 </style>
 <script setup lang="ts">
-import FacilityView from "@/views/FacilityView.vue";
-import ModalWithLink from "@/components/modal/ModalWithLink.vue";
-import ProcessView from "@/views/ProcessView.vue";
-import DepartmentView from "@/views/DepartmentView.vue";
-import UserView from "@/views/UserView.vue";
-import UnitView from "@/views/UnitView.vue";
-import OperationSettingView from "@/views/OperationSettingView.vue";
-import HolidayView from "@/views/HolidayView.vue";
-import {inject, nextTick} from "vue";
-import GanttProxy from "@/components/GanttProxy.vue";
+import {inject, ref} from "vue";
+import GanttFacility from "@/components/ganttFacility/GanttFacility.vue";
 import {
-  GLOBAL_ACTION_KEY,
   GLOBAL_MUTATION_KEY,
   GLOBAL_STATE_KEY,
 } from "@/composable/globalState";
+import GanttFacilityMenu from "@/components/ganttFacility/GanttFacilityMenu.vue";
+import {DisplayType, useGanttFacilityMenu} from "@/composable/ganttFacilityMenu";
+import OperationSettingView from "@/views/OperationSettingView.vue";
+import ModalWithLink from "@/components/modal/ModalWithLink.vue";
+import UnitView from "@/views/UnitView.vue";
+import HolidayView from "@/views/HolidayView.vue";
+import {computed} from "vue";
+import {FacilityStatus} from "@/const/common";
+import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
+import {allowed} from "@/composable/role";
+import MilestoneView from "@/views/MilestoneView.vue";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
-const facilityList = globalState.facilityList
-const {refreshFacilityList, refreshHolidayMap, refreshUnitMap, refreshOperationSettingMap} = inject(GLOBAL_ACTION_KEY)!
-const {updateCurrentFacilityId} = inject(GLOBAL_MUTATION_KEY)!
+const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
-// たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
-const refreshGantt = async (facilityId: number) => {
-  updateCurrentFacilityId(0)
-  // facility紐づくデータを初期化する
-  await refreshHolidayMap(facilityId)
-  await refreshUnitMap(facilityId)
-  await refreshOperationSettingMap(facilityId)
-  nextTick(() => {
-    updateCurrentFacilityId(facilityId)
-  })
+const {GanttHeader, displayType} = useGanttFacilityMenu()
+const gantFacility = ref(null)
+const updateDisplayType = (v: DisplayType) => {
+  displayType.value = v
 }
 
+const facilityList = computed(() => {
+  return globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled)
+})
+
+
+// たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
 </script>

@@ -34,7 +34,7 @@ services:
     image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
     container_name: gantt_api
     ports:
-      - "443:443"
+      - "80:80"
     depends_on:
       #CHANGE 2: it prevents issuing a request while the server is starting to depend on the healthy status of postgres-db
       gantt_postgres:
@@ -66,6 +66,22 @@ services:
     tty:
       true
     command: go run ./main.go
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # postgres サービス
+  gantt_session:
+#    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_postgres
+    # コンテナの名前
+    container_name: gantt_session
+    # Dockerfile のディレクトリパス
+    build:
+      context: .
+      dockerfile: ./docker/session/Dockerfile
+    ports:
+      - "6379:6379"
+    # postgres 設定
+    env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

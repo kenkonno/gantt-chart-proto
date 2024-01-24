@@ -1,0 +1,10 @@
+SELECT setval('departments_id_seq', (SELECT MAX(id) FROM departments));
+SELECT setval('facilities_id_seq', (SELECT MAX(id) FROM facilities));
+SELECT setval('gantt_groups_id_seq', (SELECT MAX(id) FROM gantt_groups));
+SELECT setval('holidays_id_seq', (SELECT MAX(id) FROM holidays));
+SELECT setval('operation_settings_id_seq', (SELECT MAX(id) FROM operation_settings));
+SELECT setval('processes_id_seq', (SELECT MAX(id) FROM processes));
+SELECT setval('ticket_users_id_seq', (SELECT MAX(id) FROM ticket_users));
+SELECT setval('tickets_id_seq', (SELECT MAX(id) FROM tickets));
+SELECT setval('units_id_seq', (SELECT MAX(id) FROM units));
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));

@@ -1,58 +1,5 @@
 <template>
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
-    <div class="action-menu d-flex">
-      <div class="wrapper d-flex">
-        <div class="justify-middle">
-          <div>メニュー</div>
-        </div>
-      </div>
-      <AccordionHorizontal class="justify-middle">
-        <template v-slot:icon>
-          <span class="material-symbols-outlined">menu_open</span>
-        </template>
-        <template v-slot:body>
-          <tippy content="（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
-            <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
-                   @click="setScheduleByPersonDayProxy()">
-          </tippy>
-          <tippy content="開始日・終了日・工数・工程が入力されている行が対象です。担当所が入力されている行は無視されます。">
-            <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ(日付)重視"
-                   @click="setScheduleByFromToProxy()">
-          </tippy>
-        </template>
-      </AccordionHorizontal>
-      <AccordionHorizontal class="justify-middle">
-        <template v-slot:icon>
-          <span class="material-symbols-outlined">filter_list</span>
-        </template>
-        <template v-slot:body>
-          <div class="justify-middle">
-            <div class="filter">
-              <label v-for="item in GanttHeader" :key="item" class="side-menu-cell">
-                <input type="checkbox" v-model="item.visible"/>{{ item.name }}
-              </label>
-            </div>
-          </div>
-        </template>
-      </AccordionHorizontal>
-      <div class="d-flex justify-middle">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="displayType" id="byDay" v-model="displayType" value="day">
-          <label class="form-check-label" for="byDay">
-            日毎
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="displayType" id="byWeek" v-model="displayType"
-                 value="week">
-          <label class="form-check-label" for="byWeek">
-            週次
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!--  <input type="button" class="btn btn-sm btn-outline-dark" value="スケジュールをスライドする" @click="slideSchedule(oldRows)">-->
     <div class="gantt-wrapper">
       <div class="d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
         <g-gantt-chart
@@ -61,7 +8,7 @@
             :precision="displayType"
             :row-height="40"
             grid
-            :width="getGanttChartWidth"
+            :width="getGanttChartWidth(displayType)"
             bar-start="beginDate"
             bar-end="endDate"
             :date-format="DAYJS_FORMAT"
@@ -76,23 +23,25 @@
             @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
             color-scheme="creamy"
 
-            :highlighted-dates="getHolidaysForGantt"
+            :highlighted-dates="getHolidaysForGantt(displayType)"
             sticky
             :display-today-line="true"
             @today-line-position-x="initScroll($event, ganttWrapperElement)"
+            :mile-stone-list="milestones"
         >
           <template #side-menu>
             <table class="side-menu" ref="ganttSideMenuElement">
               <thead class="side-menu-header">
               <tr>
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
-                <th :colspan="GanttHeader.length">
+                <th :colspan="props.ganttFacilityHeader.length">
                   「{{ facility.name }}」のスケジュール：{{ facility.term_from }}～{{ facility.term_to }}
                 </th>
               </tr>
               <tr>
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
-                <th v-for="item in GanttHeader" :key="item" class="side-menu-cell" :class="{'d-none': !item.visible}">
+                <th v-for="item in props.ganttFacilityHeader" :key="item" class="side-menu-cell"
+                    :class="{'d-none': !item.visible}">
                   {{ item.name }}
                 </th>
               </tr>
@@ -101,54 +50,70 @@
               <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
                 <tr v-for="(row, index) in item.rows" :key="row.ticket.id">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
-                  <gantt-td :visible="GanttHeader[0].visible">{{ getUnitName(item.ganttGroup.unit_id) }}</gantt-td>
-                  <gantt-td :visible="GanttHeader[1].visible">
-                    <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)">
+                  <gantt-td :visible="props.ganttFacilityHeader[0].visible">{{
+                      getUnitName(item.ganttGroup.unit_id)
+                    }}
+                  </gantt-td>
+                  <gantt-td :visible="props.ganttFacilityHeader[1].visible">
+                    <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)"
+                            :disabled="!allowed('UPDATE_TICKET')">
                       <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[2].visible">
-                    <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)">
-                      <option v-for="item in departmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
+                  <gantt-td :visible="props.ganttFacilityHeader[2].visible">
+                    <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)"
+                            :disabled="!allowed('UPDATE_TICKET')">
+                      <option v-for="item in cDepartmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[3].visible" style="min-width: 8rem;">
+                  <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
                     <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id)"
                                      :ticketUser="row.ticketUsers"
+                                     :disabled="!allowed('UPDATE_TICKET')"
                                      @update:modelValue="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[4].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[4].visible">
                     <FormNumber class="small-numeric" v-model="row.ticket.number_of_worker"
-                                @change="updateTicket(row.ticket)" :disabled="row.ticketUsers?.length > 0"/>
+                                @change="updateTicket(row.ticket)"
+                                :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[5].visible">
-                    <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"/>
+                  <gantt-td :visible="props.ganttFacilityHeader[5].visible">
+                    <input type="date" v-model="row.ticket.limit_date" @change="updateTicket(row.ticket)"
+                           :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[6].visible">
-                    <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"/>
+                  <gantt-td :visible="props.ganttFacilityHeader[6].visible">
+                    <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"
+                                :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[7].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[7].visible">
                     <FormNumber class="small-numeric" v-model="row.ticket.days_after"
-                                @change="updateTicket(row.ticket)"/>
+                                @change="updateTicket(row.ticket)"
+                                :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[8].visible">
-                    <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"/>
+                  <gantt-td :visible="props.ganttFacilityHeader[8].visible">
+                    <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"
+                           :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[9].visible">
-                    <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"/>
+                  <gantt-td :visible="props.ganttFacilityHeader[9].visible">
+                    <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"
+                           :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[10].visible">
+                  <gantt-td :visible="props.ganttFacilityHeader[10].visible">
                     <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
-                                @change="updateTicket(row.ticket)"/>
+                                @change="updateTicket(row.ticket)"
+                                :disabled="!allowed('UPDATE_PROGRESS')"/>
                   </gantt-td>
-                  <gantt-td :visible="GanttHeader[11].visible">
-                    <a href="#" @click="updateOrder(item.rows,index, -1)"><span class="material-symbols-outlined">arrow_upward</span></a>
-                    <a href="#" @click="updateOrder(item.rows, index,1)"><span class="material-symbols-outlined">arrow_downward</span></a>
-                    <a href="#" @click="deleteTicket(row.ticket)"><span class="material-symbols-outlined">delete</span></a>
+                  <gantt-td :visible="props.ganttFacilityHeader[11].visible" v-if="allowed('UPDATE_TICKET')">
+                    <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span
+                        class="material-symbols-outlined">arrow_upward</span></a>
+                    <a href="#" @click.prevent="updateOrder(item.rows, index,1)"><span
+                        class="material-symbols-outlined">arrow_downward</span></a>
+                    <a href="#" @click.prevent="deleteTicket(row.ticket)"><span
+                        class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr>
-                  <td :colspan="GanttHeader.length + 1">
+                <tr v-if="!hasFilter && allowed('UPDATE_TICKET')">
+                  <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
                       }}の工程を追加する
@@ -165,16 +130,19 @@
       <!-- 山積み部分 -->
       <hr>
       <div class="d-flex overflow-x-scroll" ref="childGanttWrapperElement">
-        <PileUps :chart-start="chartStart"
-                 :chart-end="chartEnd"
-                 :display-type="displayType"
-                 :holidays="getHolidays"
-                 :tickets="getTickets"
-                 :ticket-users="ticketUserList"
-                 :width="getGanttChartWidth"
-                 :highlightedDates="getHolidaysForGantt"
-                 :syncWidth="syncWidth"
-                 @on-mounted="forceScroll"
+        <PileUps
+            v-if="globalState.pileUpsRefresh"
+            :chart-start="chartStart"
+            :chart-end="chartEnd"
+            :display-type="displayType"
+            :holidays="getHolidays"
+            :tickets="getTickets"
+            :ticket-users="ticketUserList"
+            :width="getGanttChartWidth(displayType)"
+            :highlightedDates="getHolidaysForGantt(displayType)"
+            :syncWidth="syncWidth"
+            :current-facility-id="currentFacilityId"
+            @on-mounted="forceScroll"
         >
         </PileUps>
       </div>
@@ -183,42 +151,60 @@
   <div v-else>
     ユニットを追加してください。
   </div>
+  <Suspense v-if="modalIsOpen">
+    <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
+      <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId"  :facility-id="currentFacilityId"
+                          @close-edit-modal="closeModalProxy"></async-ticket-edit>
+    </default-modal>
+    <template #fallback>
+      Loading...
+    </template>
+  </Suspense>
 </template>
 <style>
 @import '@/assets/gantt-override.scss';
 </style>
 <style lang="scss" scoped>
-@import '@/assets/gantt.scss';
+@import '@/assets/gantt';
 </style>
 
 <script setup lang="ts">
-import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, GGanttChart, GGanttRow, MileStone} from "@infectoone/vue-ganttastic";
 import {useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
-import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {inject, nextTick, ref, watch} from "vue";
+import {computed, inject, nextTick, ref, watch} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
-import {Tippy} from "vue-tippy";
 import {useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
+import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
+import {allowed} from "@/composable/role";
+import {Department} from "@/api";
+import {useModalWithId} from "@/composable/modalWIthId";
+import DefaultModal from "@/components/modal/DefaultModal.vue";
+import AsyncHolidayEdit from "@/components/holiday/AsyncHolidayEdit.vue";
+import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
 
 type GanttProxyProps = {
-  facilityId: number
+  ganttFacilityHeader: GanttFacilityHeader[],
+  displayType: DisplayType,
 }
-
-defineProps<GanttProxyProps>()
+const props = defineProps<GanttProxyProps>()
+const globalState = inject(GLOBAL_STATE_KEY)!
+const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
-
+const cDepartmentList = computed(() => {
+  const result: Department[] = [{created_at: "", id: undefined, name: "", order: 0, updated_at: 0}]
+  result.push(...departmentList)
+  return result
+})
 const {
-  GanttHeader,
   bars,
   chartEnd,
   chartStart,
-  displayType,
   facility,
   getHolidaysForGantt,
   ganttChartGroup,
@@ -238,9 +224,11 @@ const {
   updateDepartment,
   updateOrder,
   updateTicket,
+  hasFilter,
+  milestones
 } = await useGanttFacility()
 
-// リスケ関連
+// リスケ関連 親から呼び出される
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
     setScheduleByPersonDay(v.rows)
@@ -252,8 +240,7 @@ const setScheduleByFromToProxy = () => {
     setScheduleByFromTo(v.rows)
   })
 }
-
-
+defineExpose({setScheduleByPersonDayProxy, setScheduleByFromToProxy})
 // スクロールや大きさの同期系
 const ganttSideMenuElement = ref<HTMLDivElement>()
 const ganttWrapperElement = ref<HTMLDivElement>()
@@ -265,15 +252,37 @@ const {
   forceScroll
 } = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
 
-watch(GanttHeader, () => {
+watch(props.ganttFacilityHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
 
+// チケット更新モーダル
+const {modalIsOpen, id: modalTicketId, openEditModal, closeEditModal} = useModalWithId()
+const modalUnitId = ref(0)
+const emit = defineEmits(["update"])
+
+const closeModalProxy = async () => {
+  // await refreshHolidayMap(currentFacilityId)
+  closeEditModal()
+  emit("update")
+}
+
+const openTicketDetail = (ticketId: number, unitId: number) => {
+  modalTicketId.value = ticketId
+  modalUnitId.value = unitId
+  modalIsOpen.value = true
+}
+
+let isDragged = false;
 
 // ここからイベントフック
 const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   await adjustBar(bar)
+  if(!isDragged) {
+    openTicketDetail(Number(bar.ganttBarConfig.id), 1)
+  }
+  isDragged = false
 }
 
 const onMousedownBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
@@ -297,6 +306,7 @@ const onDragstartBar = (bar: GanttBarObject, e: MouseEvent) => {
 }
 
 const onDragBar = (bar: GanttBarObject, e: MouseEvent) => {
+  isDragged = true
   console.log("drag-bar", bar, e)
 }
 
@@ -310,4 +320,5 @@ const onDragendBar = (
 const onContextmenuBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("contextmenu-bar", bar, e, datetime)
 }
+
 </script>

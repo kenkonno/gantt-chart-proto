@@ -1,4 +1,3 @@
-import {Ref} from "vue";
 
 export const initScroll = (v: { xPosition: number }, refElement: HTMLDivElement | undefined) => {
     if (v != null && v.xPosition != 0) {

@@ -8,5 +8,5 @@ type GanttGroup struct {
 	UnitId     int32
 
 	CreatedAt time.Time
-	UpdatedAt int
+	UpdatedAt int32
 }

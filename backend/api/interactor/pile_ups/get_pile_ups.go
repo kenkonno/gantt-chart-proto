@@ -2,20 +2,31 @@ package pile_ups
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
+	"golang.org/x/exp/slices"
 	"strconv"
 )
 
 func GetPileUpsInvoke(c *gin.Context) openapi_models.GetPileUpsResponse {
 	excludeFacilityId, err := strconv.Atoi(c.Query("facilityId"))
+	qFacilityTypes := c.QueryArray("facilityTypes")
+	var facilityTypes []string
+	if slices.Contains(qFacilityTypes, constants.FacilityTypeOrdered) {
+		facilityTypes = append(facilityTypes, constants.FacilityTypeOrdered)
+	}
+	if slices.Contains(qFacilityTypes, constants.FacilityTypePrepared) {
+		facilityTypes = append(facilityTypes, constants.FacilityTypePrepared)
+	}
+
 	if err != nil {
 		panic(err)
 	}
 	facilityRep := repository.NewFacilityRepository()
-	facilities := lo.Filter(facilityRep.FindAll(), func(item db.Facility, index int) bool {
+	facilities := lo.Filter(facilityRep.FindAll(facilityTypes, []string{constants.FacilityStatusEnabled}), func(item db.Facility, index int) bool {
 		return *item.Id != int32(excludeFacilityId)
 	})
 	ganttGroupRep := repository.NewGanttGroupRepository()

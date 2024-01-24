@@ -2,9 +2,9 @@
   <Suspense>
     <async-facility-table
         @open-edit-modal="openEditModal"
-        @move-up="updateFacilityOrder($event, -1)"
-        @move-down="updateFacilityOrder($event, 1)"
-        :list="facilityList"
+        @move-up="innerUpdateFacilityOrder($event, -1)"
+        @move-down="innerUpdateFacilityOrder($event, 1)"
+        :list="sortedFacilityList"
     />
     <template #fallback>
       Loading...
@@ -30,7 +30,7 @@ import AsyncFacilityEdit from "@/components/facility/AsyncFacilityEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {inject} from "vue";
+import {computed, inject} from "vue";
 
 const {facilityList} = inject(GLOBAL_STATE_KEY)!
 const {updateFacilityOrder} = inject(GLOBAL_ACTION_KEY)!
@@ -40,5 +40,17 @@ defineEmits(["update"])
 const closeModalProxy = async () => {
   closeEditModal()
 }
+const sortedFacilityList = computed(() => {
+  // TODO: 0がレスポンスから消えている
+  return [...facilityList].sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1: 1);
+});
+
+// 降順で渡しているのでindexと方向を逆転させる
+const innerUpdateFacilityOrder = (index: number, direction: number) => {
+  // index は 0番目の時に最大、 最大の時に0
+  // 方向は正と負を逆転させる。
+  updateFacilityOrder((facilityList.length - 1) - index, direction * -1)
+}
+
 
 </script>

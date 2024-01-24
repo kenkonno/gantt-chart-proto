@@ -20,13 +20,16 @@ func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdRespo
 	}
 
 	facilityRep.Upsert(db.Facility{
-		Id:        facilityReq.Facility.Id,
-		Name:      facilityReq.Facility.Name,
-		TermFrom:  facilityReq.Facility.TermFrom,
-		TermTo:    facilityReq.Facility.TermTo,
-		Order:     int(facilityReq.Facility.Order),
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
+		Id:              facilityReq.Facility.Id,
+		Name:            facilityReq.Facility.Name,
+		TermFrom:        facilityReq.Facility.TermFrom,
+		TermTo:          facilityReq.Facility.TermTo,
+		Order:           int(facilityReq.Facility.Order),
+		Status:          facilityReq.Facility.Status,
+		Type:            facilityReq.Facility.Type,
+		ShipmentDueDate: facilityReq.Facility.ShipmentDueDate,
+		CreatedAt:       time.Time{},
+		UpdatedAt:       0,
 	})
 
 	return openapi_models.PostFacilitiesIdResponse{}

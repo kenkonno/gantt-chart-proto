@@ -22,6 +22,25 @@
     </div>
 
     <div class="mb-2">
+      <label class="form-label" for="shipmentDueDate">出荷期日</label>
+      <input class="form-control" type="date" name="shipmentDueDate" id="shipmentDueDate" v-model="facility.shipment_due_date" :disabled="false">
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label" for="id">ステータス</label>
+      <select class="form-control" name="status" id="status" v-model="facility.status" :disabled="false">
+        <option v-for="(name, code) in FacilityStatusMap" :value="code" :key="code">{{name}}</option>
+      </select>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label" for="id">受注状況</label>
+      <select class="form-control" name="type" id="type" v-model="facility.type" :disabled="false">
+        <option v-for="(name, code) in FacilityTypeMap" :value="code" :key="code">{{name}}</option>
+      </select>
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">作成日</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="facility.created_at"
              :disabled="true">
@@ -48,6 +67,7 @@
 
 <script setup lang="ts">
 import {useFacility, postFacilityById, postFacility, copyFacility,deleteFacilityById} from "@/composable/facility";
+import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
 
 interface AsyncFacilityEdit {
   id: number | undefined,

@@ -5,7 +5,7 @@
       <thead>
       <tr>
         <th>Id</th>
-        <th>名称</th>
+        <th v-if="false">名称</th>
         <th>日付</th>
         <th>作成日</th>
         <th>更新日</th>
@@ -14,7 +14,7 @@
       <tbody>
       <tr v-for="item in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
-        <td>{{ item.name }}</td>
+        <td v-if="false">{{ item.name }}</td>
         <td>{{ $filters.dateFormatYMD(item.date) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>

@@ -25,6 +25,24 @@ func (r *ticketRepository) FindAll() []db.Ticket {
 	return tickets
 }
 
+func (r *ticketRepository) FindByFacilityType(facilityTypes []string, facilityStatus []string) []db.Ticket {
+	var tickets []db.Ticket
+	builder := r.con.Order(`"order" ASC`).
+		Joins("INNER JOIN gantt_groups ON gantt_groups.id = tickets.gantt_group_id").
+		Joins("INNER JOIN facilities ON facilities.id = gantt_groups.facility_id")
+	if len(facilityTypes) > 0 {
+		builder.Where("facilities.type IN ?", facilityTypes)
+	}
+	if len(facilityStatus) > 0 {
+		builder.Where("facilities.status IN ?", facilityStatus)
+	}
+	builder.Debug().Find(&tickets)
+	if builder.Error != nil {
+		panic(builder.Error)
+	}
+	return tickets
+}
+
 func (r *ticketRepository) Find(id int32) db.Ticket {
 	var ticket db.Ticket
 
@@ -36,10 +54,15 @@ func (r *ticketRepository) Find(id int32) db.Ticket {
 }
 
 func (r *ticketRepository) Upsert(m db.Ticket) db.Ticket {
-	r.con.Clauses(clause.OnConflict{
+	r.con.Omit("memo").Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
+	return m
+}
+
+func (r *ticketRepository) UpdateMemo(m db.Ticket) db.Ticket {
+	r.con.Model(&m).Update("memo", m.Memo)
 	return m
 }
 

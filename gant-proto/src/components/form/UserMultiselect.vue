@@ -3,7 +3,7 @@
       v-model="value"
       mode="tags"
       placeholder="担当者を追加"
-      :close-on-select="false"
+      :close-on-select="true"
       :search="true"
       :options="options"
       @input="$emit('update:modelValue', $event)"
@@ -13,10 +13,10 @@
           :class="{
           'is-disabled': disabled
         }"
-          v-if="!disabled"
           class="multiselect-tag-remove multiselect-tag"
           @mousedown.prevent="handleTagRemove(option, $event)"
           style="background-color: inherit"
+          :style="getStyle(option.value)"
       >
         <SingleRune :name="option.label" :id="option.value"></SingleRune>
       </div>
@@ -42,11 +42,27 @@ const options = computed(() => props.userList.map(v => {
   return {value: v.id, label: v.name}
 }))
 const value = computed(() => props.ticketUser.map(v => v.user_id))
+
+const getStyle = (userId: number) => {
+  // indexを取得する
+  const index = value.value.findIndex(v => v === userId)
+  // データが更新されるタイミングが１ターン後なのでこれを入れている
+  if ( index == -1 ) {
+    return {display: "none"}
+  }
+  return {left: index*(50/value.value.length) + "%"}
+
+}
 </script>
 
 <style>
 .multiselect-clear-icon {
   display: none;
+}
+
+.multiselect-dropdown {
+  z-index: 200;
+  position: absolute;
 }
 
 .multiselect, .multiselect-wrapper {
@@ -65,40 +81,5 @@ const value = computed(() => props.ticketUser.map(v => v.user_id))
 }
 .multiselect-tag {
   position: absolute;
-}
-.multiselect-tag:nth-child(1) {
-  left: 0%
-}
-
-.multiselect-tag:nth-child(2) {
-  left: 15%
-}
-
-.multiselect-tag:nth-child(3) {
-  left: 30%
-}
-
-.multiselect-tag:nth-child(4) {
-  left: 45%
-}
-
-.multiselect-tag:nth-child(5) {
-  left: 60%
-}
-
-.multiselect-tag:nth-child(6) {
-  left: 75%
-}
-
-.multiselect-tag:nth-child(7) {
-  left: 90%
-}
-
-.multiselect-tag:nth-child(8) {
-  left: 105%
-}
-
-.multiselect-tag:nth-child(9) {
-  left: 120%
 }
 </style>

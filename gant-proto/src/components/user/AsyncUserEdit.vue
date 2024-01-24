@@ -24,8 +24,15 @@
     </div>
 
     <div class="mb-2">
+      <label class="form-label" for="role">Role</label>
+      <select class="form-control" v-model="user.role" name="role" :disabled="!allowed('CHANGE_ROLE')">
+        <option v-for="(name,key) in roleList" :value="key" :key="key">{{ name }}</option>
+      </select>
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">Password</label>
-      <input class="form-control" type="text" name="password" id="password" v-model="user.password" :disabled="false">
+      <input class="form-control" type="password" name="password" id="password" v-model="user.password" :disabled="false">
     </div>
 
     <div class="mb-2">
@@ -57,8 +64,10 @@
 
 <script setup lang="ts">
 import {useUser, postUserById, postUser, deleteUserById} from "@/composable/user";
-import {inject} from "vue";
+import {computed, inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {RoleTypeMap} from "@/const/common";
+import {allowed} from "@/composable/role";
 
 interface AsyncUserEdit {
   id: number | undefined
@@ -70,6 +79,10 @@ const props = defineProps<AsyncUserEdit>()
 defineEmits(['closeEditModal'])
 
 const {user} = await useUser(props.id)
+
+const roleList = computed(() => {
+  return RoleTypeMap
+})
 
 </script>
 

@@ -3,13 +3,15 @@
  * facilityに紐づかないものは直接
  * facilityに紐づくものは連想はれいつとして持つ。
  */
-import {Department, Facility, Holiday, OperationSetting, Process, Unit, User} from "@/api";
-import {InjectionKey, ref} from "vue";
+import {Department, Facility, Holiday, OperationSetting, Process, ScheduleAlert, Unit, User} from "@/api";
+import {InjectionKey, ref, nextTick} from "vue";
 import {Api} from "@/api/axios";
 import {changeSort} from "@/utils/sort";
+import {FacilityType} from "@/const/common";
+import router from "@/router";
 
 type GlobalState = {
-    currentFacilityId:number,
+    currentFacilityId: number,
     facilityList: Facility[]
     processList: Process[]
     departmentList: Department[]
@@ -17,6 +19,11 @@ type GlobalState = {
     unitMap: { [key: number]: Unit[] }
     operationSettingMap: { [key: number]: OperationSetting[] }
     holidayMap: { [key: number]: Holiday[] }
+    scheduleAlert: ScheduleAlert[]
+    facilityTypes: string[]
+    ganttFacilityRefresh: boolean
+    ganttAllRefresh: boolean
+    pileUpsRefresh: boolean
 }
 
 export const GLOBAL_STATE_KEY = Symbol() as InjectionKey<GlobalState>
@@ -36,13 +43,26 @@ interface Actions {
     updateProcessOrder: (index: number, direction: number) => Promise<void>;
     updateDepartmentOrder: (index: number, direction: number) => Promise<void>;
     updateUnitOrder: (index: number, direction: number) => Promise<void>;
+
+    getScheduleAlert(): Promise<void>;
 }
 
 interface Mutations {
     updateCurrentFacilityId: (id: number) => void;
+
+    refreshGantt(id: number, moveFacilityView: boolean): void;
+
+    setFacilityTypes(facilityType: string[]): void;
+
+    refreshPileUpsRefresh(): void;
+
+    refreshGanttAll(): void;
+
 }
 
 interface Getters {
+    getUnitName: (unitId: number) => string;
+    getProcessName: (processId: number) => string;
     getDepartmentName: (departmentId: number) => string;
 }
 
@@ -56,7 +76,12 @@ export const useGlobalState = async () => {
         holidayMap: {},
         operationSettingMap: {},
         unitMap: {},
-        userList: []
+        userList: [],
+        scheduleAlert: [],
+        facilityTypes: [FacilityType.Ordered], // TODO: 初期値を記憶するようにする
+        ganttFacilityRefresh: true, // refreshさせるだけのフラグ
+        ganttAllRefresh: true,
+        pileUpsRefresh: true,
     })
     const init = async () => {
         await actions.refreshFacilityList()
@@ -126,18 +151,77 @@ export const useGlobalState = async () => {
                 v.order = globalState.value.unitMap[globalState.value.currentFacilityId].indexOf(v)
                 await Api.postUnitsId(v.id!, {unit: v})
             }
+        }, getScheduleAlert: async () => {
+            const resp = await Api.getScheduleAlerts()
+            globalState.value.scheduleAlert.length = 0
+            globalState.value.scheduleAlert.push(...resp.data.list)
         }
     }
 
     const mutations: Mutations = {
         updateCurrentFacilityId: (id: number) => {
+            console.log("CHANGE FACILITY ID")
             globalState.value.currentFacilityId = id
+        },
+        refreshGantt: async (facilityId: number, moveFacilityView = false) => {
+            globalState.value.currentFacilityId = facilityId
+            globalState.value.ganttFacilityRefresh = false
+            // facility紐づくデータを初期化する
+            await actions.refreshHolidayMap(facilityId)
+            await actions.refreshUnitMap(facilityId)
+            await actions.refreshOperationSettingMap(facilityId)
+            nextTick(() => {
+                if (moveFacilityView) {
+                    router.push("/")
+                }
+                globalState.value.ganttFacilityRefresh = true
+            })
+        },
+        refreshPileUpsRefresh: async () => {
+            globalState.value.pileUpsRefresh = false
+            nextTick(() => {
+                globalState.value.pileUpsRefresh = true
+            })
+        },
+        refreshGanttAll: () => {
+            globalState.value.ganttAllRefresh = false
+            nextTick(() => {
+                globalState.value.ganttAllRefresh = true
+            })
+        },
+        setFacilityTypes: (facilityTypes: string[]) => {
+            globalState.value.facilityTypes.length = 0
+            globalState.value.facilityTypes = facilityTypes
         }
     }
 
     const getters: Getters = {
+        getUnitName: (unitId: number) => {
+            let result = ""
+            try {
+                result = globalState.value.unitMap[globalState.value.currentFacilityId][unitId].name
+            } catch {
+                console.warn("unit not found", unitId)
+            }
+            return result
+        },
+        getProcessName: (processId: number) => {
+            let result = ""
+            try {
+                result = globalState.value.processList.find(v => v.id === processId)!.name
+            } catch {
+                console.warn("process not found", processId)
+            }
+            return result
+        },
         getDepartmentName: (departmentId: number) => {
-            return globalState.value.departmentList.find(v => v.id === departmentId)!.name
+            let result = ""
+            try {
+                result = globalState.value.departmentList.find(v => v.id === departmentId)!.name
+            } catch {
+                console.warn("department not found", departmentId)
+            }
+            return result
         }
     }
 

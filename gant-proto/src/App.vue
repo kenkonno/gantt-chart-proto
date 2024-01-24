@@ -1,6 +1,6 @@
 <template>
   <Suspense>
-    <TopPage></TopPage>
+    <router-view></router-view>
   </Suspense>
 </template>
 
@@ -34,4 +34,5 @@ nav {
 </style>
 <script setup lang="ts">
 import TopPage from "@/views/TopPage.vue";
+import {ModalsContainer} from "vue-final-modal";
 </script>

@@ -1,5 +1,5 @@
 import dayjs, {Dayjs} from "dayjs";
-import {GanttBarObject} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref, toValue} from "vue";
 import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser} from "@/api";
 import {Api} from "@/api/axios";
@@ -8,10 +8,9 @@ import {useTicketTable} from "@/composable/ticket";
 import {useTicketUserTable} from "@/composable/ticketUser";
 import {useFacility} from "@/composable/facility";
 import {changeSort} from "@/utils/sort";
-import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
     addBusinessDays,
-    adjustStartDateByHolidays,
     dayBetween,
     endOfDay,
     ganttDateToYMDDate,
@@ -19,6 +18,11 @@ import {
     getNumberOfBusinessDays
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
+import {DEFAULT_PROCESS_COLOR} from "@/const/common";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
+import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {allowed} from "@/composable/role";
+import {useMilestoneTable} from "@/composable/milestone";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -31,18 +35,8 @@ export type GanttRow = {
     ticket?: Ticket
     ticketUsers?: TicketUser[]
 }
-
-type Header = {
-    name: string,
-    visible: boolean
-}
-
-export type DisplayType = "day" | "week" | "hour" | "month"
-
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
-const BAR_COMPLETE_COLOR = "rgb(76 255 18)"
-const BAR_DANGER_COLOR = "rgb(255 89 89)"
-
+const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
 function getScheduledOperatingHours(operationSettings: OperationSetting[], row: GanttRow) {
     return operationSettings.filter(operationSetting => {
@@ -57,26 +51,13 @@ function getScheduledOperatingHours(operationSettings: OperationSetting[], row: 
 export async function useGanttFacility() {
     // injectはsetupと同期的に呼び出す必要あり
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
+    const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
+    const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
     const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
-
-    const GanttHeader = ref<Header[]>([
-        {name: "ユニット", visible: true},
-        {name: "工程", visible: true},
-        {name: "部署", visible: true},
-        {name: "担当者", visible: true},
-        {name: "人数", visible: false},
-        {name: "期日", visible: false},
-        {name: "工数(h)", visible: true},
-        {name: "日後", visible: false},
-        {name: "開始日", visible: false},
-        {name: "終了日", visible: false},
-        {name: "進捗", visible: true},
-        {name: "操作", visible: false},
-    ])
-    const displayType = ref<DisplayType>("day")
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
+    const milestones = ref<MileStone[]>([])
 
     const getUnitName = computed(() => (id: number) => {
         return unitMap[currentFacilityId].find(v => v.id === id)?.name
@@ -87,34 +68,55 @@ export async function useGanttFacility() {
     const getProcessName = (id: number) => {
         return processList.find(v => v.id === id)?.name
     }
+    const getProcessColor = (id?: number | null) => {
+        if (id == null) {
+            return DEFAULT_PROCESS_COLOR
+        }
+        return processList.find(v => v.id === id)?.color
+    }
     const getOperationList = computed(() => {
         return operationSettingMap[currentFacilityId]
     })
-    const getHolidaysForGantt = computed(() => {
-        if (displayType.value === "day") {
+    const getHolidaysForGantt = (displayType: DisplayType) => {
+        if (displayType === "day") {
             return holidayMap[currentFacilityId].map(v => new Date(v.date))
         } else {
             return []
         }
-    })
+    }
     const getHolidays = computed(() => {
         return holidayMap[currentFacilityId]
     })
-    const getGanttChartWidth = computed<string>(() => {
+    const getGanttChartWidth = (displayType: DisplayType) => {
         // 1日30pxとして計算する
-        return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType.value) + 1) * 30 + "px"
-    })
+        return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType) + 1) * 30 + "px"
+    }
 
     // 積み上げに渡すよう
     const getTickets = computed(() => {
         const result: Ticket[] = []
         ganttChartGroup.value.forEach(v => v.rows.forEach(vv => {
-            if(vv.ticket != null){
+            if (vv.ticket != null) {
                 result.push(vv.ticket)
             }
         }))
         return result
     })
+
+    const refreshMilestones = async () => {
+        const {list} = await useMilestoneTable(currentFacilityId)
+        milestones.value.length = 0
+        milestones.value.push(<MileStone>{
+            date: new Date(facility.value.shipment_due_date + " 00:00:00"),
+            description: "出荷期日"
+        })
+        milestones.value.push(
+            ...list.value.map(v => {
+                return <MileStone>{date: new Date(v.date), description: v.description}
+            })
+        )
+    }
+    await refreshMilestones()
 
     // とりあえず何も考えずにAPIからガントチャート表示に必要なオブジェクトを作る
     const {list: ganttGroupList, refresh: ganttGroupRefresh} = await useGanttGroupTable()
@@ -130,16 +132,32 @@ export async function useGanttFacility() {
     const refreshLocalGantt = () => {
         ganttChartGroup.value.length = 0
         ganttGroupList.value.forEach(ganttGroup => {
+            let filteredTicketList = ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
+                .sort((a, b) => a.order < b.order ? -1 : 1)
+            if (selectedDepartment.value != undefined) {
+                filteredTicketList = filteredTicketList.filter(ticket => ticket.department_id == selectedDepartment.value)
+            }
+            if (selectedUser.value != undefined) {
+                // 選択されたユーザーだけに絞り込む
+                const targetTicketIds = ticketUserList.value.filter(ticketUser => ticketUser.user_id == selectedUser.value).map(v => v.ticket_id)
+                filteredTicketList = filteredTicketList.filter(ticket => {
+                    return targetTicketIds.includes(ticket.id!)
+                })
+            }
             ganttChartGroup.value.push(
                 {
                     ganttGroup: ganttGroup,
-                    rows: ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
-                        .sort(v => v.order)
+                    rows: filteredTicketList
                         .map(ticket => ticketToGanttRow(ticket, ticketUserList.value, ganttGroup))
                 }
             )
         })
     }
+    const hasFilter = computed(() => {
+        return selectedDepartment.value != undefined || selectedUser.value
+    })
+
+
     // computedだとドラッグ関連が上手くいかない為やはりオブジェクトとして双方向に同期をとるようにする。
     const bars = ref<GanttBarObject[]>([])
     // ガントチャート描画用のオブジェクトの生成
@@ -159,28 +177,38 @@ export async function useGanttFacility() {
                 endDate: endOfDay(task.ticket!.end_date!),
                 ganttGroupId: unit.ganttGroup.id,
                 ganttBarConfig: {
-                    hasHandles: true,
+                    dragLimitLeft: 0,
+                    dragLimitRight: 0,
+                    hasHandles: allowed('UPDATE_TICKET'),
+                    immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
                     id: task.ticket?.id!.toString(),
                     label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
-                    style: {backgroundColor: BAR_NORMAL_COLOR},
+                    style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
                     progress: task.ticket?.progress_percent,
                     progressColor: BAR_COMPLETE_COLOR
                 }
             }))
             // ボタン用の空行を追加する
-            bars.value.push(emptyRow)
+            if (!hasFilter.value && allowed('UPDATE_TICKET')) {
+                bars.value.push(emptyRow)
+            }
         })
     }
     refreshLocalGantt()
     refreshBars()
 
     const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
-        changeSort(ganttRows, index, direction)
-        // ガントチャートのオブジェクトと同期をとる
-        changeSort(bars.value, index, direction)
-        for (const v of ganttRows) {
-            v.ticket!.order = ganttRows.indexOf(v)
-            await updateTicket(v.ticket!)
+        // ソート前にガントチャート上のIndexを検索しておく。
+        const barIndex = bars.value.findIndex(v => v.ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
+        const sorted = changeSort(ganttRows, index, direction)
+        // 変更がった場合はガントチャートのオブジェクトと同期をとる
+        if (sorted) {
+            // bars.valueは全体から見たIndexを指定する必要があった。
+            changeSort(bars.value, barIndex, direction)
+            for (const v of ganttRows) {
+                v.ticket!.order = ganttRows.indexOf(v)
+                await updateTicket(v.ticket!)
+            }
         }
     }
 
@@ -188,14 +216,15 @@ export async function useGanttFacility() {
     const updateDepartment = async (ticket: Ticket) => {
         // 担当者をすべて外す。
         const ticketUsers = ticketUserList.value.filter(v => v.ticket_id === ticket.id)
-        if (ticketUsers != null) {
+        if (ticketUsers.length > 0) {
             ticketUsers.length = 0
         }
-        await ticketUserUpdate(ticket, [])
+        // 部署替えの時は人数を変更しない
+        await ticketUserUpdate(ticket, [], false)
     }
     const getUserListByDepartmentId = (departmentId?: number) => {
         if (departmentId == null) {
-            return []
+            return userList
         }
         return userList.filter(v => v.department_id === departmentId)
     }
@@ -223,6 +252,7 @@ export async function useGanttFacility() {
         }
         await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
         reflectTicketToGantt(reqTicket)
+        await getScheduleAlert()
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -241,7 +271,8 @@ export async function useGanttFacility() {
             process_id: undefined,
             progress_percent: undefined,
             start_date: undefined,
-            updated_at: 0
+            updated_at: 0,
+            number_of_worker: 1
         }
         const {data} = await Api.postTickets({ticket: newTicket})
         ticketList.value.push(data.ticket!)
@@ -249,7 +280,7 @@ export async function useGanttFacility() {
         refreshBars()
     }
     // DBへのストア及びローカルのガントに情報を反映する
-    const ticketUserUpdate = async (ticket: Ticket, userIds: number[]) => {
+    const ticketUserUpdate = async (ticket: Ticket, userIds: number[], updateNoW = true) => {
         const {data} = await Api.postTicketUsers({ticketId: ticket.id!, userIds: userIds})
         // ticketUserList から TicketId をつけなおす
         const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticket.id!)
@@ -258,7 +289,9 @@ export async function useGanttFacility() {
         ticketUserList.value.push(...newTicketUserList)
 
         // 人数を更新する
-        ticket.number_of_worker = data.ticketUsers.length
+        if (updateNoW) {
+            ticket.number_of_worker = data.ticketUsers.length
+        }
         await updateTicket(ticket)
         // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
         refreshLocalGantt()
@@ -321,9 +354,9 @@ export async function useGanttFacility() {
         rows.forEach((row, index) => {
             let startDate: Dayjs
             // 先頭行の場合
-            if(index === 0 ) {
+            if (index === 0) {
                 // 開始日・工数・工程・人数が未設定の場合はスキップする
-                if(!row.ticket?.start_date || !row.ticket?.estimate ||
+                if (!row.ticket?.start_date || !row.ticket?.estimate ||
                     !row.ticket?.number_of_worker || !row.ticket?.process_id
                 ) {
                     console.log("###### SKIP due to first row")
@@ -332,7 +365,7 @@ export async function useGanttFacility() {
                 startDate = dayjs(row.ticket!.start_date)
             } else {
                 // 先頭行以降は (開始日 or days_after)・工数・工程・人数が未設定の場合はスキップする
-                if(!row.ticket?.estimate || !row.ticket?.number_of_worker || !row.ticket?.process_id){
+                if (!row.ticket?.estimate || !row.ticket?.number_of_worker || !row.ticket?.process_id) {
                     console.log("###### SKIP due to after first row pt1")
                     return;
                 } else {
@@ -342,7 +375,7 @@ export async function useGanttFacility() {
                         return;
                     } else {
                         // 日後が0でなければ優先
-                        if(row.ticket?.days_after != null) {
+                        if (row.ticket?.days_after != null) {
                             startDate = addBusinessDays(prevEndDate, row.ticket.days_after, holidays)
                         } else {
                             // 開始日をそのまま利用する
@@ -374,25 +407,15 @@ export async function useGanttFacility() {
 
     /**
      * リスケ（日付）重視
-     * 開始日・終了日重視で人数を設定する
-     * 期間で満了できるように人数を割り当てる
-     * ※担当者が入っていたとしても人数は必ず入っているので、人数列で参照する。
+     * 現在設定されている日付に日後を適応させる。
      *
      * @param rows
      */
     const setScheduleByFromTo = (rows: GanttRow[]) => {
-        // 必要人数の算出。スケジュールを満了できる最少の人数を計算する。
-        // 担当者が未定の時に人数を計算する
-        // 必要日数 = 工数 / 労働時間
-        // 必要人数 = 必要日数 / 期間日数 の数値は上に寄せる
         const holidays = toValue(getHolidays)
-        const operationSettings = toValue(getOperationList)
         let prevEndDate: Dayjs
         rows.forEach(row => {
-            if (row.ticket && row.ticketUsers?.length == 0 &&
-                row.ticket?.estimate && row.ticket?.estimate > 0 &&
-                row.ticket?.process_id && row.ticket?.process_id > 0 &&
-                row.ticket?.start_date && row.ticket?.end_date) {
+            if (row.ticket && row.ticket?.start_date && row.ticket?.end_date) {
                 // 日後の処理
                 if (row.ticket.days_after != null && prevEndDate != null) {
                     // 現在設定されている営業日を計算する
@@ -407,29 +430,15 @@ export async function useGanttFacility() {
                     row.ticket.start_date = ganttDateToYMDDate(dayjsStartDate.format(DAYJS_FORMAT))
                     row.ticket.end_date = ganttDateToYMDDate(dayjsEndDate.format(DAYJS_FORMAT))
                 }
-                // 工数(h)
-                const estimate = row.ticket.estimate
-                // 労働予定時間 ユニット & 工程 に紐づく稼働予定時間を取得
-                console.log(operationSettings)
-                const scheduledOperatingHours = getScheduledOperatingHours(operationSettings, row)
-                // 必要日数
-                const requiredNumberOfDays = estimate / scheduledOperatingHours
-                // 日数（期間）
-                const numberOfDays = getNumberOfDays(row, holidays)
-                // 必要人数
-                row.ticket.number_of_worker = Math.ceil(requiredNumberOfDays / numberOfDays)
-                // 前回の終了日を設定する
                 updateTicket(row.ticket)
             }
             prevEndDate = dayjs(row.ticket?.end_date)
         })
     }
     return {
-        GanttHeader,
         bars,
         chartEnd,
         chartStart,
-        displayType,
         facility,
         getHolidaysForGantt,
         ganttChartGroup,
@@ -450,6 +459,8 @@ export async function useGanttFacility() {
         updateDepartment,
         updateOrder,
         updateTicket,
+        hasFilter,
+        milestones
     }
 }
 
@@ -488,6 +499,7 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGro
             ganttBarConfig: {
                 hasHandles: true,
                 id: ticket.id!.toString(), // TODO: まあIDが数字でもいっか
+                immobile: false,
                 label: "", // TODO: コメントをラベルにする
             },
         },

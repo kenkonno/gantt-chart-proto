@@ -2,6 +2,7 @@ import {Api} from "@/api/axios";
 import {PostHolidaysRequest, Holiday} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
+import {Emit} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -22,7 +23,7 @@ export async function useHoliday(holidayId?: number) {
     const holiday = ref<Holiday>({
         id: null,
         facility_id: 0,
-        name: "",
+        name: "dummy",
         date: "",
         created_at: undefined,
         updated_at: undefined

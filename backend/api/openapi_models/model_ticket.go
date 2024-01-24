@@ -13,7 +13,6 @@ import (
 	"time"
 )
 
-// Ticket - 
 type Ticket struct {
 
 	Id *int32 `json:"id,omitempty"`
@@ -38,9 +37,11 @@ type Ticket struct {
 
 	ProgressPercent *int32 `json:"progress_percent,omitempty"`
 
+	Memo string `json:"memo,omitempty"`
+
 	Order int32 `json:"order"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
-	UpdatedAt int `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty"`
 }

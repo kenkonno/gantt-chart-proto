@@ -15,10 +15,18 @@ type facilityRepository struct {
 	con *gorm.DB
 }
 
-func (r *facilityRepository) FindAll() []db.Facility {
+func (r *facilityRepository) FindAll(facilityTypes []string, facilityStatus []string) []db.Facility {
 	var facilities []db.Facility
 
-	result := r.con.Order(`"order" ASC`).Find(&facilities)
+	builder := r.con.Order(`"order" ASC`)
+	if len(facilityTypes) > 0 {
+		builder.Where("facilities.type IN ?", facilityTypes)
+	}
+	if len(facilityStatus) > 0 {
+		builder.Where("facilities.status IN ?", facilityStatus)
+	}
+
+	result := builder.Find(&facilities)
 	if result.Error != nil {
 		panic(result.Error)
 	}

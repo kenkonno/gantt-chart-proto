@@ -54,11 +54,11 @@ defineEmits(['closeEditModal'])
 
 .modal-dialog {
   max-width: 90%;
-  height: 80%;
+  max-height: 90%;
+  overflow-y: scroll;
 }
 
 .modal-content {
-  min-height: 80%;
 }
 
 #overlay.overlay-on {
