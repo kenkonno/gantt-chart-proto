@@ -25,9 +25,9 @@
               <gantt-td :visible="true" class="justify-middle">
                 <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
                        content="稼働上限を超えている担当者がいます。">
-                  <span class="error-over-work-hour">{{ getDepartmentName(item.departmentId) }}(人)</span>
+                  <span class="error-over-work-hour" @click="updateDepartmentFilter(item.departmentId)">{{ getDepartmentName(item.departmentId) }}(人)</span>
                 </tippy>
-                <span v-else>{{ getDepartmentName(item.departmentId) }}(人)</span>
+                <span v-else  @click="updateDepartmentFilter(item.departmentId)">{{ getDepartmentName(item.departmentId) }}(人)</span>
                 <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
                       @click="item.displayUsers = true">add</span>
                 <span class="material-symbols-outlined pointer" v-else
@@ -41,9 +41,9 @@
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="true" class="justify-middle">
                 <tippy v-if="user.hasError" content="稼働上限を超えている日があります。">
-                  <span class="error-over-work-hour">{{ user.user.name }}(h)</span>
+                  <span class="error-over-work-hour" @click="updateUserFilter(user.user.id)">{{ user.user.name }}(h)</span>
                 </tippy>
-                <span v-else>{{ user.user.name }}(h)</span>
+                <span v-else @click="updateUserFilter(user.user.id)">{{ user.user.name }}(h)</span>
               </gantt-td>
             </tr>
           </template>
@@ -67,9 +67,10 @@ import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
-import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_GETTER_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {Tippy} from "vue-tippy";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {use} from "../../../../backend/skelton_generater/vue_templates/composable";
 
 type PileUpsProps = {
   tickets: Ticket[],
@@ -135,11 +136,11 @@ const {
 const cPileUpFilters = computed(() => {
   let targetDepartmentId = selectedDepartment.value
   if (selectedUser.value != undefined) {
-    targetDepartmentId = userList.find( v => v.id == selectedUser.value)?.department_id
+    targetDepartmentId = userList.find(v => v.id == selectedUser.value)?.department_id
   } else {
     targetDepartmentId = selectedDepartment.value
   }
-  if ( targetDepartmentId == undefined) {
+  if (targetDepartmentId == undefined) {
     return pileUpFilters.value
   } else {
     return pileUpFilters.value.filter(v => v.departmentId == targetDepartmentId)
@@ -147,7 +148,7 @@ const cPileUpFilters = computed(() => {
 })
 
 const cPileUpsPerson = computed(() => {
-  if ( selectedUser.value == undefined) {
+  if (selectedUser.value == undefined) {
     return pileUpsByPerson.value
   } else {
     return pileUpsByPerson.value.filter(v => v.user.id == selectedUser.value)
@@ -158,5 +159,14 @@ const emit = defineEmits(["onMounted"])
 onMounted(() => {
   emit("onMounted")
 })
+
+const updateDepartmentFilter = (departmentId: number) => {
+  selectedUser.value = undefined
+  selectedDepartment.value = departmentId
+}
+const updateUserFilter = (userId: number | undefined) => {
+  selectedDepartment.value = undefined
+  selectedUser.value = userId
+}
 
 </script>
