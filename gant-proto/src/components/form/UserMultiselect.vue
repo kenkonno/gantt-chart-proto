@@ -1,5 +1,6 @@
 <template>
   <Multiselect
+      class="user-multiselect-wrapper"
       v-model="value"
       mode="tags"
       placeholder="担当者を追加"
@@ -56,30 +57,31 @@ const getStyle = (userId: number) => {
 </script>
 
 <style>
-.multiselect-clear-icon {
+.user-multiselect-wrapper .multiselect-clear-icon {
   display: none;
 }
 
-.multiselect-dropdown {
+.user-multiselect-wrapper .multiselect-dropdown {
   z-index: 200;
   position: absolute;
 }
 
-.multiselect, .multiselect-wrapper {
+.user-multiselect-wrapper.multiselect,
+.user-multiselect-wrapper.multiselect-wrapper {
   height: 26px !important;
   min-height: 26px !important;
   font-size: 10pt;
 }
 
-.multiselect-option {
+.user-multiselect-wrapper .multiselect-option {
   padding: 2px;
   font-size: 10pt;
 }
 
-.multiselect-tags {
+.user-multiselect-wrapper .multiselect-tags {
   margin: 0;
 }
-.multiselect-tag {
+.user-multiselect-wrapper .multiselect-tag {
   position: absolute;
 }
 </style>
