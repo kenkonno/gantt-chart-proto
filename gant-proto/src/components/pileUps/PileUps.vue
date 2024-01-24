@@ -70,7 +70,6 @@ import {Holiday, Ticket, TicketUser} from "@/api";
 import {GLOBAL_GETTER_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {Tippy} from "vue-tippy";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
-import {use} from "../../../../backend/skelton_generater/vue_templates/composable";
 
 type PileUpsProps = {
   tickets: Ticket[],

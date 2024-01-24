@@ -1,4 +1,4 @@
-import {computed, ComputedRef, inject, Ref, ref, UnwrapRef, watch} from "vue";
+import {computed, ComputedRef, inject, onBeforeUnmount, Ref, ref, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
 import {Department, Holiday, Ticket, TicketUser, User} from "@/api";
 import {round} from "@/utils/math";
@@ -7,6 +7,7 @@ import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFun
 import {Api} from "@/api/axios";
 import {FacilityStatus} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
+import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 
 type PileUpByPerson = {
     user: User,
@@ -22,7 +23,7 @@ type PileUpByDepartment = {
     hasError: boolean
 }
 
-type PileUpFilter = {
+export type PileUpFilter = {
     departmentId: number,
     displayUsers: boolean,
 }
@@ -119,12 +120,26 @@ export const usePielUps = (
 
     const pileUpsByPerson = ref<PileUpByPerson[]>([])
     const pileUpsByDepartment = ref<PileUpByDepartment[]>([])
+
+    const savedPileUpsFilter = globalFilterGetter.getPileUpsFilter()
+    const safeFilter = () => {
+        globalFilterMutation.updatePileUpsFilter(pileUpFilters.value)
+    }
+    onBeforeUnmount(() => {
+        safeFilter()
+        window.removeEventListener("beforeunload", safeFilter)
+    })
+    window.addEventListener("beforeunload", safeFilter)
+
+    // 部署は変動があるので、初期値をAPIからとってきて有効無効を上書きする
     const pileUpFilters = ref<PileUpFilter[]>(departmentList.map(v => {
+        const defaultDisplayUsers = savedPileUpsFilter.find(s => s.departmentId == v.id)?.displayUsers || false;
         return <PileUpFilter>{
             departmentId: v.id,
-            displayUsers: false
+            displayUsers: defaultDisplayUsers
         }
     }))
+
     let refreshPileUpByPersonExclusive = false
     watch([displayType, tickets, ticketUsers, holidays], () => {
         refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？

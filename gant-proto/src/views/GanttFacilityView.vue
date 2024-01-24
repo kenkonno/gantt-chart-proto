@@ -101,7 +101,7 @@ nav {
 }
 </style>
 <script setup lang="ts">
-import {inject, ref} from "vue";
+import {inject, onUnmounted, ref} from "vue";
 import GanttFacility from "@/components/ganttFacility/GanttFacility.vue";
 import {
   GLOBAL_MUTATION_KEY,
@@ -131,6 +131,8 @@ const updateDisplayType = (v: DisplayType) => {
 const facilityList = computed(() => {
   return globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled).sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1 : 1);
 })
+
+
 
 
 // たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
