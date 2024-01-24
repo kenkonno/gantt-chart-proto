@@ -25,7 +25,7 @@
     <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
   </nav>
 
-  <div style="display:none">{{gantFacility != undefined}} vuejshack</div>
+  <div style="display:none">{{ gantFacility != undefined }} vuejshack</div>
   <div v-show="globalState.currentFacilityId > 0">
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
@@ -129,7 +129,7 @@ const updateDisplayType = (v: DisplayType) => {
 }
 
 const facilityList = computed(() => {
-  return globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled)
+  return globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled).sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1 : 1);
 })
 
 
