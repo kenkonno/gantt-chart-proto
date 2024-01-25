@@ -1,6 +1,6 @@
 <template>
   <ModalsContainer></ModalsContainer>
-  <a class="icon" @click="() => open()" style="border-bottom: 1px solid;">
+  <a class="icon" @click="() => newOpen()" style="border-bottom: 1px solid;">
     <span class="material-symbols-outlined">warning</span>
     <span>遅延通知</span>
     <span class="text-bg-danger">{{ scheduleAlert.length }}</span>
@@ -17,11 +17,18 @@ import {ModalsContainer} from "vue-final-modal";
 const {scheduleAlert} = inject(GLOBAL_STATE_KEY)!
 const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
 const {
-  open, destroy
+  open, destroy, filterDelayDays, filterProgressNumber, filterFacility
 } = inject(GLOBAL_SCHEDULE_ALERT_KEY)!
 
 defineEmits(["selectUnit"])
 
+const newOpen = () => {
+  // 画面上部で開くときはフィルタをリセットする
+  filterDelayDays.value = undefined
+  filterProgressNumber.value = undefined
+  filterFacility.value = undefined
+  open()
+}
 
 onBeforeUnmount(() => {
   destroy()

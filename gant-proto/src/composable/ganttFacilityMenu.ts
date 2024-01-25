@@ -1,5 +1,6 @@
-import {ref} from "vue";
+import {onBeforeUnmount, onUnmounted, ref} from "vue";
 import {allowed} from "@/composable/role";
+import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 
 export type GanttFacilityHeader = {
     name: string,
@@ -9,27 +10,35 @@ export type GanttFacilityHeader = {
 export type DisplayType = "day" | "week" | "hour" | "month"
 
 export function useGanttFacilityMenu() {
+
+    // 初期値の取得
+    const savedGanttHeader = globalFilterGetter.getGanttFacilityMenu()
+    const savedViewType = globalFilterGetter.getViewType()
+
     // injectはsetupと同期的に呼び出す必要あり
-    const GanttHeader = ref<GanttFacilityHeader[]>([
-        {name: "ユニット", visible: true},
-        {name: "工程", visible: true},
-        {name: "部署", visible: true},
-        {name: "担当者", visible: true},
-        {name: "人数", visible: false},
-        {name: "期日", visible: false},
-        {name: "工数(h)", visible: true},
-        {name: "日後", visible: false},
-        {name: "開始日", visible: false},
-        {name: "終了日", visible: false},
-        {name: "進捗", visible: true},
-    ])
+    const GanttHeader = ref<GanttFacilityHeader[]>(savedGanttHeader)
     if (allowed('UPDATE_TICKET')) {
-        GanttHeader.value.push({name: "操作", visible: false})
+        if (!GanttHeader.value.find(v => v.name == "操作")) {
+            GanttHeader.value.push({name: "操作", visible: false})
+        }
+    } else {
+        const index = GanttHeader.value.findIndex(v => v.name == "操作")
+        GanttHeader.value.splice(index)
     }
-    const displayType = ref<DisplayType>("day")
+    const displayType = ref<DisplayType>(savedViewType)
+
+    // フィルタ保存関連
+    const safeFilter = () => {
+        globalFilterMutation.updateGanttFacilityMenu(GanttHeader.value)
+        globalFilterMutation.updateViewTypeFilter(displayType.value)
+    }
+    onBeforeUnmount(() => {
+        safeFilter()
+        window.removeEventListener("beforeunload", safeFilter)
+    })
+    window.addEventListener("beforeunload", safeFilter)
     return {
         GanttHeader,
         displayType,
     }
 }
-

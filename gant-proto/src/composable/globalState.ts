@@ -4,11 +4,12 @@
  * facilityに紐づくものは連想はれいつとして持つ。
  */
 import {Department, Facility, Holiday, OperationSetting, Process, ScheduleAlert, Unit, User} from "@/api";
-import {InjectionKey, ref, nextTick} from "vue";
+import {InjectionKey, ref, nextTick, onBeforeUnmount} from "vue";
 import {Api} from "@/api/axios";
 import {changeSort} from "@/utils/sort";
 import {FacilityType} from "@/const/common";
 import router from "@/router";
+import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 
 type GlobalState = {
     currentFacilityId: number,
@@ -68,6 +69,9 @@ interface Getters {
 
 
 export const useGlobalState = async () => {
+
+    const savedOrder = globalFilterGetter.getOrderStatus()
+
     const globalState = ref<GlobalState>({
         currentFacilityId: -1,
         departmentList: [],
@@ -78,7 +82,7 @@ export const useGlobalState = async () => {
         unitMap: {},
         userList: [],
         scheduleAlert: [],
-        facilityTypes: [FacilityType.Ordered], // TODO: 初期値を記憶するようにする
+        facilityTypes: savedOrder, // TODO: 初期値を記憶するようにする
         ganttFacilityRefresh: true, // refreshさせるだけのフラグ
         ganttAllRefresh: true,
         pileUpsRefresh: true,
@@ -226,5 +230,16 @@ export const useGlobalState = async () => {
     }
 
     await init()
+
+    // filter保存
+    const safeFilter = () => {
+        globalFilterMutation.updateOrderStatus(globalState.value.facilityTypes)
+    }
+    onBeforeUnmount(() => {
+        safeFilter()
+        window.removeEventListener("beforeunload", safeFilter)
+    })
+    window.addEventListener("beforeunload", safeFilter)
+
     return {globalState, actions, mutations, getters}
 }

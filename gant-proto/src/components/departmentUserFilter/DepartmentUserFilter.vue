@@ -1,21 +1,28 @@
 <template>
-  <div class="wrapper d-flex">
+  <div class="wrapper d-flex department-user-filter-wrapper">
     <div>部署：</div>
     <multiselect
         class="select-box"
-        v-model="selectedDepartment"
+        :value="[selectedDepartment]"
+        @input="inputDepartment"
         :searchable="true"
         :options="departmentOptions"
         :allow-empty="true"
+        mode="tags"
+        :max="1"
         @change="refresh"
     />
     <div>担当者：</div>
     <multiselect
         class="select-box"
-        v-model="selectedUser"
+        :value="[selectedUser]"
+        @input="inputUser"
         :searchable="true"
         :options="userOptions"
         :allow-empty="true"
+        :taggable="true"
+        mode="tags"
+        :max="1"
         @change="refresh"
     />
   </div>
@@ -58,6 +65,13 @@ const refresh = () => {
   }
 }
 
+const inputDepartment = (v: number[]) => {
+  selectedDepartment.value = v[0]
+}
+const inputUser = (v: number[]) => {
+  selectedUser.value = v[0]
+}
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -66,12 +80,17 @@ const refresh = () => {
   white-space: nowrap;
 }
 
-.select-box {
-  min-width: 12rem;
-  z-index: 301;
-}
 </style>
 
-
-
-
+<style>
+.department-user-filter-wrapper .select-box {
+  min-width: 12rem;
+  z-index: 301;
+  min-height: 24px;
+  height: 24px;
+}
+.department-user-filter-wrapper .multiselect-tags-search{
+  min-height: 24px;
+  height: 24px;
+}
+</style>

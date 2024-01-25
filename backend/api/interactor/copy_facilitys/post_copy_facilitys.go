@@ -46,13 +46,16 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 		return a.Order > b.Order
 	}).Order + 1
 	newFacility := facilityRep.Upsert(db.Facility{
-		Id:        nil,
-		Name:      copyFacilityReq.Facility.Name,
-		TermFrom:  copyFacilityReq.Facility.TermFrom,
-		TermTo:    copyFacilityReq.Facility.TermTo,
-		Order:     order,
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
+		Id:              nil,
+		Name:            copyFacilityReq.Facility.Name,
+		TermFrom:        copyFacilityReq.Facility.TermFrom,
+		TermTo:          copyFacilityReq.Facility.TermTo,
+		Order:           order,
+		Status:          copyFacilityReq.Facility.Status,
+		Type:            copyFacilityReq.Facility.Type,
+		ShipmentDueDate: copyFacilityReq.Facility.ShipmentDueDate,
+		CreatedAt:       time.Time{},
+		UpdatedAt:       0,
 	})
 
 	var unitMap = make(map[int32]int32)
@@ -101,6 +104,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 	for _, ticket := range orgTickets {
 		from := currentFrom
 		to := from.Add(time.Hour * 24 * 7)
+		nOfw := int32(1)
 		ticketRep.Upsert(db.Ticket{
 			Id:              nil,
 			GanttGroupId:    ganttGroupMap[ticket.GanttGroupId],
@@ -108,7 +112,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 			DepartmentId:    ticket.DepartmentId,
 			LimitDate:       nil,
 			Estimate:        nil,
-			NumberOfWorker:  nil,
+			NumberOfWorker:  &nOfw,
 			DaysAfter:       nil,
 			StartDate:       &from,
 			EndDate:         &to,
@@ -116,6 +120,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 			Order:           ticket.Order,
 			CreatedAt:       time.Time{},
 			UpdatedAt:       0,
+			
 		})
 		currentFrom = from.Add(time.Hour * 24)
 	}

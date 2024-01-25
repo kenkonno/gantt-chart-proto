@@ -37,7 +37,7 @@
             <tbody>
             <tr v-for="item in ganttAllRow" :key="item.facility.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
-              <gantt-td :visible="ganttAllHeader[0].visible">{{ item.facility.name }}</gantt-td>
+              <gantt-td :visible="ganttAllHeader[0].visible" @click="refreshGantt(item.facility.id, true)" class="pointer"><u>{{ item.facility.name }}</u></gantt-td>
               <gantt-td :visible="ganttAllHeader[1].visible">
                 <div class="user-wrapper">
                   <SingleRune v-for="user in item.users" :key="user.id" :name="user.name" :id="user.id"></SingleRune>
@@ -136,7 +136,9 @@ import {initScroll} from "@/utils/initScroll";
 import {inject, nextTick, ref, watch} from "vue";
 import {DisplayType, Header} from "@/composable/ganttAllMenu";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
+import {GLOBAL_MUTATION_KEY} from "@/composable/globalState";
 
+const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
 type GanttAllProps = {
   ganttAllHeader: Header[],
