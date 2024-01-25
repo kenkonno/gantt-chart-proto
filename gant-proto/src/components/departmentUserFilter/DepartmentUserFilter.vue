@@ -3,19 +3,18 @@
     <div>部署：</div>
     <multiselect
         class="select-box"
-        :value="[selectedDepartment]"
+        :value="cSelectedDepartment"
         @input="inputDepartment"
         :searchable="true"
         :options="departmentOptions"
         :allow-empty="true"
         mode="tags"
         :max="1"
-        @change="refresh"
     />
     <div>担当者：</div>
     <multiselect
         class="select-box"
-        :value="[selectedUser]"
+        :value="cSelectedUser"
         @input="inputUser"
         :searchable="true"
         :options="userOptions"
@@ -61,9 +60,17 @@ const refresh = () => {
     refreshGantt(globalState.currentFacilityId, false)
   }
   if (router.currentRoute.value.name == "gantt-all-view") {
-    // refreshGanttAll()
+    refreshGanttAll()
   }
 }
+
+const cSelectedDepartment = computed(() => {
+  return [selectedDepartment.value]
+})
+const cSelectedUser = computed(() => {
+  return [selectedUser.value]
+})
+
 
 const inputDepartment = (v: number[]) => {
   selectedDepartment.value = v[0]
