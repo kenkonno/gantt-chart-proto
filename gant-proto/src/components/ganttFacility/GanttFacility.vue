@@ -1,7 +1,7 @@
 <template>
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="gantt-wrapper">
-      <div class="d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
+      <div class="gantt-facility-wrapper d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -28,6 +28,7 @@
             :display-today-line="true"
             @today-line-position-x="initScroll($event, ganttWrapperElement)"
             :mile-stone-list="milestones"
+            ref="gGanttChartRef"
         >
           <template #side-menu>
             <table class="side-menu" ref="ganttSideMenuElement">
@@ -125,7 +126,7 @@
       </div>
       <!-- 山積み部分 -->
       <hr>
-      <div class="d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <PileUps
             v-if="globalState.pileUpsRefresh"
             :chart-start="chartStart"
@@ -165,7 +166,7 @@
 </style>
 
 <script setup lang="ts">
-import {GanttBarObject, GGanttChart, GGanttRow, MileStone} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
 import {useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
@@ -174,14 +175,13 @@ import {computed, inject, nextTick, ref, watch} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
-import {useSyncWidthAndScroll} from "@/composable/syncWidth";
+import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
 import {Department} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
-import AsyncHolidayEdit from "@/components/holiday/AsyncHolidayEdit.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
 
 type GanttProxyProps = {
@@ -238,9 +238,10 @@ const setScheduleByFromToProxy = () => {
 }
 defineExpose({setScheduleByPersonDayProxy, setScheduleByFromToProxy})
 // スクロールや大きさの同期系
-const ganttSideMenuElement = ref<HTMLDivElement>()
-const ganttWrapperElement = ref<HTMLDivElement>()
-const childGanttWrapperElement = ref<HTMLDivElement>()
+const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体
+const ganttSideMenuElement = ref<HTMLDivElement>() // サイドメニュー
+const ganttWrapperElement = ref<HTMLDivElement>() // ガントチャートのラッパー
+const childGanttWrapperElement = ref<HTMLDivElement>() // 積み上げ
 
 const {
   syncWidth,
@@ -248,12 +249,14 @@ const {
   forceScroll
 } = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
 
+useSyncScrollY(gGanttChartRef, gGanttChartRef)
+
 watch(props.ganttFacilityHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
 
 // チケット更新モーダル
-const {modalIsOpen, id: modalTicketId, openEditModal, closeEditModal} = useModalWithId()
+const {modalIsOpen, id: modalTicketId, closeEditModal} = useModalWithId()
 const modalUnitId = ref(0)
 const emit = defineEmits(["update"])
 

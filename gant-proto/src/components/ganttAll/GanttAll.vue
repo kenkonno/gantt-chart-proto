@@ -1,6 +1,6 @@
 <template>
   <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter()}">
-    <div class="d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
+    <div class="gantt-facility-wrapper d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
       <g-gantt-chart
           :chart-start="chartStart"
           :chart-end="chartEnd"
@@ -17,6 +17,7 @@
           :display-today-line="true"
           @today-line-position-x="initScroll($event, ganttWrapperElement)"
           @click-bar="onClickBar($event.bar, $event.e, $event.datetime)"
+          ref="gGanttChartRef"
       >
         <template #side-menu>
           <table class="side-menu" ref="ganttSideMenuElement">
@@ -56,7 +57,7 @@
     </div>
     <!-- 山積み部分 -->
     <hr>
-    <div class="d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
       <PileUps :chart-start="chartStart"
                :chart-end="chartEnd"
                :display-type="displayType"
@@ -130,7 +131,7 @@ import {DAYJS_FORMAT} from "@/utils/day";
 import GanttTd from "@/components/gantt/GanttTd.vue";
 import PileUps from "@/components/pileUps/PileUps.vue";
 import {useGanttAll} from "@/composable/ganttAll";
-import {useSyncWidthAndScroll} from "@/composable/syncWidth";
+import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import SingleRune from "@/components/form/SingleRune.vue";
 import {initScroll} from "@/utils/initScroll";
 import {inject, nextTick, ref, watch} from "vue";
@@ -159,6 +160,7 @@ const {
 } = await useGanttAll()
 
 // スクロールや大きさの同期系
+const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体
 const ganttSideMenuElement = ref<HTMLDivElement>()
 const ganttWrapperElement = ref<HTMLDivElement>()
 const childGanttWrapperElement = ref<HTMLDivElement>()
@@ -171,6 +173,8 @@ const {
 watch(props.ganttAllHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
+
+useSyncScrollY(gGanttChartRef, gGanttChartRef)
 
 // 全体ビューの場合は遅延通知をフィルタして開く
 const {open, filterFacility} = inject(GLOBAL_SCHEDULE_ALERT_KEY)!

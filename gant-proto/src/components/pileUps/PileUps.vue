@@ -14,6 +14,7 @@
       :highlighted-dates="highlightedDates"
       sticky
       :display-today-line="true"
+      ref="gGanttChartRef"
   >
     <template #side-menu>
       <table class="side-menu" :style="syncWidth">
@@ -62,14 +63,15 @@
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import {DisplayType} from "@/composable/ganttFacility";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, onMounted, StyleValue, toValue} from "vue";
+import {computed, inject, onMounted, ref, StyleValue, toValue} from "vue";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
-import {GLOBAL_GETTER_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {Tippy} from "vue-tippy";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {useSyncScrollY} from "@/composable/syncWidth";
 
 type PileUpsProps = {
   tickets: Ticket[],
@@ -167,5 +169,9 @@ const updateUserFilter = (userId: number | undefined) => {
   selectedDepartment.value = undefined
   selectedUser.value = userId
 }
+
+const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体
+useSyncScrollY(gGanttChartRef, gGanttChartRef)
+
 
 </script>

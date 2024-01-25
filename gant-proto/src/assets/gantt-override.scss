@@ -1,15 +1,76 @@
 .g-gantt-chart {
   flex-shrink: 0;
 }
+
 .g-timeaxis {
   z-index: 200;
 }
+
 .today-line {
   z-index: 101;
 }
+
 .g-gantt-wrapper {
   z-index: 201 !important;
 }
+
 .g-gantt-bar {
   cursor: pointer
+}
+
+/* ここからデザイン調整向けのCSS追加 */
+#gantt-proxy-wrapper, #gantt-all-view {
+  height: calc(100% - 120px);
+  width: 100%;
+  overflow: hidden;
+}
+
+.gantt-facility-wrapper {
+  max-height: 50%;
+}
+/* Hrの分だけ高さを減らす */
+.gantt-facility-pile-ups-wrapper {
+  height: calc(50% - 3rem)
+}
+
+.gantt-wrapper {
+  height: 100%;
+  scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
+  -ms-overflow-style: none; /*Internet Explore対応のスクロールバー非表示コード*/
+}
+.gantt-wrapper::-webkit-scrollbar {
+  display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
+}
+
+/* サイドメニュー */
+.g-gantt-wrapper {
+  overflow-y: scroll !important;
+  flex-shrink: 0;
+  scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
+  -ms-overflow-style: none; /*Internet Explore対応のスクロールバー非表示コード*/
+}
+
+.g-gantt-wrapper::-webkit-scrollbar {
+  display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
+}
+
+.g-gantt-chart {
+  scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
+  -ms-overflow-style: none; /*Internet Explore対応のスクロールバー非表示コード*/
+}
+
+.g-gantt-chart::-webkit-scrollbar {
+  display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
+}
+
+.side-menu-header {
+  top: 0;
+  position: sticky;
+  z-index: 300;
+  background-color: red;
+}
+
+/* チャート本体 */
+.g-gantt-chart {
+  flex-shrink: 0;
 }

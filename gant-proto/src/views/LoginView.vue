@@ -41,8 +41,7 @@ const password = ref("")
 
 const login = async () => {
   try {
-    const response = await Api.postLogin({id: email.value, password: password.value});
-    const data = response.data;
+    await Api.postLogin({id: email.value, password: password.value});
     router.push("/")
   }
   catch (error) {

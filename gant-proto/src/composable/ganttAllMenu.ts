@@ -1,4 +1,4 @@
-import {onBeforeUnmount, onUnmounted, ref} from "vue";
+import {onBeforeUnmount, ref} from "vue";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 
 export type Header = {

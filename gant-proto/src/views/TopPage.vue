@@ -158,7 +158,7 @@ const updateFacility = () => {
 }
 
 // profile関連
-const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+const {modalIsOpen, closeEditModal} = useModalWithId()
 const closeModalProxy = async () => {
   closeEditModal()
   const {user} = await loggedIn()

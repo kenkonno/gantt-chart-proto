@@ -32,7 +32,3 @@ nav {
 }
 
 </style>
-<script setup lang="ts">
-import TopPage from "@/views/TopPage.vue";
-import {ModalsContainer} from "vue-final-modal";
-</script>

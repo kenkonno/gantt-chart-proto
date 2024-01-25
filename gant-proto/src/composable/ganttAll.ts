@@ -101,7 +101,6 @@ export async function useGanttAll() {
         holidays.push(...data.list)
         const tickets = filteredAllTickets.list.filter(v => ganttGroups.list.map(v => v.id!).includes(v.gantt_group_id))
         const ticketUsers = filteredAllTicketUsers.list.filter(v => tickets.map(vv => vv.id!).includes(v.ticket_id))
-        console.log("###### ",filteredAllTickets, ganttGroups)
         // 全てのチケットの予定工数を計上する
         const estimate = tickets.reduce((p, c) => {
             if (c.estimate != null) {

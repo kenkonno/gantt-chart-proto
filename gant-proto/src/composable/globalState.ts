@@ -7,7 +7,6 @@ import {Department, Facility, Holiday, OperationSetting, Process, ScheduleAlert,
 import {InjectionKey, ref, nextTick, onBeforeUnmount} from "vue";
 import {Api} from "@/api/axios";
 import {changeSort} from "@/utils/sort";
-import {FacilityType} from "@/const/common";
 import router from "@/router";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 

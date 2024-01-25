@@ -92,10 +92,9 @@ function dragResize(newRect: any) {
 
 
 import {inject} from "vue";
-import {GLOBAL_ACTION_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_ACTION_KEY, GLOBAL_MUTATION_KEY} from "@/composable/globalState";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 
-const {scheduleAlert} = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
 const {
@@ -109,7 +108,6 @@ const {
 const onSelectElement = function (event: any) {
   const tagName = event.target.tagName
 
-  console.log("############# EVENT", tagName)
   if (tagName === 'INPUT' || tagName === 'SELECT') {
     event.stopPropagation()
   }
