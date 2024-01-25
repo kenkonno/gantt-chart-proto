@@ -61,7 +61,7 @@ const refresh = () => {
     refreshGantt(globalState.currentFacilityId, false)
   }
   if (router.currentRoute.value.name == "gantt-all-view") {
-    refreshGanttAll()
+    // refreshGanttAll()
   }
 }
 
