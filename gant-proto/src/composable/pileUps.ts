@@ -162,7 +162,7 @@ export const usePielUps = (
                 pileUpsByPerson.value, pileUpsByDepartment.value,
                 ticket,
                 ticketUsers.value.filter(v => v.ticket_id === ticket.id),
-                startDate, holidays.value, userList
+                startDate, endDate, holidays.value, userList
             )
         })
         // 稼働上限のスタイルを適応する
@@ -200,6 +200,7 @@ export const usePielUps = (
                          ticket: Ticket,
                          ticketUsers: TicketUser[],
                          facilityStartDate: string,
+                         facilityEndDate: string,
                          holidays: Holiday[], userList: User[]) => {
 
         // validation
@@ -209,7 +210,8 @@ export const usePielUps = (
         }
         const dayjsFacilityStartDate = dayjs(facilityStartDate)
         const dayjsStartDate = dayjs(ticket.start_date)
-        const dayjsEndDate = dayjs(ticket.end_date)
+        const maxDate = dayjs(facilityEndDate).add(-1, 'days')
+        const dayjsEndDate = maxDate.isBefore(dayjs(ticket.end_date)) ? maxDate : dayjs(ticket.end_date)
         const startIndex = getIndexByDate(dayjsFacilityStartDate, dayjsStartDate)
         const endIndex = getIndexByDate(dayjsFacilityStartDate, dayjsEndDate)
         // 営業日の取得
@@ -224,6 +226,7 @@ export const usePielUps = (
         for (let i = 0; i + startIndex <= endIndex; i++) {
             validIndexes.push(i + startIndex)
         }
+        console.log(dayjsEndDate,facilityEndDate,ticket.end_date, startIndex, endIndex, validIndexes)
         // 祝日を削除する
         holidayIndexes.forEach(v => {
             const i = validIndexes.indexOf(v)

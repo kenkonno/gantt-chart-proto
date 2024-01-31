@@ -17,13 +17,11 @@ export function useGanttFacilityMenu() {
 
     // injectはsetupと同期的に呼び出す必要あり
     const GanttHeader = ref<GanttFacilityHeader[]>(savedGanttHeader)
-    if (allowed('UPDATE_TICKET')) {
-        if (!GanttHeader.value.find(v => v.name == "操作")) {
-            GanttHeader.value.push({name: "操作", visible: false})
-        }
-    } else {
+    if (!allowed('UPDATE_TICKET')) {
         const index = GanttHeader.value.findIndex(v => v.name == "操作")
-        GanttHeader.value.splice(index)
+        if (index >= 0) {
+            GanttHeader.value.splice(index)
+        }
     }
     const displayType = ref<DisplayType>(savedViewType)
 

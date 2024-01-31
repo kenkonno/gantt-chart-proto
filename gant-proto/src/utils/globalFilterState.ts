@@ -3,7 +3,6 @@
  * facilityに紐づかないものは直接
  * facilityに紐づくものは連想はれいつとして持つ。
  */
-import {InjectionKey} from "vue";
 import {GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {Header} from "@/composable/ganttAllMenu";
 import {PileUpFilter} from "@/composable/pileUps";
@@ -58,6 +57,7 @@ const state: GlobalFilterState = {
         {name: "開始日", visible: false},
         {name: "終了日", visible: false},
         {name: "進捗", visible: true},
+        {name: "操作", visible: false},
     ],
     ganttAllMenu: [
         {name: "設備名", visible: true},
@@ -78,13 +78,27 @@ export const initStateValue = async () => {
     if (savedState) {
         const parsedState = JSON.parse(savedState);
         state.orderStatus = parsedState.orderStatus;
-        state.ganttFacilityMenu = parsedState.ganttFacilityMenu;
+        state.ganttFacilityMenu = getFacilityMenu(parsedState.ganttFacilityMenu);
         state.ganttAllMenu = parsedState.ganttAllMenu;
         state.pileUpsFilter = parsedState.pileUpsFilter;
         state.viewType = parsedState.viewType;
     } else {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
     }
+}
+
+/**
+ * デフォルト値をもとにsavedFacilityMenuの値で鵜輪がいたものを返却する。
+ * @param savedFacilityMenu
+ */
+const getFacilityMenu = (savedFacilityMenu: any): GanttFacilityHeader[] => {
+    return state.ganttFacilityMenu.map((v, i) => {
+        const savedValue = savedFacilityMenu.find((vv: any) => vv.name === v.name)
+        if (savedValue != undefined) {
+            v.visible = savedValue.visible
+        }
+        return {name: v.name, visible: v.visible}
+    })
 }
 
 export const globalFilterGetter = {
