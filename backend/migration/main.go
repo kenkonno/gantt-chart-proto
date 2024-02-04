@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"time"
 )
 
 var con = repository.GetConnection()
@@ -20,6 +21,25 @@ func main() {
 	migrate(db.TicketUser{})
 	migrate(db.Ticket{})
 	migrate(db.Milestone{})
+
+	createDefaultUser()
+}
+
+func createDefaultUser() {
+	userRep := repository.NewUserRepository()
+	adminUser := userRep.FindByEmail("admin")
+	if adminUser.Id == nil {
+		userRep.Upsert(db.User{
+			DepartmentId:     0,
+			LimitOfOperation: 0,
+			Name:             "管理者",
+			Password:         "defaultpassword",
+			Email:            "admin",
+			Role:             "admin",
+			CreatedAt:        time.Time{},
+			UpdatedAt:        0,
+		})
+	}
 }
 
 func migrate[T any](model T) {
