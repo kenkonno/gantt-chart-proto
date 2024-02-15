@@ -28,6 +28,7 @@
             :display-today-line="true"
             @today-line-position-x="initScroll($event, ganttWrapperElement)"
             :mile-stone-list="milestones"
+            :vertical-lines="milestoneVerticalLines"
             ref="gGanttChartRef"
         >
           <template #side-menu>
@@ -98,7 +99,8 @@
                   <gantt-td :visible="props.ganttFacilityHeader[9].visible">
                     <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
                                 @change="updateTicket(row.ticket)"
-                                :disabled="!allowed('UPDATE_PROGRESS')"/>
+                                :disabled="!allowed('UPDATE_PROGRESS')"
+                                :min=0 />
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
                     <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span
@@ -109,7 +111,7 @@
                         class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr v-if="!hasFilter && allowed('UPDATE_TICKET')">
+                <tr :style="{visibility :!hasFilter && allowed('UPDATE_TICKET') ? 'visible' : 'hidden'}">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -139,6 +141,7 @@
             :highlightedDates="getHolidaysForGantt(displayType)"
             :syncWidth="syncWidth"
             :current-facility-id="currentFacilityId"
+            :vertical-lines="milestoneVerticalLines"
             @on-mounted="forceScroll"
         >
         </PileUps>
@@ -150,8 +153,8 @@
   </div>
   <Suspense v-if="modalIsOpen">
     <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
-      <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId"  :facility-id="currentFacilityId"
-                          @close-edit-modal="closeModalProxy"></async-ticket-edit>
+      <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId" :facility-id="currentFacilityId"
+                         @close-edit-modal="closeModalProxy"></async-ticket-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -183,6 +186,8 @@ import {Department} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
+import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
+import dayjs from "dayjs";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -223,6 +228,19 @@ const {
   hasFilter,
   milestones
 } = await useGanttFacility()
+
+const milestoneVerticalLines = computed(() => {
+  return milestones.value.map(v => {
+    let color = "blue"
+    if (v.description == "出荷期日") {
+      color = "yellow"
+    }
+    return {
+      color: color,
+      date: dayjs(v.date)
+    }
+  })
+})
 
 // リスケ関連 親から呼び出される
 const setScheduleByPersonDayProxy = () => {
@@ -275,9 +293,9 @@ const openTicketDetail = (ticketId: number, unitId: number) => {
 let isDragged = false;
 
 // ここからイベントフック
-const onClickBar =  (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
+const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  if(!isDragged) {
+  if (!isDragged) {
     openTicketDetail(Number(bar.ganttBarConfig.id), 1)
   }
   isDragged = false

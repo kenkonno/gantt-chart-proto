@@ -97,6 +97,14 @@ resource "aws_cloudfront_distribution" "front_cloudfront" {
     minimum_protocol_version       = "TLSv1"
   }
 
+  // TODO: 次回構築時に確認 エラーページのリライト
+  custom_error_response {
+    error_code = 403
+    error_caching_min_ttl = 10
+    response_code = 200
+    response_page_path = "/index.html"
+  }
+
   #  EC2との連携は別のterraformファイルにして後から更新する形にしたほうがよさそう
   #  ordered_cache_behavior {
   #    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]

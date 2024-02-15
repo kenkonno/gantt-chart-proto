@@ -97,7 +97,8 @@ const inputUser = (v: number[]) => {
   height: 24px;
 }
 .department-user-filter-wrapper .multiselect-tags-search{
-  min-height: 24px;
-  height: 24px;
+  min-height: 22px;
+  height: 22px;
+  top: 1px;
 }
 </style>

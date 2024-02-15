@@ -4,9 +4,10 @@
 
 .g-timeaxis {
   z-index: 200;
+  max-height: 75px;
 }
 
-.today-line {
+.vertical-line {
   z-index: 101;
 }
 
@@ -26,11 +27,12 @@
 }
 
 .gantt-facility-wrapper {
-  max-height: 50%;
+  max-height: 70%;
 }
+
 /* Hrの分だけ高さを減らす */
 .gantt-facility-pile-ups-wrapper {
-  height: calc(50% - 3rem)
+  height: calc(30% - 3rem)
 }
 
 .gantt-wrapper {
@@ -38,6 +40,7 @@
   scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
   -ms-overflow-style: none; /*Internet Explore対応のスクロールバー非表示コード*/
 }
+
 .gantt-wrapper::-webkit-scrollbar {
   display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
 }
@@ -73,4 +76,8 @@
 /* チャート本体 */
 .g-gantt-chart {
   flex-shrink: 0;
+}
+
+#gantt-all-view .g-gantt-bar-label {
+  padding: 0
 }

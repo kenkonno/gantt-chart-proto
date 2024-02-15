@@ -62,9 +62,7 @@ resource "aws_apigatewayv2_route" "api_route" {
   request_models       = {}
   route_key            = "ANY /{proxy+}"
   target               = "integrations/${aws_apigatewayv2_integration.api_integration.id}"
-  # "integrations/xz2ib34" // TODO: integration
 }
-
 resource "aws_apigatewayv2_vpc_link" "api_vpc_link" {
   name               = "${var.env}-${var.serviceName}-apigateway-for-ecs-vpc-link"
   security_group_ids = var.securityGroupIds
@@ -109,7 +107,7 @@ resource "aws_apigatewayv2_stage" "api_stage" {
 ##                       ECR
 #####################################################
 resource "aws_ecr_repository" "api_ecr_repository" {
-  image_tag_mutability = "IMMUTABLE" // NOTE: docker image の上書き
+  image_tag_mutability = "MUTABLE" // NOTE: docker image の上書き
   name                 = "${var.env}-${var.serviceName}/api"
 
   encryption_configuration {
@@ -144,6 +142,13 @@ resource "aws_iam_role" "ecsInstanceRole" {
           Effect    = "Allow"
           Principal = {
             Service = "ec2.amazonaws.com"
+          }
+          Sid = ""
+        },{
+          Action    = "sts:AssumeRole"
+          Effect    = "Allow"
+          Principal = {
+            Service = "ecs-tasks.amazonaws.com"
           }
           Sid = ""
         },
@@ -216,7 +221,7 @@ resource "aws_iam_role" "ecsTaskExecutionRole" {
     )
   }
 }
-
+// TODO: apiってついてるけど起動テンプレートは１つになった。
 resource "aws_launch_template" "api_launch_template" {
   default_version         = 1
   disable_api_stop        = false
@@ -224,9 +229,12 @@ resource "aws_launch_template" "api_launch_template" {
   image_id                = "ami-0fd4bb49e3134c823"
   instance_type           = "t2.micro"
   key_name                = var.sshKeyPairName
-  vpc_security_group_ids  = []
-  user_data               = "IyEvYmluL2Jhc2ggCmVjaG8gRUNTX0NMVVNURVI9ZW52LW1hbnVhbC1lY3MtY2x1c3Rlci0yID4+IC9ldGMvZWNzL2Vjcy5jb25maWc7"
-  #  これのことらしい
+  vpc_security_group_ids  = var.securityGroupIds
+  user_data = <<DATA
+#!/bin/bash
+echo ECS_CLUSTER=${aws_ecs_cluster.api_ecs_cluster.name} >> /etc/ecs/ecs.config;
+DATA
+  # TODO: もしかしてこれだけの問題だったかも。次回構築時に気を付ける。
   #  #!/bin/bash
   #  echo ECS_CLUSTER=env-manual-ecs-cluster-2 >> /etc/ecs/ecs.config;
 
@@ -279,7 +287,7 @@ resource "aws_ecs_task_definition" "api_ecs_task_definition" {
           },
         ]
         essential        = true
-        image            = "${aws_ecr_repository.api_ecr_repository.arn}:latest"
+        image            = "${aws_ecr_repository.api_ecr_repository.repository_url}:latest"
         logConfiguration = {
           logDriver = "awslogs"
           options   = {
@@ -311,8 +319,8 @@ resource "aws_ecs_task_definition" "api_ecs_task_definition" {
   memory                   = "717"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2",]
-  task_role_arn            = aws_iam_role.ecsInstanceRole.arn // TODO: task_execution_role 本当は分けたほうがいい
-  execution_role_arn       = aws_iam_role.ecsInstanceRole.arn // TODO: task_execution_role
+  task_role_arn            = aws_iam_role.ecsTaskExecutionRole.arn // TODO: task_execution_role 本当は分けたほうがいい
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn // TODO: task_execution_role
 
   runtime_platform {
     cpu_architecture        = "X86_64"
@@ -333,7 +341,7 @@ resource "aws_ecs_task_definition" "migration_ecs_task_definition" {
           },
         ]
         essential        = true
-        image            = "${aws_ecr_repository.migration_ecr_repository.name}:latest" // TODO: 未確認
+        image            = "${aws_ecr_repository.migration_ecr_repository.repository_url}:latest"
         logConfiguration = {
           logDriver = "awslogs"
           options   = {
@@ -357,8 +365,8 @@ resource "aws_ecs_task_definition" "migration_ecs_task_definition" {
   memory                   = "717"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2",]
-  task_role_arn            = aws_iam_role.ecsInstanceRole.arn // TODO: task_execution_role 本当は分けたほうがいい
-  execution_role_arn       = aws_iam_role.ecsInstanceRole.arn // TODO: task_execution_role
+  task_role_arn            = aws_iam_role.ecsTaskExecutionRole.arn // TODO: task_execution_role 本当は分けたほうがいい
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn // TODO: task_execution_role
 
   runtime_platform {
     cpu_architecture        = "X86_64"
@@ -371,6 +379,7 @@ resource "aws_cloudwatch_log_group" "api_capacity_provider_gateway_log_group" {
   name = "/aws/capacity-provider/${var.env}-${var.serviceName}-api"
 }
 
+# TODO: CapacityProviderは手動でECSクラスターに設定する。
 resource "aws_ecs_capacity_provider" "api_capacity_provider_strategy" {
   name = "Infra-ECS-Cluster-${aws_ecs_cluster.api_ecs_cluster.name}-EC2CapacityProvider"
 
@@ -400,6 +409,9 @@ resource "aws_ecs_cluster" "api_ecs_cluster" {
     value = "disabled"
   }
 }
+resource "aws_ecs_service" "api_ecs_service_wk" {
+
+}
 
 resource "aws_ecs_service" "api_ecs_service" {
   cluster                            = aws_ecs_cluster.api_ecs_cluster.arn
@@ -418,9 +430,22 @@ resource "aws_ecs_service" "api_ecs_service" {
 
   capacity_provider_strategy {
     base              = 0
-    #    capacity_provider = "Infra-ECS-Cluster-env-manual-ecs-cluster-2-e641b6e0-EC2CapacityProvider-lBoxExbVXogj"
-    capacity_provider = aws_ecs_capacity_provider.api_capacity_provider_strategy.name
+    capacity_provider = aws_ecs_capacity_provider.api_capacity_provider_strategy.name // TODO: 次回確認 なんかキャパシティプロバイダの名前とかID関係の指定にもともと失敗していた気がする。
     weight            = 1
+  }
+
+  // TODO: 次回デプロイ時に確認。ServiceConnectが設定されていればOK
+  service_connect_options {
+    enabled = true
+    namespace = aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name // epson-prod-namespace
+    service = {
+      client_alias = {
+        port     = 80
+        dns_name = "api-80-tcp.${aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name}"
+      }
+      port_name      = "api-80-tcp"
+      discovery_name = "api-80-tcp"
+    }
   }
 
   deployment_circuit_breaker {

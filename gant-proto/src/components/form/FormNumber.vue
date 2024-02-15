@@ -4,6 +4,7 @@
          @input="$emit('update:modelValue',parseFloat($event.target.value) != null && !isNaN(parseFloat($event.target.value)) ? parseFloat($event.target.value) : undefined)"
          @change="$emit('change')"
          :disabled="disabled"
+         :min="min"
   />
 </template>
 
@@ -11,6 +12,7 @@
 interface FormNumber {
   modelValue: number | undefined
   disabled?: boolean
+  min?: number
 }
 
 withDefaults(defineProps<FormNumber>(), {disabled: false, modelValue: undefined})

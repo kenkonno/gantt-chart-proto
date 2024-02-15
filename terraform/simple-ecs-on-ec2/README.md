@@ -20,11 +20,39 @@ RDSは対象外です。
 ## required
 
 - SSH キーペア
-- VPC
+- VPC（注意！特に前回パブリックで構築してしまったので、次回は必ずプライベートVPCで構築すること）
+- AWSの自動生成リソースがあるから何回かapplyする必要あり。
 
-## recommended
+## apply後
+ - DBサーバーの構築
+ - Redisサーバーの構築
+ - ECRにコンテナーをpushする
+   - ローカルの aws profileに追加する
+   - docker-compose.yamlに定義を追加する（不要なものをコメントアウト）
+   - ECRメモの項を参照しECRへpushする
+ - CodePipeLineを構築する
+   - S3にフロントのファイルをdeployする
+ - s3にenvファイルを設置する
+ - Apigateway で api ステージにデプロイする（スロットの設定に注意）
 
- - 
+# ECR メモ
+ログインする
+docker-compose.yamlにECRの定義を追加すれば ログイン・build・pushでいけるみたい
+
+$ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
+$ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com
+Login Succeeded
+docker-compose build
+docker-compose push
+
+
+# 運用について
+TOBE: まとめていく。現状だとフロントはmasterへpush。バックエンドはbuild後各ECRへpushしてサービスから今日再デプロイをする必要がある。
+
+一旦は、各お客様の環境は 手動のcodepipelineにして手動デプロイかな。
+
+一旦はローカルでスクリプト組めば回るけど将来的にはもうちょい考えないといけないね。
+というかスキーマ分けしたサービスを構築できればアプリケーションは１個で済むはずだ。
 
 
 ## 手動構築した時の注意事項
@@ -51,15 +79,6 @@ RDSは対象外です。
 ※cloudfrontからECSは指定できないのでELBをかませる必要がありそう。
 
 手でぽちぽちするならECRが先かも。ともかく今日やり切るぞ。
-
-# ECR メモ
-
-ログインする
-
-docker-compose.yamlにECRの定義を追加すれば ログイン・build・pushでいけるみたい
-
-$ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
-Login Succeeded
 
 リポジトリはdocker-composeのサービスごとに作成する
 

@@ -241,11 +241,16 @@ export async function useGanttFacility() {
     // DBへのストア及びローカルのガントに情報を反映する
     const updateTicket = async (ticket: Ticket) => {
         const reqTicket = Object.assign({}, ticket)
-        if (reqTicket.start_date != undefined) {
+        console.log(reqTicket.start_date)
+        if (reqTicket.start_date) {
             reqTicket.start_date = ticket.start_date + "T00:00:00.00000+09:00"
+        } else {
+            reqTicket.start_date = undefined
         }
-        if (reqTicket.end_date != undefined) {
+        if (reqTicket.end_date) {
             reqTicket.end_date = ticket.end_date + "T00:00:00.00000+09:00"
+        } else {
+            reqTicket.end_date = undefined
         }
         if (reqTicket.limit_date != undefined) {
             reqTicket.limit_date = ticket.limit_date + "T00:00:00.00000+09:00"
@@ -323,9 +328,7 @@ export async function useGanttFacility() {
             // パフォーマンスのためにガントチャートに反映すべきものは特別にここで記述する
             targetTicket.beginDate = dayjs(ticket.start_date!).format(DAYJS_FORMAT)
             targetTicket.endDate = endOfDay(ticket.end_date!)
-            if (ticket.progress_percent) {
-                targetTicket.ganttBarConfig.progress = ticket.progress_percent
-            }
+            targetTicket.ganttBarConfig.progress = ticket.progress_percent ? ticket.progress_percent : targetTicket.ganttBarConfig.progress = 0
             targetTicket.ganttBarConfig.label = getProcessName(ticket.process_id == null ? -1 : ticket.process_id)
         }
     }

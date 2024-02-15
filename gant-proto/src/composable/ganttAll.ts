@@ -3,9 +3,7 @@ import {GanttBarObject} from "@infectoone/vue-ganttastic";
 import {inject, ref} from "vue";
 import {Facility, Holiday, Ticket, User} from "@/api";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {
-    endOfDay,
-} from "@/coreFunctions/manHourCalculation";
+import {endOfDay,} from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Api} from "@/api/axios";
 import {GanttBarConfig} from "@infectoone/vue-ganttastic/lib_types/types";
@@ -13,6 +11,7 @@ import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
 import {DisplayType} from "@/composable/ganttAllMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {useMilestoneTable} from "@/composable/milestone";
 
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
@@ -53,15 +52,15 @@ export async function useGanttAll() {
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
 
     let filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
-    if(facilityTypes.length > 0 ) {
-        filteredFacilityList = filteredFacilityList.filter(v => facilityTypes.includes(v.type) )
+    if (facilityTypes.length > 0) {
+        filteredFacilityList = filteredFacilityList.filter(v => facilityTypes.includes(v.type))
     }
 
     const filteredAllTickets = allTickets
     const filteredAllTicketUsers = allTicketUsers
     // チケット、設備の絞り込みを実施する
     if (selectedDepartment.value != undefined) {
-        filteredAllTickets.list = filteredAllTickets.list.filter( v => v.department_id == selectedDepartment.value)
+        filteredAllTickets.list = filteredAllTickets.list.filter(v => v.department_id == selectedDepartment.value)
         const ticketIds = filteredAllTickets.list.map(v => v.id)
         filteredAllTicketUsers.list = filteredAllTicketUsers.list.filter(v => ticketIds.includes(v.ticket_id))
     }
@@ -93,7 +92,66 @@ export async function useGanttAll() {
         return a.term_to > b.term_to ? 1 : -1
     }).pop()!.term_to.substring(0, 10)
 
-    // 設備ごとに行を作成する
+    async function getMilestones(facility: Facility) {
+        return await (async () => {
+            const result: GanttBarObject[] = []
+            const {list} = await useMilestoneTable(facility.id!)
+            result.push(<GanttBarObject>{
+                beginDate: dayjs(facility.shipment_due_date).format(DAYJS_FORMAT),
+                endDate: endOfDay(facility.shipment_due_date),
+                ganttBarConfig: {
+                    bundle: "",
+                    dragLimitLeft: 0,
+                    dragLimitRight: 0,
+                    hasHandles: false,
+                    immobile: false,
+                    pushOnOverlap: false,
+                    id: 90000 + facility.id! + "", // TODO: IDのルールの決定
+                    label: "出荷期日".substring(0,1), // 工程名
+                    progress: 0,
+                    progressColor: BAR_COMPLETE_COLOR,
+                    style: {
+                        backgroundColor: "yellow",
+                        padding: 0,
+                        height: "90%",
+                        opacity: 0.9,
+                        borderRadius: "30px"
+                    },
+                }
+            })
+            result.push(
+                ...list.value.map(v => {
+                    return <GanttBarObject>{
+                        beginDate: dayjs(v.date).format(DAYJS_FORMAT),
+                        endDate: endOfDay(v.date),
+                        ganttBarConfig: {
+                            bundle: "",
+                            dragLimitLeft: 0,
+                            dragLimitRight: 0,
+                            hasHandles: false,
+                            immobile: false,
+                            pushOnOverlap: false,
+                            id: 80000 + facility.id! + "", // TODO: IDのルールの決定
+                            label: v.description.substring(0,1), // 工程名
+                            progress: 0,
+                            progressColor: BAR_COMPLETE_COLOR,
+                            style: {
+                                backgroundColor: "blue",
+                                padding: 0,
+                                height: "90%",
+                                opacity: 0.9,
+                                borderRadius: "30px",
+                                color:  "white"
+                            },
+                        }
+                    }
+                })
+            )
+            return result
+        })();
+    }
+
+// 設備ごとに行を作成する
     const ganttAllRowPromise = filteredFacilityList.map(async facility => {
         // 設備に紐づくチケット一覧
         const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
@@ -126,6 +184,8 @@ export async function useGanttAll() {
             users.push(...Array.from(new Set(r)))
         }
 
+        const milestones = await getMilestones(facility);
+
         // ここのbarsが複数なので１つにして日付を最小最大にする。
         return <GanttAllRow>{
             facility: facility,
@@ -134,7 +194,10 @@ export async function useGanttAll() {
             users: users,
             estimate: estimate,
             progress_percent: round(progress_percent),
-            bars: hasFilter() ? createBars(tickets) : [createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to)],
+            bars: hasFilter() ? createBars(tickets) : [
+                createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to),
+                ...milestones
+            ],
         }
     })
     const createBar = (progressPercent: number, facilityName: string, facilityId: number, startDate: string, endDate: string) => {
@@ -162,7 +225,7 @@ export async function useGanttAll() {
         console.log("#create Bars", tickets)
         const bars: GanttBarObject[] = []
         bars.push(
-            ...tickets.filter(v => v.process_id ).map(ticket => {
+            ...tickets.filter(v => v.process_id).map(ticket => {
                 return <GanttBarObject>{
                     beginDate: dayjs(ticket.start_date!).format(DAYJS_FORMAT),
                     endDate: endOfDay(ticket!.end_date!),
