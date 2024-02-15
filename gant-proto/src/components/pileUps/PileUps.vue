@@ -12,8 +12,10 @@
       color-scheme="creamy"
       :hide-timeaxis="true"
       :highlighted-dates="highlightedDates"
+      :vertical-lines="milestoneVerticalLines"
       sticky
       :display-today-line="true"
+      ref="gGanttChartRef"
   >
     <template #side-menu>
       <table class="side-menu" :style="syncWidth">
@@ -25,9 +27,13 @@
               <gantt-td :visible="true" class="justify-middle">
                 <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
                        content="稼働上限を超えている担当者がいます。">
-                  <span class="error-over-work-hour" @click="updateDepartmentFilter(item.departmentId)">{{ getDepartmentName(item.departmentId) }}(人)</span>
+                  <span class="error-over-work-hour" @click="updateDepartmentFilter(item.departmentId)">{{
+                      getDepartmentName(item.departmentId)
+                    }}(人)</span>
                 </tippy>
-                <span v-else  @click="updateDepartmentFilter(item.departmentId)">{{ getDepartmentName(item.departmentId) }}(人)</span>
+                <span v-else @click="updateDepartmentFilter(item.departmentId)">{{
+                    getDepartmentName(item.departmentId)
+                  }}(人)</span>
                 <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
                       @click="item.displayUsers = true">add</span>
                 <span class="material-symbols-outlined pointer" v-else
@@ -41,7 +47,9 @@
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="true" class="justify-middle">
                 <tippy v-if="user.hasError" content="稼働上限を超えている日があります。">
-                  <span class="error-over-work-hour" @click="updateUserFilter(user.user.id)">{{ user.user.name }}(h)</span>
+                  <span class="error-over-work-hour" @click="updateUserFilter(user.user.id)">{{
+                      user.user.name
+                    }}(h)</span>
                 </tippy>
                 <span v-else @click="updateUserFilter(user.user.id)">{{ user.user.name }}(h)</span>
               </gantt-td>
@@ -62,14 +70,16 @@
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import {DisplayType} from "@/composable/ganttFacility";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, onMounted, StyleValue, toValue} from "vue";
+import {computed, inject, onMounted, ref, StyleValue, toValue} from "vue";
 import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
 import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
-import {GLOBAL_GETTER_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {Tippy} from "vue-tippy";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
+import {useSyncScrollY} from "@/composable/syncWidth";
+import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
 
 type PileUpsProps = {
   tickets: Ticket[],
@@ -82,6 +92,7 @@ type PileUpsProps = {
   highlightedDates: Date[],
   syncWidth: StyleValue | undefined,
   currentFacilityId: number,
+  milestoneVerticalLines: VerticalLine[]
 }
 const props = defineProps<PileUpsProps>()
 const {departmentList, userList} = inject(GLOBAL_STATE_KEY)!
@@ -167,5 +178,9 @@ const updateUserFilter = (userId: number | undefined) => {
   selectedDepartment.value = undefined
   selectedUser.value = userId
 }
+
+const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体
+useSyncScrollY(gGanttChartRef, gGanttChartRef)
+
 
 </script>

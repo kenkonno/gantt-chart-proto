@@ -1,0 +1,175 @@
+1. laurensia dev みたいなやつのアカウント削除
+   →残しててもいいかなってなった。料金がかかる系の奴らは停止させておくこと。
+2. epuson-aws@laurensia.net のアカウント作成
+3. aws アカウントの作成
+4. terraformの実施
+5. DB, cacheの作成
+6. pipeline の作成
+
+一旦いろいろ作った。
+
+APIのデプロイは多分失敗するから、いろいろトライ&エラーから開始。
+
+
+■フロント関係
+・フロントからちゃんと正しいドメインでリクエストしていることは確認。
+　https://d2tkjyeuxi9gom.cloudfront.net/api/userInfo
+　→オリジンとにビヘイビアにAPIGateway登録する必要あり。
+　→message:"Too Many Requests" という謎の状態になった。
+
+・API Gateway
+　apiステージへデプロイする
+　単品だと{"message":"Not Found"}となった（まだAPIをデプロイしていないけどね）
+　
+■ECS系
+　キャパシティプロバイダがなんか連携されていない
+　ECS内のキャパシティプロバイダ定義を削除して連携の削除を試みる。
+　→手動で設定した後正しい値を確認する。
+　　→ちょっとよくわからなかったから削除して手動で設定する運用にする。
+　　README反映済み
+　　assumeRoleが適切じゃなかったので terafform更新した。
+　　
+■いったんタスク実行してみた
+保留中になっていて、コンテナが立ち上がっていないので何か設定が間違っていそう。
+
+■やること
+Dev-Laurensia と比較して色々調べる
+とりあえあず Service Connect オプションはからになっていた。
+
+
+■残課題
+・コンテナが起動しない。（EC2は起動している）
+・アプリケーションからDB接続
+・アプリケーションからSession接続
+・Cloudfront経由のTooManyRequestエラー
+
+■やったこと
+cloudwatch logsの作成
+ - /ecs/epson-prod-koteikanri-service-api
+
+task definition の ecrのURLが間違っていた。 arn空になっていた
+task execution Role になっていなかった。
+
+設定は大体一致してきたから ASG 周りがかなり怪しい。
+一回削除して全部作り直して挑戦してみる。
+コンテナインスタンスとしてアサインされないのがかなり怪しい。
+or 必要なVCPUを減らして実行してみる？
+
+手動で作りなおしたらコンテナインスタンスが割り当てられたので、やっぱり無理やりキャパシティプロバイダを作ったのがダメだったっぽい。
+この辺りアップデートがあったようなので、手動で作成してterraform側も取り込みなおす必要がありそう。
+
+arn:aws:iam::339712996936:role/ecsInstanceRole
+arn:aws:iam::339712996936:role/ecsTaskExecutionRole
+
+
+AGSの比較
+セキュリティグループの有無
+・
+・sg-00c066bf12c09075a
+
+なんかセキュリティグループっぽい。
+一回リセットまでもっていってセキュリティグループ更新してダメだったら手動で実施する。
+
+・ちょっとよくわからない。
+　クラスターを新規作成したら上手く起動したので多分ドレインがらみのデフォルト値の変更で動作がおかしくなった模様。
+　いったん手動で構築するようにして、terraform取り込みは後日行うことにする。
+
+
+■とりあえず色々まとめ
+・違いが判らないけど、多分AGSかキャパシティプロバイダー周りが変わって上手くいかなくなった。
+・いったん手動で実行して、後日terafformで管理できるようにする。
+
+■手動でやること
+・ECS - サービスディスカバリーの更新（80-api-80）みたいなやつ → やった
+・Migrationを実行する → なんか普通に成功した。
+・SSL関連のDBにつながらない問題のやつ → パラメータグループの変更で対応した。
+・ECS - サービス起動 → なんか普通に起動した。
+・Redisにつながることの確認 → つながってる
+・ApiGatewayのTooManyRequestはステージのスロットリング制限が定義されていなかったため。
+・Cloudfrontの設定でPostとかのメソッド許可してなかった → 修正済み
+・ecsInstanceRole に EC2InstanceConnect を追加した。
+・SecurityGroupに一時的に SSH と Postgresqlを追加した
+　・SSHについてはなぜか接続できない→お尻のフィルタのせいだった。
+・Cloudfrontでエラーページの設定をして 404の時に index.html に戻すようにした。
+　→よくわから403になるから、いったん403の時にindex.htmlに戻すようにした。
+
+
+■とりあえずterraformの最新化作業とブランチが壊れたので直す。
+・ブランチは直した
+
+・取り込み直し作業はどうする？
+　→動作確認までは大変なのでいったん修正だけして、次回構築時に気を付けるようにする。
+・ECS関連
+　・そもそもECSクラスター定義の更新
+　・起動テンプレートの更新
+　・AutoscalingGroupの更新
+　　・多分この三つは不要。user_dataの問題だったっぽい。
+・ApiGatewayはステージの問題だからまあええか
+
+・サービス定義の更新（サービスディスカバリーの登録）
+・Cloudfrontのエラーページの設定
+・READMEの更新。securitygruopを開ける話とdockerのbuildを記載する。
+
+
+terraform import -var-file=epson-prod.terraform.tfvars aws_ecs_service.api_ecs_service manual-epson-prod-koteikanri-ecs-cluster-api-2/manual-ecs-service
+
+
+切り分け
+■
+Pt.1 Terraformで作成したAutoscaling Group + 手動で作成したECSクラスター
+　　→これもだめだった
+Pt.2 手動で作成した Autoscaling Group + Terraformで作成したECSクラスター
+     →NG（多分やっぱクラスター側な気がする）
+
+やっぱクラスター作成と同時に作ったAutoscalingGruopじゃないと動作しなくなっているっぽい。
+新しく作ったものでいったんあきらめるのが正しそう（結局そうなるから）
+
+
+
+
+
+
+ビルドの実行までは確認できた。SQLのssl関係で落ちてるっぽい。
+https://ap-northeast-1.console.aws.amazon.com/ecs/v2/clusters/manual-epson-prod-koteikanri-ecs-cluster-api-2/services/manual-ecs-service/tasks/966035e80df64ad1ad68e5aa9ce0b1d4/logs?region=ap-northeast-1
+
+$ aws ecs delete-capacity-provider --region ap-northeast-1 --profile=epson-prod --capacity-provider Infra-ECS-Cluster-epson-prod-koteikanri-ecs-cluster-api-EC2CapacityProvider
+
+　
+　        {
+            "capacityProviderArn": "arn:aws:ecs:ap-northeast-1:339712996936:capacity-provider/Infra-ECS-Cluster-epson-prod-koteikanri-ecs-cluster-api-EC2CapacityProvider",
+            "name": "Infra-ECS-Cluster-epson-prod-koteikanri-ecs-cluster-api-EC2CapacityProvider",
+            "status": "ACTIVE",
+            "autoScalingGroupProvider": {
+                "autoScalingGroupArn": "arn:aws:autoscaling:ap-northeast-1:339712996936:autoScalingGroup:38ca7375-593b-4bcb-b076-1ff11d4952fe:autoScalingGroupName/Infra-ECS-Cluster-epson-prod-koteikanri-ecs-cluster",
+                "managedScaling": {
+                    "status": "ENABLED",
+                    "targetCapacity": 100,
+                    "minimumScalingStepSize": 1,
+                    "maximumScalingStepSize": 10000,
+                    "instanceWarmupPeriod": 300
+                },
+                "managedTerminationProtection": "DISABLED"
+            },
+            "tags": []
+        }
+    ],
+    "failures": []
+
+        },
+        {
+            "capacityProviderArn": "arn:aws:ecs:ap-northeast-1:339712996936:capacity-provider/epson-prod-koteikanri-ecs-capacity-provider",
+            "name": "epson-prod-koteikanri-ecs-capacity-provider",
+            "status": "ACTIVE",
+            "autoScalingGroupProvider": {
+                "autoScalingGroupArn": "arn:aws:autoscaling:ap-northeast-1:339712996936:autoScalingGroup:38ca7375-593b-4bcb-b076-1ff11d4952fe:autoScalingGroupName/Infra-ECS-Cluster-epson-prod-koteikanri-ecs-cluster",
+                "managedScaling": {
+                    "status": "ENABLED",
+                    "targetCapacity": 100,
+                    "minimumScalingStepSize": 1,
+                    "maximumScalingStepSize": 10000,
+                    "instanceWarmupPeriod": 300
+                },
+                "managedTerminationProtection": "DISABLED"
+            },
+            "tags": []
+        }

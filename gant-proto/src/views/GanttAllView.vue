@@ -31,7 +31,6 @@ const {
   displayType,
 } = useGanttAllMenu()
 const updateDisplayType = (v: DisplayType) => {
-  console.log("################ displayType", v)
   displayType.value = v
 }
 

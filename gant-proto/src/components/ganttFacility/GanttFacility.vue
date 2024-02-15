@@ -1,7 +1,7 @@
 <template>
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="gantt-wrapper">
-      <div class="d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
+      <div class="gantt-facility-wrapper d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -28,6 +28,8 @@
             :display-today-line="true"
             @today-line-position-x="initScroll($event, ganttWrapperElement)"
             :mile-stone-list="milestones"
+            :vertical-lines="milestoneVerticalLines"
+            ref="gGanttChartRef"
         >
           <template #side-menu>
             <table class="side-menu" ref="ganttSideMenuElement">
@@ -97,7 +99,8 @@
                   <gantt-td :visible="props.ganttFacilityHeader[9].visible">
                     <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
                                 @change="updateTicket(row.ticket)"
-                                :disabled="!allowed('UPDATE_PROGRESS')"/>
+                                :disabled="!allowed('UPDATE_PROGRESS')"
+                                :min=0 />
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
                     <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span
@@ -108,7 +111,7 @@
                         class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr v-if="!hasFilter && allowed('UPDATE_TICKET')">
+                <tr :style="{visibility :!hasFilter && allowed('UPDATE_TICKET') ? 'visible' : 'hidden'}">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -125,7 +128,7 @@
       </div>
       <!-- 山積み部分 -->
       <hr>
-      <div class="d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <PileUps
             v-if="globalState.pileUpsRefresh"
             :chart-start="chartStart"
@@ -138,6 +141,7 @@
             :highlightedDates="getHolidaysForGantt(displayType)"
             :syncWidth="syncWidth"
             :current-facility-id="currentFacilityId"
+            :vertical-lines="milestoneVerticalLines"
             @on-mounted="forceScroll"
         >
         </PileUps>
@@ -149,8 +153,8 @@
   </div>
   <Suspense v-if="modalIsOpen">
     <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
-      <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId"  :facility-id="currentFacilityId"
-                          @close-edit-modal="closeModalProxy"></async-ticket-edit>
+      <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId" :facility-id="currentFacilityId"
+                         @close-edit-modal="closeModalProxy"></async-ticket-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -165,7 +169,7 @@
 </style>
 
 <script setup lang="ts">
-import {GanttBarObject, GGanttChart, GGanttRow, MileStone} from "@infectoone/vue-ganttastic";
+import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
 import {useGanttFacility} from "@/composable/ganttFacility";
 import FormNumber from "@/components/form/FormNumber.vue";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
@@ -174,15 +178,16 @@ import {computed, inject, nextTick, ref, watch} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {DAYJS_FORMAT} from "@/utils/day";
 import PileUps from "@/components/pileUps/PileUps.vue";
-import {useSyncWidthAndScroll} from "@/composable/syncWidth";
+import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
 import {Department} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
-import AsyncHolidayEdit from "@/components/holiday/AsyncHolidayEdit.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
+import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
+import dayjs from "dayjs";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -224,6 +229,19 @@ const {
   milestones
 } = await useGanttFacility()
 
+const milestoneVerticalLines = computed(() => {
+  return milestones.value.map(v => {
+    let color = "blue"
+    if (v.description == "出荷期日") {
+      color = "yellow"
+    }
+    return {
+      color: color,
+      date: dayjs(v.date)
+    }
+  })
+})
+
 // リスケ関連 親から呼び出される
 const setScheduleByPersonDayProxy = () => {
   ganttChartGroup.value.forEach(v => {
@@ -238,9 +256,10 @@ const setScheduleByFromToProxy = () => {
 }
 defineExpose({setScheduleByPersonDayProxy, setScheduleByFromToProxy})
 // スクロールや大きさの同期系
-const ganttSideMenuElement = ref<HTMLDivElement>()
-const ganttWrapperElement = ref<HTMLDivElement>()
-const childGanttWrapperElement = ref<HTMLDivElement>()
+const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体
+const ganttSideMenuElement = ref<HTMLDivElement>() // サイドメニュー
+const ganttWrapperElement = ref<HTMLDivElement>() // ガントチャートのラッパー
+const childGanttWrapperElement = ref<HTMLDivElement>() // 積み上げ
 
 const {
   syncWidth,
@@ -248,12 +267,14 @@ const {
   forceScroll
 } = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
 
+useSyncScrollY(gGanttChartRef, gGanttChartRef)
+
 watch(props.ganttFacilityHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
 
 // チケット更新モーダル
-const {modalIsOpen, id: modalTicketId, openEditModal, closeEditModal} = useModalWithId()
+const {modalIsOpen, id: modalTicketId, closeEditModal} = useModalWithId()
 const modalUnitId = ref(0)
 const emit = defineEmits(["update"])
 
@@ -272,9 +293,9 @@ const openTicketDetail = (ticketId: number, unitId: number) => {
 let isDragged = false;
 
 // ここからイベントフック
-const onClickBar =  (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
+const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  if(!isDragged) {
+  if (!isDragged) {
     openTicketDetail(Number(bar.ganttBarConfig.id), 1)
   }
   isDragged = false

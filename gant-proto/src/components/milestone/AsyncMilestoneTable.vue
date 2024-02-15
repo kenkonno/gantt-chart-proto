@@ -33,7 +33,7 @@ interface AsyncMilestoneTable {
   list: Milestone[]
 }
 
-const props = defineProps<AsyncMilestoneTable>()
+defineProps<AsyncMilestoneTable>()
 
 </script>
 

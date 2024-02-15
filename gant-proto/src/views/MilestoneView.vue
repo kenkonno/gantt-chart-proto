@@ -29,7 +29,6 @@ import {useModalWithId} from "@/composable/modalWIthId";
 import {useMilestoneTable} from "@/composable/milestone";
 import {inject} from "vue";
 import {GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import AsyncFacilityEdit from "@/components/facility/AsyncFacilityEdit.vue";
 
 const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!

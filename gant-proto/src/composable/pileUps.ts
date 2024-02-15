@@ -226,7 +226,6 @@ export const usePielUps = (
         for (let i = 0; i + startIndex <= endIndex; i++) {
             validIndexes.push(i + startIndex)
         }
-        console.log(dayjsEndDate,facilityEndDate,ticket.end_date, startIndex, endIndex, validIndexes)
         // 祝日を削除する
         holidayIndexes.forEach(v => {
             const i = validIndexes.indexOf(v)

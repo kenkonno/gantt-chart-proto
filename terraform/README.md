@@ -21,9 +21,28 @@ Samで何とかなると思ったけど寒い結果になって危機感を感�
 - ChangeRoleをできるようにする
 - terraformの学習
 
+## 実行方法
+
+Planの確認
+
+``terraform.exe plan -var-file [epson-prod].terraform.tfvars``
+
+適応
+
+``terraform.exe apply -var-file [epson-prod].terraform.tfvars``
+
+## TODO
+- TODO: 実行フォルダを環境ごとに用意して管理する必要がある。
+- ECRへのpushがdocker-compose.yamlに依存しているので環境ごとに手動となる。
+- 
+
+
 ## メモ
 
 - [簡単なチュートリアル](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-build)
+
+- 
+
 
 ## やること
 
