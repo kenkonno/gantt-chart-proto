@@ -241,7 +241,6 @@ export async function useGanttFacility() {
     // DBへのストア及びローカルのガントに情報を反映する
     const updateTicket = async (ticket: Ticket) => {
         const reqTicket = Object.assign({}, ticket)
-        console.log(reqTicket.start_date)
         if (reqTicket.start_date) {
             reqTicket.start_date = ticket.start_date + "T00:00:00.00000+09:00"
         } else {

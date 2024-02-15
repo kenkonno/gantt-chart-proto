@@ -222,7 +222,6 @@ export async function useGanttAll() {
 
     // フィルタ済みの場合はこちらを利用する。
     const createBars = (tickets: Ticket[]) => {
-        console.log("#create Bars", tickets)
         const bars: GanttBarObject[] = []
         bars.push(
             ...tickets.filter(v => v.process_id).map(ticket => {
