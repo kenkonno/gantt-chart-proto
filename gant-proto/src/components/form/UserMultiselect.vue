@@ -15,7 +15,7 @@
           'is-disabled': disabled
         }"
           class="multiselect-tag-remove multiselect-tag"
-          @mousedown.prevent="handleTagRemove(option, $event)"
+          @mousedown.prevent="allowed('UPDATE_TICKET') && handleTagRemove(option, $event)"
           style="background-color: inherit"
           :style="getStyle(option.value)"
       >
@@ -30,6 +30,7 @@ import Multiselect from '@vueform/multiselect'
 import {TicketUser, User} from "@/api";
 import {computed} from "vue";
 import SingleRune from "@/components/form/SingleRune.vue";
+import {allowed} from "@/composable/role";
 
 interface UserMultiselect {
   ticketUser: TicketUser[]
