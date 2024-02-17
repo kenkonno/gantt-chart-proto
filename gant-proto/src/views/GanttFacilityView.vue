@@ -10,7 +10,7 @@
         <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
           <unit-view></unit-view>
         </ModalWithLink>
-        <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1">
+        <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1" v-if="false">
           <operation-setting-view></operation-setting-view>
         </ModalWithLink>
         <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
