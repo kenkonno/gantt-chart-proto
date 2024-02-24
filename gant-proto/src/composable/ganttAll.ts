@@ -9,9 +9,9 @@ import {Api} from "@/api/axios";
 import {GanttBarConfig} from "@infectoone/vue-ganttastic/lib_types/types";
 import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
-import {DisplayType} from "@/composable/ganttAllMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {useMilestoneTable} from "@/composable/milestone";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 

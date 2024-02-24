@@ -9,6 +9,7 @@ import {PileUpFilter} from "@/composable/pileUps";
 import {FacilityType} from "@/const/common";
 
 const LOCAL_STORAGE_KEY = "koteikanri"
+const VERSION = 1.0 // フィルタの項目が変わったときに変える
 
 /**
  * WebStorageを用いて各種フィルタ系の値を保持するようにする。
@@ -39,7 +40,8 @@ type GlobalFilterState = {
     ganttFacilityMenu: GanttFacilityHeader[],
     ganttAllMenu: Header[],
     pileUpsFilter: PileUpFilter[],
-    viewType: "day" | "week" | "hour" | "month"
+    viewType: "day" | "week" | "hour" | "month",
+    version: number
 }
 
 
@@ -68,7 +70,8 @@ const state: GlobalFilterState = {
         {name: "進捗", visible: true},
     ],
     pileUpsFilter: [],
-    viewType: "day"
+    viewType: "day",
+    version: VERSION
 
 }
 
@@ -77,11 +80,17 @@ export const initStateValue = async () => {
     const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedState) {
         const parsedState = JSON.parse(savedState);
+        // バージョンが異なる場合は初期化する
+        if (parsedState.version != VERSION) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
+            return
+        }
         state.orderStatus = parsedState.orderStatus;
         state.ganttFacilityMenu = getFacilityMenu(parsedState.ganttFacilityMenu);
         state.ganttAllMenu = parsedState.ganttAllMenu;
         state.pileUpsFilter = parsedState.pileUpsFilter;
         state.viewType = parsedState.viewType;
+        state.version = parsedState.version;
     } else {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
     }

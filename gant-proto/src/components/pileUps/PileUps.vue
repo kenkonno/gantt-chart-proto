@@ -20,59 +20,137 @@
     <template #side-menu>
       <table class="side-menu" :style="syncWidth">
         <tbody>
-        <gantt-nested-row v-for="item in cPileUpFilters" :key="item.departmentId">
-          <template #parent>
+          <template v-for="pileUp in cPileUps" :key="pileUp.departmentId">
+            <!-- 部署 -->
             <tr>
               <td class="side-menu-cell"></td><!-- css hack min-height -->
-              <gantt-td :visible="true" class="justify-middle">
-                <tippy v-if="pileUpsByDepartment.find(v => v.departmentId === item.departmentId).hasError"
-                       content="稼働上限を超えている担当者がいます。">
-                  <span class="error-over-work-hour" @click="updateDepartmentFilter(item.departmentId)">{{
-                      getDepartmentName(item.departmentId)
-                    }}(人)</span>
-                </tippy>
-                <span v-else @click="updateDepartmentFilter(item.departmentId)">{{
-                    getDepartmentName(item.departmentId)
-                  }}(人)</span>
-                <span class="material-symbols-outlined pointer" v-if="!item.displayUsers"
-                      @click="item.displayUsers = true">add</span>
-                <span class="material-symbols-outlined pointer" v-else
-                      @click="item.displayUsers = false">remove</span>
+              <gantt-td :visible="true">
+                <div class="pileUp-title">
+                  <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, '')" v-if="!pileUp.display">add</span>
+                  <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, '')" v-if="pileUp.display">remove</span>
+                  {{getDepartmentName(pileUp.departmentId)}}
+                </div>
               </gantt-td>
             </tr>
+            <template v-if="pileUp.display">
+              <!-- アサイン済み -->
+              <tr>
+                <td class="side-menu-cell"></td><!-- css hack min-height -->
+                <gantt-td :visible="true">
+                  <div class="pileUp-title child">
+                    <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'assignedUser')" v-if="!pileUp.assignedUser.display">add</span>
+                    <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'assignedUser')" v-if="pileUp.assignedUser.display">remove</span>
+                    アサイン済み
+                  </div>
+                </gantt-td>
+              </tr>
+              <!-- アサイン済みユーザー -->
+              <template v-if="pileUp.assignedUser.display">
+                <tr v-for="item in pileUp.assignedUser.users" :key="item.user.id">
+                  <td class="side-menu-cell"></td><!-- css hack min-height -->
+                  <gantt-td :visible="true">
+                    <div class="pileUp-title child-child">
+                      {{item.user.name}}
+                    </div>
+                  </gantt-td>
+                </tr>
+              </template>
+              <!-- 未アサイン -->
+              <tr>
+                <td class="side-menu-cell"></td><!-- css hack min-height -->
+                <gantt-td :visible="true">
+                  <div class="pileUp-title child">
+                    <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'unAssignedPileUp')" v-if="!pileUp.unAssignedPileUp.display">add</span>
+                    <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'unAssignedPileUp')" v-if="pileUp.unAssignedPileUp.display">remove</span>
+                    未アサイン
+                  </div>
+                </gantt-td>
+              </tr>
+              <!-- 未アサイン - 設備 -->
+              <template v-if="pileUp.unAssignedPileUp.display">
+                <tr v-for="item in pileUp.unAssignedPileUp.facilities" :key="item.facilityId">
+                  <td class="side-menu-cell"></td><!-- css hack min-height -->
+                  <gantt-td :visible="true">
+                    <div class="pileUp-title child-child">
+                      {{getFacilityName(item.facilityId)}}
+                    </div>
+                  </gantt-td>
+                </tr>
+              </template>
+              <!-- 未受注 -->
+              <tr>
+                <td class="side-menu-cell"></td><!-- css hack min-height -->
+                <gantt-td :visible="globalState.facilityTypes.includes(FacilityType.Prepared)">
+                  <div class="pileUp-title child">
+                    <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'noOrdersReceivedPileUp')" v-if="!pileUp.noOrdersReceivedPileUp.display">add</span>
+                    <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'noOrdersReceivedPileUp')" v-if="pileUp.noOrdersReceivedPileUp.display">remove</span>
+                    未受注
+                  </div>
+                </gantt-td>
+              </tr>
+              <!-- 未受注 - 設備 -->
+              <template v-if="pileUp.noOrdersReceivedPileUp.display && globalState.facilityTypes.includes(FacilityType.Prepared)">
+                <tr v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId">
+                  <td class="side-menu-cell"></td><!-- css hack min-height -->
+                  <gantt-td :visible="true">
+                    <div class="pileUp-title child-child">
+                      {{getFacilityName(item.facilityId)}}
+                    </div>
+                  </gantt-td>
+                </tr>
+              </template>
+            </template>
           </template>
-          <template #child v-if="item.displayUsers">
-            <tr v-for="user in cPileUpsPerson.filter(v => v.user.department_id === item.departmentId)"
-                :key="user.user.id">
-              <td class="side-menu-cell"></td><!-- css hack min-height -->
-              <gantt-td :visible="true" class="justify-middle">
-                <tippy v-if="user.hasError" content="稼働上限を超えている日があります。">
-                  <span class="error-over-work-hour" @click="updateUserFilter(user.user.id)">{{
-                      user.user.name
-                    }}(h)</span>
-                </tippy>
-                <span v-else @click="updateUserFilter(user.user.id)">{{ user.user.name }}(h)</span>
-              </gantt-td>
-            </tr>
-          </template>
-        </gantt-nested-row>
         </tbody>
       </table>
     </template>
-    <g-gantt-label-row v-for="(item, index) in displayPileUps" :key="index" :labels="item.labels"
-                       :styles="item.styles"></g-gantt-label-row>
+    <template v-for="pileUp in cPileUps" :key="pileUp.departmentId">
+      <!-- 部署 -->
+      <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.labels, displayType)" :styles="pileUp.styles"></g-gantt-label-row>
+      <!-- アサイン済み -->
+      <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.assignedUser.labels, displayType)" :styles="pileUp.assignedUser.styles" v-if="pileUp.display"></g-gantt-label-row>
+      <!-- アサイン済みユーザー -->
+      <template  v-if="pileUp.assignedUser.display">
+        <g-gantt-label-row v-for="item in pileUp.assignedUser.users" :key="item.user.id" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
+      </template>
+      <!-- 未アサイン -->
+      <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.unAssignedPileUp.labels, displayType)" :styles="pileUp.unAssignedPileUp.styles" v-if="pileUp.display"></g-gantt-label-row>
+      <!-- 未アサイン - 設備 -->
+      <template v-if="pileUp.unAssignedPileUp.display">
+        <g-gantt-label-row v-for="item in pileUp.unAssignedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
+      </template>
+      <!-- 未受注 -->
+      <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.noOrdersReceivedPileUp.labels, displayType)" :styles="pileUp.noOrdersReceivedPileUp.styles"
+                         v-if="pileUp.display && globalState.facilityTypes.includes(FacilityType.Prepared)"></g-gantt-label-row>
+      <!-- 未受注 - 設備 -->
+      <template v-if="pileUp.noOrdersReceivedPileUp.display && globalState.facilityTypes.includes(FacilityType.Prepared)">
+        <g-gantt-label-row v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
+      </template>
+    </template>
   </g-gantt-chart>
 </template>
 <style lang="scss" scoped>
 @import '@/assets/gantt.scss';
+
+.pileUp-title {
+  width: 50%;
+  text-align: left;
+  margin: auto;
+}
+.child {
+  padding-left: 16px;
+}
+.child-child {
+  padding-left: 32px;
+}
+
+
 </style>
 <script setup lang="ts">
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
-import {DisplayType} from "@/composable/ganttFacility";
 import GanttTd from "@/components/gantt/GanttTd.vue";
 import {computed, inject, onMounted, ref, StyleValue, toValue} from "vue";
-import GanttNestedRow from "@/components/gantt/GanttNestedRow.vue";
-import {getDefaultPileUps, usePielUps} from "@/composable/pileUps";
+import {getDefaultPileUps, usePileUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
 import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
@@ -80,6 +158,10 @@ import {Tippy} from "vue-tippy";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {useSyncScrollY} from "@/composable/syncWidth";
 import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
+import {pileUpsLabelFormat} from "@/utils/filters";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
+import {PileUps} from "@/composable/pileUps";
+import {FacilityType} from "@/const/common";
 
 type PileUpsProps = {
   tickets: Ticket[],
@@ -95,8 +177,9 @@ type PileUpsProps = {
   milestoneVerticalLines: VerticalLine[]
 }
 const props = defineProps<PileUpsProps>()
-const {departmentList, userList} = inject(GLOBAL_STATE_KEY)!
-const {getDepartmentName} = inject(GLOBAL_GETTER_KEY)!
+const {facilityList, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
+const globalState = inject(GLOBAL_STATE_KEY)!
+const {getDepartmentName, getFacilityName} = inject(GLOBAL_GETTER_KEY)!
 const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
 
 const tickets = computed(() => {
@@ -115,54 +198,63 @@ const holidays = computed(() => props.holidays)
 console.log("####### start main getDefaultPileUps")
 const {
   globalStartDate,
-  defaultPileUpsByPerson,
-  defaultPileUpsByDepartment,
-} = await getDefaultPileUps(props.currentFacilityId, "day", selectedDepartment, selectedUser,)
-console.log("####### start main getDefaultPileUps", defaultPileUpsByPerson, defaultPileUpsByDepartment)
+  defaultPileUps,
+} = await getDefaultPileUps(props.currentFacilityId, "day")
+console.log("####### start main getDefaultPileUps", defaultPileUps)
 
 console.log("####### start main usePileUps", globalStartDate)
 const {
-  pileUpFilters,
-  pileUpsByDepartment,
-  pileUpsByPerson,
-  displayPileUps,
-} = usePielUps(
+  // pileUpFilters,
+  // pileUpsByDepartment,
+  // pileUpsByPerson,
+  // displayPileUps,
+    pileUps,
+} = usePileUps(
     props.chartStart,
     props.chartEnd,
+    facilityList.find(v => v.id === props.currentFacilityId)!,
     tickets,
     ticketUsers,
     displayType,
     holidays,
     departmentList,
     userList,
-    selectedDepartment,
-    selectedUser,
-    toValue(defaultPileUpsByPerson),
-    toValue(defaultPileUpsByDepartment),
+    facilityList,
+    toValue(defaultPileUps),
     globalStartDate
 )
 
-// TODO: フィルタ処理が分散してわかりにくい。
-const cPileUpFilters = computed(() => {
-  let targetDepartmentId = selectedDepartment.value
-  if (selectedUser.value != undefined) {
-    targetDepartmentId = userList.find(v => v.id == selectedUser.value)?.department_id
+const toggleDisplay = (departmentId: number, type: "" | "assignedUser" | "noOrdersReceivedPileUp" | "unAssignedPileUp") => {
+  const target = pileUps.value.find(v => v.departmentId === departmentId)!
+  if ( type === "" ) {
+    target.display = !target.display
   } else {
-    targetDepartmentId = selectedDepartment.value
+    target[type].display = !target[type].display
   }
-  if (targetDepartmentId == undefined) {
-    return pileUpFilters.value
-  } else {
-    return pileUpFilters.value.filter(v => v.departmentId == targetDepartmentId)
-  }
-})
+}
 
-const cPileUpsPerson = computed(() => {
-  if (selectedUser.value == undefined) {
-    return pileUpsByPerson.value
-  } else {
-    return pileUpsByPerson.value.filter(v => v.user.id == selectedUser.value)
+const cPileUps = computed(() => {
+  let result: PileUps[] = pileUps.value
+  // 部署のフィルタ
+  if (selectedDepartment.value !== undefined) {
+    result = result.filter(v => v.departmentId === selectedDepartment.value)
   }
+  if (selectedUser.value !== undefined) {
+    result = result.map(function(v): PileUps {
+      // ユーザーに紐づく部署を特定する
+      return {
+        assignedUser: {display: v.assignedUser.display, labels: v.assignedUser.labels, styles: v.assignedUser.styles, users: v.assignedUser.users.filter(user => user.user.id === selectedUser.value)},
+        noOrdersReceivedPileUp: {display: v.noOrdersReceivedPileUp.display, facilities: [], labels: [], styles: []},
+        unAssignedPileUp: {display: v.unAssignedPileUp.display, facilities: [], labels: [], styles: []},
+        departmentId: v.departmentId,
+        display: v.display,
+        labels: v.labels,
+        styles: v.styles,
+      }
+    })
+  }
+  return result
+
 })
 
 const emit = defineEmits(["onMounted"])
