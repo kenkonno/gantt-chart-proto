@@ -76,7 +76,7 @@ const PILEUP_DANGER_COLOR = "rgb(255 89 89)"
 const PILEUP_MERGE_COLOR = "rgb(68 141 255)"
 
 function initPileUps(
-    endDate: string, startDate: string,
+    endDate: string, startDate: string, isALlMode: boolean,
     userList: User[], pileUps: Ref<UnwrapRef<PileUps[]>>, departmentList: Department[], facilityList: Facility[],
     defaultPileUps: PileUps[] = [], globalStartDate?: string,) {
 
@@ -143,47 +143,56 @@ function initPileUps(
     if (globalStartDate != null) {
         const mergeStartIndex = dayjs(startDate).diff(dayjs(globalStartDate), 'day');
         pileUps.value.forEach((row, i) => {
-            // TODO: 全体通して参照渡しになっているか確認の必要あり 抽象化については一旦考えない
             // 部署のマージ
             const target = defaultPileUps.find(v => v.departmentId === row.departmentId);
             if (target == undefined) return console.warn("departmentId is not exists", row.departmentId)
-            mergeAndUpdate(target, row, mergeStartIndex);
+            mergeAndUpdate(target, row, mergeStartIndex, isALlMode);
 
             // アサイン済み（計）のマージ
-            mergeAndUpdate(target.assignedUser, row.assignedUser, mergeStartIndex)
+            mergeAndUpdate(target.assignedUser, row.assignedUser, mergeStartIndex, isALlMode)
             // アサイン済みユーザーのマージ
             row.assignedUser.users.forEach(v => {
                 const vv = target.assignedUser.users.find(vvv => vvv.user.id === v.user.id)!
-                mergeAndUpdate(vv, v, mergeStartIndex)
+                mergeAndUpdate(vv, v, mergeStartIndex, isALlMode)
             })
 
             // 未アサイン済みのマージ
-            mergeAndUpdate(target.unAssignedPileUp, row.unAssignedPileUp, mergeStartIndex)
+            mergeAndUpdate(target.unAssignedPileUp, row.unAssignedPileUp, mergeStartIndex, isALlMode)
             // 未アサインの設備マージ
             row.unAssignedPileUp.facilities.forEach(v => {
                 const vv = target.unAssignedPileUp.facilities.find(vvv => vvv.facilityId === v.facilityId)
                 if (vv == undefined) return console.warn("facilityId is not exists", v.facilityId)
-                mergeAndUpdate(vv, v, mergeStartIndex)
+                mergeAndUpdate(vv, v, mergeStartIndex, isALlMode)
             })
 
             // 未受注のマージ
-            mergeAndUpdate(target.noOrdersReceivedPileUp, row.noOrdersReceivedPileUp, mergeStartIndex)
+            mergeAndUpdate(target.noOrdersReceivedPileUp, row.noOrdersReceivedPileUp, mergeStartIndex, isALlMode)
             // 未受注の設備マージ
             row.noOrdersReceivedPileUp.facilities.forEach(v => {
                 const vv = target.noOrdersReceivedPileUp.facilities.find(vvv => vvv.facilityId === v.facilityId)
                 if (vv == undefined) return console.warn("facilityId is not exists", v.facilityId)
-                mergeAndUpdate(vv, v, mergeStartIndex)
+                mergeAndUpdate(vv, v, mergeStartIndex, isALlMode)
             })
 
         });
     }
 
-    function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number) {
+    function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean) {
         row.labels.forEach((v, index) => {
             const targetIndex = mergeStartIndex + index;
             if (0 <= targetIndex && targetIndex < target.labels.length && target.labels[mergeStartIndex + index] != 0) {
-                row.labels[index] += target.labels[mergeStartIndex + index];
-                row.styles[index] = {color: PILEUP_MERGE_COLOR};
+                row.labels[index] += target.labels[targetIndex];
+                // TODO: エラーをスタイルで管理しているので微妙なコード。
+                const hasError = target.styles[targetIndex].color == PILEUP_DANGER_COLOR
+                if(isALlMode) {
+                    row.styles[index] = target.styles[targetIndex]
+                } else {
+                    if(hasError) {
+                        row.styles[index] = {color: PILEUP_DANGER_COLOR}
+                    } else {
+                        row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                    }
+                }
             }
         });
     }
@@ -191,7 +200,7 @@ function initPileUps(
 }
 
 export const usePileUps = (
-    startDate: string, endDate: string,
+    startDate: string, endDate: string, isAllMode: boolean,
     facility: Facility,
     tickets: ComputedRef<Ticket[]>, ticketUsers: ComputedRef<TicketUser[]>,
     displayType: ComputedRef<DisplayType>,
@@ -241,7 +250,7 @@ export const usePileUps = (
         }
         // 初期表示時（pileUps未作成）の状態での呼び出し防止
         if (pileUps.value.length > 0) saveFilter()
-        initPileUps(endDate, startDate, userList, pileUps, departmentList, filteredFacilityList, defaultPileUps, globalStartDate);
+        initPileUps(endDate, startDate, isAllMode, userList, pileUps, departmentList, filteredFacilityList, defaultPileUps, globalStartDate);
 
         // 全てのチケットから積み上げを更新する
         tickets.value.forEach(ticket => {
@@ -403,13 +412,12 @@ export const usePileUps = (
                 if (rowErrorFunc(v.labels[validIndex])) {
                     v.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                 }
-                summaryRows.forEach((v, i) => {
-                    v.forEach(vv => {
-                        vv.labels[validIndex] += workHourResult
-                        if (pileUpLabelFormat(vv.labels[validIndex]) > summaryLimit[i]) {
-                            vv.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
-                        }
-                    })
+                // ユーザーごとに割当先が異なることに注意
+                summaryRows[i].forEach(pileUpRow => {
+                    pileUpRow.labels[validIndex] += workHourResult
+                    if (pileUpLabelFormat(pileUpRow.labels[validIndex]) > summaryLimit[i]) {
+                        pileUpRow.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                    }
                 })
                 estimate -= workHour
             })
@@ -542,8 +550,8 @@ export const usePileUps = (
             }, 0)
             // 週表示の場合は 営業日 * 8 を 1とする
             result.labels.push(workHour / (8 * (indexMap[key].length - holidayMap[key])))
-            hasError = indexMap[key].some(vv => row.styles[vv] == PILEUP_DANGER_COLOR)
-            hasMerge = indexMap[key].some(vv => row.styles[vv] == PILEUP_MERGE_COLOR)
+            hasError = indexMap[key].some(vv => row.styles[vv].color == PILEUP_DANGER_COLOR)
+            hasMerge = indexMap[key].some(vv => row.styles[vv].color == PILEUP_MERGE_COLOR)
             // エラー > マージ > デフォルト となるようにスタイルを決定する。
             result.styles.push(hasError ? {color: PILEUP_DANGER_COLOR} : hasMerge ? {color: PILEUP_MERGE_COLOR} : {})
         }
@@ -569,6 +577,7 @@ export const usePileUps = (
 export const getDefaultPileUps = async (
     excludeFacilityId: number,
     displayType: DisplayType,
+    isAllMode: boolean,
 ) => {
     const {facilityList, userList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
     const filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
@@ -587,7 +596,7 @@ export const getDefaultPileUps = async (
     }).pop()!.term_to.substring(0, 10)
 
     const defaultPileUps = ref<PileUps[]>([])
-    initPileUps(endDate, startDate, userList, defaultPileUps, departmentList, filteredFacilityList);
+    initPileUps(endDate, startDate, isAllMode, userList, defaultPileUps, departmentList, filteredFacilityList);
 
     for (const facility of filteredFacilityList) {
         // 対象外の設備はスキップ
@@ -609,7 +618,7 @@ export const getDefaultPileUps = async (
             return allTicketUsers.list.filter(v => tickets.value.map(vv => vv.id).includes(v.ticket_id))
         })
 
-        const {pileUps} = usePileUps(startDate, endDate,
+        const {pileUps} = usePileUps(startDate, endDate, isAllMode,
             facility,
             tickets, ticketUsers,
             computed(() => displayType),

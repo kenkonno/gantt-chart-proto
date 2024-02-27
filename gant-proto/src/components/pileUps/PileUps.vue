@@ -78,9 +78,9 @@
                 </tr>
               </template>
               <!-- 未受注 -->
-              <tr>
+              <tr v-if="displayPrepared(pileUp.display)">
                 <td class="side-menu-cell"></td><!-- css hack min-height -->
-                <gantt-td :visible="globalState.facilityTypes.includes(FacilityType.Prepared)">
+                <gantt-td :visible="true">
                   <div class="pileUp-title child">
                     <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'noOrdersReceivedPileUp')" v-if="!pileUp.noOrdersReceivedPileUp.display">add</span>
                     <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'noOrdersReceivedPileUp')" v-if="pileUp.noOrdersReceivedPileUp.display">remove</span>
@@ -89,7 +89,7 @@
                 </gantt-td>
               </tr>
               <!-- 未受注 - 設備 -->
-              <template v-if="pileUp.noOrdersReceivedPileUp.display && globalState.facilityTypes.includes(FacilityType.Prepared)">
+              <template v-if="displayPrepared(pileUp.noOrdersReceivedPileUp.display)">
                 <tr v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
                   <gantt-td :visible="true">
@@ -110,20 +110,20 @@
       <!-- アサイン済み -->
       <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.assignedUser.labels, displayType)" :styles="pileUp.assignedUser.styles" v-if="pileUp.display"></g-gantt-label-row>
       <!-- アサイン済みユーザー -->
-      <template  v-if="pileUp.assignedUser.display">
+      <template  v-if="pileUp.assignedUser.display && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.assignedUser.users" :key="item.user.id" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>
       <!-- 未アサイン -->
       <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.unAssignedPileUp.labels, displayType)" :styles="pileUp.unAssignedPileUp.styles" v-if="pileUp.display"></g-gantt-label-row>
       <!-- 未アサイン - 設備 -->
-      <template v-if="pileUp.unAssignedPileUp.display">
+      <template v-if="pileUp.unAssignedPileUp.display && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.unAssignedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>
       <!-- 未受注 -->
       <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.noOrdersReceivedPileUp.labels, displayType)" :styles="pileUp.noOrdersReceivedPileUp.styles"
-                         v-if="pileUp.display && globalState.facilityTypes.includes(FacilityType.Prepared)"></g-gantt-label-row>
+                         v-if="displayPrepared(pileUp.display)"></g-gantt-label-row>
       <!-- 未受注 - 設備 -->
-      <template v-if="pileUp.noOrdersReceivedPileUp.display && globalState.facilityTypes.includes(FacilityType.Prepared)">
+      <template v-if="displayPrepared(pileUp.noOrdersReceivedPileUp.display) && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>
     </template>
@@ -191,15 +191,21 @@ const ticketUsers = computed(() => {
 const displayType = computed(() => props.displayType)
 const holidays = computed(() => props.holidays)
 
+
+const displayPrepared = (display: boolean) => {
+  return display && globalState.facilityTypes.includes(FacilityType.Prepared)
+}
+
 // 結論
 // usePileUpsを全ての設備で実行。
 // 開始日、終了日は現在の設備。
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
+const isAllMode = props.currentFacilityId === -1
 console.log("####### start main getDefaultPileUps")
 const {
   globalStartDate,
   defaultPileUps,
-} = await getDefaultPileUps(props.currentFacilityId, "day")
+} = await getDefaultPileUps(props.currentFacilityId, "day", isAllMode)
 console.log("####### start main getDefaultPileUps", defaultPileUps)
 
 console.log("####### start main usePileUps", globalStartDate)
@@ -212,6 +218,7 @@ const {
 } = usePileUps(
     props.chartStart,
     props.chartEnd,
+    isAllMode,
     facilityList.find(v => v.id === props.currentFacilityId)!,
     tickets,
     ticketUsers,

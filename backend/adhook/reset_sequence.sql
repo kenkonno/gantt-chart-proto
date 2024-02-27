@@ -8,3 +8,4 @@ SELECT setval('ticket_users_id_seq', (SELECT MAX(id) FROM ticket_users));
 SELECT setval('tickets_id_seq', (SELECT MAX(id) FROM tickets));
 SELECT setval('units_id_seq', (SELECT MAX(id) FROM units));
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+SELECT setval('milestones_id_seq', (SELECT MAX(id) FROM milestones));
