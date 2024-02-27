@@ -1,12 +1,11 @@
 import {onBeforeUnmount, ref} from "vue";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 export type Header = {
     name: string,
     visible: boolean
 }
-
-export type DisplayType = "day" | "week" | "hour" | "month"
 
 export function useGanttAllMenu() {
 

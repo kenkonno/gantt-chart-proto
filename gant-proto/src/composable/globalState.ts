@@ -64,6 +64,7 @@ interface Getters {
     getUnitName: (unitId: number) => string;
     getProcessName: (processId: number) => string;
     getDepartmentName: (departmentId: number) => string;
+    getFacilityName: (facilityId: number) => string;
 }
 
 
@@ -225,7 +226,16 @@ export const useGlobalState = async () => {
                 console.warn("department not found", departmentId)
             }
             return result
-        }
+        },
+        getFacilityName: (facilityId: number) => {
+            let result = ""
+            try {
+                result = globalState.value.facilityList.find(v => v.id === facilityId)!.name
+            } catch {
+                console.warn("department not found", facilityId)
+            }
+            return result
+        },
     }
 
     await init()

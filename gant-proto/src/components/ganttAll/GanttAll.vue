@@ -68,6 +68,7 @@
                :highlightedDates="holidaysAsDate"
                :syncWidth="syncWidth"
                :current-facility-id="-1"
+               :milestone-vertical-lines="[]"
                @on-mounted="forceScroll"
       >
       </PileUps>
@@ -135,9 +136,10 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import SingleRune from "@/components/form/SingleRune.vue";
 import {initScroll} from "@/utils/initScroll";
 import {inject, nextTick, ref, watch} from "vue";
-import {DisplayType, Header} from "@/composable/ganttAllMenu";
+import { Header} from "@/composable/ganttAllMenu";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 import {GLOBAL_MUTATION_KEY} from "@/composable/globalState";
+import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
