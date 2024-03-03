@@ -111,7 +111,7 @@
                         class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr :style="{visibility :!hasFilter && allowed('UPDATE_TICKET') ? 'visible' : 'hidden'}">
+                <tr :style="addTicketRowStyle()">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -130,7 +130,7 @@
       <hr>
       <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <PileUps
-            v-if="globalState.pileUpsRefresh"
+            v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')"
             :chart-start="chartStart"
             :chart-end="chartEnd"
             :display-type="displayType"
@@ -284,7 +284,7 @@ const closeModalProxy = async () => {
   closeEditModal()
 }
 const closeTicketMemo = (result: PostTicketMemoIdResponse) => {
-  if(result != undefined) {
+  if (result != undefined) {
     refreshTicketMemo(modalTicketId.value, result.msg, result.updated_at)
   }
   closeEditModal()
@@ -296,6 +296,17 @@ const openTicketDetail = (ticketId: number, unitId: number) => {
   modalUnitId.value = unitId
   modalIsOpen.value = true
 }
+
+const addTicketRowStyle = () => {
+  // 更新できる人の場合はフィルタを考慮する。
+  if (allowed('UPDATE_TICKET')) {
+    return {visibility: !hasFilter ? 'visible' : 'hidden'}
+  } else {
+    // 更新できない人はそもそも非表示とする。
+    return {display: 'none'}
+  }
+}
+
 
 let isDragged = false;
 

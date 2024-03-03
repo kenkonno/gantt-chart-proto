@@ -10,7 +10,7 @@ import {RoleType} from "@/const/common";
  * ・チケットの追加
  *
  */
-export type Section = "ALL_SETTINGS" | "FACILITY_SETTINGS" | "UPDATE_TICKET" | "UPDATE_PROGRESS" | "ADD_TICKET" | "CHANGE_ROLE"
+export type Section = "ALL_SETTINGS" | "FACILITY_SETTINGS" | "UPDATE_TICKET" | "UPDATE_PROGRESS" | "ADD_TICKET" | "CHANGE_ROLE" | "VIEW_PILEUPS"
 
 
 // 大枠の制御のセット。とりあえずつけただけで使わないものが多いかも。
@@ -21,6 +21,7 @@ const Manager = {
     "UPDATE_PROGRESS": true,
     "ADD_TICKET": true,
     "CHANGE_ROLE": true,
+    "VIEW_PILEUPS": true,
 }
 const Viewer = {
     "ALL_SETTINGS": false,
@@ -29,6 +30,7 @@ const Viewer = {
     "UPDATE_PROGRESS": false,
     "ADD_TICKET": false,
     "CHANGE_ROLE": false,
+    "VIEW_PILEUPS": false,
 
 }
 const Worker = {
@@ -38,6 +40,7 @@ const Worker = {
     "UPDATE_PROGRESS": true,
     "ADD_TICKET": false,
     "CHANGE_ROLE": false,
+    "VIEW_PILEUPS": false,
 }
 
 export function allowed(section: Section) {
