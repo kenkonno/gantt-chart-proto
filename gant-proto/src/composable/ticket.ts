@@ -81,15 +81,14 @@ export async function postTicketById(ticket: Ticket, emit: Emit) {
     }
 }
 
-export async function postTicketMemoById(ticketId: number, memo: string, emit: Emit) {
+export async function postTicketMemoById(ticketId: number, memo: string, updatedAt: number) {
     const req: PostTicketMemoIdRequest = {
-        memo: memo
+        memo: memo,
+        updated_at: updatedAt,
     }
-    await Api.postTicketMemoId(ticketId, req).then(() => {
-        toast("成功しました。")
-    }).finally(() => {
-        emit('closeEditModal')
-    })
+    const {data} = await Api.postTicketMemoId(ticketId, req)
+    toast("成功しました。")
+    return data
 }
 
 

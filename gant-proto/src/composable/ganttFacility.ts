@@ -254,9 +254,53 @@ export async function useGanttFacility() {
         if (reqTicket.limit_date != undefined) {
             reqTicket.limit_date = ticket.limit_date + "T00:00:00.00000+09:00"
         }
-        await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
-        reflectTicketToGantt(reqTicket)
-        await getScheduleAlert()
+        try {
+            const {data} = await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
+            // reflectTicketToGantt(reqTicket) TODO: パフォーマンス改善。一旦はローカルのチケットを更新して、ローカルガントデータを作り直す。
+            refreshTicket(data.ticket!)
+            await getScheduleAlert()
+
+        } catch ( e ) {
+            console.log(e)
+        }
+    }
+
+    // DBからのチケット更新をフロントに反映させる。
+    const refreshTicket = (ticket: Ticket) => {
+        const target = ticketList.value.find(v => v.id === ticket.id)
+        if (target == undefined) {
+            console.error("チケットが存在しません。")
+            return
+        }
+        target.days_after = ticket.days_after
+        target.department_id = ticket.department_id
+        target.end_date = ticket.end_date
+        target.estimate = ticket.estimate
+        target.limit_date = ticket.limit_date
+        target.order = ticket.order
+        target.process_id = ticket.process_id
+        target.progress_percent = ticket.progress_percent
+        target.start_date = ticket.start_date
+        target.updated_at = ticket.updated_at
+        target.number_of_worker = ticket.number_of_worker
+        refreshLocalGantt()
+        refreshBars()
+    }
+    /**
+     * 忘れそうなのでメモ。
+     * TicketMemoを更新してUpdatedAtを更新しただけだと競合が起きるので、APIから再度取り直す。
+     * @param ticketId
+     * @param memo
+     * @param updatedAt
+     */
+    const refreshTicketMemo = async (ticketId: number, memo: string, updatedAt: number) => {
+        const target = ticketList.value.find(v => v.id === ticketId)
+        if (target == undefined) {
+            console.error("チケットが存在しません。")
+            return
+        }
+        const {data} = await Api.getTicketsId(ticketId)
+        refreshTicket(data.ticket!)
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -285,20 +329,30 @@ export async function useGanttFacility() {
     }
     // DBへのストア及びローカルのガントに情報を反映する
     const ticketUserUpdate = async (ticket: Ticket, userIds: number[], updateNoW = true) => {
-        const {data} = await Api.postTicketUsers({ticketId: ticket.id!, userIds: userIds})
-        // ticketUserList から TicketId をつけなおす
-        const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticket.id!)
-        newTicketUserList.push(...data.ticketUsers)
-        ticketUserList.value.length = 0
-        ticketUserList.value.push(...newTicketUserList)
-
-        // 人数を更新する
-        if (updateNoW) {
-            ticket.number_of_worker = data.ticketUsers.length
+        // ticketUsersのcreatedAtを検索する
+        const ticketUser = ticketUserList.value.find(v => v.ticket_id == ticket.id)
+        let createdAt = undefined
+        if (ticketUser != undefined) {
+            createdAt = ticketUser.created_at
         }
-        await updateTicket(ticket)
-        // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
-        refreshLocalGantt()
+        try {
+            const {data} = await Api.postTicketUsers({ticketId: ticket.id!, userIds: userIds, createdAt: createdAt})
+            // ticketUserList から TicketId をつけなおす
+            const newTicketUserList = ticketUserList.value.filter(v => v.ticket_id !== ticket.id!)
+            newTicketUserList.push(...data.ticketUsers)
+            ticketUserList.value.length = 0
+            ticketUserList.value.push(...newTicketUserList)
+
+            // 人数を更新する
+            if (updateNoW) {
+                ticket.number_of_worker = data.ticketUsers.length
+            }
+            await updateTicket(ticket)
+            // TODO: refreshLocalGanttは重くなるので性能対策が必要かも
+            refreshLocalGantt()
+        } catch(e) {
+            console.warn(e)
+        }
     }
 
     const adjustBar = async (bar: GanttBarObject) => {
@@ -461,6 +515,7 @@ export async function useGanttFacility() {
         updateDepartment,
         updateOrder,
         updateTicket,
+        refreshTicketMemo,
         hasFilter,
         milestones
     }

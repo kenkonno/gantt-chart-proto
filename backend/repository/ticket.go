@@ -53,17 +53,37 @@ func (r *ticketRepository) Find(id int32) db.Ticket {
 	return ticket
 }
 
-func (r *ticketRepository) Upsert(m db.Ticket) db.Ticket {
+func (r *ticketRepository) Upsert(m db.Ticket) (db.Ticket, error) {
+	var org db.Ticket
+	if m.Id != nil {
+		result := r.con.First(&org, m.Id)
+		if result.Error != nil {
+			panic(result.Error)
+		}
+		if org.Id != nil && org.UpdatedAt > m.UpdatedAt {
+			return m, NewConflictError()
+		}
+	}
+
 	r.con.Omit("memo").Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
-	}).Create(&m)
-	return m
+	}).Save(&m)
+	return m, nil
 }
 
-func (r *ticketRepository) UpdateMemo(m db.Ticket) db.Ticket {
+func (r *ticketRepository) UpdateMemo(m db.Ticket) (db.Ticket, error) {
+	var org db.Ticket
+	result := r.con.First(&org, m.Id)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	if org.UpdatedAt > m.UpdatedAt {
+		return m, NewConflictError()
+	}
+
 	r.con.Model(&m).Update("memo", m.Memo)
-	return m
+	return m, nil
 }
 
 func (r *ticketRepository) Delete(id int32) {

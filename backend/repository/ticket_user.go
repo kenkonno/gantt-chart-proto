@@ -34,6 +34,15 @@ func (r *ticketUserRepository) Find(id int32) db.TicketUser {
 	}
 	return ticketUser
 }
+func (r *ticketUserRepository) FindByTicketId(ticketId int32) []db.TicketUser {
+	var ticketUsers []db.TicketUser
+
+	result := r.con.Where("ticket_id = ? ", ticketId).Find(&ticketUsers)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return ticketUsers
+}
 
 func (r *ticketUserRepository) Upsert(m db.TicketUser) db.TicketUser {
 	r.con.Clauses(clause.OnConflict{
@@ -41,6 +50,12 @@ func (r *ticketUserRepository) Upsert(m db.TicketUser) db.TicketUser {
 		UpdateAll: true,
 	}).Create(&m)
 	return m
+}
+func (r *ticketUserRepository) UpsertWithCreatedAt(m db.TicketUser) db.TicketUser {
+	createdAt := m.CreatedAt
+	result := r.Upsert(m)
+	r.con.Model(&result).Update("CreatedAt", createdAt)
+	return result
 }
 
 func (r *ticketUserRepository) Delete(id int32) {

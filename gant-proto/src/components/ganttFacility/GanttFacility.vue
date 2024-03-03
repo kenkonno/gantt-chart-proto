@@ -154,7 +154,7 @@
   <Suspense v-if="modalIsOpen">
     <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
       <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId" :facility-id="currentFacilityId"
-                         @close-edit-modal="closeModalProxy"></async-ticket-edit>
+                         @close-edit-modal="closeTicketMemo"></async-ticket-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -182,7 +182,7 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
-import {Department} from "@/api";
+import {Department, PostTicketMemoIdResponse} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
@@ -225,6 +225,7 @@ const {
   updateDepartment,
   updateOrder,
   updateTicket,
+  refreshTicketMemo,
   hasFilter,
   milestones
 } = await useGanttFacility()
@@ -279,10 +280,16 @@ const modalUnitId = ref(0)
 const emit = defineEmits(["update"])
 
 const closeModalProxy = async () => {
-  // await refreshHolidayMap(currentFacilityId)
-  closeEditModal()
   emit("update")
+  closeEditModal()
 }
+const closeTicketMemo = (result: PostTicketMemoIdResponse) => {
+  if(result != undefined) {
+    refreshTicketMemo(modalTicketId.value, result.msg, result.updated_at)
+  }
+  closeEditModal()
+}
+
 
 const openTicketDetail = (ticketId: number, unitId: number) => {
   modalTicketId.value = ticketId
@@ -296,7 +303,7 @@ let isDragged = false;
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   if (!isDragged) {
-    openTicketDetail(Number(bar.ganttBarConfig.id), 1)
+    openTicketDetail(Number(bar.ganttBarConfig.id), 1) // TODO: UnitId
   }
   isDragged = false
 }

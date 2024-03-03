@@ -1,6 +1,7 @@
 package tickets
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
@@ -19,7 +20,7 @@ func PostTicketsIdInvoke(c *gin.Context) openapi_models.PostTicketsIdResponse {
 		panic(err)
 	}
 
-	ticketRep.Upsert(db.Ticket{
+	result, err := ticketRep.Upsert(db.Ticket{
 		Id:              ticketReq.Ticket.Id,
 		GanttGroupId:    ticketReq.Ticket.GanttGroupId,
 		ProcessId:       ticketReq.Ticket.ProcessId,
@@ -33,9 +34,34 @@ func PostTicketsIdInvoke(c *gin.Context) openapi_models.PostTicketsIdResponse {
 		ProgressPercent: ticketReq.Ticket.ProgressPercent,
 		Order:           ticketReq.Ticket.Order,
 		CreatedAt:       time.Time{},
-		UpdatedAt:       0,
+		UpdatedAt:       ticketReq.Ticket.UpdatedAt,
 	})
+	if err != nil {
+		var target repository.ConflictError
+		if errors.As(err, &target) {
+			c.JSON(http.StatusConflict, err.Error())
+			panic(err)
+		}
+	}
 
-	return openapi_models.PostTicketsIdResponse{}
+	return openapi_models.PostTicketsIdResponse{
+		Ticket: openapi_models.Ticket{
+			Id:              result.Id,
+			GanttGroupId:    result.GanttGroupId,
+			ProcessId:       result.ProcessId,
+			DepartmentId:    result.DepartmentId,
+			LimitDate:       result.LimitDate,
+			Estimate:        result.Estimate,
+			NumberOfWorker:  result.NumberOfWorker,
+			DaysAfter:       result.DaysAfter,
+			StartDate:       result.StartDate,
+			EndDate:         result.EndDate,
+			ProgressPercent: result.ProgressPercent,
+			Memo:            result.Memo,
+			Order:           result.Order,
+			CreatedAt:       result.CreatedAt,
+			UpdatedAt:       result.UpdatedAt,
+		},
+	}
 
 }

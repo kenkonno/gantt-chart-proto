@@ -9,9 +9,15 @@
 
 package openapi_models
 
+import (
+	"time"
+)
+
 type PostTicketUsersRequest struct {
 
 	TicketId int32 `json:"ticketId"`
 
 	UserIds []int32 `json:"userIds"`
+
+	CreatedAt time.Time `json:"createdAt,omitempty"`
 }

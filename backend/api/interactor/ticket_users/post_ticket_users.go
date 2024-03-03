@@ -19,14 +19,25 @@ func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersRespons
 		panic(err)
 	}
 
+	// DeleteInsertなのでInteractor側で CreatedAtが同一であることを確認する。
+	originals := ticketUserRep.FindByTicketId(ticketUserReq.TicketId)
+	if len(originals) > 0 {
+		if originals[0].CreatedAt.Truncate(time.Second) != ticketUserReq.CreatedAt.Truncate(time.Second) {
+			err := repository.NewConflictError()
+			c.JSON(http.StatusConflict, err.Error())
+			panic(err)
+		}
+	}
+
 	var result = []openapi_models.TicketUser{}
 	ticketUserRep.DeleteByTicketId(ticketUserReq.TicketId)
+	createdAt := time.Now()
 	for index, v := range ticketUserReq.UserIds {
-		r := ticketUserRep.Upsert(db.TicketUser{
+		r := ticketUserRep.UpsertWithCreatedAt(db.TicketUser{
 			TicketId:  ticketUserReq.TicketId,
 			UserId:    v,
 			Order:     index,
-			CreatedAt: time.Time{},
+			CreatedAt: createdAt,
 			UpdatedAt: 0,
 		})
 		result = append(result, openapi_models.TicketUser{
