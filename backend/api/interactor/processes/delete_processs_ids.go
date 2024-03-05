@@ -26,7 +26,7 @@ func DeleteProcessesIdInvoke(c *gin.Context) openapi_models.DeleteProcessesIdRes
 	for _, item := range allTickets {
 		if item.ProcessId != nil && *item.ProcessId == int32(id) {
 			item.ProcessId = nil
-			ticketRep.Upsert(item)
+			_, _ = ticketRep.Upsert(item) // 工程をNULL化する処理なのでエラーハンドリングしない（厳密にはするべき）
 		}
 	}
 	// 稼働設定からは削除

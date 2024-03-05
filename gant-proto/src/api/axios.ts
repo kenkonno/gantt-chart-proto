@@ -26,6 +26,9 @@ axiosInstance.interceptors.response.use(response => response, error => {
             // Handle 401 error
             toast("ログイン情報に誤りがあります。", {autoClose: 1000,})
             break;
+        case 409:
+            toast("他のユーザーによる更新がありました、この操作は反映されていません。情報をリロードし、再度操作してください。", {autoClose: 10000,})
+            break;
         default:
             toast("エラーが発生しました。\n" + error.response?.data, {
                 autoClose: 1000,

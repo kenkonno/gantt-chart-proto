@@ -46,3 +46,18 @@ func createInParam(arrStr []string) string {
 		return fmt.Sprintf("'%s'", item)
 	}), ",")
 }
+
+type ConflictError struct {
+	Type    string
+	Message string
+}
+
+func (e ConflictError) Error() string {
+	return e.Message
+}
+func NewConflictError() ConflictError {
+	return ConflictError{
+		"REPOSITORY_UPDATE_CONFLICT_ERROR",
+		"ほかの操作によって更新されています。", // TODO: より適切なメッセージ
+	}
+}

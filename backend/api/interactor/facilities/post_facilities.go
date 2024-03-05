@@ -64,7 +64,7 @@ func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse 
 			startDate = newFacility.TermFrom
 		}
 		nOfW := int32(1) // 人数はデフォルト1
-		ticketRep.Upsert(db.Ticket{
+		_, _ = ticketRep.Upsert(db.Ticket{ // 新規なのでエラーハンドリング無
 			GanttGroupId:    *newGanttGroup.Id,
 			ProcessId:       v.Id,
 			DepartmentId:    nil,

@@ -1,6 +1,7 @@
 package ticket_memo
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
@@ -25,10 +26,21 @@ func PostTicketMemoIdInvoke(c *gin.Context) openapi_models.PostTicketMemoIdRespo
 		panic(err)
 	}
 
-	ticketRep.UpdateMemo(db.Ticket{
+	result, err := ticketRep.UpdateMemo(db.Ticket{
 		Id:   &id32,
 		Memo: ticketReq.Memo,
+		UpdatedAt: ticketReq.UpdatedAt,
 	})
-	return openapi_models.PostTicketMemoIdResponse{}
+	if err != nil {
+		var target repository.ConflictError
+		if errors.As(err, &target) {
+			c.JSON(http.StatusConflict, err.Error())
+			panic(err)
+		}
+	}
+	return openapi_models.PostTicketMemoIdResponse{
+		Msg:       result.Memo,
+		UpdatedAt: result.UpdatedAt,
+	}
 
 }

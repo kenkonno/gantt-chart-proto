@@ -111,7 +111,7 @@
                         class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr :style="{visibility :!hasFilter && allowed('UPDATE_TICKET') ? 'visible' : 'hidden'}">
+                <tr :style="addTicketRowStyle()">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -130,7 +130,7 @@
       <hr>
       <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <PileUps
-            v-if="globalState.pileUpsRefresh"
+            v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')"
             :chart-start="chartStart"
             :chart-end="chartEnd"
             :display-type="displayType"
@@ -154,7 +154,7 @@
   <Suspense v-if="modalIsOpen">
     <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
       <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId" :facility-id="currentFacilityId"
-                         @close-edit-modal="closeModalProxy"></async-ticket-edit>
+                         @close-edit-modal="closeTicketMemo"></async-ticket-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -182,7 +182,7 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
-import {Department} from "@/api";
+import {Department, PostTicketMemoIdResponse} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
@@ -225,6 +225,7 @@ const {
   updateDepartment,
   updateOrder,
   updateTicket,
+  refreshTicketMemo,
   hasFilter,
   milestones
 } = await useGanttFacility()
@@ -279,10 +280,16 @@ const modalUnitId = ref(0)
 const emit = defineEmits(["update"])
 
 const closeModalProxy = async () => {
-  // await refreshHolidayMap(currentFacilityId)
-  closeEditModal()
   emit("update")
+  closeEditModal()
 }
+const closeTicketMemo = (result: PostTicketMemoIdResponse) => {
+  if (result != undefined) {
+    refreshTicketMemo(modalTicketId.value, result.msg, result.updated_at)
+  }
+  closeEditModal()
+}
+
 
 const openTicketDetail = (ticketId: number, unitId: number) => {
   modalTicketId.value = ticketId
@@ -290,13 +297,24 @@ const openTicketDetail = (ticketId: number, unitId: number) => {
   modalIsOpen.value = true
 }
 
+const addTicketRowStyle = () => {
+  // 更新できる人の場合はフィルタを考慮する。
+  if (allowed('UPDATE_TICKET')) {
+    return {visibility: !hasFilter ? 'visible' : 'hidden'}
+  } else {
+    // 更新できない人はそもそも非表示とする。
+    return {display: 'none'}
+  }
+}
+
+
 let isDragged = false;
 
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   if (!isDragged) {
-    openTicketDetail(Number(bar.ganttBarConfig.id), 1)
+    openTicketDetail(Number(bar.ganttBarConfig.id), 1) // TODO: UnitId
   }
   isDragged = false
 }

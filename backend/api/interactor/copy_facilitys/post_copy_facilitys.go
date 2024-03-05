@@ -105,7 +105,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 		from := currentFrom
 		to := from.Add(time.Hour * 24 * 7)
 		nOfw := int32(1)
-		ticketRep.Upsert(db.Ticket{
+		_, _ = ticketRep.Upsert(db.Ticket{ // 新規なのでエラーハンドリング無
 			Id:              nil,
 			GanttGroupId:    ganttGroupMap[ticket.GanttGroupId],
 			ProcessId:       ticket.ProcessId,

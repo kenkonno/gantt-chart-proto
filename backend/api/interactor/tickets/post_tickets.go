@@ -18,7 +18,8 @@ func PostTicketsInvoke(c *gin.Context) openapi_models.PostTicketsResponse {
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
-	result := ticketRep.Upsert(db.Ticket{
+	// 新規のため重複チェックは無
+	result, _ := ticketRep.Upsert(db.Ticket{
 		GanttGroupId:    ticketReq.Ticket.GanttGroupId,
 		ProcessId:       ticketReq.Ticket.ProcessId,
 		DepartmentId:    ticketReq.Ticket.DepartmentId,

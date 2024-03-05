@@ -812,6 +812,12 @@ export interface GetTicketMemoIdResponse {
      * @memberof GetTicketMemoIdResponse
      */
     'memo': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetTicketMemoIdResponse
+     */
+    'updated_at': number;
 }
 /**
  * 
@@ -1576,6 +1582,12 @@ export interface PostTicketMemoIdRequest {
      * @memberof PostTicketMemoIdRequest
      */
     'memo': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PostTicketMemoIdRequest
+     */
+    'updated_at': number;
 }
 /**
  * 
@@ -1588,7 +1600,13 @@ export interface PostTicketMemoIdResponse {
      * @type {string}
      * @memberof PostTicketMemoIdResponse
      */
-    'msg'?: string;
+    'msg': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PostTicketMemoIdResponse
+     */
+    'updated_at': number;
 }
 /**
  * 
@@ -1634,6 +1652,12 @@ export interface PostTicketUsersRequest {
      * @memberof PostTicketUsersRequest
      */
     'userIds': Array<number>;
+    /**
+     * 
+     * @type {string}
+     * @memberof PostTicketUsersRequest
+     */
+    'createdAt'?: string;
 }
 /**
  * 
@@ -4873,7 +4897,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTicketMemoIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketMemoId(id, postTicketMemoIdRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -4907,7 +4931,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTicketsIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketsId(id, postTicketsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -5497,7 +5521,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: any): AxiosPromise<void> {
+        postTicketMemoId(id: number, postTicketMemoIdRequest?: PostTicketMemoIdRequest, options?: any): AxiosPromise<PostTicketMemoIdResponse> {
             return localVarFp.postTicketMemoId(id, postTicketMemoIdRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -5528,7 +5552,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: any): AxiosPromise<void> {
+        postTicketsId(id: number, postTicketsRequest?: PostTicketsRequest, options?: any): AxiosPromise<PostTicketsIdResponse> {
             return localVarFp.postTicketsId(id, postTicketsRequest, options).then((request) => request(axios, basePath));
         },
         /**

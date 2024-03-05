@@ -594,6 +594,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostTicketsIdResponse'
       requestBody:
         content:
           application/json:
@@ -625,6 +629,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostTicketMemoIdResponse'
       requestBody:
         content:
           application/json:
@@ -1746,8 +1754,11 @@ components:
       properties:
         memo:
           type: string
+        updated_at:
+          type: integer
       required:
         - memo
+        - updated_at
     DeleteTicketsIdRequest:
       title: DeleteTicketsIdRequest
       type: object
@@ -1791,8 +1802,11 @@ components:
       properties:
         memo:
           type: string
+        updated_at:
+          type: integer
       required:
         - memo
+        - updated_at
     PostTicketMemoIdResponse:
       title: PostTicketMemoIdResponse
       type: object
@@ -1801,6 +1815,11 @@ components:
       properties:
         msg:
           type: string
+        updated_at:
+          type: integer
+      required:
+        - msg
+        - updated_at
     TicketUser:
       title: TicketUser
       type: object
@@ -1876,6 +1895,9 @@ components:
           type: array
           items:
             type: integer
+        createdAt:
+          type: string
+          format: date-time
       required:
         - ticketId
         - userIds

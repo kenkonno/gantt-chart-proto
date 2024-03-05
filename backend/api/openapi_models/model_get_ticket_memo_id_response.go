@@ -12,4 +12,6 @@ package openapi_models
 type GetTicketMemoIdResponse struct {
 
 	Memo string `json:"memo"`
+
+	UpdatedAt int32 `json:"updated_at"`
 }

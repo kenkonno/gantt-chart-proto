@@ -24,7 +24,7 @@ func DeleteDepartmentsIdInvoke(c *gin.Context) openapi_models.DeleteDepartmentsI
 	for _, item := range allTickets {
 		if item.DepartmentId != nil && *item.DepartmentId == int32(id) {
 			item.DepartmentId = nil
-			ticketRep.Upsert(item)
+			_, _ = ticketRep.Upsert(item) // 部署のNULL化なので新規無（厳密にはするべき）
 		}
 	}
 

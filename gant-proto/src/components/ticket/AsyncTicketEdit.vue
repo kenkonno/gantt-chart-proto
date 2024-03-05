@@ -83,7 +83,12 @@ memo.value = data.memo
 const myQuillEditor = ref(null)
 
 const updateTicketMemo = async () => {
-  await postTicketMemoById(ticket.value.id! ,myQuillEditor.value.getHTML(), emit)
+  try {
+    const result = await postTicketMemoById(ticket.value.id!, myQuillEditor.value.getHTML(), ticket.value.updated_at)
+    emit('closeEditModal', result)
+  } catch(e) {
+    console.warn(e)
+  }
 }
 
 onMounted(() => {
@@ -125,7 +130,7 @@ label {
 
 </style>
 <style>
-.quill-editor, .ql-container, .ql-editor{
+.quill-editor, .ql-container, .ql-editor {
   min-height: 10rem;
 }
 </style>
