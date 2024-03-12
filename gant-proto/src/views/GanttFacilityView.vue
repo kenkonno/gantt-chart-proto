@@ -133,7 +133,12 @@ const updateDisplayType = (v: DisplayType) => {
 }
 
 const facilityList = computed(() => {
-  return globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled).sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1 : 1);
+  let result = globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled)
+  if (globalState.facilityTypes.length > 0) {
+    result = result.filter(v => globalState.facilityTypes.includes(v.type))
+  }
+
+  return result.sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1 : 1);
 })
 
 
