@@ -10,6 +10,7 @@
         :allow-empty="true"
         mode="tags"
         :max="1"
+        @change="refresh"
     />
     <div>担当者：</div>
     <multiselect
