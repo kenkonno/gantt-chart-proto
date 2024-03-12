@@ -42,7 +42,7 @@ const password = ref("")
 const login = async () => {
   try {
     await Api.postLogin({id: email.value, password: password.value});
-    router.push("/")
+    router.push("/all-view")
   }
   catch (error) {
     // Here we assume 'error.response' exists and AxiosError is thrown.

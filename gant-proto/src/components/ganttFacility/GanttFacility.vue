@@ -300,7 +300,7 @@ const openTicketDetail = (ticketId: number, unitId: number) => {
 const addTicketRowStyle = () => {
   // 更新できる人の場合はフィルタを考慮する。
   if (allowed('UPDATE_TICKET')) {
-    return {visibility: !hasFilter ? 'visible' : 'hidden'}
+    return {visibility: !hasFilter.value ? 'visible' : 'hidden'}
   } else {
     // 更新できない人はそもそも非表示とする。
     return {display: 'none'}

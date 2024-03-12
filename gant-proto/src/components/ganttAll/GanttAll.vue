@@ -38,7 +38,8 @@
             <tbody>
             <tr v-for="item in ganttAllRow" :key="item.facility.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
-              <gantt-td :visible="ganttAllHeader[0].visible" @click="refreshGantt(item.facility.id, true)" class="pointer"><u>{{ item.facility.name }}</u></gantt-td>
+              <gantt-td :visible="ganttAllHeader[0].visible" @click="refreshGantt(item.facility.id, true)"
+                        class="pointer"><u>{{ item.facility.name }}</u></gantt-td>
               <gantt-td :visible="ganttAllHeader[1].visible">
                 <div class="user-wrapper">
                   <SingleRune v-for="user in item.users" :key="user.id" :name="user.name" :id="user.id"></SingleRune>
@@ -58,18 +59,20 @@
     <!-- 山積み部分 -->
     <hr>
     <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
-      <PileUps :chart-start="chartStart"
-               :chart-end="chartEnd"
-               :display-type="displayType"
-               :holidays="holidays"
-               :tickets="[]"
-               :ticket-users="[]"
-               :width="getGanttChartWidth(displayType)"
-               :highlightedDates="holidaysAsDate"
-               :syncWidth="syncWidth"
-               :current-facility-id="-1"
-               :milestone-vertical-lines="[]"
-               @on-mounted="forceScroll"
+      <PileUps
+          v-if="allowed('VIEW_PILEUPS')"
+          :chart-start="chartStart"
+          :chart-end="chartEnd"
+          :display-type="displayType"
+          :holidays="holidays"
+          :tickets="[]"
+          :ticket-users="[]"
+          :width="getGanttChartWidth(displayType)"
+          :highlightedDates="holidaysAsDate"
+          :syncWidth="syncWidth"
+          :current-facility-id="-1"
+          :milestone-vertical-lines="[]"
+          @on-mounted="forceScroll"
       >
       </PileUps>
     </div>
@@ -77,13 +80,16 @@
 </template>
 <style>
 @import '@/assets/gantt-override.scss';
-#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar{
+
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar {
   height: 33% !important;
 }
+
 #gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n) {
   top: 33% !important;
   height: 33% !important;
 }
+
 #gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {
   top: 66% !important;
   height: 33% !important;
@@ -136,10 +142,11 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import SingleRune from "@/components/form/SingleRune.vue";
 import {initScroll} from "@/utils/initScroll";
 import {inject, nextTick, ref, watch} from "vue";
-import { Header} from "@/composable/ganttAllMenu";
+import {Header} from "@/composable/ganttAllMenu";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 import {GLOBAL_MUTATION_KEY} from "@/composable/globalState";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
+import {allowed} from "@/composable/role";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
