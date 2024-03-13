@@ -77,18 +77,18 @@
                   </gantt-td>
                 </tr>
               </template>
-              <!-- 未受注 -->
+              <!-- 未確定 -->
               <tr v-if="displayPrepared(pileUp.display)">
                 <td class="side-menu-cell"></td><!-- css hack min-height -->
                 <gantt-td :visible="true">
                   <div class="pileUp-title child">
                     <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'noOrdersReceivedPileUp')" v-if="!pileUp.noOrdersReceivedPileUp.display">add</span>
                     <span class="material-symbols-outlined pointer" @click="toggleDisplay(pileUp.departmentId, 'noOrdersReceivedPileUp')" v-if="pileUp.noOrdersReceivedPileUp.display">remove</span>
-                    未受注
+                    未確定
                   </div>
                 </gantt-td>
               </tr>
-              <!-- 未受注 - 設備 -->
+              <!-- 未確定 - 設備 -->
               <template v-if="displayPrepared(pileUp.noOrdersReceivedPileUp.display)">
                 <tr v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
@@ -119,10 +119,10 @@
       <template v-if="pileUp.unAssignedPileUp.display && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.unAssignedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>
-      <!-- 未受注 -->
+      <!-- 未確定 -->
       <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.noOrdersReceivedPileUp.labels, displayType)" :styles="pileUp.noOrdersReceivedPileUp.styles"
                          v-if="displayPrepared(pileUp.display)"></g-gantt-label-row>
-      <!-- 未受注 - 設備 -->
+      <!-- 未確定 - 設備 -->
       <template v-if="displayPrepared(pileUp.noOrdersReceivedPileUp.display) && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>

@@ -17,8 +17,8 @@ export const FacilityType = {
     Prepared: "Prepared",
 }
 export const FacilityTypeMap = {
-    Ordered: "受注済み",
-    Prepared: "非受注",
+    Ordered: "確定",
+    Prepared: "未確定",
 }
 
 export const RoleType = {
