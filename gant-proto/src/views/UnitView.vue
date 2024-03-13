@@ -11,7 +11,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="ユニット" @close-edit-modal="closeModalProxy">
+    <default-modal title="ユニット" @close-edit-modal="closeModalProxy" :size="'half'">
       <async-unit-edit :id="id" :order="unitMap[currentFacilityId].length + 1" :facility-id="currentFacilityId"
                        @close-edit-modal="closeModalProxy"></async-unit-edit>
     </default-modal>
