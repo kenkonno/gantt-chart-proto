@@ -15,11 +15,13 @@
           'is-disabled': disabled
         }"
           class="multiselect-tag-remove multiselect-tag"
-          @mousedown.prevent="allowed('UPDATE_TICKET') && handleTagRemove(option, $event)"
           style="background-color: inherit"
           :style="getStyle(option.value)"
       >
-        <SingleRune :name="option.label" :id="option.value"></SingleRune>
+        <div class="icon-wrapper">
+          <SingleRune :name="option.label" :id="option.value" class="hover-test"></SingleRune>
+          <div class="close" @mousedown.prevent="allowed('UPDATE_TICKET') && handleTagRemove(option, $event)"></div>
+        </div>
       </div>
     </template>
   </Multiselect>
@@ -58,6 +60,43 @@ const getStyle = (userId: number) => {
 </script>
 
 <style>
+.icon-wrapper {
+  z-index: 100;
+}
+.icon-wrapper:hover .close{
+  display: block;
+}
+.close {
+  display: none;
+  z-index: 101;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #333; /* 枠の調整 */
+  border-radius: 50%;  /* 丸みの度合い */
+  background-color: white;
+  right: 0;
+  top: 0;
+}
+
+.close::before, .close::after { /* 共通設定 */
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px; /* 棒の幅（太さ） */
+  height: 12px; /* 棒の高さ */
+  background: #333;
+}
+
+.close::before {
+  transform: translate(-50%,-50%) rotate(45deg);
+}
+
+.close::after {
+  transform: translate(-50%,-50%) rotate(-45deg);
+}
+
 .user-multiselect-wrapper .multiselect-clear-icon {
   display: none;
 }
