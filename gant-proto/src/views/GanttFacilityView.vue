@@ -4,7 +4,7 @@
       <b>設備設定</b>
       <select style="display: inline" v-model.number="globalState.currentFacilityId"
               @input="refreshGantt(Number($event.target.value))">
-        <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}</option>
+        <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}<template v-if="item.type === FacilityType.Ordered">✅</template></option>
       </select>
       <template v-if="allowed('FACILITY_SETTINGS')">
         <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
@@ -118,7 +118,7 @@ import ModalWithLink from "@/components/modal/ModalWithLink.vue";
 import UnitView from "@/views/UnitView.vue";
 import HolidayView from "@/views/HolidayView.vue";
 import {computed} from "vue";
-import {FacilityStatus} from "@/const/common";
+import {FacilityStatus, FacilityType} from "@/const/common";
 import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
 import {allowed} from "@/composable/role";
 import MilestoneView from "@/views/MilestoneView.vue";

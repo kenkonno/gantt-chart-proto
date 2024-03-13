@@ -39,7 +39,9 @@
             <tr v-for="item in ganttAllRow" :key="item.facility.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="ganttAllHeader[0].visible" @click="refreshGantt(item.facility.id, true)"
-                        class="pointer"><u>{{ item.facility.name }}</u></gantt-td>
+                        class="pointer">
+                <u class="d-inline-block position-relative">{{ item.facility.name }}<green-check v-if="item.facility.type === FacilityType.Ordered"/></u>
+              </gantt-td>
               <gantt-td :visible="ganttAllHeader[1].visible">
                 <div class="user-wrapper">
                   <SingleRune v-for="user in item.users" :key="user.id" :name="user.name" :id="user.id"></SingleRune>
@@ -147,6 +149,8 @@ import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 import {GLOBAL_MUTATION_KEY} from "@/composable/globalState";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
+import {FacilityType} from "@/const/common";
+import GreenCheck from "@/components/icon/GreenCheck.vue";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
