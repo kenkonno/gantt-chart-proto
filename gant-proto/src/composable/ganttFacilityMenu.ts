@@ -8,6 +8,7 @@ export type GanttFacilityHeader = {
 }
 
 export type DisplayType = "day" | "week" | "hour" | "month"
+export type AggregationAxis = "process" | "facility"
 
 export function useGanttFacilityMenu() {
 
