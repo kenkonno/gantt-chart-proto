@@ -37,7 +37,10 @@
               <tr>
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
                 <th :colspan="props.ganttFacilityHeader.length">
-                  「{{ facility.name }}」のスケジュール：{{ facility.term_from }}～{{ facility.term_to }}
+                  <span>「</span>
+                  <span class="d-inline-block position-relative">{{ facility.name }}<green-check v-if="facility.type === FacilityType.Ordered"/></span>
+                  <span>」</span>
+                  <span>のスケジュール：{{ facility.term_from }}～{{ facility.term_to }}</span>
                 </th>
               </tr>
               <tr>
@@ -188,6 +191,8 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
 import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
 import dayjs from "dayjs";
+import GreenCheck from "@/components/icon/GreenCheck.vue";
+import {FacilityType} from "@/const/common";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],

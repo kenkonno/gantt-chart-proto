@@ -11,7 +11,7 @@ import {round} from "@/utils/math";
 import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {useMilestoneTable} from "@/composable/milestone";
-import {DisplayType} from "@/composable/ganttFacilityMenu";
+import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
 
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
@@ -25,7 +25,7 @@ type GanttAllRow = {
     bars: GanttBarObject[]
 }
 
-export async function useGanttAll() {
+export async function useGanttAll(aggregationAxis: AggregationAxis) {
     // injectはsetupと同期的に呼び出す必要あり
     const {facilityList, userList, processList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
     const {refreshFacilityList, refreshUserList, refreshProcessList} = inject(GLOBAL_ACTION_KEY)!
@@ -151,7 +151,7 @@ export async function useGanttAll() {
         })();
     }
 
-// 設備ごとに行を作成する
+    // 設備ごとに行を作成する
     const ganttAllRowPromise = filteredFacilityList.map(async facility => {
         // 設備に紐づくチケット一覧
         const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
@@ -187,6 +187,7 @@ export async function useGanttAll() {
         const milestones = await getMilestones(facility);
 
         // ここのbarsが複数なので１つにして日付を最小最大にする。
+        // TODO: CreateBarsでCSSをさらに変更させる
         return <GanttAllRow>{
             facility: facility,
             startDate: facility.term_from.substring(0, 10),
@@ -194,7 +195,7 @@ export async function useGanttAll() {
             users: users,
             estimate: estimate,
             progress_percent: round(progress_percent),
-            bars: hasFilter() ? createBars(tickets) : [
+            bars: hasFilter() || aggregationAxis == 'process' ? createBars(tickets) : [
                 createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to),
                 ...milestones
             ],

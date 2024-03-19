@@ -3,13 +3,13 @@
  * facilityに紐づかないものは直接
  * facilityに紐づくものは連想はれいつとして持つ。
  */
-import {GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
+import {AggregationAxis, DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {Header} from "@/composable/ganttAllMenu";
 import {PileUpFilter} from "@/composable/pileUps";
 import {FacilityType} from "@/const/common";
 
 const LOCAL_STORAGE_KEY = "koteikanri"
-const VERSION = 1.0 // フィルタの項目が変わったときに変える
+const VERSION = 1.1 // フィルタの項目が変わったときに変える
 
 /**
  * WebStorageを用いて各種フィルタ系の値を保持するようにする。
@@ -17,7 +17,7 @@ const VERSION = 1.0 // フィルタの項目が変わったときに変える
  * 対象
  *
  * ・受注状況
- *   受注済み、非受注のチェックボックス
+ *   確定、未確定のチェックボックス
  *
  * ・ガントチャートフィルタ
  *   部署フィルタ
@@ -40,7 +40,8 @@ type GlobalFilterState = {
     ganttFacilityMenu: GanttFacilityHeader[],
     ganttAllMenu: Header[],
     pileUpsFilter: PileUpFilter[],
-    viewType: "day" | "week" | "hour" | "month",
+    viewType: DisplayType,
+    aggregationAxis: AggregationAxis,
     version: number
 }
 
@@ -71,6 +72,7 @@ const state: GlobalFilterState = {
     ],
     pileUpsFilter: [],
     viewType: "day",
+    aggregationAxis: "facility",
     version: VERSION
 
 }
@@ -90,6 +92,7 @@ export const initStateValue = async () => {
         state.ganttAllMenu = parsedState.ganttAllMenu;
         state.pileUpsFilter = parsedState.pileUpsFilter;
         state.viewType = parsedState.viewType;
+        state.aggregationAxis = parsedState.aggregationAxis;
         state.version = parsedState.version;
     } else {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
@@ -116,16 +119,24 @@ export const globalFilterGetter = {
     getGanttAllMenu: () => state.ganttAllMenu,
     getPileUpsFilter: () => state.pileUpsFilter,
     getViewType: () => state.viewType,
+    getAggregationAxis: () => state.aggregationAxis,
 }
 
-type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType';
+type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType' | 'aggregationAxis';
 
 function updateState(key: StateKey, value: any) {
     const storage = localStorage.getItem(LOCAL_STORAGE_KEY)
     if (storage == null) return
     const savedState = JSON.parse(storage) as GlobalFilterState;
-    savedState[key] = value;
-    state[key] = value;
+    // NOTE: 型推論が完璧ではないためこのような分岐を利用しないと型エラーとなる。
+    if ( key == "aggregationAxis") {
+        savedState[key] = value;
+        state[key] = value;
+    } else {
+        savedState[key] = value;
+        state[key] = value;
+
+    }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedState))
 }
 
@@ -142,7 +153,10 @@ export const globalFilterMutation = {
     updatePileUpsFilter: (pileUpsFilter: PileUpFilter[]) => {
         updateState('pileUpsFilter', pileUpsFilter);
     },
-    updateViewTypeFilter: (viewType: "day" | "week" | "hour" | "month") => {
+    updateViewTypeFilter: (viewType: DisplayType) => {
         updateState('viewType', viewType);
+    },
+    updateAggregationAxisFilter: (aggregationAxis: AggregationAxis) => {
+        updateState('aggregationAxis', aggregationAxis);
     },
 }

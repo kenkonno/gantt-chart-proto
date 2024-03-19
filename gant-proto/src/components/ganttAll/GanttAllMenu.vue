@@ -34,6 +34,20 @@
           週次
         </label>
       </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="aggregationAxis" id="byProcess" v-model="aggregationAxis" value="process"
+               @change="emits('updateAggregationAxis', $event.target.value)">
+        <label class="form-check-label" for="byProcess">
+          工程別
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="aggregationAxis" id="byFacility" v-model="aggregationAxis"  value="facility"
+               @change="emits('updateAggregationAxis', $event.target.value)">
+        <label class="form-check-label" for="byFacility">
+          設備別
+        </label>
+      </div>
     </div>
   </div>
 </template>
@@ -63,16 +77,19 @@ nav {
 <script setup lang="ts">
 import AccordionHorizontal from "@/components/accordionHorizontal/AccordionHorizontal.vue";
 import {ref} from "vue";
-import {DisplayType, Header} from "@/composable/ganttAllMenu";
+import { Header} from "@/composable/ganttAllMenu";
+import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
 
 type GanttFacilityMenuProps = {
   ganttAllHeader: Header[],
   displayType: DisplayType,
+  aggregationAxis: AggregationAxis,
 }
 
-const emits = defineEmits(["updateDisplayType"])
+const emits = defineEmits(["updateDisplayType", "updateAggregationAxis"])
 const props = defineProps<GanttFacilityMenuProps>()
 const ganttAllHeader = ref(props.ganttAllHeader)
 const displayType = ref(props.displayType)
+const aggregationAxis = ref(props.aggregationAxis)
 
 </script>

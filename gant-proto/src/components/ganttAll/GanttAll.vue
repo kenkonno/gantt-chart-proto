@@ -1,5 +1,5 @@
 <template>
-  <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter()}">
+  <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter(), byProcess:byProcess()}">
     <div class="gantt-facility-wrapper d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
       <g-gantt-chart
           :chart-start="chartStart"
@@ -39,7 +39,9 @@
             <tr v-for="item in ganttAllRow" :key="item.facility.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="ganttAllHeader[0].visible" @click="refreshGantt(item.facility.id, true)"
-                        class="pointer"><u>{{ item.facility.name }}</u></gantt-td>
+                        class="pointer">
+                <u class="d-inline-block position-relative">{{ item.facility.name }}<green-check v-if="item.facility.type === FacilityType.Ordered"/></u>
+              </gantt-td>
               <gantt-td :visible="ganttAllHeader[1].visible">
                 <div class="user-wrapper">
                   <SingleRune v-for="user in item.users" :key="user.id" :name="user.name" :id="user.id"></SingleRune>
@@ -80,6 +82,9 @@
 </template>
 <style>
 @import '@/assets/gantt-override.scss';
+#gantt-all-view.byProcess .g-gantt-row-bars-container .g-gantt-bar {
+  opacity: 0.8;
+}
 
 #gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar {
   height: 33% !important;
@@ -145,14 +150,17 @@ import {inject, nextTick, ref, watch} from "vue";
 import {Header} from "@/composable/ganttAllMenu";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 import {GLOBAL_MUTATION_KEY} from "@/composable/globalState";
-import {DisplayType} from "@/composable/ganttFacilityMenu";
+import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
+import {FacilityType} from "@/const/common";
+import GreenCheck from "@/components/icon/GreenCheck.vue";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
 type GanttAllProps = {
   ganttAllHeader: Header[],
   displayType: DisplayType,
+  aggregationAxis: AggregationAxis,
 }
 const props = defineProps<GanttAllProps>()
 
@@ -166,7 +174,11 @@ const {
   chartStart,
   chartEnd,
   hasFilter
-} = await useGanttAll()
+} = await useGanttAll(props.aggregationAxis)
+
+const byProcess = () => {
+  return props.aggregationAxis == "process"
+}
 
 // スクロールや大きさの同期系
 const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体

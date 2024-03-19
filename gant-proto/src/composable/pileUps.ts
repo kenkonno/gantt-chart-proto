@@ -165,9 +165,9 @@ function initPileUps(
                 mergeAndUpdate(vv, v, mergeStartIndex, isALlMode)
             })
 
-            // 未受注のマージ
+            // 未確定のマージ
             mergeAndUpdate(target.noOrdersReceivedPileUp, row.noOrdersReceivedPileUp, mergeStartIndex, isALlMode)
-            // 未受注の設備マージ
+            // 未確定の設備マージ
             row.noOrdersReceivedPileUp.facilities.forEach(v => {
                 const vv = target.noOrdersReceivedPileUp.facilities.find(vvv => vvv.facilityId === v.facilityId)
                 if (vv == undefined) return console.warn("facilityId is not exists", v.facilityId)
@@ -273,17 +273,17 @@ export const usePileUps = (
      * １つのチケットから山積みを更新する。
      * ユーザーまたは設備の計算を行った後、サマリーへ足し上げる
      *
-     * [受注済みかつアサイン済みの場合]
+     * [確定かつアサイン済みの場合]
      * ユーザーとアサイン済みと部署が対象
      * 担当者の人数と営業日で均等に割り当てる。
      *
-     * [受注済みかつ未アサインの場合]
+     * [確定かつ未アサインの場合]
      * 未アサインと設備が対象
      * 部署が設定されている場合のみ計上する。
      * 営業日・工数・人数で均等に割り当てる。
      *
-     * [未受注の場合]
-     * 未受注と設備が対象
+     * [未確定の場合]
+     * 未確定と設備が対象
      * 営業日・工数・人数で均等に割り当てる。
      *
      * @param pileUps
@@ -347,7 +347,7 @@ export const usePileUps = (
         }
         let rowErrorFunc = userErrorFunc
 
-        // 受注済みの場合
+        // 確定の場合
         if (facility.type === FacilityType.Ordered) {
             const ticketUserIds = ticketUsers.map(v => v.user_id)
             // アサイン済み

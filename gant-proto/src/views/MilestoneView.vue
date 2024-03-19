@@ -9,7 +9,7 @@
     </template>
   </Suspense>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="マイルストーン" @close-edit-modal="closeModalProxy">
+    <default-modal title="マイルストーン" @close-edit-modal="closeModalProxy" :size="'half'">
       <async-milestone-edit :id="id"
                             :order="list.length + 1"
                             @close-edit-modal="closeModalProxy"

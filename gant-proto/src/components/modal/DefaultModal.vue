@@ -3,7 +3,7 @@
     <div id="overlay" class="overlay-event overlay-on">
       <div class="flex">
           <div class="modal" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog" :class="size()">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">{{ title }}</h5>
@@ -24,12 +24,19 @@
 <script setup lang="ts">
 
 interface DefaultModal {
-  title: string
+  title: string,
+  size: string
 }
 
-defineProps<DefaultModal>()
+const props = defineProps<DefaultModal>()
 defineEmits(['closeEditModal'])
 
+const size = () => {
+  if (props.size === "half") {
+    return "half"
+  }
+  return "big"
+}
 </script>
 
 <style scoped>
@@ -38,6 +45,10 @@ defineEmits(['closeEditModal'])
   z-index: 999;
   width: 100%;
   display: block;
+}
+
+.half {
+  width: 50%;
 }
 
 #overlay {
