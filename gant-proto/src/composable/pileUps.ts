@@ -146,7 +146,7 @@ function initPileUps(
             // 部署のマージ
             const target = defaultPileUps.find(v => v.departmentId === row.departmentId);
             if (target == undefined) return console.warn("departmentId is not exists", row.departmentId)
-            mergeAndUpdate(target, row, mergeStartIndex, isALlMode);
+            mergeAndUpdate(target, row, mergeStartIndex, isALlMode, false);
 
             // アサイン済み（計）のマージ
             mergeAndUpdate(target.assignedUser, row.assignedUser, mergeStartIndex, isALlMode)
@@ -177,7 +177,7 @@ function initPileUps(
         });
     }
 
-    function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean) {
+    function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean, mergedColor = true) {
         row.labels.forEach((v, index) => {
             const targetIndex = mergeStartIndex + index;
             if (0 <= targetIndex && targetIndex < target.labels.length && target.labels[mergeStartIndex + index] != 0) {
@@ -190,7 +190,9 @@ function initPileUps(
                     if(hasError) {
                         row.styles[index] = {color: PILEUP_DANGER_COLOR}
                     } else {
-                        row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                        if (mergedColor) {
+                            row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                        }
                     }
                 }
             }
@@ -370,8 +372,8 @@ export const usePileUps = (
                 if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
                 rows.push(pileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!)
                 // TODO: サマリーの計上先にするかヒアリング。絵面的には含めないっぽい。含める場合はpileUp事態をsummaryRowsに追加する
-                summaryRows.push([pileUp.unAssignedPileUp])
-                summaryLimit.push(9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
+                summaryRows.push([pileUp, pileUp.unAssignedPileUp])
+                summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length, 9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
                 rowErrorFunc = facilityErrorFunc
             }
         } else if (facility.type === FacilityType.Prepared) {
