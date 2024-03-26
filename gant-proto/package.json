@@ -21,6 +21,7 @@
     "core-js": "^3.8.3",
     "dayjs": "^1.11.8",
     "showdown": "^2.1.0",
+    "sweetalert2": "^11.10.7",
     "vite": "^3.2.7",
     "vue": "^3.3.4",
     "vue-class-component": "^8.0.0-0",

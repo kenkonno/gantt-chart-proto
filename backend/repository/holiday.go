@@ -69,11 +69,12 @@ func (r *holidayRepository) InsertByFacilityId(facilityId int32) []db.Holiday {
 									WHEN extract(dow FROM date) = 0 THEN '日曜日' END as youbi
 						 FROM generate_series((SELECT term_from FROM facilities WHERE id = %d),
 											  (SELECT term_to FROM facilities WHERE id = %d), '1 days') as date
-						 WHERE extract(dow FROM date) IN (6, 0))
+	                     WHERE extract(dow FROM date) IN (6, 0)
+    	                 AND NOT EXISTS (SELECT * FROM holidays h WHERE h.facility_id = %d AND h.date = date.date))
 	INSERT
 	INTO holidays (name, date, created_at, facility_id, updated_at)
 	SELECT youbi, date, now(), %d, EXTRACT(EPOCH FROM now())
 	FROM date_master
-	`, facilityId, facilityId, facilityId)).Scan(&results)
+	`, facilityId, facilityId, facilityId, facilityId)).Scan(&results)
 	return results
 }

@@ -66,7 +66,7 @@
                   </div>
                 </gantt-td>
               </tr>
-              <!-- 未アサイン - 設備 -->
+              <!-- 未アサイン - 案件 -->
               <template v-if="pileUp.unAssignedPileUp.display">
                 <tr v-for="item in pileUp.unAssignedPileUp.facilities" :key="item.facilityId">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
@@ -88,7 +88,7 @@
                   </div>
                 </gantt-td>
               </tr>
-              <!-- 未確定 - 設備 -->
+              <!-- 未確定 - 案件 -->
               <template v-if="displayPrepared(pileUp.noOrdersReceivedPileUp.display)">
                 <tr v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
@@ -115,14 +115,14 @@
       </template>
       <!-- 未アサイン -->
       <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.unAssignedPileUp.labels, displayType)" :styles="pileUp.unAssignedPileUp.styles" v-if="pileUp.display"></g-gantt-label-row>
-      <!-- 未アサイン - 設備 -->
+      <!-- 未アサイン - 案件 -->
       <template v-if="pileUp.unAssignedPileUp.display && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.unAssignedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>
       <!-- 未確定 -->
       <g-gantt-label-row :labels="pileUpsLabelFormat(pileUp.noOrdersReceivedPileUp.labels, displayType)" :styles="pileUp.noOrdersReceivedPileUp.styles"
                          v-if="displayPrepared(pileUp.display)"></g-gantt-label-row>
-      <!-- 未確定 - 設備 -->
+      <!-- 未確定 - 案件 -->
       <template v-if="displayPrepared(pileUp.noOrdersReceivedPileUp.display) && pileUp.display">
         <g-gantt-label-row v-for="item in pileUp.noOrdersReceivedPileUp.facilities" :key="item.facilityId" :labels="pileUpsLabelFormat(item.labels, displayType)" :styles="item.styles"></g-gantt-label-row>
       </template>
@@ -197,8 +197,8 @@ const displayPrepared = (display: boolean) => {
 }
 
 // 結論
-// usePileUpsを全ての設備で実行。
-// 開始日、終了日は現在の設備。
+// usePileUpsを全ての案件で実行。
+// 開始日、終了日は現在の案件。
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
 const isAllMode = props.currentFacilityId === -1
 console.log("####### start main getDefaultPileUps")

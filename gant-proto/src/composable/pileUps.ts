@@ -81,11 +81,11 @@ function initPileUps(
     defaultPileUps: PileUps[] = [], globalStartDate?: string,) {
 
     pileUps.value.length = 0
-    // 開始日・終了日は表示中の設備にする
+    // 開始日・終了日は表示中の案件にする
     const duration = dayjs(endDate).diff(dayjs(startDate), 'day')
     const orderedFacilities = facilityList.filter(v => v.type === FacilityType.Ordered)
     const noOrderedFacilities = facilityList.filter(v => v.type === FacilityType.Prepared)
-    // 部署でループをし、紐づくユーザーと全ての設備分初期化する
+    // 部署でループをし、紐づくユーザーと全ての案件分初期化する
     departmentList.forEach(v => {
         // 部署に紐づくユーザー
         const users = userList.filter(user => user.department_id == v.id!)
@@ -146,7 +146,7 @@ function initPileUps(
             // 部署のマージ
             const target = defaultPileUps.find(v => v.departmentId === row.departmentId);
             if (target == undefined) return console.warn("departmentId is not exists", row.departmentId)
-            mergeAndUpdate(target, row, mergeStartIndex, isALlMode);
+            mergeAndUpdate(target, row, mergeStartIndex, isALlMode, false);
 
             // アサイン済み（計）のマージ
             mergeAndUpdate(target.assignedUser, row.assignedUser, mergeStartIndex, isALlMode)
@@ -158,7 +158,7 @@ function initPileUps(
 
             // 未アサイン済みのマージ
             mergeAndUpdate(target.unAssignedPileUp, row.unAssignedPileUp, mergeStartIndex, isALlMode)
-            // 未アサインの設備マージ
+            // 未アサインの案件マージ
             row.unAssignedPileUp.facilities.forEach(v => {
                 const vv = target.unAssignedPileUp.facilities.find(vvv => vvv.facilityId === v.facilityId)
                 if (vv == undefined) return console.warn("facilityId is not exists", v.facilityId)
@@ -167,7 +167,7 @@ function initPileUps(
 
             // 未確定のマージ
             mergeAndUpdate(target.noOrdersReceivedPileUp, row.noOrdersReceivedPileUp, mergeStartIndex, isALlMode)
-            // 未確定の設備マージ
+            // 未確定の案件マージ
             row.noOrdersReceivedPileUp.facilities.forEach(v => {
                 const vv = target.noOrdersReceivedPileUp.facilities.find(vvv => vvv.facilityId === v.facilityId)
                 if (vv == undefined) return console.warn("facilityId is not exists", v.facilityId)
@@ -177,7 +177,7 @@ function initPileUps(
         });
     }
 
-    function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean) {
+    function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean, mergedColor = true) {
         row.labels.forEach((v, index) => {
             const targetIndex = mergeStartIndex + index;
             if (0 <= targetIndex && targetIndex < target.labels.length && target.labels[mergeStartIndex + index] != 0) {
@@ -190,7 +190,9 @@ function initPileUps(
                     if(hasError) {
                         row.styles[index] = {color: PILEUP_DANGER_COLOR}
                     } else {
-                        row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                        if (mergedColor) {
+                            row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                        }
                     }
                 }
             }
@@ -271,19 +273,19 @@ export const usePileUps = (
 
     /**
      * １つのチケットから山積みを更新する。
-     * ユーザーまたは設備の計算を行った後、サマリーへ足し上げる
+     * ユーザーまたは案件の計算を行った後、サマリーへ足し上げる
      *
      * [確定かつアサイン済みの場合]
      * ユーザーとアサイン済みと部署が対象
      * 担当者の人数と営業日で均等に割り当てる。
      *
      * [確定かつ未アサインの場合]
-     * 未アサインと設備が対象
+     * 未アサインと案件が対象
      * 部署が設定されている場合のみ計上する。
      * 営業日・工数・人数で均等に割り当てる。
      *
      * [未確定の場合]
-     * 未確定と設備が対象
+     * 未確定と案件が対象
      * 営業日・工数・人数で均等に割り当てる。
      *
      * @param pileUps
@@ -370,8 +372,8 @@ export const usePileUps = (
                 if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
                 rows.push(pileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!)
                 // TODO: サマリーの計上先にするかヒアリング。絵面的には含めないっぽい。含める場合はpileUp事態をsummaryRowsに追加する
-                summaryRows.push([pileUp.unAssignedPileUp])
-                summaryLimit.push(9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
+                summaryRows.push([pileUp, pileUp.unAssignedPileUp])
+                summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length, 9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
                 rowErrorFunc = facilityErrorFunc
             }
         } else if (facility.type === FacilityType.Prepared) {
@@ -428,7 +430,7 @@ export const usePileUps = (
     const getIndexByDate = (facilityStartDate: Dayjs, date: Dayjs) => {
         return date.diff(facilityStartDate, 'days')
     }
-    // TODO: 週表示, 祝日が設備ごとに違うので見る設備によっては結果が変わってしまう。
+    // TODO: 週表示, 祝日が案件ごとに違うので見る案件によっては結果が変わってしまう。
     const aggregatePileUpsByWeek = (term_from: string, term_to: string, pileUps: PileUps[], holidays: Holiday[]) => {
         // 日毎で計算された結果を週ごとに集約する。
         // 集約元のIndexと集約先のIndexをマッピングする
@@ -586,11 +588,11 @@ export const getDefaultPileUps = async (
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
     const {data: allData} = await Api.getPileUps(excludeFacilityId, facilityTypes)
 
-    // 全設備の最小
+    // 全案件の最小
     const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
     }).shift()!.term_from.substring(0, 10)
-    // 全設備の最大
+    // 全案件の最大
     const endDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_to > b.term_to ? 1 : -1
     }).pop()!.term_to.substring(0, 10)
@@ -599,7 +601,7 @@ export const getDefaultPileUps = async (
     initPileUps(endDate, startDate, isAllMode, userList, defaultPileUps, departmentList, filteredFacilityList);
 
     for (const facility of filteredFacilityList) {
-        // 対象外の設備はスキップ
+        // 対象外の案件はスキップ
         if (facility.id === excludeFacilityId) continue
         const targetData = allData.list.find(v => v.facilityId === facility.id)
         // 対象データなしの場合もスキップ

@@ -58,7 +58,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
 
     const filteredAllTickets = allTickets
     const filteredAllTicketUsers = allTicketUsers
-    // チケット、設備の絞り込みを実施する
+    // チケット、案件の絞り込みを実施する
     if (selectedDepartment.value != undefined) {
         filteredAllTickets.list = filteredAllTickets.list.filter(v => v.department_id == selectedDepartment.value)
         const ticketIds = filteredAllTickets.list.map(v => v.id)
@@ -72,7 +72,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     const hasFilter = () => {
         return selectedDepartment.value != undefined || selectedUser.value != undefined
     }
-    // TODO: ここでチケットから 設備が絞り込めれば長楽 コードに違和感があるがAPI呼び出しをする
+    // TODO: ここでチケットから 案件が絞り込めれば長楽 コードに違和感があるがAPI呼び出しをする
     if (hasFilter()) {
         const ganttGroupIds = Array.from(new Set(filteredAllTickets.list.map(v => v.gantt_group_id)))
         const facilityIds = await Promise.all(ganttGroupIds.map(async ganttGroupId => {
@@ -83,11 +83,11 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         filteredFacilityList = filteredFacilityList.filter(v => facilityIdFlat.includes(v.id!))
     }
 
-    // 全設備の最小
+    // 全案件の最小
     const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
     }).shift()!.term_from.substring(0, 10)
-    // 全設備の最大
+    // 全案件の最大
     const endDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_to > b.term_to ? 1 : -1
     }).pop()!.term_to.substring(0, 10)
@@ -151,9 +151,9 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         })();
     }
 
-    // 設備ごとに行を作成する
+    // 案件ごとに行を作成する
     const ganttAllRowPromise = filteredFacilityList.map(async facility => {
-        // 設備に紐づくチケット一覧
+        // 案件に紐づくチケット一覧
         const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
         const {data} = await Api.getHolidays(facility.id!)
         holidays.push(...data.list)
