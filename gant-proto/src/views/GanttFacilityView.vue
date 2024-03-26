@@ -30,8 +30,8 @@
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
-        @set-schedule-by-from-to="gantFacility.setScheduleByFromToProxy()"
-        @set-schedule-by-person-day="gantFacility.setScheduleByPersonDayProxy()"
+        @set-schedule-by-from-to="confirm(gantFacility.setScheduleByFromToProxy)"
+        @set-schedule-by-person-day="confirm(gantFacility.setScheduleByPersonDayProxy)"
         @updateDisplayType="updateDisplayType"
     ></gantt-facility-menu>
   </div>
@@ -122,6 +122,7 @@ import {FacilityStatus, FacilityType} from "@/const/common";
 import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
 import {allowed} from "@/composable/role";
 import MilestoneView from "@/views/MilestoneView.vue";
+import Swal from "sweetalert2"
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
@@ -140,6 +141,22 @@ const facilityList = computed(() => {
 
   return result.sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1 : 1);
 })
+
+const confirm = async (func : ()=> any) => {
+  let result = await Swal.fire({
+    title: 'リスケ機能実行の確認',
+    text: "スケジュールを一括で変更しますがよろしいでしょうか？この変更は元に戻すことはできません。",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '実行',
+    cancelButtonText: 'キャンセル'
+  });
+  if (result.isConfirmed) {
+    func()
+  }
+}
 
 
 // たぶんwatchしてガントチャートの切り替えにしたほうがいい気がする。
