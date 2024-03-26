@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: '/',
                 name: 'gantt',
-                meta: {title: "工程管理ツール | 設備ビュー", requiresAuth: true},
+                meta: {title: "工程管理ツール | 案件ビュー", requiresAuth: true},
                 component: () => import('../views/GanttFacilityView.vue')
             },
             {

@@ -12,7 +12,7 @@ import (
 
 func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysResponse {
 
-	// 設備のコピーを実施する
+	// 案件のコピーを実施する
 	facilityRep := repository.NewFacilityRepository()
 	ganttGroupRep := repository.NewGanttGroupRepository()
 	unitRep := repository.NewUnitRepository()

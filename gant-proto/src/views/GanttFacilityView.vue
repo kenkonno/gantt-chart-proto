@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-light bg-light">
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
-      <b>設備設定</b>
+      <b>案件設定</b>
       <select style="display: inline" v-model.number="globalState.currentFacilityId"
               @input="refreshGantt(Number($event.target.value))">
         <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}<template v-if="item.type === FacilityType.Ordered">✅</template></option>
@@ -22,7 +22,7 @@
 
       </template>
     </div>
-    <div v-else>設備の設定がありません。設備一覧から追加してください。</div>
+    <div v-else>案件の設定がありません。案件一覧から追加してください。</div>
   </nav>
 
   <div style="display:none">{{ gantFacility != undefined }} vuejshack</div>
@@ -36,7 +36,7 @@
     ></gantt-facility-menu>
   </div>
   <div v-if="globalState.currentFacilityId <= 0">
-    設備を選択してください。
+    案件を選択してください。
   </div>
   <Suspense v-if="globalState.currentFacilityId > 0 && globalState.ganttFacilityRefresh">
     <gantt-facility

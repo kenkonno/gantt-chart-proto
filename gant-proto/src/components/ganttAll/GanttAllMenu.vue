@@ -45,7 +45,7 @@
         <input class="form-check-input" type="radio" name="aggregationAxis" id="byFacility" v-model="aggregationAxis"  value="facility"
                @change="emits('updateAggregationAxis', $event.target.value)">
         <label class="form-check-label" for="byFacility">
-          設備別
+          案件別
         </label>
       </div>
     </div>

@@ -16,14 +16,14 @@ const VERSION = 1.1 // フィルタの項目が変わったときに変える
  *
  * 対象
  *
- * ・受注状況
+ * ・案件状況
  *   確定、未確定のチェックボックス
  *
  * ・ガントチャートフィルタ
  *   部署フィルタ
  *   担当者フィルタ
  *
- * ・設備ビューのヘッダー
+ * ・案件ビューのヘッダー
  *
  * ・全体ビューのヘッダー
  *
@@ -63,7 +63,7 @@ const state: GlobalFilterState = {
         {name: "操作", visible: false},
     ],
     ganttAllMenu: [
-        {name: "設備名", visible: true},
+        {name: "案件名", visible: true},
         {name: "担当者", visible: false},
         {name: "開始日", visible: true},
         {name: "終了日", visible: true},

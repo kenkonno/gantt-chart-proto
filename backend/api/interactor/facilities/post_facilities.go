@@ -50,8 +50,8 @@ func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse 
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
 	})
-	// 全行程を登録して、お尻から登録する。開始日終了日は工程の数の設備の期間で決定する
-	// 1週刊づつずらして、開始日はMAX(開始日, 設備開始日）とする。
+	// 全行程を登録して、お尻から登録する。開始日終了日は工程の数の案件の期間で決定する
+	// 1週刊づつずらして、開始日はMAX(開始日, 案件開始日）とする。
 	allProcess := processRep.FindAll()
 	for i, v := range allProcess {
 		index := len(allProcess) - 1 - i

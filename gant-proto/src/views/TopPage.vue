@@ -4,7 +4,7 @@
       <b class="d-flex align-items-center">ビューの選択</b>
       <router-link to="/">
         <span class="material-symbols-outlined">edit</span>
-        <span class="text">設備ビュー</span>
+        <span class="text">案件ビュー</span>
       </router-link>
       <router-link to="/all-view">
         <span class="material-symbols-outlined">travel_explore</span>
@@ -15,7 +15,7 @@
       </div>
       <div>
         <label>
-          受注状況：
+          案件状況：
           <label v-for="(name, code) in FacilityTypeMap" :key="code" >
             <input type="checkbox" name="facilityType" :value="code" v-model="globalState.facilityTypes" @change="changeFacilityType"/>
             {{name}}
@@ -36,7 +36,7 @@
   <nav class="navbar navbar-light bg-light" v-if="allowed('ALL_SETTINGS')">
     <div>
       <b>全体設定</b>
-      <ModalWithLink title="設備一覧" icon="precision_manufacturing">
+      <ModalWithLink title="案件一覧" icon="precision_manufacturing">
         <facility-view @update="updateFacility"></facility-view>
       </ModalWithLink>
       <ModalWithLink title="工程一覧" icon="account_tree">
@@ -138,7 +138,7 @@ provide(GLOBAL_DEPARTMENT_USER_FILTER_KEY, globalDepartmentUserFilter)
 const userInfo = await getUserInfo()!
 
 const changeFacilityType = () => {
-  // 設備ビューの時はpileUpsだけ
+  // 案件ビューの時はpileUpsだけ
   if (router.currentRoute.value.name == "gantt") {
     mutations.refreshPileUpsRefresh()
   }

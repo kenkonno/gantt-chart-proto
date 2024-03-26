@@ -26,7 +26,7 @@
         </div>
         <div class="d-flex flex-column">
           <label>
-            設備
+            案件
             <select v-model="filterFacility">
               <option v-for="item in facilityList" :key="item.code" :value="item.code">{{ item.name }}</option>
             </select>

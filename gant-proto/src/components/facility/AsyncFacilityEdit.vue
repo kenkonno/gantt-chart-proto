@@ -34,7 +34,7 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">受注状況</label>
+      <label class="form-label" for="id">案件状況</label>
       <select class="form-control" name="type" id="type" v-model="facility.type" :disabled="false">
         <option v-for="(name, code) in FacilityTypeMap" :value="code" :key="code">{{name}}</option>
       </select>
