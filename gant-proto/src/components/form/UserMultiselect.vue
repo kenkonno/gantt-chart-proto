@@ -19,7 +19,7 @@
           :style="getStyle(option.value)"
       >
         <div class="icon-wrapper">
-          <SingleRune :name="option.label" :id="option.value" class="hover-test"></SingleRune>
+          <SingleRune :name="getRuneName(option.lastName, option.firstName)" :id="option.value" class="hover-test"></SingleRune>
           <div class="close" @mousedown.prevent="allowed('UPDATE_TICKET') && handleTagRemove(option, $event)" v-if="allowed('UPDATE_TICKET')"></div>
         </div>
       </div>
@@ -43,7 +43,7 @@ const props = defineProps<UserMultiselect>()
 defineEmits(['update:modelValue', 'change'])
 
 const options = computed(() => props.userList.map(v => {
-  return {value: v.id, label: v.name}
+  return {value: v.id, label: `${v.lastName} ${v.firstName}`, lastName: v.lastName, firstName: v.firstName}
 }))
 const value = computed(() => props.ticketUser.map(v => v.user_id))
 
@@ -55,8 +55,18 @@ const getStyle = (userId: number) => {
     return {display: "none"}
   }
   return {left: index*(50/value.value.length) + "%"}
-
 }
+const getRuneName = (lastName?: string, firstName?: string) => {
+  let result = ""
+  if(lastName != undefined) {
+    result += lastName.substring(0,1)
+  }
+  if(firstName != undefined) {
+    result += firstName.substring(0,1)
+  }
+  return result
+}
+
 </script>
 
 <style>

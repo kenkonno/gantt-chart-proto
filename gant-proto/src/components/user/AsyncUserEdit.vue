@@ -13,8 +13,13 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">氏名</label>
-      <input class="form-control" type="text" name="name" id="name" v-model="user.name" :disabled="false">
+      <label class="form-label" for="id">姓</label>
+      <input class="form-control" type="text" name="name" id="name" v-model="user.lastName" :disabled="false">
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label" for="id">名</label>
+      <input class="form-control" type="text" name="name" id="name" v-model="user.firstName" :disabled="false">
     </div>
 
     <div class="mb-2">

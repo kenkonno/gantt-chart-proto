@@ -3,7 +3,7 @@
       class="single-rune"
       :style="getBgColor(id)"
   >
-    {{ name.substring(0, 1) }}
+    {{ name }}
   </div>
 </template>
 
@@ -46,6 +46,7 @@ const getBgColor = (value: number) => {
   text-align: center;
   z-index: 10;
   border: solid 1px white;
+  font-size: 0.7rem;
 }
 .single-rune:hover {
   opacity: 0.8;

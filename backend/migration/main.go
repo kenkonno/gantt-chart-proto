@@ -37,7 +37,7 @@ func createDefaultUser() {
 		userRep.Upsert(db.User{
 			DepartmentId:     0,
 			LimitOfOperation: 0,
-			Name:             "管理者",
+			LastName:         "管理者",
 			Password:         string(hashedPassword),
 			Email:            "admin",
 			Role:             "admin",

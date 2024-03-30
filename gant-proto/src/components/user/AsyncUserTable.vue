@@ -19,7 +19,7 @@
       <tr v-for="item in list" :key="item.id">
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ getDepartmentName(item.department_id) }}</td>
-        <td>{{ item.name }}</td>
+        <td>{{ `${item.lastName} ${item.firstName}` }}</td>
         <td>{{ item.limit_of_operation }}</td>
         <td>{{ RoleTypeMap[item.role] }}</td>
         <td v-if="false">{{ item.password }}</td>

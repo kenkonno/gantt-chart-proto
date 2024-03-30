@@ -21,7 +21,9 @@ type User struct {
 
 	LimitOfOperation float32 `json:"limit_of_operation"`
 
-	Name string `json:"name" binding:"min=1"`
+	LastName string `json:"lastName" binding:"min=1"`
+
+	FirstName string `json:"firstName" binding:"min=1"`
 
 	Password string `json:"password" binding:"min=0"`
 
