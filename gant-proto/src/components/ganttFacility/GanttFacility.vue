@@ -114,7 +114,7 @@
                         class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr :style="addTicketRowStyle()">
+                <tr :style="addTicketRowStyle()" v-if="!hasFilter">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
