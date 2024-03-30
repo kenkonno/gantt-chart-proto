@@ -23,4 +23,8 @@ export function pileUpLabelFormat(v: number) {
     return Math.round(v * 10 / 8) / 10
 }
 
+export function progressFormat(v: number) {
+    return v.toFixed(1)
+}
+
 

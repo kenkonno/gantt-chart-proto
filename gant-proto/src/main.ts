@@ -16,7 +16,7 @@ import router from './router'
 import {createVfm} from 'vue-final-modal'
 
 import ganttastic from '@infectoone/vue-ganttastic'
-import {dateFormat, dateFormatYMD, unixTimeFormat} from "@/utils/filters";
+import {dateFormat, dateFormatYMD, unixTimeFormat, progressFormat} from "@/utils/filters";
 
 import dayjs from "dayjs";
 import 'dayjs/locale/ja'
@@ -31,6 +31,7 @@ app.config.globalProperties.$filters = {
     dateFormat: dateFormat,
     dateFormatYMD: dateFormatYMD,
     unixTimeFormat: unixTimeFormat,
+    progressFormat: progressFormat
 }
 app.use(router)
     .use(ganttastic)
