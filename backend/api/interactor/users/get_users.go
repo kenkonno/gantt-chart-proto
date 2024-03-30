@@ -19,7 +19,8 @@ func GetUsersInvoke(c *gin.Context) openapi_models.GetUsersResponse {
 				Id:               item.Id,
 				DepartmentId:     item.DepartmentId,
 				LimitOfOperation: item.LimitOfOperation,
-				Name:             item.Name,
+				LastName:         item.LastName,
+				FirstName:        item.FirstName,
 				Password:         "", // Passwordはレスポンスに含めない
 				Email:            item.Email,
 				Role:             item.Role,

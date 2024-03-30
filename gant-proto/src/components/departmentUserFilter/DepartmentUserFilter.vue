@@ -52,7 +52,7 @@ const userOptions = computed(() => {
       return v.department_id == selectedDepartment.value
     }
   }).map(v => {
-    return {value: v.id, label: v.name}
+    return {value: v.id, label: `${v.lastName} ${v.firstName}`}
   })
 })
 

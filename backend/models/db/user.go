@@ -8,7 +8,8 @@ type User struct {
 	Id               *int32 `gorm:"primaryKey;autoIncrement"`
 	DepartmentId     int32
 	LimitOfOperation float32
-	Name             string
+	LastName         string
+	FirstName        string
 	Password         string
 	Email            string
 	Role             string

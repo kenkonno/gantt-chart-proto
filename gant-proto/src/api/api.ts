@@ -2162,7 +2162,13 @@ export interface User {
      * @type {string}
      * @memberof User
      */
-    'name': string;
+    'lastName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'firstName': string;
     /**
      * 
      * @type {string}

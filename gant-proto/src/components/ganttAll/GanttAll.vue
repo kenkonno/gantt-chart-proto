@@ -39,7 +39,7 @@
             <tr v-for="item in ganttAllRow" :key="item.facility.id">
               <td class="side-menu-cell"></td><!-- css hack min-height -->
               <gantt-td :visible="ganttAllHeader[0].visible" @click="refreshGantt(item.facility.id, true)"
-                        class="pointer">
+                        class="pointer facility-name">
                 <u class="d-inline-block position-relative">{{ item.facility.name }}<green-check v-if="item.facility.type === FacilityType.Ordered"/></u>
               </gantt-td>
               <gantt-td :visible="ganttAllHeader[1].visible">
@@ -49,8 +49,8 @@
               </gantt-td>
               <gantt-td :visible="ganttAllHeader[2].visible">{{ item.startDate }}</gantt-td>
               <gantt-td :visible="ganttAllHeader[3].visible">{{ item.endDate }}</gantt-td>
-              <gantt-td :visible="ganttAllHeader[4].visible">{{ item.estimate }}</gantt-td>
-              <gantt-td :visible="ganttAllHeader[5].visible">{{ item.progress_percent }}</gantt-td>
+              <gantt-td :visible="ganttAllHeader[4].visible" class="estimate">{{ item.estimate }}</gantt-td>
+              <gantt-td :visible="ganttAllHeader[5].visible" class="progress-percent">{{ $filters.progressFormat(item.progress_percent) }}</gantt-td>
             </tr>
             </tbody>
           </table>
@@ -135,6 +135,15 @@ nav {
     margin: auto 0 auto -10px;
   }
 }
+.facility-name {
+  text-align: left;
+}
+.estimate {
+  text-align: right;
+}
+.progress-percent {
+  text-align: right;
+}
 
 </style>
 <script setup lang="ts">
@@ -154,6 +163,7 @@ import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
 import {FacilityType} from "@/const/common";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
+import {progressFormat} from "@/utils/filters";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 

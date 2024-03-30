@@ -904,7 +904,10 @@ components:
           type: integer
         limit_of_operation:
           type: number
-        name:
+        lastName:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        firstName:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
         password:
@@ -924,7 +927,8 @@ components:
       required:
         - department_id
         - limit_of_operation
-        - name
+        - lastName
+        - firstName
         - password
         - email
         - role

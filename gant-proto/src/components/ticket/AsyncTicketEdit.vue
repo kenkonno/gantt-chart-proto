@@ -53,7 +53,7 @@
     <div class="quill-editor">
       <QuillEditor ref="myQuillEditor" theme="snow" v-model="memo"/>
     </div>
-    <div class="buttons">
+    <div class="buttons" v-if="allowed('UPDATE_TICKET')">
       <button type="submit" class="btn btn-primary" @click="updateTicketMemo()">更新</button>
     </div>
   </div>
@@ -65,6 +65,7 @@ import {inject, onMounted, ref} from "vue";
 import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
 import {QuillEditor} from "@vueup/vue-quill";
 import {Api} from "@/api/axios";
+import {allowed} from "@/composable/role";
 
 const {getUnitName, getDepartmentName, getProcessName} = inject(GLOBAL_GETTER_KEY)!
 

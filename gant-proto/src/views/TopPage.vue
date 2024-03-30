@@ -29,7 +29,7 @@
       </a>
       <a href="#" @click.prevent="modalIsOpen = true" style="margin-left: auto;">
         <span class="material-symbols-outlined">person</span>
-        <span class="text">{{ userInfo.name }}</span>
+        <span class="text">{{ `${userInfo.lastName} ${userInfo.firstName}` }}</span>
       </a>
     </div>
   </nav>
@@ -163,7 +163,8 @@ const closeModalProxy = async () => {
   closeEditModal()
   const {user} = await loggedIn()
   if (user != undefined) {
-    userInfo.name = user.name
+    userInfo.lastName = user.lastName
+    userInfo.firstName = user.firstName
   }
 }
 

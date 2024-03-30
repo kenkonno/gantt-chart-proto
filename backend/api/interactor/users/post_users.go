@@ -29,7 +29,8 @@ func PostUsersInvoke(c *gin.Context) openapi_models.PostUsersResponse {
 	userRep.Upsert(db.User{
 		DepartmentId:     userReq.User.DepartmentId,
 		LimitOfOperation: userReq.User.LimitOfOperation,
-		Name:             userReq.User.Name,
+		LastName:         userReq.User.LastName,
+		FirstName:        userReq.User.FirstName,
 		Password:         string(hashedPassword),
 		Email:            userReq.User.Email,
 		Role:             userReq.User.Role,

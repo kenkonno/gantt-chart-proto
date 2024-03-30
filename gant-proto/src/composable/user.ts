@@ -22,7 +22,8 @@ export async function useUser(userId?: number) {
 
     const user = ref<User>({
         id: null,
-        name: "",
+        lastName: "",
+        firstName: "",
         department_id: 0,
         limit_of_operation: 8.0,
         password: "",
@@ -36,7 +37,8 @@ export async function useUser(userId?: number) {
         if (data.user != undefined) {
             user.value.id = data.user.id
             user.value.department_id = data.user.department_id
-            user.value.name = data.user.name
+            user.value.lastName = data.user.lastName
+            user.value.firstName = data.user.firstName
             user.value.limit_of_operation = data.user.limit_of_operation
             user.value.password = data.user.password
             user.value.email = data.user.email
