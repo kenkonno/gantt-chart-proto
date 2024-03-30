@@ -63,12 +63,14 @@ const getStyle = (userId: number) => {
 .icon-wrapper {
   z-index: 100;
 }
+.icon-wrapper:hover {
+  z-index: 101;
+}
 .icon-wrapper:hover .close{
   display: block;
 }
 .close {
   display: none;
-  z-index: 101;
   position: absolute;
   width: 16px;
   height: 16px;
