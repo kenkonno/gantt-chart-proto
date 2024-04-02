@@ -50,7 +50,7 @@
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
                   <gantt-td :visible="true">
                     <div class="pileUp-title child-child">
-                      {{item.user.name}}
+                      {{item.user.lastName}} {{item.user.firstName}}
                     </div>
                   </gantt-td>
                 </tr>

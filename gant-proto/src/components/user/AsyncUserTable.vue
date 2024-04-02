@@ -7,7 +7,7 @@
         <th>Id</th>
         <th>部署</th>
         <th>氏名</th>
-        <th>稼働上限</th>
+        <th v-if="false">稼働上限</th>
         <th>Role</th>
         <th v-if="false">Password</th>
         <th>Email</th>
@@ -20,7 +20,7 @@
         <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ getDepartmentName(item.department_id) }}</td>
         <td>{{ `${item.lastName} ${item.firstName}` }}</td>
-        <td>{{ item.limit_of_operation }}</td>
+        <td v-if="false">{{ item.limit_of_operation }}</td>
         <td>{{ RoleTypeMap[item.role] }}</td>
         <td v-if="false">{{ item.password }}</td>
         <td>{{ item.email }}</td>
