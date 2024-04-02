@@ -22,7 +22,7 @@
       <input class="form-control" type="text" name="name" id="name" v-model="user.firstName" :disabled="false">
     </div>
 
-    <div class="mb-2">
+    <div class="mb-2" v-if="false">
       <label class="form-label" for="limit_of_operation">稼働上限</label>
       <input class="form-control" type="number" name="limit_of_operation" step="0.1" id="limit_of_operation"
              v-model="user.limit_of_operation" :disabled="false">
