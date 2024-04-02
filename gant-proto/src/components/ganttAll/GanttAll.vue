@@ -44,7 +44,7 @@
               </gantt-td>
               <gantt-td :visible="ganttAllHeader[1].visible">
                 <div class="user-wrapper">
-                  <SingleRune v-for="user in item.users" :key="user.id" :name="user.name" :id="user.id"></SingleRune>
+                  <SingleRune v-for="user in item.users" :key="user.id" :name="getRuneName(user.lastName, user.firstName)" :id="user.id"></SingleRune>
                 </div>
               </gantt-td>
               <gantt-td :visible="ganttAllHeader[2].visible">{{ item.startDate }}</gantt-td>
@@ -215,5 +215,18 @@ const onClickBar = async (bar: GanttBarObject, e: MouseEvent, datetime?: string 
   open()
   filterFacility.value = Number(bar.ganttBarConfig.id)
 }
+
+// TODO: 重複コード
+const getRuneName = (lastName?: string, firstName?: string) => {
+  let result = ""
+  if(lastName != undefined) {
+    result += lastName.substring(0,1)
+  }
+  if(firstName != undefined) {
+    result += firstName.substring(0,1)
+  }
+  return result
+}
+
 
 </script>
