@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostUnitsRequest, Unit} from "@/api";
+import {PostUnitsRequest, Unit, User} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
@@ -54,7 +54,14 @@ export async function useUnit(unitId?: number) {
     return {unit}
 
 }
-
+export function validate(unit: Unit) {
+    let isValid = true
+    if (!unit.name) {
+        toast.warning("名称は必須です")
+        isValid = false
+    }
+    return isValid
+}
 export async function postUnit(unit: Unit, facilityId: number, order: number, emit: Emit) {
     unit.order = order
     unit.facility_id = facilityId

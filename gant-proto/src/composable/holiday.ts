@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostHolidaysRequest, Holiday} from "@/api";
+import {PostHolidaysRequest, Holiday, Department, Unit} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {Emit} from "@/const/common";
@@ -42,6 +42,14 @@ export async function useHoliday(holidayId?: number) {
 
     return {holiday}
 
+}
+export function validate(holiday: Holiday) {
+    let isValid = true
+    if (!holiday.date) {
+        toast.warning("年月日は必須です")
+        isValid = false
+    }
+    return isValid
 }
 
 export async function postHoliday(holiday: Holiday, facilityId: number, emit: Emit) {

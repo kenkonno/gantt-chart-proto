@@ -26,17 +26,17 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postHoliday(holiday, facilityId, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(holiday) && postHoliday(holiday, facilityId, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postHolidayById(holiday, facilityId, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(holiday) && postHolidayById(holiday, facilityId, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteHolidayById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useHoliday, postHolidayById, postHoliday, deleteHolidayById} from "@/composable/holiday";
+import {useHoliday, postHolidayById, postHoliday, deleteHolidayById, validate} from "@/composable/holiday";
 
 interface AsyncHolidayEdit {
   id: number | undefined,

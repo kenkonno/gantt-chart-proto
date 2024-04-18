@@ -56,17 +56,24 @@
       <button type="submit" class="btn btn-primary" @click="copyFacility(facility, order, originalId, emit)">コピー</button>
     </template>
     <template v-else-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postFacility(facility, order, emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(facility) && postFacility(facility, order, emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postFacilityById(facility, emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(facility) && postFacilityById(facility, emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteFacilityById(id, emit)">削除</button>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useFacility, postFacilityById, postFacility, copyFacility,deleteFacilityById} from "@/composable/facility";
+import {
+  useFacility,
+  postFacilityById,
+  postFacility,
+  copyFacility,
+  deleteFacilityById,
+  validate
+} from "@/composable/facility";
 import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
 
 interface AsyncFacilityEdit {

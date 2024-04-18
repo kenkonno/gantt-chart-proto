@@ -58,17 +58,17 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postUser(user, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(user, true) && postUser(user, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postUserById(user, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(user) && postUserById(user, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteUserById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useUser, postUserById, postUser, deleteUserById} from "@/composable/user";
+import {useUser, postUserById, postUser, deleteUserById, validate} from "@/composable/user";
 import {computed, inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {RoleTypeMap} from "@/const/common";

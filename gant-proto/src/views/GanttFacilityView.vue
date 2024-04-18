@@ -26,7 +26,7 @@
   </nav>
 
   <div style="display:none">{{ gantFacility != undefined }} vuejshack</div>
-  <div v-show="globalState.currentFacilityId > 0" class="gantt-facility-menu">
+  <div v-show="globalState.currentFacilityId > 0 && globalState.processList.length > 0" class="gantt-facility-menu">
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
@@ -38,7 +38,11 @@
   <div v-if="globalState.currentFacilityId <= 0">
     案件を選択してください。
   </div>
-  <Suspense v-if="globalState.currentFacilityId > 0 && globalState.ganttFacilityRefresh">
+  <div v-if="globalState.processList.length <= 0">
+    工程を登録してください。
+  </div>
+  <div></div>
+  <Suspense v-if="globalState.currentFacilityId > 0 && globalState.processList.length > 0 && globalState.ganttFacilityRefresh">
     <gantt-facility
         ref="gantFacility"
         :gantt-facility-header="GanttHeader"

@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostMilestonesRequest, Milestone} from "@/api";
+import {PostMilestonesRequest, Milestone, Unit} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 
@@ -44,7 +44,18 @@ export async function useMilestone(facilityId: number, milestoneId?: number) {
     return {milestone}
 
 }
-
+export function validate(milestone: Milestone) {
+    let isValid = true
+    if (!milestone.description) {
+        toast.warning("名称は必須です")
+        isValid = false
+    }
+    if (!milestone.date) {
+        toast.warning("日付は必須です")
+        isValid = false
+    }
+    return isValid
+}
 export async function postMilestone(milestone: Milestone, order: number, emit: any) {
     milestone.date = milestone.date + "T00:00:00.00000+09:00"
     milestone.order = order

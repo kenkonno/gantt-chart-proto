@@ -40,13 +40,13 @@
         <facility-view @update="updateFacility"></facility-view>
       </ModalWithLink>
       <ModalWithLink title="工程一覧" icon="account_tree">
-        <process-view></process-view>
+        <process-view @update="updateFacility"></process-view>
       </ModalWithLink>
       <ModalWithLink title="部署一覧" icon="settings_accessibility">
-        <department-view></department-view>
+        <department-view @update="updateFacility"></department-view>
       </ModalWithLink>
       <ModalWithLink title="担当者一覧" icon="person">
-        <user-view></user-view>
+        <user-view @update="updateFacility"></user-view>
       </ModalWithLink>
     </div>
   </nav>
