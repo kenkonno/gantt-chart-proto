@@ -7,6 +7,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -29,10 +30,10 @@ func PostUsersInvoke(c *gin.Context) openapi_models.PostUsersResponse {
 	userRep.Upsert(db.User{
 		DepartmentId:     userReq.User.DepartmentId,
 		LimitOfOperation: userReq.User.LimitOfOperation,
-		LastName:         userReq.User.LastName,
-		FirstName:        userReq.User.FirstName,
+		LastName:         strings.TrimSpace(userReq.User.LastName),
+		FirstName:        strings.TrimSpace(userReq.User.FirstName),
 		Password:         string(hashedPassword),
-		Email:            userReq.User.Email,
+		Email:            strings.TrimSpace(userReq.User.Email),
 		Role:             userReq.User.Role,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        0,

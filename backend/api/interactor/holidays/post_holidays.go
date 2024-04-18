@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func PostHolidaysInvoke(c *gin.Context) openapi_models.PostHolidaysResponse {
 	}
 	holidayRep.Upsert(db.Holiday{
 		FacilityId: holidayReq.Holiday.FacilityId,
-		Name:       holidayReq.Holiday.Name,
+		Name:       strings.TrimSpace(holidayReq.Holiday.Name),
 		Date:       holidayReq.Holiday.Date,
 		CreatedAt:  time.Time{},
 		UpdatedAt:  0,
