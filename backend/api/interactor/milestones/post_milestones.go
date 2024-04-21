@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func PostMilestonesInvoke(c *gin.Context) openapi_models.PostMilestonesResponse 
 	milestoneRep.Upsert(db.Milestone{
 		FacilityId:      milestoneReq.Milestone.FacilityId,
 		Date:            milestoneReq.Milestone.Date,
-		Description:     milestoneReq.Milestone.Description,
+		Description:     strings.TrimSpace(milestoneReq.Milestone.Description),
 		Order:           int(milestoneReq.Milestone.Order),
 		CreatedAt:       time.Time{},
 		UpdatedAt:       0,

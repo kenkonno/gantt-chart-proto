@@ -64,6 +64,27 @@ export async function useFacility(facilityId?: number) {
 
 }
 
+export function validate(facility: Facility) {
+    let isValid = true
+    if (!facility.name) {
+        toast.warning("名称は必須です")
+        isValid = false
+    }
+    if (!facility.term_from) {
+        toast.warning("開始日は必須です")
+        isValid = false
+    }
+    if (!facility.term_to) {
+        toast.warning("終了日は必須です")
+        isValid = false
+    }
+    if (!facility.shipment_due_date) {
+        toast.warning("出荷期日は必須です")
+        isValid = false
+    }
+    return isValid
+}
+
 export async function postFacility(facility: Facility, order: number, emit: Emit) {
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
@@ -84,8 +105,8 @@ export async function copyFacility(facility: Facility, order: number, originalFa
     facility.term_from = facility.term_from + "T00:00:00.00000+09:00"
     facility.term_to = facility.term_to + "T00:00:00.00000+09:00"
     facility.shipment_due_date = facility.shipment_due_date + "T00:00:00.00000+09:00"
-    delete(facility.created_at)
-    delete(facility.updated_at)
+    delete (facility.created_at)
+    delete (facility.updated_at)
     facility.order = order
     const req: PostCopyFacilitysRequest = {
         facility: facility,

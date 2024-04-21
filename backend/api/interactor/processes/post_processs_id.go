@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func PostProcessesIdInvoke(c *gin.Context) openapi_models.PostProcessesIdRespons
 
 	processRep.Upsert(db.Process{
 		Id:        processReq.Process.Id,
-		Name:      processReq.Process.Name,
+		Name:      strings.TrimSpace(processReq.Process.Name),
 		Order:     int(processReq.Process.Order),
 		Color:     processReq.Process.Color,
 		CreatedAt: time.Time{},

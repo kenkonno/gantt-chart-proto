@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostUsersRequest, User} from "@/api";
+import {Holiday, PostUsersRequest, User} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {Emit, RoleType} from "@/const/common";
@@ -51,6 +51,28 @@ export async function useUser(userId?: number) {
     return {user}
 
 }
+
+export function validate(user: User, validatePassword = false) {
+    let isValid = true
+    if (!user.firstName) {
+        toast.warning("姓は必須です")
+        isValid = false
+    }
+    if (!user.lastName) {
+        toast.warning("名は必須です")
+        isValid = false
+    }
+    if (!user.password && validatePassword) {
+        toast.warning("Passwordは必須です")
+        isValid = false
+    }
+    if (!user.email) {
+        toast.warning("Emailは必須です")
+        isValid = false
+    }
+    return isValid
+}
+
 
 export async function postUser(user: User, emit: Emit) {
     const req: PostUsersRequest = {

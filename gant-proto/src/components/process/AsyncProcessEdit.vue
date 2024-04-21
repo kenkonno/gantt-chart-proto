@@ -28,10 +28,10 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postProcess(process, order, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(process) && postProcess(process, order, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postProcessById(process, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(process) && postProcessById(process, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteProcessById(id, $emit)">削除</button>
     </template>
   </div>
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import {ColorPicker} from "vue3-colorpicker";
-import {useProcess, postProcessById, postProcess, deleteProcessById} from "@/composable/process";
+import {useProcess, postProcessById, postProcess, deleteProcessById, validate} from "@/composable/process";
 
 interface AsyncProcessEdit {
   id: number | undefined,

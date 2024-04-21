@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -22,7 +23,7 @@ func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdRespo
 
 	facilityRep.Upsert(db.Facility{
 		Id:              facilityReq.Facility.Id,
-		Name:            facilityReq.Facility.Name,
+		Name:            strings.TrimSpace(facilityReq.Facility.Name),
 		TermFrom:        facilityReq.Facility.TermFrom,
 		TermTo:          facilityReq.Facility.TermTo,
 		Order:           int(facilityReq.Facility.Order),

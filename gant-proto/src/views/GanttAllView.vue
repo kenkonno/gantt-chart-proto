@@ -1,23 +1,28 @@
 <template>
-  <gantt-all-menu
-      :display-type="displayType"
-      :gantt-all-header="GanttHeader"
-      :aggregation-axis="aggregationAxis"
-      @update-display-type="updateDisplayType"
-      @update-aggregation-axis="updateAggregationAxis"
-  >
-  </gantt-all-menu>
-  <Suspense v-if="globalState.ganttAllRefresh">
-    <gantt-all
-        :gantt-all-header="GanttHeader"
+  <template v-if="globalState.facilityList.length > 0">
+    <gantt-all-menu
         :display-type="displayType"
+        :gantt-all-header="GanttHeader"
         :aggregation-axis="aggregationAxis"
+        @update-display-type="updateDisplayType"
+        @update-aggregation-axis="updateAggregationAxis"
     >
-    </gantt-all>
-    <template #fallback>
-      <DefaultSpinner></DefaultSpinner>
-    </template>
-  </Suspense>
+    </gantt-all-menu>
+    <Suspense v-if="globalState.ganttAllRefresh">
+      <gantt-all
+          :gantt-all-header="GanttHeader"
+          :display-type="displayType"
+          :aggregation-axis="aggregationAxis"
+      >
+      </gantt-all>
+      <template #fallback>
+        <DefaultSpinner></DefaultSpinner>
+      </template>
+    </Suspense>
+  </template>
+  <template v-else>
+    <p>案件を登録してください。</p>
+  </template>
 </template>
 <script setup lang="ts">
 import {useGanttAllMenu} from "@/composable/ganttAllMenu";

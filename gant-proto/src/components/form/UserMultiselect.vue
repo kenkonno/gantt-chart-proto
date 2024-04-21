@@ -9,6 +9,9 @@
       :options="options"
       @input="$emit('update:modelValue', $event)"
   >
+    <template v-slot:nooptions>
+      <small>担当者を登録してください</small>
+    </template>
     <template v-slot:tag="{ option, handleTagRemove, disabled }">
       <div
           :class="{

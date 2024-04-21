@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostDepartmentsRequest, Department} from "@/api";
+import {PostDepartmentsRequest, Department, Facility} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
@@ -52,6 +52,15 @@ export async function useDepartment(departmentId?: number) {
 
     return {department}
 
+}
+
+export function validate(department: Department) {
+    let isValid = true
+    if (!department.name) {
+        toast.warning("名称は必須です")
+        isValid = false
+    }
+    return isValid
 }
 
 export async function postDepartment(department: Department, order: number,emit: Emit) {

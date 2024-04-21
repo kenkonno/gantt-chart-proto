@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostProcessesRequest, Process} from "@/api";
+import {Milestone, PostProcessesRequest, Process} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
@@ -64,6 +64,15 @@ export async function postProcess(process: Process, order: number,emit: Emit) {
     }).finally(() => {
         emit('closeEditModal')
     })
+}
+
+export function validate(process: Process) {
+    let isValid = true
+    if (!process.name) {
+        toast.warning("名称は必須です")
+        isValid = false
+    }
+    return isValid
 }
 
 export async function postProcessById(process: Process, emit: Emit) {

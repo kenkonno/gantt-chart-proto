@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -19,7 +20,7 @@ func PostDepartmentsInvoke(c *gin.Context) openapi_models.PostDepartmentsRespons
 		panic(err)
 	}
 	departmentRep.Upsert(db.Department{
-		Name:      departmentReq.Department.Name,
+		Name:      strings.TrimSpace(departmentReq.Department.Name),
 		Order:     int(departmentReq.Department.Order),
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,

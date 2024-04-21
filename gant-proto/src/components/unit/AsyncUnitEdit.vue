@@ -21,17 +21,17 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postUnit(unit, facilityId, order,$emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(unit) && postUnit(unit, facilityId, order,$emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postUnitById(unit, facilityId, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(unit) && postUnitById(unit, facilityId, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteUnitById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useUnit, postUnitById, postUnit, deleteUnitById} from "@/composable/unit";
+import {useUnit, postUnitById, postUnit, deleteUnitById, validate} from "@/composable/unit";
 
 interface AsyncUnitEdit {
   id: number | undefined,

@@ -21,17 +21,23 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postDepartment(department, order, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(department) && postDepartment(department, order, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postDepartmentById(department, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(department) && postDepartmentById(department, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteDepartmentById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useDepartment, postDepartmentById, postDepartment, deleteDepartmentById} from "@/composable/department";
+import {
+  useDepartment,
+  postDepartmentById,
+  postDepartment,
+  deleteDepartmentById,
+  validate
+} from "@/composable/department";
 
 interface AsyncDepartmentEdit {
   id: number | undefined,
