@@ -4,6 +4,7 @@ import {DisplayType} from "@/composable/ganttFacilityMenu";
 export function dateFormat(date: string) {
     return dayjs(date).format("YYYY-MM-DD HH:mm:ss")
 }
+
 export function dateFormatYMD(date: string) {
     return dayjs(date).format("YYYY-MM-DD")
 }
@@ -13,18 +14,20 @@ export function unixTimeFormat(unixTime: number) {
 }
 
 export function pileUpsLabelFormat(labels: number[], displayType: DisplayType) {
-    if(displayType === "day") {
+    if (displayType === "day") {
         return labels.map(v => v === 0 ? "" : pileUpLabelFormat(v))
     } else {
-        return labels.map(v => v === 0 ? "" : Math.round(v * 10 ) / 10)
+        return labels.map(v => v === 0 ? "" : Math.round(v * 10) / 10)
     }
 }
+
 export function pileUpLabelFormat(v: number) {
     return Math.round(v * 10 / 8) / 10
 }
 
 export function progressFormat(v: number) {
-    return v.toFixed(1)
+    const result = v.toFixed(1)
+    return result == "NaN" ? "0.0" : result
 }
 
 

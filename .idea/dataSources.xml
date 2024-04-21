@@ -8,7 +8,7 @@
       <jdbc-url>jdbc:postgresql://localhost:5433/gantt-chart-proto</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="エプソン様工程管理" uuid="0fd9998b-145f-4cf7-a0c9-dd2955b51051">
+    <data-source source="LOCAL" name="エプソン様工程管理" read-only="true" uuid="0fd9998b-145f-4cf7-a0c9-dd2955b51051">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
