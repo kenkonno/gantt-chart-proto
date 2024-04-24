@@ -1,0 +1,1 @@
+docker-compose up gantt_api

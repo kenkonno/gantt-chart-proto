@@ -551,7 +551,13 @@ export const usePileUps = (
                 return p + row.labels[c]
             }, 0)
             // 週表示の場合は 営業日 * 8 を 1とする
-            result.labels.push(workHour / (8 * (indexMap[key].length - holidayMap[key])))
+            const numOfWorkdays = (indexMap[key].length - holidayMap[key])
+            // その週の稼働日が0の場合は計算しない(NaN, Infinity対策)
+            if ( numOfWorkdays <= 0 ) {
+                result.labels.push(0)
+            } else {
+                result.labels.push(workHour / (8 * numOfWorkdays))
+            }
             hasError = indexMap[key].some(vv => row.styles[vv].color == PILEUP_DANGER_COLOR)
             hasMerge = indexMap[key].some(vv => row.styles[vv].color == PILEUP_MERGE_COLOR)
             // エラー > マージ > デフォルト となるようにスタイルを決定する。

@@ -12,7 +12,7 @@
           bar-end="endDate"
           :date-format="DAYJS_FORMAT"
           color-scheme="creamy"
-          :highlighted-dates="holidaysAsDate"
+          :highlighted-dates="holidaysAsDate(displayType)"
           sticky
           :display-today-line="true"
           @today-line-position-x="initScroll($event, ganttWrapperElement)"
@@ -70,7 +70,7 @@
           :tickets="[]"
           :ticket-users="[]"
           :width="getGanttChartWidth(displayType)"
-          :highlightedDates="holidaysAsDate"
+          :highlightedDates="holidaysAsDate(displayType)"
           :syncWidth="syncWidth"
           :current-facility-id="-1"
           :milestone-vertical-lines="[]"
