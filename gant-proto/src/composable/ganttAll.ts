@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
-import {inject, ref} from "vue";
+import {computed, inject, ref} from "vue";
 import {Facility, Holiday, Ticket, User} from "@/api";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {endOfDay,} from "@/coreFunctions/manHourCalculation";
@@ -251,11 +251,14 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
 
     const chartStart = ref(dayjs(startDate).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(endDate).format(DAYJS_FORMAT))
-    const holidaysAsDate: Date[] = []
-    {
-        const r = holidays.map(v => new Date(v.date))
-        holidaysAsDate.push(...Array.from(new Set(r)))
-    }
+    const holidaysAsDate = computed(() => (displayType: DisplayType) => {
+        if ( displayType === "week") {
+            return Array.from([])
+        } else {
+            const r = holidays.map(v => new Date(v.date))
+            return Array.from(new Set(r))
+        }
+    })
 
     return {
         startDate,
