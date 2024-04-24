@@ -40,6 +40,8 @@ services:
       #CHANGE 2: it prevents issuing a request while the server is starting to depend on the healthy status of postgres-db
       gantt_postgres:
         condition: service_healthy
+      gantt_session:
+        condition: service_started
     build:
       context: .
       dockerfile: ./docker/api/Dockerfile
