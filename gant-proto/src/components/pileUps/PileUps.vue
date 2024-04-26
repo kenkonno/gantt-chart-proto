@@ -149,7 +149,7 @@
 <script setup lang="ts">
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, onMounted, ref, StyleValue, toValue} from "vue";
+import {computed, inject, onMounted, ref, StyleValue, toRefs, toValue, watch} from "vue";
 import {getDefaultPileUps, usePileUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
@@ -182,16 +182,6 @@ const globalState = inject(GLOBAL_STATE_KEY)!
 const {getDepartmentName, getFacilityName} = inject(GLOBAL_GETTER_KEY)!
 const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
 
-const tickets = computed(() => {
-  return props.tickets
-})
-const ticketUsers = computed(() => {
-  return props.ticketUsers
-})
-const displayType = computed(() => props.displayType)
-const holidays = computed(() => props.holidays)
-
-
 const displayPrepared = (display: boolean) => {
   return display && globalState.facilityTypes.includes(FacilityType.Prepared)
 }
@@ -205,10 +195,14 @@ console.log("####### start main getDefaultPileUps")
 const {
   globalStartDate,
   defaultPileUps,
-} = await getDefaultPileUps(props.currentFacilityId, "day", isAllMode)
+} = await getDefaultPileUps(props.currentFacilityId, "day", isAllMode, globalState.facilityTypes)
+
 console.log("####### start main getDefaultPileUps", defaultPileUps)
 
 console.log("####### start main usePileUps", globalStartDate)
+
+const {tickets, ticketUsers, holidays, displayType} = toRefs(props)
+
 const {
   // pileUpFilters,
   // pileUpsByDepartment,
@@ -227,7 +221,7 @@ const {
     departmentList,
     userList,
     facilityList,
-    toValue(defaultPileUps),
+    defaultPileUps,
     globalStartDate
 )
 

@@ -38,7 +38,8 @@
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
                 <th :colspan="props.ganttFacilityHeader.length">
                   <span>「</span>
-                  <span class="d-inline-block position-relative">{{ facility.name }}<green-check v-if="facility.type === FacilityType.Ordered"/></span>
+                  <span class="d-inline-block position-relative">{{ facility.name }}<green-check
+                      v-if="facility.type === FacilityType.Ordered"/></span>
                   <span>」</span>
                   <span>のスケジュール：{{ facility.term_from }}～{{ facility.term_to }}</span>
                 </th>
@@ -60,13 +61,15 @@
                     }}
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[1].visible">
-                    <select v-model="row.ticket.process_id" @change="updateTicket(row.ticket)"
+                    <select :value="row.ticket.process_id"
+                            @change="mutation.setProcessId($event.target.value, row.ticket)"
                             :disabled="!allowed('UPDATE_TICKET')">
                       <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[2].visible">
-                    <select v-model="row.ticket.department_id" @change="updateDepartment(row.ticket)"
+                    <select :value="row.ticket.department_id"
+                            @change="mutation.setDepartmentId($event.target.value, row.ticket)"
                             :disabled="!allowed('UPDATE_TICKET')">
                       <option v-for="item in cDepartmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
@@ -75,33 +78,42 @@
                     <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id)"
                                      :ticketUser="row.ticketUsers"
                                      :disabled="!allowed('UPDATE_TICKET')"
-                                     @update:modelValue="ticketUserUpdate(row.ticket ,$event)"></UserMultiselect>
+                                     @update:modelValue="mutation.setTicketUser(row.ticket ,$event)"></UserMultiselect>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[4].visible">
-                    <FormNumber class="small-numeric" v-model="row.ticket.number_of_worker"
-                                @change="updateTicket(row.ticket)"
+                    <FormNumber class="small-numeric"
+                                :value="row.ticket.number_of_worker"
+                                @change="mutation.setNumberOfWorker($event, row.ticket)"
                                 :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[5].visible">
-                    <FormNumber class="small-numeric" v-model="row.ticket.estimate" @change="updateTicket(row.ticket)"
+                    <FormNumber class="small-numeric"
+                                :value="row.ticket.estimate"
+                                @change="mutation.setEstimate($event, row.ticket)"
                                 :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[6].visible">
-                    <FormNumber class="small-numeric" v-model="row.ticket.days_after"
-                                @change="updateTicket(row.ticket)"
+                    <FormNumber class="small-numeric"
+                                :value="row.ticket.days_after"
+                                @change="mutation.setDaysAfter($event, row.ticket)"
                                 :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[7].visible">
-                    <input type="date" v-model="row.ticket.start_date" @change="updateTicket(row.ticket)"
+                    <input type="date"
+                           :value="row.ticket.start_date"
+                           @change="mutation.setStartDate($event.target.value, row.ticket)"
                            :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[8].visible">
-                    <input type="date" v-model="row.ticket.end_date" @change="updateTicket(row.ticket)"
+                    <input type="date"
+                           :value="row.ticket.end_date"
+                           @change="mutation.setEndDate($event.target.value, row.ticket)"
                            :disabled="!allowed('UPDATE_TICKET')"/>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[9].visible">
-                    <FormNumber class="middle-numeric" v-model="row.ticket.progress_percent"
-                                @change="updateTicket(row.ticket)"
+                    <FormNumber class="middle-numeric"
+                                :value="row.ticket.progress_percent"
+                                @change="mutation.setProgressPercent($event, row.ticket)"
                                 :disabled="!allowed('UPDATE_PROGRESS')"
                                 :min=0 />
                   </gantt-td>
@@ -185,7 +197,7 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
-import {Department, PostTicketMemoIdResponse} from "@/api";
+import {Department, PostTicketMemoIdResponse, Ticket} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
@@ -226,13 +238,11 @@ const {
   getUserListByDepartmentId,
   setScheduleByFromTo,
   setScheduleByPersonDay,
-  ticketUserUpdate,
-  updateDepartment,
   updateOrder,
-  updateTicket,
   refreshTicketMemo,
   hasFilter,
-  milestones
+  milestones,
+  mutation
 } = await useGanttFacility()
 
 const milestoneVerticalLines = computed(() => {

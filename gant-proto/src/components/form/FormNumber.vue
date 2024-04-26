@@ -2,7 +2,7 @@
   <input type="number"
          :value="modelValue"
          @input="$emit('update:modelValue',parseFloat($event.target.value) != null && !isNaN(parseFloat($event.target.value)) ? parseFloat($event.target.value) : undefined)"
-         @change="$emit('change')"
+         @change="$emit('change',parseFloat($event.target.value) != null && !isNaN(parseFloat($event.target.value)) ? parseFloat($event.target.value) : undefined)"
          :disabled="disabled"
          :min="min"
   />
@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 interface FormNumber {
-  modelValue: number | undefined
+  modelValue?: number | undefined
   disabled?: boolean
   min?: number
 }

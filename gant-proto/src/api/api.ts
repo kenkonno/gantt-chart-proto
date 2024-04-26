@@ -26,6 +26,86 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
 /**
  * 
  * @export
+ * @interface AssignedPileUp
+ */
+export interface AssignedPileUp {
+    /**
+     * 
+     * @type {Array<PileUpByPerson>}
+     * @memberof AssignedPileUp
+     */
+    'users': Array<PileUpByPerson>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof AssignedPileUp
+     */
+    'labels': Array<number>;
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof AssignedPileUp
+     */
+    'styles': Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AssignedPileUp
+     */
+    'display': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface DefaultPileUp
+ */
+export interface DefaultPileUp {
+    /**
+     * 
+     * @type {number}
+     * @memberof DefaultPileUp
+     */
+    'departmentId'?: number;
+    /**
+     * 
+     * @type {AssignedPileUp}
+     * @memberof DefaultPileUp
+     */
+    'assignedUser'?: AssignedPileUp;
+    /**
+     * 
+     * @type {UnAssingedPileUp}
+     * @memberof DefaultPileUp
+     */
+    'unAssignedPileUp'?: UnAssingedPileUp;
+    /**
+     * 
+     * @type {NoOrdersReceivedPileUp}
+     * @memberof DefaultPileUp
+     */
+    'noOrdersReceivedPileUp'?: NoOrdersReceivedPileUp;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof DefaultPileUp
+     */
+    'labels': Array<number>;
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof DefaultPileUp
+     */
+    'styles': Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof DefaultPileUp
+     */
+    'display': boolean;
+}
+/**
+ * 
+ * @export
  * @interface DeleteDepartmentsIdRequest
  */
 export interface DeleteDepartmentsIdRequest {
@@ -462,6 +542,50 @@ export interface GetAllTicketsResponse {
      * @memberof GetAllTicketsResponse
      */
     'list': Array<Ticket>;
+}
+/**
+ * 
+ * @export
+ * @interface GetDefaultPileUpsRequest
+ */
+export interface GetDefaultPileUpsRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDefaultPileUpsRequest
+     */
+    'currentFacilityId': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetDefaultPileUpsRequest
+     */
+    'isAllMode': boolean;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof GetDefaultPileUpsRequest
+     */
+    'facilityTypes'?: Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface GetDefaultPileUpsResponse
+ */
+export interface GetDefaultPileUpsResponse {
+    /**
+     * 
+     * @type {Array<DefaultPileUp>}
+     * @memberof GetDefaultPileUpsResponse
+     */
+    'defaultPileUps': Array<DefaultPileUp>;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetDefaultPileUpsResponse
+     */
+    'globalStartDate': string;
 }
 /**
  * 
@@ -1083,6 +1207,37 @@ export interface Milestone {
 /**
  * 
  * @export
+ * @interface NoOrdersReceivedPileUp
+ */
+export interface NoOrdersReceivedPileUp {
+    /**
+     * 
+     * @type {Array<PileUpByFacility>}
+     * @memberof NoOrdersReceivedPileUp
+     */
+    'facilities': Array<PileUpByFacility>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof NoOrdersReceivedPileUp
+     */
+    'labels': Array<number>;
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof NoOrdersReceivedPileUp
+     */
+    'styles': Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof NoOrdersReceivedPileUp
+     */
+    'display': boolean;
+}
+/**
+ * 
+ * @export
  * @interface OperationSetting
  */
 export interface OperationSetting {
@@ -1141,6 +1296,68 @@ export interface PileUp {
      * @memberof PileUp
      */
     'holidays': number;
+}
+/**
+ * 
+ * @export
+ * @interface PileUpByFacility
+ */
+export interface PileUpByFacility {
+    /**
+     * 
+     * @type {number}
+     * @memberof PileUpByFacility
+     */
+    'facilityId': number;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof PileUpByFacility
+     */
+    'labels': Array<number>;
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof PileUpByFacility
+     */
+    'styles': Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PileUpByFacility
+     */
+    'hasError': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface PileUpByPerson
+ */
+export interface PileUpByPerson {
+    /**
+     * 
+     * @type {User}
+     * @memberof PileUpByPerson
+     */
+    'user': User;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof PileUpByPerson
+     */
+    'labels': Array<number>;
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof PileUpByPerson
+     */
+    'styles': Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PileUpByPerson
+     */
+    'hasError': boolean;
 }
 /**
  * 
@@ -2093,6 +2310,37 @@ export interface TicketUser {
 /**
  * 
  * @export
+ * @interface UnAssingedPileUp
+ */
+export interface UnAssingedPileUp {
+    /**
+     * 
+     * @type {Array<PileUpByFacility>}
+     * @memberof UnAssingedPileUp
+     */
+    'facilities': Array<PileUpByFacility>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof UnAssingedPileUp
+     */
+    'labels': Array<number>;
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof UnAssingedPileUp
+     */
+    'styles': Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UnAssingedPileUp
+     */
+    'display': boolean;
+}
+/**
+ * 
+ * @export
  * @interface Unit
  */
 export interface Unit {
@@ -2619,6 +2867,57 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (facilityTypes) {
+                localVarQueryParameter['facilityTypes'] = facilityTypes;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetDefaultPileUps
+         * @param {number} facilityId 
+         * @param {boolean} isAllMode 
+         * @param {Array<string>} facilityTypes 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDefaultPileUps: async (facilityId: number, isAllMode: boolean, facilityTypes: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'facilityId' is not null or undefined
+            assertParamExists('getDefaultPileUps', 'facilityId', facilityId)
+            // verify required parameter 'isAllMode' is not null or undefined
+            assertParamExists('getDefaultPileUps', 'isAllMode', isAllMode)
+            // verify required parameter 'facilityTypes' is not null or undefined
+            assertParamExists('getDefaultPileUps', 'facilityTypes', facilityTypes)
+            const localVarPath = `/api/defaultPileUps`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (facilityId !== undefined) {
+                localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+            if (isAllMode !== undefined) {
+                localVarQueryParameter['isAllMode'] = isAllMode;
+            }
 
             if (facilityTypes) {
                 localVarQueryParameter['facilityTypes'] = facilityTypes;
@@ -4455,6 +4754,19 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetDefaultPileUps
+         * @param {number} facilityId 
+         * @param {boolean} isAllMode 
+         * @param {Array<string>} facilityTypes 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDefaultPileUps(facilityId: number, isAllMode: boolean, facilityTypes: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDefaultPileUpsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDefaultPileUps(facilityId, isAllMode, facilityTypes, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetDepartments
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5119,6 +5431,18 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetDefaultPileUps
+         * @param {number} facilityId 
+         * @param {boolean} isAllMode 
+         * @param {Array<string>} facilityTypes 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDefaultPileUps(facilityId: number, isAllMode: boolean, facilityTypes: Array<string>, options?: any): AxiosPromise<GetDefaultPileUpsResponse> {
+            return localVarFp.getDefaultPileUps(facilityId, isAllMode, facilityTypes, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetDepartments
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5755,6 +6079,20 @@ export class DefaultApi extends BaseAPI {
      */
     public getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getAllTickets(facilityTypes, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetDefaultPileUps
+     * @param {number} facilityId 
+     * @param {boolean} isAllMode 
+     * @param {Array<string>} facilityTypes 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getDefaultPileUps(facilityId: number, isAllMode: boolean, facilityTypes: Array<string>, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getDefaultPileUps(facilityId, isAllMode, facilityTypes, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
