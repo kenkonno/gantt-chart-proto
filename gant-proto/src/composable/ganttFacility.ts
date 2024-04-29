@@ -94,12 +94,6 @@ export async function useGanttFacility() {
 
     // 積み上げに渡すよう
     const getTickets = computed(() => {
-        // const result: Ticket[] = []
-        // ganttChartGroup.value.forEach(v => v.rows.forEach(vv => {
-        //     if (vv.ticket != null) {
-        //         result.push(vv.ticket)
-        //     }
-        // }))
         return ticketList
     })
 

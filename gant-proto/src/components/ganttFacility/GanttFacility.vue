@@ -157,6 +157,7 @@
             :syncWidth="syncWidth"
             :current-facility-id="currentFacilityId"
             :vertical-lines="milestoneVerticalLines"
+            :milestone-vertical-lines="[]"
             @on-mounted="forceScroll"
         >
         </PileUps>

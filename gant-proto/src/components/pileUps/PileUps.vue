@@ -149,7 +149,7 @@
 <script setup lang="ts">
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, inject, onMounted, ref, StyleValue, toRefs, toValue, watch} from "vue";
+import {computed, ComputedRef, inject, onMounted, ref, StyleValue, toRefs, toValue, watch} from "vue";
 import {getDefaultPileUps, usePileUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
@@ -164,7 +164,7 @@ import {PileUps} from "@/composable/pileUps";
 import {FacilityType} from "@/const/common";
 
 type PileUpsProps = {
-  tickets: Ticket[],
+  tickets: ComputedRef<Ticket[]>,
   ticketUsers: TicketUser[],
   chartStart: string,
   chartEnd: string,
