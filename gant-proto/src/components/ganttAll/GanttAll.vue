@@ -67,8 +67,8 @@
           :chart-end="chartEnd"
           :display-type="displayType"
           :holidays="holidays"
-          :tickets="[]"
-          :ticket-users="[]"
+          :tickets="tickets"
+          :ticket-users="ticketUsers"
           :width="getGanttChartWidth(displayType)"
           :highlightedDates="holidaysAsDate(displayType)"
           :syncWidth="syncWidth"
@@ -164,6 +164,7 @@ import {allowed} from "@/composable/role";
 import {FacilityType} from "@/const/common";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {progressFormat} from "@/utils/filters";
+import {Ticket, TicketUser} from "@/api";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
@@ -185,6 +186,10 @@ const {
   chartEnd,
   hasFilter
 } = await useGanttAll(props.aggregationAxis)
+
+// NOTE: PileUpsのPropsだが、明示的に変数じゃないとwatchが多重で実行されてしまう。
+const tickets: Ticket[] = []
+const ticketUsers: TicketUser[] = []
 
 const byProcess = () => {
   return props.aggregationAxis == "process"

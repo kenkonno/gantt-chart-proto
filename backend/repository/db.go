@@ -42,9 +42,9 @@ func Commit() {
 }
 
 func createInParam(arrStr []string) string {
-	return strings.Join(lo.Map(arrStr, func(item string, index int) string {
+	return "(" + strings.Join(lo.Map(arrStr, func(item string, index int) string {
 		return fmt.Sprintf("'%s'", item)
-	}), ",")
+	}), ",") + ")"
 }
 
 type ConflictError struct {

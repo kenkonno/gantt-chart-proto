@@ -1,8 +1,6 @@
-import {computed, ComputedRef, inject, onBeforeUnmount, Ref, ref, UnwrapRef, watch} from "vue";
+import {ComputedRef,onBeforeUnmount, Ref, ref, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
-import {Department, Facility, Holiday, Ticket, TicketUser, User} from "@/api";
-import {round} from "@/utils/math";
-import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {DefaultPileUp, Department, Facility, Holiday, PileUp, Ticket, TicketUser, User} from "@/api";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
 import {Api} from "@/api/axios";
 import {FacilityStatus, FacilityType} from "@/const/common";
@@ -201,13 +199,14 @@ function initPileUps(
 
 }
 
+// NOTE: displayType は単なるストリングなので computedRefで渡さないと watch が機能しない
 export const usePileUps = (
     startDate: string, endDate: string, isAllMode: boolean,
     facility: Facility,
-    tickets: ComputedRef<Ticket[]>, ticketUsers: ComputedRef<TicketUser[]>,
-    displayType: ComputedRef<DisplayType>,
-    holidays: ComputedRef<Holiday[]>, departmentList: Department[], userList: User[], facilityList: Facility[],
-    defaultPileUps: PileUps[] = [],
+    tickets: Ref<Ticket[]>, ticketUsers: Ref<TicketUser[]>,
+    displayType: Ref<"day" | "week" | "hour" | "month">,
+    holidays: Ref<Holiday[]>, departmentList: Department[], userList: User[], facilityList: Facility[],
+    defaultPileUps?: PileUps[],
     globalStartDate?: string,
 ) => {
     // ガントチャート描画用の日付だとフォーマットが違うので変換しておく
@@ -237,7 +236,21 @@ export const usePileUps = (
     window.addEventListener("beforeunload", saveFilter)
 
     let refreshPileUpByPersonExclusive = false
-    watch([displayType, tickets, ticketUsers, holidays], () => {
+    watch(displayType, (newValue) => {
+        console.log("############## watch displayType")
+    },  {deep:true});
+    watch(tickets, (oldValue, newValue) => {
+        console.log("############## watch tickets")
+    },  {deep:true});
+    watch(ticketUsers, (oldValue, newValue)=> {
+        console.log("############## watch ticketUsers")
+    },  {deep:true});
+    watch(holidays, (oldValue, newValue) => {
+        console.log("############## watch holidays")
+    },  {deep:true});
+
+    watch([displayType, tickets, ticketUsers,holidays], () => {
+        console.log("############## watch refreshPileUps", [displayType, tickets, ticketUsers, holidays])
         refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？
     }, {
         deep: true
@@ -245,6 +258,7 @@ export const usePileUps = (
 
     // 人単位・部署単位ともに更新する
     const refreshPileUps = () => {
+        console.log("############## function refreshPileUps", refreshPileUpByPersonExclusive)
         if (refreshPileUpByPersonExclusive) {
             return
         } else {
@@ -434,7 +448,7 @@ export const usePileUps = (
     const aggregatePileUpsByWeek = (term_from: string, term_to: string, pileUps: PileUps[], holidays: Holiday[]) => {
         // 日毎で計算された結果を週ごとに集約する。
         // 集約元のIndexと集約先のIndexをマッピングする
-        const dayjsHolidays = holidays.map(v => dayjs(v.date))
+        // const dayjsHolidays = holidays.map(v => dayjs(v.date))
         const dayjsEndDate = dayjs(term_to)
         let currentDate = dayjs(term_from)
         let currentStartOfWeek = dayjs(term_from).startOf("week")
@@ -442,6 +456,14 @@ export const usePileUps = (
         let currentDayIndex = 0
         const indexMap: { [index: number]: number[] } = {}
         const holidayMap: { [index: number]: number } = {}
+
+        const padding = (v: number)=> {
+            return (v+"").padStart(2,'0');
+        }
+        const dayjsToString = (v: Dayjs) => {
+            return v.year() + "-" + padding(v.month()+1) + "-" + padding(v.date())
+        }
+
         while (currentDate.isBefore(dayjsEndDate)) {
             // 週が異なっていれば次の週とする
             if (!currentStartOfWeek.isSame(currentDate.startOf("week"))) {
@@ -456,7 +478,8 @@ export const usePileUps = (
             // その週に紐づく日付のindexを追加する
             indexMap[currentWeekIndex].push(currentDayIndex)
             // 祝日だった場合祝日の数を増やす
-            if (dayjsHolidays.find(v => v.isSame(currentDate))) holidayMap[currentWeekIndex]++
+            // NOTE:パフォーマンス対応のために文字列での比較を行っている。そもそもHolidayをDate型で定義すべきだった。
+            if (holidays.find(v => v.date.substring(0,10) == dayjsToString(currentDate))) holidayMap[currentWeekIndex]++
             // シーケンスを進める
             currentDate = currentDate.add(1, "day")
             currentDayIndex++
@@ -586,57 +609,64 @@ export const getDefaultPileUps = async (
     excludeFacilityId: number,
     displayType: DisplayType,
     isAllMode: boolean,
-) => {
-    const {facilityList, userList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
-    const filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
-
-    const {data: allTickets} = await Api.getAllTickets(facilityTypes)
-    const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
-    const {data: allData} = await Api.getPileUps(excludeFacilityId, facilityTypes)
-
-    // 全案件の最小
-    const startDate: string = filteredFacilityList.slice().sort((a, b) => {
-        return a.term_from > b.term_from ? 1 : -1
-    }).shift()!.term_from.substring(0, 10)
-    // 全案件の最大
-    const endDate: string = filteredFacilityList.slice().sort((a, b) => {
-        return a.term_to > b.term_to ? 1 : -1
-    }).pop()!.term_to.substring(0, 10)
-
-    const defaultPileUps = ref<PileUps[]>([])
-    initPileUps(endDate, startDate, isAllMode, userList, defaultPileUps, departmentList, filteredFacilityList);
-
-    for (const facility of filteredFacilityList) {
-        // 対象外の案件はスキップ
-        if (facility.id === excludeFacilityId) continue
-        const targetData = allData.list.find(v => v.facilityId === facility.id)
-        // 対象データなしの場合もスキップ
-        if (targetData == undefined) continue
-
-        const innerHolidays: Holiday[] = []
-        innerHolidays.push(...targetData.holidays)
-
-        const holidays = computed(() => {
-            return innerHolidays
-        })
-        const tickets = computed(() => {
-            return allTickets.list.filter(v => targetData.ganttGroups.map(vv => vv.id!).includes(v.gantt_group_id))
-        })
-        const ticketUsers = computed(() => {
-            return allTicketUsers.list.filter(v => tickets.value.map(vv => vv.id).includes(v.ticket_id))
-        })
-
-        const {pileUps} = usePileUps(startDate, endDate, isAllMode,
-            facility,
-            tickets, ticketUsers,
-            computed(() => displayType),
-            holidays, departmentList, userList, filteredFacilityList, defaultPileUps.value, startDate)
-        defaultPileUps.value.length = 0
-        defaultPileUps.value.push(...pileUps.value)
-    }
+    facilityTypes: string[]) => {
+    // const {facilityList, userList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
+    // const filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
+    //
+    // const {data: allTickets} = await Api.getAllTickets(facilityTypes)
+    // const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
+    // const {data: allData} = await Api.getPileUps(excludeFacilityId, facilityTypes)
+    //
+    // // 全案件の最小
+    // const startDate: string = filteredFacilityList.slice().sort((a, b) => {
+    //     return a.term_from > b.term_from ? 1 : -1
+    // }).shift()!.term_from.substring(0, 10)
+    // // 全案件の最大
+    // const endDate: string = filteredFacilityList.slice().sort((a, b) => {
+    //     return a.term_to > b.term_to ? 1 : -1
+    // }).pop()!.term_to.substring(0, 10)
+    //
+    // const defaultPileUps = ref<PileUps[]>([])
+    // initPileUps(endDate, startDate, isAllMode, userList, defaultPileUps, departmentList, filteredFacilityList);
+    //
+    // for (const facility of filteredFacilityList) {
+    //     // 対象外の案件はスキップ
+    //     if (facility.id === excludeFacilityId) continue
+    //     const targetData = allData.list.find(v => v.facilityId === facility.id)
+    //     // 対象データなしの場合もスキップ
+    //     if (targetData == undefined) continue
+    //
+    //     const innerHolidays: Holiday[] = []
+    //     innerHolidays.push(...targetData.holidays)
+    //
+    //     const holidays = computed(() => {
+    //         return innerHolidays
+    //     })
+    //     const tickets = computed(() => {
+    //         return allTickets.list.filter(v => targetData.ganttGroups.map(vv => vv.id!).includes(v.gantt_group_id))
+    //     })
+    //     const ticketUsers = computed(() => {
+    //         return allTicketUsers.list.filter(v => tickets.value.map(vv => vv.id).includes(v.ticket_id))
+    //     })
+    //
+    //     const {pileUps} = usePileUps(startDate, endDate, isAllMode,
+    //         facility,
+    //         tickets, ticketUsers,
+    //         computed(() => displayType),
+    //         holidays, departmentList, userList, filteredFacilityList, defaultPileUps.value, startDate)
+    //     defaultPileUps.value.length = 0
+    //     defaultPileUps.value.push(...pileUps.value)
+    // }
+    // return {
+    //     globalStartDate: startDate,
+    //     defaultPileUps,
+    // }
+    const {data} = await Api.getDefaultPileUps(excludeFacilityId, isAllMode, facilityTypes)
+    // styleの適応を実施する
     return {
-        globalStartDate: startDate,
-        defaultPileUps,
+        globalStartDate: data.globalStartDate,
+        defaultPileUps: data.defaultPileUps
     }
+
 }
 

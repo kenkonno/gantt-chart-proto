@@ -25,7 +25,7 @@
 
 interface DefaultModal {
   title: string,
-  size: string
+  size?: string
 }
 
 const props = defineProps<DefaultModal>()

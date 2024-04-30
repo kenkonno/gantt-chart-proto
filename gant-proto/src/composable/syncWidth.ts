@@ -51,20 +51,16 @@ export function useSyncScrollY(
         parentElement.value.$refs.ganttChart.dispatchEvent(new Event('scroll'))
     }
     onMounted(() => {
-        console.log("##############", childElement)
         // @ts-expect-error よくわからなけどいったん抑制
         parentElement.value.$refs.ganttChart.addEventListener("scroll", (event) => {
             // @ts-expect-error よくわからなけどいったん抑制
             childElement.value.$refs.gGanttWrapperRef.scrollTo(0, event.srcElement.scrollTop)
 
-            console.log("############## scroll parentElement")
         })
-        console.log("####################### HERE", childElement.value)
         // @ts-expect-error よくわからなけどいったん抑制
         childElement.value.$refs.gGanttWrapperRef.addEventListener("scroll", (event) => {
             // @ts-expect-error よくわからなけどいったん抑制
             parentElement.value.$refs.ganttChart.scrollTo(0, event.srcElement.scrollTop)
-            console.log("############## scroll childElement")
         })
     })
     // 要素が消えるからeventも消さなくて良いみたい。

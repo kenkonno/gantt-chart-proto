@@ -149,6 +149,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetDefaultPileUps",
+		http.MethodGet,
+		"/api/defaultPileUps",
+		GetDefaultPileUps,
+	},
+
+	{
 		"GetDepartments",
 		http.MethodGet,
 		"/api/departments",

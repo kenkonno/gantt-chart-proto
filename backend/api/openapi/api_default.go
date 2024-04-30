@@ -11,23 +11,24 @@ package openapi
 
 import (
 
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
@@ -117,6 +118,13 @@ func DeleteUsersId(c *gin.Context) {
 func GetAllTickets(c *gin.Context) {
 	var r openapi_models.GetAllTicketsResponse
 	r = all_tickets.GetAllTicketsInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetDefaultPileUps - GetDefaultPileUps
+func GetDefaultPileUps(c *gin.Context) {
+	var r openapi_models.GetDefaultPileUpsResponse
+	r = default_pile_ups.GetDefaultPileUpsInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

@@ -889,6 +889,36 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostMilestonesRequest'
+  /api/defaultPileUps:
+    get:
+      summary: GetDefaultPileUps
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDefaultPileUpsResponse'
+      operationId: get-defaultPileUps
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: facilityId
+          required: true
+        - schema:
+            type: boolean
+          in: query
+          name: isAllMode
+          required: true
+        - schema:
+            type: array
+            items:
+              type: string
+          in: query
+          name: facilityTypes
+          required: true
 components:
   schemas:
     User:
@@ -2169,3 +2199,181 @@ components:
       properties:
         milestone:
           $ref: '#/components/schemas/Milestone'
+    PileUpByPerson:
+      title: PileUpByPerson
+      x-stoplight:
+        id: kynrsc9jdxc3e
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        labels:
+          type: array
+          items:
+            type: number
+        styles:
+          type: array
+          items:
+            type: object
+        hasError:
+          type: boolean
+      required:
+        - user
+        - labels
+        - styles
+        - hasError
+    PileUpByFacility:
+      title: PileUpByFacility
+      x-stoplight:
+        id: 374f50b9bf72b
+      type: object
+      properties:
+        facilityId:
+          type: integer
+        labels:
+          type: array
+          items:
+            type: number
+        styles:
+          type: array
+          items:
+            type: object
+        hasError:
+          type: boolean
+      required:
+        - facilityId
+        - labels
+        - styles
+        - hasError
+    AssignedPileUp:
+      title: AssignedPileUp
+      x-stoplight:
+        id: d89f4017f257f
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/PileUpByPerson'
+        labels:
+          type: array
+          items:
+            type: number
+        styles:
+          type: array
+          items:
+            type: object
+        display:
+          type: boolean
+      required:
+        - users
+        - labels
+        - styles
+        - display
+    UnAssingedPileUp:
+      title: UnAssingedPileUp
+      x-stoplight:
+        id: ec0812807ed94
+      type: object
+      properties:
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/PileUpByFacility'
+        labels:
+          type: array
+          items:
+            type: number
+        styles:
+          type: array
+          items:
+            type: object
+        display:
+          type: boolean
+      required:
+        - facilities
+        - labels
+        - styles
+        - display
+    NoOrdersReceivedPileUp:
+      title: NoOrdersReceivedPileUp
+      x-stoplight:
+        id: f087ad3e0d284
+      type: object
+      properties:
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/PileUpByFacility'
+        labels:
+          type: array
+          items:
+            type: number
+        styles:
+          type: array
+          items:
+            type: object
+        display:
+          type: boolean
+      required:
+        - facilities
+        - labels
+        - styles
+        - display
+    DefaultPileUp:
+      title: DefaultPileUp
+      x-stoplight:
+        id: 61383b2e1a9c8
+      type: object
+      properties:
+        departmentId:
+          type: integer
+        assignedUser:
+          $ref: '#/components/schemas/AssignedPileUp'
+        unAssignedPileUp:
+          $ref: '#/components/schemas/UnAssingedPileUp'
+        noOrdersReceivedPileUp:
+          $ref: '#/components/schemas/NoOrdersReceivedPileUp'
+        labels:
+          type: array
+          items:
+            type: number
+        styles:
+          type: array
+          items:
+            type: object
+        display:
+          type: boolean
+      required:
+        - labels
+        - styles
+        - display
+    GetDefaultPileUpsRequest:
+      title: GetDefaultPileUpsRequest
+      type: object
+      properties:
+        currentFacilityId:
+          type: number
+        isAllMode:
+          type: boolean
+        facilityTypes:
+          type: array
+          items:
+            type: string
+      required:
+        - currentFacilityId
+        - isAllMode
+    GetDefaultPileUpsResponse:
+      title: GetDefaultPileUpsResponse
+      type: object
+      properties:
+        defaultPileUps:
+          type: array
+          items:
+            $ref: '#/components/schemas/DefaultPileUp'
+        globalStartDate:
+          type: string
+          format: date-time
+      required:
+        - defaultPileUps
+        - globalStartDate
