@@ -1,6 +1,8 @@
 <template>
   <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter(), byProcess:byProcess()}">
-    <div class="gantt-facility-wrapper d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
+    <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
+         :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}"
+    >
       <g-gantt-chart
           :chart-start="chartStart"
           :chart-end="chartEnd"
@@ -60,9 +62,8 @@
     </div>
     <!-- 山積み部分 -->
     <hr>
-    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement" v-if="allowed('VIEW_PILEUPS')">
       <PileUps
-          v-if="allowed('VIEW_PILEUPS')"
           :chart-start="chartStart"
           :chart-end="chartEnd"
           :display-type="displayType"
@@ -75,6 +76,8 @@
           :current-facility-id="-1"
           :milestone-vertical-lines="[]"
           @on-mounted="forceScroll"
+          :defaultPileUps="defaultPileUps"
+          :global-start-date="globalStartDate"
       >
       </PileUps>
     </div>
@@ -158,15 +161,17 @@ import {initScroll} from "@/utils/initScroll";
 import {inject, nextTick, ref, watch} from "vue";
 import {Header} from "@/composable/ganttAllMenu";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
-import {GLOBAL_MUTATION_KEY} from "@/composable/globalState";
+import {GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
 import {FacilityType} from "@/const/common";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {progressFormat} from "@/utils/filters";
 import {Ticket, TicketUser} from "@/api";
+import {getDefaultPileUps} from "@/composable/pileUps";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
+const {facilityTypes} = inject(GLOBAL_STATE_KEY)!
 
 type GanttAllProps = {
   ganttAllHeader: Header[],
@@ -174,6 +179,13 @@ type GanttAllProps = {
   aggregationAxis: AggregationAxis,
 }
 const props = defineProps<GanttAllProps>()
+
+// パフォーマンス対応のためにガントチャートの時点で並行してAPIコールするように修正。
+const ret = await Promise.all([getDefaultPileUps(-1, "day", true, facilityTypes), useGanttAll(props.aggregationAxis)])
+const {
+  globalStartDate,
+  defaultPileUps,
+} =  ret[0]
 
 const {
   startDate,
@@ -185,7 +197,7 @@ const {
   chartStart,
   chartEnd,
   hasFilter
-} = await useGanttAll(props.aggregationAxis)
+} = ret[1]
 
 // NOTE: PileUpsのPropsだが、明示的に変数じゃないとwatchが多重で実行されてしまう。
 const tickets: Ticket[] = []
