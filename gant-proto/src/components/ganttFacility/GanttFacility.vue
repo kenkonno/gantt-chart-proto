@@ -1,7 +1,8 @@
 <template>
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="gantt-wrapper">
-      <div class="gantt-facility-wrapper d-flex overflow-x-scroll hide-scroll" ref="ganttWrapperElement">
+      <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
+           :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}" >
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -143,9 +144,8 @@
       </div>
       <!-- 山積み部分 -->
       <hr>
-      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement" v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')">
         <PileUps
-            v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')"
             :chart-start="chartStart"
             :chart-end="chartEnd"
             :display-type="displayType"
@@ -159,6 +159,8 @@
             :vertical-lines="milestoneVerticalLines"
             :milestone-vertical-lines="[]"
             @on-mounted="forceScroll"
+            :defaultPileUps="defaultPileUps"
+            :global-start-date="globalStartDate"
         >
         </PileUps>
       </div>
@@ -206,6 +208,8 @@ import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
 import dayjs from "dayjs";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {FacilityType} from "@/const/common";
+import {getDefaultPileUps} from "@/composable/pileUps";
+import {useGanttAll} from "@/composable/ganttAll";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -214,12 +218,20 @@ type GanttProxyProps = {
 const props = defineProps<GanttProxyProps>()
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
-const {processList, departmentList} = inject(GLOBAL_STATE_KEY)!
+const {processList, departmentList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
 const cDepartmentList = computed(() => {
   const result: Department[] = [{created_at: "", id: undefined, name: "", order: 0, updated_at: 0}]
   result.push(...departmentList)
   return result
 })
+
+const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", true, facilityTypes), useGanttFacility()])
+
+const {
+  globalStartDate,
+  defaultPileUps,
+} =  ret[0]
+
 const {
   bars,
   chartEnd,
@@ -244,7 +256,7 @@ const {
   hasFilter,
   milestones,
   mutation
-} = await useGanttFacility()
+} = ret[1]
 
 const milestoneVerticalLines = computed(() => {
   return milestones.value.map(v => {

@@ -174,7 +174,9 @@ type PileUpsProps = {
   highlightedDates: Date[],
   syncWidth: StyleValue | undefined,
   currentFacilityId: number,
-  milestoneVerticalLines: VerticalLine[]
+  milestoneVerticalLines: VerticalLine[],
+  defaultPileUps: PileUps[],
+  globalStartDate: string,
 }
 const props = defineProps<PileUpsProps>()
 const {facilityList, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
@@ -191,16 +193,6 @@ const displayPrepared = (display: boolean) => {
 // 開始日、終了日は現在の案件。
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
 const isAllMode = props.currentFacilityId === -1
-console.log("####### start main getDefaultPileUps")
-const {
-  globalStartDate,
-  defaultPileUps,
-} = await getDefaultPileUps(props.currentFacilityId, "day", isAllMode, globalState.facilityTypes)
-
-console.log("####### start main getDefaultPileUps", defaultPileUps)
-
-console.log("####### start main usePileUps", globalStartDate)
-
 const {tickets, ticketUsers, holidays, displayType} = toRefs(props)
 
 const {
@@ -221,8 +213,8 @@ const {
     departmentList,
     userList,
     facilityList,
-    defaultPileUps,
-    globalStartDate
+    props.defaultPileUps,
+    props.globalStartDate
 )
 
 const toggleDisplay = (departmentId: number, type: "" | "assignedUser" | "noOrdersReceivedPileUp" | "unAssignedPileUp") => {

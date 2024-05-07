@@ -35,6 +35,10 @@
   height: calc(40% - 3rem)
 }
 
+.full-max-height {
+  max-height: 100% !important;
+}
+
 .gantt-wrapper {
   height: 100%;
   scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/
