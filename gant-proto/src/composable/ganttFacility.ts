@@ -515,10 +515,13 @@ export async function useGanttFacility() {
             await getScheduleAlert()
 
         }, setDepartmentId: async (departmentId: string, ticket?: Ticket) => {
-            console.log("########### setDepartmentId")
+            console.log("########### setDepartmentId", departmentId)
             const clone = Object.assign({}, ticket)
-            clone.department_id = Number(departmentId)
-
+            if (departmentId == "" ) {
+                clone.department_id = undefined
+            } else {
+                clone.department_id = Number(departmentId)
+            }
             const newTicket = await updateTicket(clone)
 
             // 担当者をすべて外す。
