@@ -89,6 +89,20 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # postgres サービス
+  gantt_web:
+    # コンテナの名前
+    container_name: gantt_web
+    # Dockerfile のディレクトリパス
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+    ports:
+      - "8080:8080"
+    # postgres 設定
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 volumes:
   dbdata_gantt:
     external: true
