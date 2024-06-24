@@ -1,0 +1,67 @@
+# docker-compose のバージョン
+version: '3'
+
+# 各コンテナの情報
+services:
+
+  # postgres サービス
+  gantt_postgres:
+    image: backend-gantt_postgres
+    # コンテナの名前
+    container_name: gantt_postgres
+    ports:
+      - "5433:5432"
+    env_file: .env
+    volumes:
+      - so-link_dbdata_gantt:/var/lib/postgresql/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # golang アプリケーション
+  gantt_api:
+    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
+    container_name: gantt_api
+    ports:
+      - "80:80"
+    env_file: .env
+    tty:
+      true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  # session サービス
+  gantt_session:
+    image: backend-gantt_session
+    container_name: gantt_session
+    ports:
+      - "6379:6379"
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  migration:
+    image: migration-migration
+    container_name: migration
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    tty:
+      true
+    # docker-compose run 実行時に実行されるコマンド
+    command: go run ./main.go
+  # postgres サービス
+  gantt_web:
+    image: backend-gantt_web
+    container_name: gantt_web
+    ports:
+      - "8080:8080"
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  so-link_dbdata_gantt:
+    external: true
