@@ -3,3 +3,4 @@ ssh_tunnnel.sh
 skelton_generater/dest/*
 api/api
 debug_data/*
+backend/docker/web/dist/*
