@@ -540,7 +540,6 @@ export async function useGanttFacility() {
         }, setNumberOfWorker: async (numberOfWorker: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.number_of_worker = numberOfWorker
-            await updateTicket(clone)
             const newTicket = await updateTicket(clone)
             refreshTicket(newTicket!)
             await getScheduleAlert()
