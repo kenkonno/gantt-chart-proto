@@ -24,10 +24,10 @@ docker image から確認する（docker-compose.yaml の nameからでも docke
 ![img.png](docker-for-windows-images.png)
 
 ```shell
-docker save 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api > gantt_api.tar
+docker save backend-gantt_api > gantt_api.tar
 docker save backend-gantt_postgres > gantt_postgres.tar
 docker save backend-gantt_session > gantt_session.tar
-docker save migration-migration > gantt_migration.tar
+docker save backend-gantt_migration > gantt_migration.tar
 docker save backend-gantt_web > gantt_web.tar
 ```
 
@@ -78,3 +78,14 @@ docker-compose up gantt_web -d
   - 現状では.envファイルで指定されているものが利用されるが、build時点で固定されてしまう。
 - APIサーバーのポートは80にするべき
   - 今はapiサーバーが80を占領してしまっている
+- buildするときはapiのDockerファイル指定をDockerFileForProvisionに変更する
+- フロントのbuildはAPIへのURLを変更してビルドしてdockerフォルダに置きなおす
+- パラメータ周りを整理する
+
+技術的な課題は一旦クリアしたので正直に現状を伝えつつ資料を作って打ち合わせに向かう。
+
+さて何で作るか。
+googleのwordで作るか。
+
+## 残作業
+- 時限装置の作成（golang側で固定値で持たせる。フロント側でも表示させる） envとかではなくハードコーディングでやることになる。管理に注意。

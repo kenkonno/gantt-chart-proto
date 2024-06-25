@@ -28,7 +28,7 @@ func main() {
 	r.Use(middleware.AuthMiddleware())
 
 	r = openapi.NewRouter(r)
-	r.LoadHTMLGlob("templates/*")
+	//r.LoadHTMLGlob("templates/*") TODO: たぶん現状では不要。
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":" + os.Getenv("API_PORT"))
 }

@@ -24,10 +24,10 @@ services:
 
   # golang アプリケーション
   gantt_api:
-    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
+    image: backend-gantt_api
     container_name: gantt_api
     ports:
-      - "80:80"
+      - "8080:8080"
     env_file: .env
     tty:
       true
@@ -43,7 +43,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   migration:
-    image: migration-migration
+    image: backend-gantt_migration
     container_name: migration
     env_file: .env
     extra_hosts:
@@ -57,7 +57,7 @@ services:
     image: backend-gantt_web
     container_name: gantt_web
     ports:
-      - "8080:8080"
+      - "80:80"
     env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"

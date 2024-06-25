@@ -32,10 +32,10 @@ services:
   # golang アプリケーション
   gantt_api:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
-    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
+#    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
     container_name: gantt_api
     ports:
-      - "80:80"
+      - "8080:8080"
     depends_on:
       #CHANGE 2: it prevents issuing a request while the server is starting to depend on the healthy status of postgres-db
       gantt_postgres:
@@ -45,6 +45,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/api/Dockerfile
+#      dockerfile: ./docker/api/DockerfileForProvision
     env_file: .env
     # フォルダ共有（ホストOS:コンテナ）
     volumes:
@@ -57,7 +58,7 @@ services:
 
   gantt_migration:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration
-    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
+#    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
     container_name: gantt_migration
     build:
       context: .
@@ -98,7 +99,7 @@ services:
       context: .
       dockerfile: ./docker/web/Dockerfile
     ports:
-      - "8080:8080"
+      - "80:80"
     # postgres 設定
     env_file: .env
     extra_hosts:
