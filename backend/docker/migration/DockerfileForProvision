@@ -1,0 +1,34 @@
+FROM golang:1.19
+
+# コンテナ作業ディレクトリの変更
+WORKDIR /go/src/github.com/kenkonno/gantt-chart-proto/backend/migration/
+
+COPY ./migration/ ./
+COPY ./models/ ../models/
+COPY ./repository/ ../repository/
+
+RUN go mod download
+RUN go build -o migration
+
+# TODO: 改善の必要あり buildファイル以外の削除
+RUN rm -rf GanttChartApi.yaml
+RUN rm -rf README.md
+RUN rm -rf constants
+RUN rm -rf gen
+RUN rm -rf go.mod
+RUN rm -rf go.sum
+RUN rm -rf interactor
+RUN rm -rf main.go
+RUN rm -rf middleware
+RUN rm -rf openapi
+RUN rm -rf openapi-generator-cli-6.6.0.jar
+RUN rm -rf openapi_converter
+RUN rm -rf openapi_generator.sh
+RUN rm -rf openapi_models
+RUN rm -rf templates
+RUN rm -rf tests
+RUN rm -rf utils
+
+CMD ./migration
+
+# CMD ["go","run","./main.go"]

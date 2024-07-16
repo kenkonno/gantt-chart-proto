@@ -1,43 +1,30 @@
-# docker-compose のバージョン
 version: '3'
 
-# 各コンテナの情報
 services:
 
-  # postgres サービス
   gantt_postgres:
-    #image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_postgres
-    # コンテナの名前
     container_name: gantt_postgres
-    # Dockerfile のディレクトリパス
     build:
       context: .
       dockerfile: ./docker/postgres/Dockerfile
     ports:
       - "5433:5432"
-    # postgres 設定
     env_file: .env
     volumes:
       - dbdata_gantt:/var/lib/postgresql/data
-    #      - ./docker/postgres/init/:/docker-entrypoint-initdb.d/
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
-      #CHANGE 1: this command checks if the database is ready, right on the source db server
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # golang アプリケーション
   gantt_api:
-#    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
-#    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
     container_name: gantt_api
     ports:
       - "8080:8080"
     depends_on:
-      #CHANGE 2: it prevents issuing a request while the server is starting to depend on the healthy status of postgres-db
       gantt_postgres:
         condition: service_healthy
       gantt_session:
@@ -45,62 +32,45 @@ services:
     build:
       context: .
       dockerfile: ./docker/api/DockerfileForProvision
-#      dockerfile: ./docker/api/DockerfileForProvision
     env_file: .env
-    # フォルダ共有（ホストOS:コンテナ）
     volumes:
       - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
-    # docker-compose run 実行時に実行されるコマンド
     tty:
       true
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
   gantt_migration:
-#    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration
-#    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
     container_name: gantt_migration
     build:
       context: .
       dockerfile: ./docker/migration/DockerfileForProvision
     env_file: .env
-    # フォルダ共有（ホストOS:コンテナ）
     volumes:
       - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
-    # docker-compose run 実行時に実行されるコマンド
     tty:
       true
-#    command: go run ./main.go
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # postgres サービス
   gantt_session:
-#    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_postgres
-    # コンテナの名前
     container_name: gantt_session
-    # Dockerfile のディレクトリパス
     build:
       context: .
       dockerfile: ./docker/session/Dockerfile
     ports:
       - "6379:6379"
-    # postgres 設定
     env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # postgres サービス
   gantt_web:
-    # コンテナの名前
     container_name: gantt_web
-    # Dockerfile のディレクトリパス
     build:
       context: .
       dockerfile: ./docker/web/Dockerfile
     ports:
       - "80:80"
-    # postgres 設定
     env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
