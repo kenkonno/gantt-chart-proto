@@ -176,7 +176,9 @@ export const useGlobalState = async () => {
             await actions.refreshOperationSettingMap(facilityId)
             nextTick(() => {
                 if (moveFacilityView) {
-                    router.push("/")
+                    router.push({path: "/", query: {facilityId: facilityId}})
+                } else {
+                    router.push({query: {facilityId: facilityId}})
                 }
                 globalState.value.ganttFacilityRefresh = true
             })
