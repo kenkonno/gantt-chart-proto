@@ -3,9 +3,11 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/samber/lo"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -60,12 +62,14 @@ func isValidToken(sessionID string) bool {
 	return result != ""
 }
 
-func GetUserId(sessionID string) *string {
+func GetUserId(sessionID string) *int32 {
 	result, err := redisClient.Get(sessionID).Result()
 	if err != nil {
 		return nil
 	}
-	return &result
+	userId, _ := strconv.Atoi(result)
+	int32UserId := int32(userId)
+	return &int32UserId
 }
 
 func UpdateSessionID(sessionID string, userId int32) {
@@ -73,4 +77,16 @@ func UpdateSessionID(sessionID string, userId int32) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func IsGuest(c *gin.Context) bool {
+	sessionID, err := c.Cookie("session_id")
+	if err != nil {
+		return false
+	}
+	userId := GetUserId(sessionID)
+	if userId != nil && *userId == constants.GuestID {
+		return true
+	}
+	return false
 }

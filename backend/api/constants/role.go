@@ -9,5 +9,5 @@ const (
 )
 
 const (
-	GuestID = -1 // GUESTログインで使用するユーザーID
+	GuestID = int32(-1) // GUESTログインで使用するユーザーID
 )

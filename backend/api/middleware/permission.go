@@ -1,12 +1,10 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"net/http"
-	"strconv"
 )
 
 // TODO: OpenApi定義から自動生成させる。
@@ -23,8 +21,8 @@ var rolesNeeded = map[string][]string{
 	"DELETE /api/tickets/:id":             {constants.RoleAdmin, constants.RoleManager},
 	"DELETE /api/units/:id":               {constants.RoleAdmin, constants.RoleManager},
 	"DELETE /api/users/:id":               {constants.RoleAdmin, constants.RoleManager},
-	"GET /api/all-tickets":                {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
-	"GET /api/defaultPileUps":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
+	"GET /api/all-tickets":                {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer},
+	"GET /api/defaultPileUps":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer},
 	"GET /api/departments":                {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/departments/:id":            {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer},
 	"GET /api/facilities":                 {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
@@ -80,18 +78,14 @@ var rolesNeeded = map[string][]string{
 }
 
 func getRolesFromToken(sessionID string) []string {
-	strUserID := GetUserId(sessionID)
-	fmt.Println(sessionID, strUserID)
-	if strUserID != nil {
-		userId, _ := strconv.Atoi(*strUserID)
-		// TODO: DIに切り替える
-		if userId == constants.GuestID {
-			return []string{constants.RoleGuest}
-		} else {
-			userRep := repository.NewUserRepository()
-			user := userRep.Find(int32(userId))
-			return []string{user.Role}
+	userId := GetUserId(sessionID)
+	userRep := repository.NewUserRepository()
+	if userId != nil {
+		if *userId == constants.GuestID {
+			userRep = repository.NewUserRepository(repository.GuestMode)
 		}
+		user := userRep.Find(*userId)
+		return []string{user.Role}
 	}
 	return []string{}
 }

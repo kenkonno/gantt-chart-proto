@@ -1,12 +1,13 @@
-import {ComputedRef,onBeforeUnmount, Ref, ref, UnwrapRef, watch} from "vue";
+import {onBeforeUnmount, Ref, ref, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
-import {DefaultPileUp, Department, Facility, Holiday, PileUp, Ticket, TicketUser, User} from "@/api";
+import {Department, Facility, Holiday, Ticket, TicketUser, User} from "@/api";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
 import {Api} from "@/api/axios";
 import {FacilityStatus, FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 import {pileUpLabelFormat} from "@/utils/filters";
+import {allowed} from "@/composable/role";
 
 
 export type PileUps = {
@@ -661,12 +662,21 @@ export const getDefaultPileUps = async (
     //     globalStartDate: startDate,
     //     defaultPileUps,
     // }
-    const {data} = await Api.getDefaultPileUps(excludeFacilityId, isAllMode, facilityTypes)
-    // styleの適応を実施する
-    return {
-        globalStartDate: data.globalStartDate,
-        defaultPileUps: data.defaultPileUps
-    }
 
+    // TODO: どうなんだろうこれ。APIでは呼び出せない権限なのでUIガワで対応する。
+    if (allowed("VIEW_PILEUPS")) {
+        const {data} = await Api.getDefaultPileUps(excludeFacilityId, isAllMode, facilityTypes)
+        // styleの適応を実施する
+        return {
+            globalStartDate: data.globalStartDate,
+            defaultPileUps: data.defaultPileUps
+        }
+    } else {
+        // styleの適応を実施する
+        return {
+            globalStartDate: "",
+            defaultPileUps: []
+        }
+    }
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/connection"
 	"net/http"
 	"time"
 )
@@ -37,7 +38,7 @@ func PostTicketsIdInvoke(c *gin.Context) openapi_models.PostTicketsIdResponse {
 		UpdatedAt:       ticketReq.Ticket.UpdatedAt,
 	})
 	if err != nil {
-		var target repository.ConflictError
+		var target connection.ConflictError
 		if errors.As(err, &target) {
 			c.JSON(http.StatusConflict, err.Error())
 			panic(err)

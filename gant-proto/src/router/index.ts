@@ -39,7 +39,6 @@ router.beforeEach(async (to, from, next) => {
     if (to.query.uuid != undefined) {
         console.log("uuid is detected.")
         await Api.postLogin({id: "", password: "", uuid: String(to.query.uuid)});
-
     }
 
     if (to.matched.some(record => record.meta.requiresAuth)) {

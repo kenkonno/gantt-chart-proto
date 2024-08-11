@@ -26,6 +26,7 @@ func main() {
 	r.Use(cors.New(cfg))
 	r.Use(middleware.RoleBasedAccessControl())
 	r.Use(middleware.AuthMiddleware())
+	r.Use(middleware.GuestAccessControl())
 
 	r = openapi.NewRouter(r)
 	//r.LoadHTMLGlob("templates/*") TODO: たぶん現状では不要。

@@ -5,6 +5,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/connection"
 	"net/http"
 	"time"
 )
@@ -23,7 +24,7 @@ func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersRespons
 	originals := ticketUserRep.FindByTicketId(ticketUserReq.TicketId)
 	if len(originals) > 0 {
 		if originals[0].CreatedAt.Truncate(time.Second) != ticketUserReq.CreatedAt.Truncate(time.Second) {
-			err := repository.NewConflictError()
+			err := connection.NewConflictError()
 			c.JSON(http.StatusConflict, err.Error())
 			panic(err)
 		}

@@ -6,28 +6,29 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"strconv"
 	"time"
 )
 
 // Tokenからユーザー情報を返却する
 func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
-	userRep := repository.NewUserRepository()
 	sessionID, err := c.Cookie("session_id")
 	if err != nil {
 		return openapi_models.GetUserInfoResponse{}
 	}
-	strUserId := middleware.GetUserId(sessionID)
-	if strUserId == nil {
+	// TODO: この辺のDIをAPIとinteractorで分けて処理するべきだが、自動生成の兼ね合いで対応できず。コスト的にはinteractorに記述したほうがいったんはよい？と思ったけどそうでもないか。GetInteractorで gin.Contextを渡してInteractorの構造を返す形にするのがいいかも。そうするとロジックとDIで分離できる。シミュレーション機能のリファクタリングのタイミングで実施する。
+	userRep := repository.NewUserRepository()
+	if *middleware.GetUserId(sessionID) == constants.GuestID {
+		userRep = repository.NewUserRepository(repository.GuestMode)
+	}
+	if err != nil {
 		return openapi_models.GetUserInfoResponse{}
 	}
-	int32UserId, _ := strconv.ParseInt(*strUserId, 10, 32)
-	userId := int32(int32UserId)
+	userId := middleware.GetUserId(sessionID)
 
 	var userInfoResponse openapi_models.GetUserInfoResponse
 
 	// TODO: DI設計の時に GuestRepositoryを作成すること。このつくりはOpenClosedに違反
-	if userId == constants.GuestID {
+	if *userId == constants.GuestID {
 		guestId := int32(constants.GuestID)
 		userInfoResponse = openapi_models.GetUserInfoResponse{
 			User: openapi_models.User{
@@ -44,7 +45,7 @@ func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
 			},
 		}
 	} else {
-		user := userRep.Find(userId)
+		user := userRep.Find(*userId)
 		userInfoResponse = openapi_models.GetUserInfoResponse{
 			User: openapi_models.User{
 				Id:               user.Id,
