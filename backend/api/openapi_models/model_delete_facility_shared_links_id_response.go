@@ -9,11 +9,7 @@
 
 package openapi_models
 
-type PostLoginRequest struct {
+type DeleteFacilitySharedLinksIdResponse struct {
 
-	Id string `json:"id"`
-
-	Password string `json:"password"`
-
-	Uuid string `json:"uuid,omitempty"`
+	Msg string `json:"msg,omitempty"`
 }

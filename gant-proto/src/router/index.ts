@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
 import {loggedIn} from "@/composable/auth";
+import {Api} from "@/api/axios";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -33,6 +34,14 @@ const router = createRouter({
     routes
 })
 router.beforeEach(async (to, from, next) => {
+
+    // ゲストログインの処理を実施する
+    if (to.query.uuid != undefined) {
+        console.log("uuid is detected.")
+        await Api.postLogin({id: "", password: "", uuid: String(to.query.uuid)});
+
+    }
+
     if (to.matched.some(record => record.meta.requiresAuth)) {
         const {user} = await loggedIn()
         if (user?.id == undefined) {

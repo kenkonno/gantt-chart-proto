@@ -79,6 +79,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteFacilitySharedLinksId",
+		http.MethodDelete,
+		"/api/facilitySharedLinks/:id",
+		DeleteFacilitySharedLinksId,
+	},
+
+	{
 		"DeleteGanttGroupsId",
 		http.MethodDelete,
 		"/api/ganttGroups/:id",
@@ -181,6 +188,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/facilities/:id",
 		GetFacilitiesId,
+	},
+
+	{
+		"GetFacilitySharedLinks",
+		http.MethodGet,
+		"/api/facilitySharedLinks",
+		GetFacilitySharedLinks,
+	},
+
+	{
+		"GetFacilitySharedLinksId",
+		http.MethodGet,
+		"/api/facilitySharedLinks/:id",
+		GetFacilitySharedLinksId,
 	},
 
 	{
@@ -363,6 +384,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/facilities/:id",
 		PostFacilitiesId,
+	},
+
+	{
+		"PostFacilitySharedLinks",
+		http.MethodPost,
+		"/api/facilitySharedLinks",
+		PostFacilitySharedLinks,
+	},
+
+	{
+		"PostFacilitySharedLinksId",
+		http.MethodPost,
+		"/api/facilitySharedLinks/:id",
+		PostFacilitySharedLinksId,
 	},
 
 	{

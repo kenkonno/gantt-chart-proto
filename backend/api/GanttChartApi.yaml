@@ -812,6 +812,8 @@ paths:
                   type: string
                 password:
                   type: string
+                uuid:
+                  type: string
               required:
                 - id
                 - password
@@ -919,6 +921,76 @@ paths:
           in: query
           name: facilityTypes
           required: true
+  /api/facilitySharedLinks:
+    get:
+      summary: GetFacilitySharedLinks
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilitySharedLinksResponse'
+              examples: {}
+      operationId: get-facilitySharedLinks
+      description: ''
+      parameters: []
+    post:
+      summary: PostFacilitySharedLinks
+      operationId: post-facilitySharedLinks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostFacilitySharedLinksResponse'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilitySharedLinksRequest'
+    parameters: []
+  '/api/facilitySharedLinks/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetFacilitySharedLinksId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilitySharedLinksIdResponse'
+              examples: {}
+      operationId: get-facilitySharedLinks-id
+      description: ''
+    delete:
+      summary: DeleteFacilitySharedLinksId
+      operationId: delete-facilitySharedLinks-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostFacilitySharedLinksId
+      operationId: post-facilitySharedLinks-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilitySharedLinksRequest'
 components:
   schemas:
     User:
@@ -2377,3 +2449,89 @@ components:
       required:
         - defaultPileUps
         - globalStartDate
+    FacilitySharedLink:
+      title: FacilitySharedLink
+      type: object
+      x-tags:
+        - FacilitySharedLink
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        uuid:
+          type: string
+          nullable: true
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+    GetFacilitySharedLinksRequest:
+      title: GetFacilitySharedLinksRequest
+      type: object
+    GetFacilitySharedLinksResponse:
+      title: GetFacilitySharedLinksResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacilitySharedLink'
+      required:
+        - list
+    GetFacilitySharedLinksIdRequest:
+      title: GetFacilitySharedLinksIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetFacilitySharedLinksIdResponse:
+      title: GetFacilitySharedLinksResponse
+      type: object
+      properties:
+        facilitySharedLink:
+          $ref: '#/components/schemas/FacilitySharedLink'
+    DeleteFacilitySharedLinksIdRequest:
+      title: DeleteFacilitySharedLinksIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteFacilitySharedLinksIdResponse:
+      title: DeleteFacilitySharedLinksIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostFacilitySharedLinksRequest:
+      title: PostFacilitySharedLinksRequest
+      type: object
+      properties:
+        facilitySharedLink:
+          $ref: '#/components/schemas/FacilitySharedLink'
+    PostFacilitySharedLinksResponse:
+      title: PostFacilitySharedLinksResponse
+      type: object
+      properties:
+        facilitySharedLink:
+          $ref: '#/components/schemas/FacilitySharedLink'
+    PostFacilitySharedLinksIdRequest:
+      title: PostFacilitySharedLinksIdRequest
+      type: object
+      properties:
+        facilitySharedLink:
+          $ref: '#/components/schemas/FacilitySharedLink'
+    PostFacilitySharedLinksIdResponse:
+      title: PostFacilitySharedLinksIdResponse
+      type: object
+      properties:
+        facilitySharedLink:
+          $ref: '#/components/schemas/FacilitySharedLink'

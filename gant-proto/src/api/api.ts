@@ -158,6 +158,32 @@ export interface DeleteFacilitiesIdResponse {
 /**
  * 
  * @export
+ * @interface DeleteFacilitySharedLinksIdRequest
+ */
+export interface DeleteFacilitySharedLinksIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteFacilitySharedLinksIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteFacilitySharedLinksIdResponse
+ */
+export interface DeleteFacilitySharedLinksIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteFacilitySharedLinksIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeleteGanttGroupsIdRequest
  */
 export interface DeleteGanttGroupsIdRequest {
@@ -496,6 +522,43 @@ export interface Facility {
 /**
  * 
  * @export
+ * @interface FacilitySharedLink
+ */
+export interface FacilitySharedLink {
+    /**
+     * 
+     * @type {number}
+     * @memberof FacilitySharedLink
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof FacilitySharedLink
+     */
+    'facility_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof FacilitySharedLink
+     */
+    'uuid'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof FacilitySharedLink
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof FacilitySharedLink
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
  * @interface GanttGroup
  */
 export interface GanttGroup {
@@ -664,6 +727,45 @@ export interface GetFacilitiesResponse {
      * @memberof GetFacilitiesResponse
      */
     'list': Array<Facility>;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilitySharedLinksIdRequest
+ */
+export interface GetFacilitySharedLinksIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetFacilitySharedLinksIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilitySharedLinksIdResponse
+ */
+export interface GetFacilitySharedLinksIdResponse {
+    /**
+     * 
+     * @type {FacilitySharedLink}
+     * @memberof GetFacilitySharedLinksIdResponse
+     */
+    'facilitySharedLink'?: FacilitySharedLink;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilitySharedLinksResponse
+ */
+export interface GetFacilitySharedLinksResponse {
+    /**
+     * 
+     * @type {Array<FacilitySharedLink>}
+     * @memberof GetFacilitySharedLinksResponse
+     */
+    'list': Array<FacilitySharedLink>;
 }
 /**
  * 
@@ -1498,6 +1600,58 @@ export interface PostFacilitiesResponse {
 /**
  * 
  * @export
+ * @interface PostFacilitySharedLinksIdRequest
+ */
+export interface PostFacilitySharedLinksIdRequest {
+    /**
+     * 
+     * @type {FacilitySharedLink}
+     * @memberof PostFacilitySharedLinksIdRequest
+     */
+    'facilitySharedLink'?: FacilitySharedLink;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitySharedLinksIdResponse
+ */
+export interface PostFacilitySharedLinksIdResponse {
+    /**
+     * 
+     * @type {FacilitySharedLink}
+     * @memberof PostFacilitySharedLinksIdResponse
+     */
+    'facilitySharedLink'?: FacilitySharedLink;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitySharedLinksRequest
+ */
+export interface PostFacilitySharedLinksRequest {
+    /**
+     * 
+     * @type {FacilitySharedLink}
+     * @memberof PostFacilitySharedLinksRequest
+     */
+    'facilitySharedLink'?: FacilitySharedLink;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilitySharedLinksResponse
+ */
+export interface PostFacilitySharedLinksResponse {
+    /**
+     * 
+     * @type {FacilitySharedLink}
+     * @memberof PostFacilitySharedLinksResponse
+     */
+    'facilitySharedLink'?: FacilitySharedLink;
+}
+/**
+ * 
+ * @export
  * @interface PostGanttGroupsIdRequest
  */
 export interface PostGanttGroupsIdRequest {
@@ -1617,6 +1771,12 @@ export interface PostLoginRequest {
      * @memberof PostLoginRequest
      */
     'password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PostLoginRequest
+     */
+    'uuid'?: string;
 }
 /**
  * 
@@ -2544,6 +2704,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary DeleteFacilitySharedLinksId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFacilitySharedLinksId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteFacilitySharedLinksId', 'id', id)
+            const localVarPath = `/api/facilitySharedLinks/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -3039,6 +3233,70 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getFacilitiesId', 'id', id)
             const localVarPath = `/api/facilities/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetFacilitySharedLinks
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilitySharedLinks: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/facilitySharedLinks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetFacilitySharedLinksId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilitySharedLinksId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getFacilitySharedLinksId', 'id', id)
+            const localVarPath = `/api/facilitySharedLinks/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3964,6 +4222,78 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostFacilitySharedLinks
+         * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilitySharedLinks: async (postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/facilitySharedLinks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFacilitySharedLinksRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostFacilitySharedLinksId
+         * @param {number} id 
+         * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilitySharedLinksId: async (id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postFacilitySharedLinksId', 'id', id)
+            const localVarPath = `/api/facilitySharedLinks/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFacilitySharedLinksRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
          * @param {*} [options] Override http request option.
@@ -4644,6 +4974,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary DeleteFacilitySharedLinksId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteFacilitySharedLinksId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFacilitySharedLinksId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -4805,6 +5146,27 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getFacilitiesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitiesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetFacilitySharedLinks
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFacilitySharedLinks(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitySharedLinksResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitySharedLinks(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetFacilitySharedLinksId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFacilitySharedLinksId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitySharedLinksIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitySharedLinksId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5094,6 +5456,29 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary PostFacilitySharedLinks
+         * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFacilitySharedLinks(postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostFacilitySharedLinksResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilitySharedLinks(postFacilitySharedLinksRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostFacilitySharedLinksId
+         * @param {number} id 
+         * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFacilitySharedLinksId(id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilitySharedLinksId(id, postFacilitySharedLinksRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
          * @param {*} [options] Override http request option.
@@ -5331,6 +5716,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary DeleteFacilitySharedLinksId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFacilitySharedLinksId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFacilitySharedLinksId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -5478,6 +5873,25 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getFacilitiesId(id: number, options?: any): AxiosPromise<GetFacilitiesIdResponse> {
             return localVarFp.getFacilitiesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetFacilitySharedLinks
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilitySharedLinks(options?: any): AxiosPromise<GetFacilitySharedLinksResponse> {
+            return localVarFp.getFacilitySharedLinks(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetFacilitySharedLinksId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilitySharedLinksId(id: number, options?: any): AxiosPromise<GetFacilitySharedLinksIdResponse> {
+            return localVarFp.getFacilitySharedLinksId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5740,6 +6154,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary PostFacilitySharedLinks
+         * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilitySharedLinks(postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: any): AxiosPromise<PostFacilitySharedLinksResponse> {
+            return localVarFp.postFacilitySharedLinks(postFacilitySharedLinksRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostFacilitySharedLinksId
+         * @param {number} id 
+         * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilitySharedLinksId(id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postFacilitySharedLinksId(id, postFacilitySharedLinksRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
          * @param {*} [options] Override http request option.
@@ -5963,6 +6398,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary DeleteFacilitySharedLinksId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteFacilitySharedLinksId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteFacilitySharedLinksId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary DeleteGanttGroupsId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -6139,6 +6586,29 @@ export class DefaultApi extends BaseAPI {
      */
     public getFacilitiesId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getFacilitiesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetFacilitySharedLinks
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFacilitySharedLinks(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilitySharedLinks(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetFacilitySharedLinksId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFacilitySharedLinksId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilitySharedLinksId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6450,6 +6920,31 @@ export class DefaultApi extends BaseAPI {
      */
     public postFacilitiesId(id: number, postFacilitiesRequest?: PostFacilitiesRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postFacilitiesId(id, postFacilitiesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostFacilitySharedLinks
+     * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFacilitySharedLinks(postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFacilitySharedLinks(postFacilitySharedLinksRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostFacilitySharedLinksId
+     * @param {number} id 
+     * @param {PostFacilitySharedLinksRequest} [postFacilitySharedLinksRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFacilitySharedLinksId(id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFacilitySharedLinksId(id, postFacilitySharedLinksRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

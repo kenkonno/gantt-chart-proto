@@ -156,9 +156,13 @@ export const useGlobalState = async () => {
                 await Api.postUnitsId(v.id!, {unit: v})
             }
         }, getScheduleAlert: async () => {
-            const resp = await Api.getScheduleAlerts()
-            globalState.value.scheduleAlert.length = 0
-            globalState.value.scheduleAlert.push(...resp.data.list)
+            try {
+                const resp = await Api.getScheduleAlerts()
+                globalState.value.scheduleAlert.length = 0
+                globalState.value.scheduleAlert.push(...resp.data.list)
+            } catch {
+                globalState.value.scheduleAlert.length = 0
+            }
         }
     }
 

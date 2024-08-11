@@ -9,11 +9,7 @@
 
 package openapi_models
 
-type PostLoginRequest struct {
+type GetFacilitySharedLinksResponse struct {
 
-	Id string `json:"id"`
-
-	Password string `json:"password"`
-
-	Uuid string `json:"uuid,omitempty"`
+	List []FacilitySharedLink `json:"list"`
 }

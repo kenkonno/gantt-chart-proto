@@ -24,7 +24,7 @@ func main() {
 	cfg.AllowCredentials = true
 	cfg.AllowWildcard = true
 	r.Use(cors.New(cfg))
-	//r.Use(middleware.RoleBasedAccessControl())
+	r.Use(middleware.RoleBasedAccessControl())
 	r.Use(middleware.AuthMiddleware())
 
 	r = openapi.NewRouter(r)

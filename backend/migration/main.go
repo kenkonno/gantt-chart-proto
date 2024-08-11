@@ -22,6 +22,7 @@ func main() {
 	migrate(db.TicketUser{})
 	migrate(db.Ticket{})
 	migrate(db.Milestone{})
+	migrate(db.FacilitySharedLink{})
 	createDefaultUser()
 }
 
