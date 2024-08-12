@@ -1,7 +1,6 @@
 package login
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
