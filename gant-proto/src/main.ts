@@ -10,6 +10,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 import '@kouts/vue-modal/dist/vue-modal.css'
 
+
 import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'

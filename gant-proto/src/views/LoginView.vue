@@ -26,6 +26,7 @@
       </form>
     </div>
     <!-- end:Main Form -->
+    <tiptap-editor />
   </div>
 </template>
 
@@ -35,6 +36,7 @@
 import {ref} from "vue";
 import {Api} from "@/api/axios";
 import router from "@/router";
+import TiptapEditor from "@/components/tiptap/TiptapEditor.vue";
 
 const email = ref("")
 const password = ref("")
