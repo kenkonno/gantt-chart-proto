@@ -6,11 +6,11 @@
         <span class="material-symbols-outlined">edit</span>
         <span class="text">案件ビュー</span>
       </router-link>
-      <router-link to="/all-view">
+      <router-link to="/all-view" v-if="allowed('ALL_VIEW')">
         <span class="material-symbols-outlined">travel_explore</span>
         <span class="text">全体ビュー</span>
       </router-link>
-      <schedule-alert></schedule-alert>
+      <schedule-alert v-if="allowed('VIEW_SCHEDULE_ALERT')"></schedule-alert>
       <div>
       </div>
       <div>
@@ -52,7 +52,7 @@
   </nav>
   <Suspense v-if="modalIsOpen">
     <default-modal title="担当者" @close-edit-modal="closeModalProxy">
-      <async-user-edit :id="userInfo.id" @close-edit-modal="closeModalProxy"></async-user-edit>
+      <async-user-edit :id="userInfo.id" @close-edit-modal="closeModalProxy" :mode="'profile'"></async-user-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -118,6 +118,7 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
+import {all} from "axios";
 
 // ローカルストレージの初期化
 initStateValue()

@@ -436,6 +436,13 @@ var routes = Routes{
 	},
 
 	{
+		"PostLogout",
+		http.MethodPost,
+		"/api/logout",
+		PostLogout,
+	},
+
+	{
 		"PostMilestones",
 		http.MethodPost,
 		"/api/milestones",

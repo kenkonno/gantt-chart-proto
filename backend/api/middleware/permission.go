@@ -62,6 +62,7 @@ var rolesNeeded = map[string][]string{
 	"POST /api/holidays":                {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/holidays/:id":            {constants.RoleAdmin, constants.RoleManager},
 	//"POST /api/login":                     {constants.RoleAdmin, constants.RoleManager},
+	//"POST /api/logout":                     {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/milestones":            {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/milestones/:id":        {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/operationSettings/:id": {constants.RoleAdmin, constants.RoleManager},

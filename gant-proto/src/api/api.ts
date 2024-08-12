@@ -1794,6 +1794,19 @@ export interface PostLoginResponse {
 /**
  * 
  * @export
+ * @interface PostLogoutResponse
+ */
+export interface PostLogoutResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostLogoutResponse
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
  * @interface PostMilestonesIdRequest
  */
 export interface PostMilestonesIdRequest {
@@ -4472,6 +4485,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postLogout: async (body?: object, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/logout`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostMilestones
          * @param {PostMilestonesRequest} [postMilestonesRequest] 
          * @param {*} [options] Override http request option.
@@ -5536,6 +5583,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postLogout(body?: object, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postLogout(body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostMilestones
          * @param {PostMilestonesRequest} [postMilestonesRequest] 
          * @param {*} [options] Override http request option.
@@ -6224,6 +6282,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postLogin(postLoginRequest?: PostLoginRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postLogin(postLoginRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postLogout(body?: object, options?: any): AxiosPromise<void> {
+            return localVarFp.postLogout(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7007,6 +7075,18 @@ export class DefaultApi extends BaseAPI {
      */
     public postLogin(postLoginRequest?: PostLoginRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postLogin(postLoginRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {object} [body] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postLogout(body?: object, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postLogout(body, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

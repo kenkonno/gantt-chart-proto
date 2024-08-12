@@ -39,7 +39,7 @@ func (r *facilitySharedLinkRepository) Find(id int32) db.FacilitySharedLink {
 func (r *facilitySharedLinkRepository) FindByFacilityId(facilityId int32) *db.FacilitySharedLink {
 	var facilitySharedLink *db.FacilitySharedLink
 
-	result := r.con.First(&facilitySharedLink, facilityId)
+	result := r.con.Where("facility_id", facilityId).First(&facilitySharedLink)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			// nothing todo...

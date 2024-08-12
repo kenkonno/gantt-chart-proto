@@ -19,7 +19,9 @@
         <ModalWithLink title="マイルストーン" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
           <milestone-view></milestone-view>
         </ModalWithLink>
-
+        <ModalWithLink title="共有リンク" icon="public" :disabled="globalState.currentFacilityId===-1">
+          <facility-shared-link-view></facility-shared-link-view>
+        </ModalWithLink>
       </template>
     </div>
     <div v-else>案件の設定がありません。案件一覧から追加してください。</div>
@@ -128,6 +130,7 @@ import {allowed} from "@/composable/role";
 import MilestoneView from "@/views/MilestoneView.vue";
 import Swal from "sweetalert2"
 import {useRoute} from 'vue-router'
+import FacilitySharedLinkView from "@/views/FacilitySharedLinkView.vue";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!

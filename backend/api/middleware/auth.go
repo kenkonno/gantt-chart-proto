@@ -29,6 +29,7 @@ func init() {
 var publicRoute = []string{
 	"GET /api/userInfo",
 	"POST /api/login",
+	"POST /api/logout",
 }
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -89,4 +90,11 @@ func IsGuest(c *gin.Context) bool {
 		return true
 	}
 	return false
+}
+
+func ClearSession(sessionID string) {
+	err := redisClient.Del(sessionID).Err()
+	if err != nil {
+		panic(err)
+	}
 }

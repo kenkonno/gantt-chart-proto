@@ -14,18 +14,18 @@
 
     <div class="mb-2">
       <label class="form-label" for="id">姓</label>
-      <input class="form-control" type="text" name="name" id="name" v-model="user.lastName" :disabled="false">
+      <input class="form-control" type="text" name="name" id="name" v-model="user.lastName" :disabled="false" autocomplete="off">
     </div>
 
     <div class="mb-2">
       <label class="form-label" for="id">名</label>
-      <input class="form-control" type="text" name="name" id="name" v-model="user.firstName" :disabled="false">
+      <input class="form-control" type="text" name="name" id="name" v-model="user.firstName" :disabled="false" autocomplete="off">
     </div>
 
     <div class="mb-2" v-if="false">
       <label class="form-label" for="limit_of_operation">稼働上限</label>
       <input class="form-control" type="number" name="limit_of_operation" step="0.1" id="limit_of_operation"
-             v-model="user.limit_of_operation" :disabled="false">
+             v-model="user.limit_of_operation" :disabled="false" autocomplete="off">
     </div>
 
     <div class="mb-2">
@@ -37,12 +37,13 @@
 
     <div class="mb-2">
       <label class="form-label" for="id">Password</label>
-      <input class="form-control" type="password" name="password" id="password" v-model="user.password" :disabled="false">
+      <input class="form-control" type="password" name="password" id="password" v-model="user.password"
+             :disabled="false" autocomplete="off">
     </div>
 
     <div class="mb-2">
       <label class="form-label" for="id">Email</label>
-      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false">
+      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false" autocomplete="off">
     </div>
 
     <div class="mb-2">
@@ -61,8 +62,11 @@
       <button type="submit" class="btn btn-primary" @click="validate(user, true) && postUser(user, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="validate(user) && postUserById(user, $emit)">更新</button>
-      <button type="submit" class="btn btn-warning" @click="deleteUserById(id, $emit)">削除</button>
+      <button type="submit" class="btn btn-primary" :disabled="!allowed('UPDATE_USER')" @click="validate(user) && postUserById(user, $emit)">更新</button>
+      <button type="submit" class="btn btn-warning" :disabled="!allowed('UPDATE_USER')" @click="deleteUserById(id, $emit)">削除</button>
+      <template v-if="mode == 'profile'">
+        <button type="submit" class="btn btn-info float-end" @click="logout()">ログアウト</button>
+      </template>
     </template>
   </div>
 </template>
@@ -73,9 +77,12 @@ import {computed, inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {RoleTypeMap} from "@/const/common";
 import {allowed} from "@/composable/role";
+import {Api} from "@/api/axios";
+import router from "@/router";
 
 interface AsyncUserEdit {
   id: number | undefined
+  mode: string | undefined
 }
 
 const {departmentList} = inject(GLOBAL_STATE_KEY)!
@@ -88,6 +95,11 @@ const {user} = await useUser(props.id)
 const roleList = computed(() => {
   return RoleTypeMap
 })
+
+const logout = async () => {
+  await Api.postLogout()
+  await router.push("/login")
+}
 
 </script>
 

@@ -1,6 +1,7 @@
 package login
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
@@ -29,7 +30,7 @@ func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 	// ゲストログインの処理を実行する
 	if userReq.Uuid != "" {
 		facilitySharedLink := facilitySharedLinkRep.FindByUUID(userReq.Uuid)
-		if facilitySharedLink != nil {
+		if facilitySharedLink.Id != nil {
 			isAuthenticated = true
 			guestId := int32(constants.GuestID)
 			userId = &guestId
