@@ -200,7 +200,7 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
-import {Department, PostTicketMemoIdResponse} from "@/api";
+import {Department, PostTicketMemoIdResponse, Ticket} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
@@ -208,6 +208,7 @@ import dayjs from "dayjs";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {FacilityType} from "@/const/common";
 import {getDefaultPileUps} from "@/composable/pileUps";
+import {postTicketMemoById} from "@/composable/ticket";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -253,7 +254,8 @@ const {
   refreshTicketMemo,
   hasFilter,
   milestones,
-  mutation
+  mutation,
+  updateTicket
 } = ret[1]
 
 const milestoneVerticalLines = computed(() => {
@@ -309,11 +311,17 @@ const closeModalProxy = async () => {
   emit("update")
   closeEditModal()
 }
-const closeTicketMemo = (result: PostTicketMemoIdResponse) => {
-  if (result != undefined) {
-    refreshTicketMemo(modalTicketId.value, result.msg, result.updated_at)
+const closeTicketMemo = async (ticket: Ticket) => {
+  // NOTE: 本当はAsyncEditMemo側で完結させたかったが、ガントチャートに反映させる都合上更新はこっちの方で実行するようにする。
+  try {
+    const result = await postTicketMemoById(ticket.id, ticket.memo, ticket.updated_at)
+    ticket.updated_at = result?.updated_at
+    await updateTicket(ticket)
+    await refreshTicketMemo(ticket.id)
+    closeEditModal()
+  } catch(e) {
+    console.log(e)
   }
-  closeEditModal()
 }
 
 

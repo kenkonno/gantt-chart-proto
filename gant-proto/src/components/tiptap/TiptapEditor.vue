@@ -1,7 +1,7 @@
 <template>
   <div class="tiptap-wrapper">
     <div class="tiptap-toolbar clearfix">
-      <button @click="editor.chain().focus().toggleHeading().run()">H</button>
+      <button @click="editor.chain().focus().toggleHeading({level:1}).run()">H</button>
       <button @click="editor.chain().focus().toggleBold().run()">B</button>
       <button @click="editor.chain().focus().toggleItalic().run()">I</button>
       <button @click="editor.chain().focus().toggleBulletList().run()">・</button>

@@ -303,10 +303,8 @@ export async function useGanttFacility() {
      * 忘れそうなのでメモ。
      * TicketMemoを更新してUpdatedAtを更新しただけだと競合が起きるので、APIから再度取り直す。
      * @param ticketId
-     * @param memo
-     * @param updatedAt
      */
-    const refreshTicketMemo = async (ticketId: number, memo: string, updatedAt: number) => {
+    const refreshTicketMemo = async (ticketId: number) => {
         const target = ticketList.value.find(v => v.id === ticketId)
         if (target == undefined) {
             console.error("チケットが存在しません。")

@@ -51,7 +51,7 @@
       </p>
     </div>
     <div class="editor mt-2">
-      <tiptap-editor v-model="memo"/>
+      <tiptap-editor v-model="ticket.memo"/>
     </div>
     <div class="buttons mt-2" v-if="allowed('UPDATE_TICKET')">
       <button type="submit" class="btn btn-primary" @click="updateTicketMemo()">更新</button>
@@ -60,12 +60,12 @@
 </template>
 
 <script setup lang="ts">
-import {useTicket, postTicketMemoById} from "@/composable/ticket";
-import {inject, onMounted, ref} from "vue";
+import {useTicket} from "@/composable/ticket";
+import {inject} from "vue";
 import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
-import {Api} from "@/api/axios";
 import {allowed} from "@/composable/role";
 import TiptapEditor from "@/components/tiptap/TiptapEditor.vue";
+import {Api} from "@/api/axios";
 
 const {getUnitName, getDepartmentName, getProcessName} = inject(GLOBAL_GETTER_KEY)!
 
@@ -77,24 +77,20 @@ interface AsyncTicketEdit {
 const props = defineProps<AsyncTicketEdit>()
 const emit = defineEmits(['closeEditModal'])
 
+// チケットは memo を通常取り扱わないので２個APIを呼び出している。
 const {ticket} = await useTicket(props.id)
-const memo = ref<string>("")
 const {data} = await Api.getTicketMemoId(ticket.value.id!)
-memo.value = data.memo
+ticket.value.memo = data.memo
+
+
+// TODO: この日付関連はかなり良くないのでだが、負債ということでどこかで治す。
+ticket.value.start_date = ticket.value.start_date?.substring(0, 10)
+ticket.value.end_date = ticket.value.end_date?.substring(0, 10)
+ticket.value.limit_date = ticket.value.limit_date?.substring(0, 10)
 
 const updateTicketMemo = async () => {
-  try {
-    const result = await postTicketMemoById(ticket.value.id!, memo.value, ticket.value.updated_at)
-    emit('closeEditModal', result)
-  } catch (e) {
-    console.warn(e)
-  }
+  emit('closeEditModal', ticket.value)
 }
-
-onMounted(() => {
-  // myQuillEditor.value.setHTML(memo.value)
-})
-
 
 </script>
 
@@ -102,16 +98,19 @@ onMounted(() => {
 label {
   float: left;
 }
-.async-ticket-edit-container{
+
+.async-ticket-edit-container {
   height: 100%;
   display: flex;
   flex-direction: column;
   margin: 10px;
   overflow: scroll;
   width: 100%;
+
   &::-webkit-scrollbar {
     display: none;
   }
+
   -ms-overflow-style: none;
   scrollbar-width: none;
 

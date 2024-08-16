@@ -65,12 +65,16 @@ func (r *ticketRepository) Upsert(m db.Ticket) (db.Ticket, error) {
 		if org.Id != nil && org.UpdatedAt > m.UpdatedAt {
 			return m, connection.NewConflictError()
 		}
+		r.con.Omit("memo").Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "id"}, {Name: "created_at"}},
+			UpdateAll: true,
+		}).Save(&m) // created_atが上書きされるので除外する。またSaveじゃないとUpdatedAtが更新後で取れない
+	} else {
+		r.con.Omit("memo").Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "id"}},
+			UpdateAll: true,
+		}).Create(&m) // 新規の場合はCreateにする。
 	}
-
-	r.con.Omit("memo").Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "id"}},
-		UpdateAll: true,
-	}).Save(&m)
 	return m, nil
 }
 
