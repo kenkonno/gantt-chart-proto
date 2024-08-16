@@ -2,19 +2,19 @@
   <Teleport to="body">
     <div id="overlay" class="overlay-event overlay-on">
       <div class="flex">
-          <div class="modal" tabindex="-1">
-            <div class="modal-dialog" :class="size()">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">{{ title }}</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                          @click="$emit('closeEditModal')"></button>
-                </div>
-                <div class="modal-body">
-                  <slot/>
-                </div>
+        <div class="modal" tabindex="-1">
+          <div class="modal-dialog" :class="size()" :style="fullHeight ? 'height:90%' : ''">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        @click="$emit('closeEditModal')"></button>
+              </div>
+              <div class="modal-body">
+                <slot/>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -25,7 +25,8 @@
 
 interface DefaultModal {
   title: string,
-  size?: string
+  size?: string,
+  fullHeight?: boolean,
 }
 
 const props = defineProps<DefaultModal>()
@@ -45,6 +46,24 @@ const size = () => {
   z-index: 999;
   width: 100%;
   display: block;
+
+  .modal-dialog {
+    max-width: 90%;
+    overflow-y: scroll;
+
+    .modal-content {
+      height: 100%;
+
+      .modal-body {
+        width: 100%;
+
+      }
+
+      .modal-header {
+
+      }
+    }
+  }
 }
 
 .half {
@@ -61,15 +80,6 @@ const size = () => {
   opacity: 0;
   background: rgba(0, 0, 0, 0.6);
   transition: all 0.5s ease-out;
-}
-
-.modal-dialog {
-  max-width: 90%;
-  max-height: 90%;
-  overflow-y: scroll;
-}
-
-.modal-content {
 }
 
 #overlay.overlay-on {

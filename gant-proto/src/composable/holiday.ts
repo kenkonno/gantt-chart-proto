@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostHolidaysRequest, Holiday, Department, Unit} from "@/api";
+import {PostHolidaysRequest, Holiday} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {Emit} from "@/const/common";

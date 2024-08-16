@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="async-ticket-edit-container">
     <div class="d-flex flex-wrap conditions">
       <p>
         <b class="form-label">Id:</b>
@@ -50,10 +50,10 @@
         <span>{{ $filters.unixTimeFormat(ticket.updated_at) }}</span>
       </p>
     </div>
-    <div class="quill-editor">
-      <QuillEditor ref="myQuillEditor" theme="snow" v-model="memo"/>
+    <div class="editor mt-2">
+      <tiptap-editor v-model="memo"/>
     </div>
-    <div class="buttons" v-if="allowed('UPDATE_TICKET')">
+    <div class="buttons mt-2" v-if="allowed('UPDATE_TICKET')">
       <button type="submit" class="btn btn-primary" @click="updateTicketMemo()">更新</button>
     </div>
   </div>
@@ -63,9 +63,9 @@
 import {useTicket, postTicketMemoById} from "@/composable/ticket";
 import {inject, onMounted, ref} from "vue";
 import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
-import {QuillEditor} from "@vueup/vue-quill";
 import {Api} from "@/api/axios";
 import {allowed} from "@/composable/role";
+import TiptapEditor from "@/components/tiptap/TiptapEditor.vue";
 
 const {getUnitName, getDepartmentName, getProcessName} = inject(GLOBAL_GETTER_KEY)!
 
@@ -81,19 +81,18 @@ const {ticket} = await useTicket(props.id)
 const memo = ref<string>("")
 const {data} = await Api.getTicketMemoId(ticket.value.id!)
 memo.value = data.memo
-const myQuillEditor = ref(null)
 
 const updateTicketMemo = async () => {
   try {
-    const result = await postTicketMemoById(ticket.value.id!, myQuillEditor.value.getHTML(), ticket.value.updated_at)
+    const result = await postTicketMemoById(ticket.value.id!, memo.value, ticket.value.updated_at)
     emit('closeEditModal', result)
-  } catch(e) {
+  } catch (e) {
     console.warn(e)
   }
 }
 
 onMounted(() => {
-  myQuillEditor.value.setHTML(memo.value)
+  // myQuillEditor.value.setHTML(memo.value)
 })
 
 
@@ -103,36 +102,40 @@ onMounted(() => {
 label {
   float: left;
 }
-
-.container {
+.async-ticket-edit-container{
+  height: 100%;
   display: flex;
   flex-direction: column;
   margin: 10px;
-  height: 80%;
   overflow: scroll;
-}
+  width: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
-.conditions {
-  border: 1px solid #aaaaaa;
-  border-radius: 10px;
-  flex: 1;
-  min-height: 80px;
+  .conditions {
+    flex-basis: auto;
+    border: 1px solid #aaaaaa;
+    border-radius: 10px;
+    min-height: 80px;
 
-  > p {
-    margin: 5px;
+    > p {
+      margin: 5px;
+    }
+  }
+
+  .editor {
+    flex-grow: 1;
+    flex-basis: 0;
+    overflow: scroll;
   }
 }
 
 .buttons {
-  flex: 1;
+  flex-basis: 50px;
   min-height: 50px;
-  margin-top: 50px;
 }
 
 </style>
-<style>
-.quill-editor, .ql-container, .ql-editor {
-  min-height: 10rem;
-}
-</style>
-

@@ -170,7 +170,7 @@
     ユニットを追加してください。
   </div>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
+    <default-modal title="工程詳細" @close-edit-modal="closeModalProxy" :full-height="true">
       <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId" :facility-id="currentFacilityId"
                          @close-edit-modal="closeTicketMemo"></async-ticket-edit>
     </default-modal>
@@ -200,16 +200,14 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
-import {Department, PostTicketMemoIdResponse, Ticket} from "@/api";
+import {Department, PostTicketMemoIdResponse} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
-import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
 import dayjs from "dayjs";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {FacilityType} from "@/const/common";
 import {getDefaultPileUps} from "@/composable/pileUps";
-import {useGanttAll} from "@/composable/ganttAll";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],

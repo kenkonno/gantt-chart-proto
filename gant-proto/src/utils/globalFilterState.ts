@@ -104,7 +104,7 @@ export const initStateValue = async () => {
  * @param savedFacilityMenu
  */
 const getFacilityMenu = (savedFacilityMenu: any): GanttFacilityHeader[] => {
-    return state.ganttFacilityMenu.map((v, i) => {
+    return state.ganttFacilityMenu.map((v) => {
         const savedValue = savedFacilityMenu.find((vv: any) => vv.name === v.name)
         if (savedValue != undefined) {
             v.visible = savedValue.visible

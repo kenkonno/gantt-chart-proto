@@ -16,12 +16,11 @@
 
 <script setup lang="ts">
 import {computed, inject} from "vue";
-import {GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {useFacilitySharedLink} from "@/composable/facilitySharedLink";
 import Swal from "sweetalert2"
 
 const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
-const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 const {facilitySharedLink} = await useFacilitySharedLink(currentFacilityId)
 
 const sharedLink = computed(() => {

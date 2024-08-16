@@ -118,7 +118,6 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
-import {all} from "axios";
 
 // ローカルストレージの初期化
 initStateValue()

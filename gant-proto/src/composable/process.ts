@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {Milestone, PostProcessesRequest, Process} from "@/api";
+import {PostProcessesRequest, Process} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
