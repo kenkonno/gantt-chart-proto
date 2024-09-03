@@ -33,6 +33,7 @@ services:
   gantt_api:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
+    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/api
     container_name: gantt_api
     ports:
       - "8080:8080"
@@ -44,8 +45,8 @@ services:
         condition: service_started
     build:
       context: .
-      dockerfile: ./docker/api/DockerfileForProvision
-#      dockerfile: ./docker/api/DockerfileForProvision
+#     dockerfile: ./docker/api/DockerfileForProvision
+      dockerfile: ./docker/api/Dockerfile
     env_file: .env
     # フォルダ共有（ホストOS:コンテナ）
     volumes:
@@ -59,10 +60,12 @@ services:
   gantt_migration:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
+    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/migration
     container_name: gantt_migration
     build:
       context: .
-      dockerfile: ./docker/migration/DockerfileForProvision
+      dockerfile: ./docker/migration/Dockerfile
+#      dockerfile: ./docker/migration/DockerfileForProvision
     env_file: .env
     # フォルダ共有（ホストOS:コンテナ）
     volumes:
