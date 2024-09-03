@@ -13,7 +13,6 @@ import (
 func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdResponse {
 
 	facilityRep := repository.NewFacilityRepository()
-	holidayRep := repository.NewHolidayRepository()
 
 	var facilityReq openapi_models.PostFacilitiesRequest
 	if err := c.ShouldBindJSON(&facilityReq); err != nil {
