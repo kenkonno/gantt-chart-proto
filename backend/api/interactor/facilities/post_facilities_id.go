@@ -34,9 +34,6 @@ func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdRespo
 		UpdatedAt:       0,
 	})
 
-	// 祝日の更新
-	holidayRep.InsertByFacilityId(*facilityReq.Facility.Id)
-
 	return openapi_models.PostFacilitiesIdResponse{}
 
 }
