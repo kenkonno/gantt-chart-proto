@@ -90,6 +90,8 @@ docker-compose -p env2 up -d gantt_postgres_2
 docker-compose -p env2 up -d gantt_session_2
 docker-compose -p env2 up -d gantt_api_2
 
+docker-compose -p env2 logs gantt_api_2
+
 docker-compose -p env2 up gantt_migration_2
 
 # AWS環境へbuild
