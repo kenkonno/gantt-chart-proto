@@ -2,7 +2,7 @@
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="gantt-wrapper">
       <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
-           :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}" >
+           :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}">
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -144,7 +144,8 @@
       </div>
       <!-- 山積み部分 -->
       <hr>
-      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement" v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')">
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement"
+           v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')">
         <PileUps
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -229,7 +230,7 @@ const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", false
 const {
   globalStartDate,
   defaultPileUps,
-} =  ret[0]
+} = ret[0]
 
 const {
   bars,
@@ -311,15 +312,16 @@ const closeModalProxy = async () => {
   emit("update")
   closeEditModal()
 }
-const closeTicketMemo = async (ticket: Ticket) => {
+const closeTicketMemo = async (ticket: Ticket, userIds: number[]) => {
   // NOTE: 本当はAsyncEditMemo側で完結させたかったが、ガントチャートに反映させる都合上更新はこっちの方で実行するようにする。
   try {
     const result = await postTicketMemoById(ticket.id, ticket.memo, ticket.updated_at)
     ticket.updated_at = result?.updated_at
     await updateTicket(ticket)
+    await mutation.setTicketUser(ticket, userIds)
     await refreshTicketMemo(ticket.id)
     closeEditModal()
-  } catch(e) {
+  } catch (e) {
     console.log(e)
   }
 }
