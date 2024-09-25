@@ -225,7 +225,7 @@ const cDepartmentList = computed(() => {
   return result
 })
 
-const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", true, facilityTypes), useGanttFacility()])
+const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", false, facilityTypes), useGanttFacility()])
 
 const {
   globalStartDate,

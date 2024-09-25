@@ -230,14 +230,11 @@ resource "aws_launch_template" "api_launch_template" {
   instance_type           = "t2.micro"
   key_name                = var.sshKeyPairName
   vpc_security_group_ids  = var.securityGroupIds
-  user_data = <<DATA
+  user_data = base64encode(<<DATA
 #!/bin/bash
 echo ECS_CLUSTER=${aws_ecs_cluster.api_ecs_cluster.name} >> /etc/ecs/ecs.config;
 DATA
-  # TODO: もしかしてこれだけの問題だったかも。次回構築時に気を付ける。
-  #  #!/bin/bash
-  #  echo ECS_CLUSTER=env-manual-ecs-cluster-2 >> /etc/ecs/ecs.config;
-
+)
   iam_instance_profile {
     arn = aws_iam_instance_profile.ecsInstanceRole.arn
   }
@@ -409,9 +406,6 @@ resource "aws_ecs_cluster" "api_ecs_cluster" {
     value = "disabled"
   }
 }
-resource "aws_ecs_service" "api_ecs_service_wk" {
-
-}
 
 resource "aws_ecs_service" "api_ecs_service" {
   cluster                            = aws_ecs_cluster.api_ecs_cluster.arn
@@ -434,19 +428,20 @@ resource "aws_ecs_service" "api_ecs_service" {
     weight            = 1
   }
 
-  // TODO: 次回デプロイ時に確認。ServiceConnectが設定されていればOK
-  service_connect_options {
-    enabled = true
-    namespace = aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name // epson-prod-namespace
-    service = {
-      client_alias = {
-        port     = 80
-        dns_name = "api-80-tcp.${aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name}"
-      }
-      port_name      = "api-80-tcp"
-      discovery_name = "api-80-tcp"
-    }
-  }
+  // TODO: 次回デプロイ時に確認。ServiceConnectが設定されていればOK なぜかうまくいかない。。。一旦手順に加える
+  // │ Error: creating ECS Service (mds-prod-koteikanri-ecs-service-api): ClientException: Service already exists. (Service: ServiceDiscovery, Status Code: 400, Request ID: d5bb8989-cb64-413f-969f-c85d43f10c75)
+#  service_connect_configuration {
+#    enabled = true
+#    namespace = aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name // epson-prod-namespace
+#    service {
+#      client_alias {
+#        port     = 80
+#        dns_name = "api-80-tcp.${aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name}"
+#      }
+#      port_name      = "api-80-tcp"
+#      discovery_name = "api-80-tcp"
+#    }
+#  }
 
   deployment_circuit_breaker {
     enable   = true

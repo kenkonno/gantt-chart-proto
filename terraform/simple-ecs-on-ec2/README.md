@@ -25,7 +25,17 @@ RDSは対象外です。
 
 ## apply後
  - DBサーバーの構築
+   - パラメータグループで force_ssl を 0 にする
  - Redisサーバーの構築
+   - 何かわからんけどredis oss とかになってつながらなくなった
+   - 独自クラスター、で全部シンプルにして暗号化を全部いいえにすればつながった（たぶんデフォルトで暗号化ＯＮだとクライアント側で対応が必要そう。てかこの辺ＤＢもあるからデフォに改善すべきだな）
+ - Cloudfront
+   - APIGatewayとの連携
+   - /api/*のビヘイビアを指定する
+ - ECS
+   - サービスは作り直さないとなぜかキャパシティプロバイダから発見されなかったので作り直す
+   - サービスコネクトは作り直さないといけなかった。作り直したらAPIGateway側の統合設定も直す。
+   - キャパシティプロバイダが反応しないので手動で作成しなおす。 TODO: terraformから消した方がましかも
  - ECRにコンテナーをpushする
    - ローカルの aws profileに追加する
    - docker-compose.yamlに定義を追加する（不要なものをコメントアウト）
@@ -41,10 +51,18 @@ docker-compose.yamlにECRの定義を追加すれば ログイン・build・push
 
 $ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com
+$ aws ecr get-login-password --region ap-northeast-1 --profile=mds-prod | docker login --username AWS --password-stdin 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com
 Login Succeeded
 docker-compose build
 docker-compose push
 
+# MDS構築時のメモ
+なんか色々上手くいかなくなっている。
+結局手動でやってりうので上手くいかなかったところはterraformから一旦外した方が便利になりそう。
+- オートスケーリング
+- サービスコネクト
+- redisのSSL
+- DBのSSL
 
 # 運用について
 TOBE: まとめていく。現状だとフロントはmasterへpush。バックエンドはbuild後各ECRへpushしてサービスから今日再デプロイをする必要がある。
