@@ -24,6 +24,22 @@ func main() {
 	migrate(db.Ticket{})
 	migrate(db.Milestone{})
 	migrate(db.FacilitySharedLink{})
+	migrate(db.SimulationLock{})
+
+	// simulation
+	migrate(db.SimulationDepartment{})
+	migrate(db.SimulationFacility{})
+	migrate(db.SimulationHoliday{})
+	migrate(db.SimulationOperationSetting{})
+	migrate(db.SimulationProcess{})
+	migrate(db.SimulationUnit{})
+	migrate(db.SimulationUser{})
+	migrate(db.SimulationGanttGroup{})
+	migrate(db.SimulationTicketUser{})
+	migrate(db.SimulationTicket{})
+	migrate(db.SimulationMilestone{})
+	migrate(db.SimulationFacilitySharedLink{})
+
 	createDefaultUser()
 }
 

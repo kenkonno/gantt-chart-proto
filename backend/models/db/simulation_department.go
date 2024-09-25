@@ -2,7 +2,7 @@ package db
 
 import "time"
 
-type Department struct {
+type SimulationDepartment struct {
 	Id    *int32 `gorm:"primaryKey;autoIncrement"`
 	Name  string
 	Order int
@@ -10,4 +10,3 @@ type Department struct {
 	CreatedAt time.Time
 	UpdatedAt int32
 }
-

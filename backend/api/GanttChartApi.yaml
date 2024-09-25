@@ -1003,6 +1003,71 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostFacilitySharedLinksRequest'
+  /api/simulation:
+    post:
+      summary: PostSimulation
+      operationId: post-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostSimulationRequest'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+    get:
+      summary: ''
+      operationId: get-api-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetSimulationRequest'
+    put:
+      summary: ''
+      operationId: put-api-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutSimulationRequest'
+    delete:
+      summary: ''
+      operationId: delete-api-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteSimulationRequest'
 components:
   schemas:
     User:
@@ -2555,3 +2620,55 @@ components:
       properties:
         facilitySharedLink:
           $ref: '#/components/schemas/FacilitySharedLink'
+    SimulationLock:
+      title: SimulationLock
+      type: object
+      properties:
+        simulationName:
+          type: integer
+        status:
+          type: string
+        lockedAt:
+          type: string
+          format: date-time
+        lockedBy:
+          type: integer
+      required:
+        - simulationName
+        - status
+        - lockedAt
+        - lockedBy
+    GetSimulationRequest:
+      title: GetSimulationRequest
+      type: object
+    GetSimulationResponse:
+      title: GetSimulationResponse
+      type: object
+      properties:
+        simulationLock:
+          $ref: '#/components/schemas/SimulationLock'
+      required:
+        - simulationLock
+    PostSimulationRequest:
+      title: PostSimulationRequest
+      type: object
+    PostSimulationResponse:
+      title: PostSimulationResponse
+      type: object
+    PutSimulationRequest:
+      title: PutSimulationRequest
+      type: object
+      properties:
+        mode:
+          type: string
+      required:
+        - mode
+    PutSimulationResponse:
+      title: PutSimulationResponse
+      type: object
+    DeleteSimulationRequest:
+      title: DeleteSimulationRequest
+      type: object
+    DeleteSimulationResponse:
+      title: DeleteSimulationResponse
+      type: object
