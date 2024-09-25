@@ -4,11 +4,9 @@ import '@vueform/multiselect/themes/default.css'
 import 'tippy.js/dist/tippy.css' // optional for styling
 import "vue3-colorpicker/style.css";
 import 'vue-final-modal/style.css'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
-
-
 
 import '@kouts/vue-modal/dist/vue-modal.css'
+
 
 import {createApp} from 'vue'
 import App from './App.vue'

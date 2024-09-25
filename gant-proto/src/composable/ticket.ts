@@ -68,15 +68,13 @@ export async function postTicket(ticket: Ticket, emit: Emit) {
     })
 }
 
-export async function postTicketById(ticket: Ticket, emit: Emit) {
+export async function postTicketById(ticket: Ticket) {
     const req: PostTicketsRequest = {
         ticket: ticket
     }
     if (ticket.id != null) {
         await Api.postTicketsId(ticket.id, req).then(() => {
             toast("成功しました。")
-        }).finally(() => {
-            emit('closeEditModal')
         })
     }
 }

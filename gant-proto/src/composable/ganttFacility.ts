@@ -303,10 +303,8 @@ export async function useGanttFacility() {
      * 忘れそうなのでメモ。
      * TicketMemoを更新してUpdatedAtを更新しただけだと競合が起きるので、APIから再度取り直す。
      * @param ticketId
-     * @param memo
-     * @param updatedAt
      */
-    const refreshTicketMemo = async (ticketId: number, memo: string, updatedAt: number) => {
+    const refreshTicketMemo = async (ticketId: number) => {
         const target = ticketList.value.find(v => v.id === ticketId)
         if (target == undefined) {
             console.error("チケットが存在しません。")
@@ -372,20 +370,6 @@ export async function useGanttFacility() {
                 const newTicket = await updateTicket(clone)
                 refreshTicket(newTicket!)
             }
-        }
-    }
-
-    // モデル情報をガントチャート（bars）に反映させる
-    const reflectTicketToGantt = (ticket: Ticket) => {
-        const targetTicket = bars.value.find(v => v.ganttBarConfig.id! === ticket.id!.toString())
-        if (!targetTicket) {
-            console.error(`TicketID: ${ticket.id} が現在のガントに存在しません。`, bars)
-        } else {
-            // パフォーマンスのためにガントチャートに反映すべきものは特別にここで記述する
-            targetTicket.beginDate = dayjs(ticket.start_date!).format(DAYJS_FORMAT)
-            targetTicket.endDate = endOfDay(ticket.end_date!)
-            targetTicket.ganttBarConfig.progress = ticket.progress_percent ? ticket.progress_percent : targetTicket.ganttBarConfig.progress = 0
-            targetTicket.ganttBarConfig.label = getProcessName(ticket.process_id == null ? -1 : ticket.process_id)
         }
     }
 
@@ -618,21 +602,6 @@ export async function useGanttFacility() {
     }
 }
 
-
-/**
- * 祝日を除く期間の日数を返却する
- * @param row
- * @param holidays
- */
-function getNumberOfDays(row: GanttRow, holidays: Holiday[]) {
-    const dayjsStartDate = dayjs(row.ticket?.start_date)
-    const dayjsEndDate = dayjs(row.ticket?.end_date)
-    const numberOfHolidays = holidays.filter(v => {
-        return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
-    })
-    const numberOfDays = dayjsEndDate.diff(dayjsStartDate, 'day') + 1
-    return numberOfDays - numberOfHolidays.length
-}
 
 
 const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGroup: GanttGroup) => {

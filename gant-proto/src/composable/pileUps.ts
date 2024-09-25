@@ -64,13 +64,6 @@ export type PileUpFilter = {
     noOrdersReceivedPileUp: boolean
 }
 
-type DisplayPileUp = {
-    labels: string[],
-    // styles?: StyleValue[], TODO: なぜか StyleValue[] だと再起的な何とかでlintエラーになるので一旦any
-    styles?: any[]
-    hasError: boolean
-}
-
 const PILEUP_DANGER_COLOR = "rgb(255 89 89)"
 const PILEUP_MERGE_COLOR = "rgb(68 141 255)"
 
@@ -141,7 +134,7 @@ function initPileUps(
     // マージし始めるindexを計算する
     if (globalStartDate != null) {
         const mergeStartIndex = dayjs(startDate).diff(dayjs(globalStartDate), 'day');
-        pileUps.value.forEach((row, i) => {
+        pileUps.value.forEach((row) => {
             // 部署のマージ
             const target = defaultPileUps.find(v => v.departmentId === row.departmentId);
             if (target == undefined) return console.warn("departmentId is not exists", row.departmentId)
@@ -237,21 +230,7 @@ export const usePileUps = (
     window.addEventListener("beforeunload", saveFilter)
 
     let refreshPileUpByPersonExclusive = false
-    watch(displayType, (newValue) => {
-        console.log("############## watch displayType")
-    },  {deep:true});
-    watch(tickets, (oldValue, newValue) => {
-        console.log("############## watch tickets")
-    },  {deep:true});
-    watch(ticketUsers, (oldValue, newValue)=> {
-        console.log("############## watch ticketUsers")
-    },  {deep:true});
-    watch(holidays, (oldValue, newValue) => {
-        console.log("############## watch holidays")
-    },  {deep:true});
-
     watch([displayType, tickets, ticketUsers,holidays], () => {
-        console.log("############## watch refreshPileUps", [displayType, tickets, ticketUsers, holidays])
         refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？
     }, {
         deep: true
@@ -414,7 +393,7 @@ export const usePileUps = (
      * @param workHour
      */
     const allocateWorkingHours = (rows: PileUpRow[], summaryRows: PileUpRow[][], rowErrorFunc: (v: number) => boolean, summaryLimit: number[], validIndexes: number[], estimate: number, workHour: number) => {
-        validIndexes.forEach((validIndex, index) => {
+        validIndexes.forEach((validIndex) => {
             rows.forEach((v, i) => {
                 if (estimate < 0) {
                     return

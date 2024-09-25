@@ -2,7 +2,7 @@
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="gantt-wrapper">
       <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
-           :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}" >
+           :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}">
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -144,7 +144,8 @@
       </div>
       <!-- 山積み部分 -->
       <hr>
-      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement" v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')">
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement"
+           v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')">
         <PileUps
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -170,7 +171,7 @@
     ユニットを追加してください。
   </div>
   <Suspense v-if="modalIsOpen">
-    <default-modal title="工程詳細" @close-edit-modal="closeModalProxy">
+    <default-modal title="工程詳細" @close-edit-modal="closeModalProxy" :full-height="true">
       <async-ticket-edit :id="modalTicketId" :unit-id="modalUnitId" :facility-id="currentFacilityId"
                          @close-edit-modal="closeTicketMemo"></async-ticket-edit>
     </default-modal>
@@ -204,12 +205,11 @@ import {Department, PostTicketMemoIdResponse, Ticket} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";
-import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
 import dayjs from "dayjs";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {FacilityType} from "@/const/common";
 import {getDefaultPileUps} from "@/composable/pileUps";
-import {useGanttAll} from "@/composable/ganttAll";
+import {postTicketMemoById} from "@/composable/ticket";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -230,7 +230,7 @@ const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", false
 const {
   globalStartDate,
   defaultPileUps,
-} =  ret[0]
+} = ret[0]
 
 const {
   bars,
@@ -255,7 +255,8 @@ const {
   refreshTicketMemo,
   hasFilter,
   milestones,
-  mutation
+  mutation,
+  updateTicket
 } = ret[1]
 
 const milestoneVerticalLines = computed(() => {
@@ -311,11 +312,18 @@ const closeModalProxy = async () => {
   emit("update")
   closeEditModal()
 }
-const closeTicketMemo = (result: PostTicketMemoIdResponse) => {
-  if (result != undefined) {
-    refreshTicketMemo(modalTicketId.value, result.msg, result.updated_at)
+const closeTicketMemo = async (ticket: Ticket, userIds: number[]) => {
+  // NOTE: 本当はAsyncEditMemo側で完結させたかったが、ガントチャートに反映させる都合上更新はこっちの方で実行するようにする。
+  try {
+    const result = await postTicketMemoById(ticket.id, ticket.memo, ticket.updated_at)
+    ticket.updated_at = result?.updated_at
+    await updateTicket(ticket)
+    await mutation.setTicketUser(ticket, userIds)
+    await refreshTicketMemo(ticket.id)
+    closeEditModal()
+  } catch (e) {
+    console.log(e)
   }
-  closeEditModal()
 }
 
 

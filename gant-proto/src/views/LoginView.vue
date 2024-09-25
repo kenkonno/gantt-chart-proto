@@ -25,7 +25,6 @@
         </div>
       </form>
     </div>
-    <!-- end:Main Form -->
   </div>
 </template>
 

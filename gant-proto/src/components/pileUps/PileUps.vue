@@ -149,12 +149,11 @@
 <script setup lang="ts">
 import {GGanttChart, GGanttLabelRow} from "@infectoone/vue-ganttastic";
 import GanttTd from "@/components/gantt/GanttTd.vue";
-import {computed, ComputedRef, inject, onMounted, ref, StyleValue, toRefs, toValue, watch} from "vue";
-import {getDefaultPileUps, usePileUps} from "@/composable/pileUps";
+import {computed, ComputedRef, inject, onMounted, ref, StyleValue, toRefs} from "vue";
+import {usePileUps} from "@/composable/pileUps";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Holiday, Ticket, TicketUser} from "@/api";
 import {GLOBAL_GETTER_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {Tippy} from "vue-tippy";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {useSyncScrollY} from "@/composable/syncWidth";
 import {VerticalLine} from "@infectoone/vue-ganttastic/lib_types/types";
@@ -255,14 +254,6 @@ onMounted(() => {
   emit("onMounted")
 })
 
-const updateDepartmentFilter = (departmentId: number) => {
-  selectedUser.value = undefined
-  selectedDepartment.value = departmentId
-}
-const updateUserFilter = (userId: number | undefined) => {
-  selectedDepartment.value = undefined
-  selectedUser.value = userId
-}
 
 const gGanttChartRef = ref<HTMLDivElement>() // ガントチャート本体
 useSyncScrollY(gGanttChartRef, gGanttChartRef)

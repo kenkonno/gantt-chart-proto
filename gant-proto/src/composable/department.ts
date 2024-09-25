@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostDepartmentsRequest, Department, Facility} from "@/api";
+import {PostDepartmentsRequest, Department} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";

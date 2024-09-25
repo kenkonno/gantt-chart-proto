@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostMilestonesRequest, Milestone, Unit} from "@/api";
+import {PostMilestonesRequest, Milestone} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 

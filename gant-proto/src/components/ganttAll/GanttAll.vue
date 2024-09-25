@@ -166,7 +166,6 @@ import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
 import {FacilityType} from "@/const/common";
 import GreenCheck from "@/components/icon/GreenCheck.vue";
-import {progressFormat} from "@/utils/filters";
 import {Ticket, TicketUser} from "@/api";
 import {getDefaultPileUps} from "@/composable/pileUps";
 
