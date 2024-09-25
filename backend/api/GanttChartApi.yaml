@@ -1025,7 +1025,7 @@ paths:
               properties: {}
     get:
       summary: ''
-      operationId: get-api-simulation
+      operationId: get-simulation
       responses:
         '200':
           description: OK
@@ -1040,7 +1040,7 @@ paths:
               $ref: '#/components/schemas/GetSimulationRequest'
     put:
       summary: ''
-      operationId: put-api-simulation
+      operationId: put-simulation
       responses:
         '200':
           description: OK
@@ -1055,7 +1055,7 @@ paths:
               $ref: '#/components/schemas/PutSimulationRequest'
     delete:
       summary: ''
-      operationId: delete-api-simulation
+      operationId: delete-simulation
       responses:
         '200':
           description: OK
@@ -2652,9 +2652,15 @@ components:
     PostSimulationRequest:
       title: PostSimulationRequest
       type: object
+      properties:
+        '':
+          type: string
     PostSimulationResponse:
       title: PostSimulationResponse
       type: object
+      properties:
+        '':
+          type: string
     PutSimulationRequest:
       title: PutSimulationRequest
       type: object
@@ -2666,9 +2672,18 @@ components:
     PutSimulationResponse:
       title: PutSimulationResponse
       type: object
+      properties:
+        '':
+          type: string
     DeleteSimulationRequest:
       title: DeleteSimulationRequest
       type: object
+      properties:
+        '':
+          type: string
     DeleteSimulationResponse:
       title: DeleteSimulationResponse
       type: object
+      properties:
+        '':
+          type: string
