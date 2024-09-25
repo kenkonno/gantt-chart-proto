@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/connection"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
-var con = repository.GetConnection()
+var con = connection.GetConnection()
 
 func main() {
 	migrate(db.Department{})
@@ -22,6 +23,7 @@ func main() {
 	migrate(db.TicketUser{})
 	migrate(db.Ticket{})
 	migrate(db.Milestone{})
+	migrate(db.FacilitySharedLink{})
 	createDefaultUser()
 }
 

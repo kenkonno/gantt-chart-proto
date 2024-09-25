@@ -33,7 +33,7 @@ services:
   gantt_api:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
-    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/api
+#    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/api
     container_name: gantt_api
     ports:
       - "8080:8080"
@@ -45,7 +45,6 @@ services:
         condition: service_started
     build:
       context: .
-#     dockerfile: ./docker/api/DockerfileForProvision
       dockerfile: ./docker/api/Dockerfile
     env_file: .env
     # フォルダ共有（ホストOS:コンテナ）
@@ -60,7 +59,7 @@ services:
   gantt_migration:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
-    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/migration
+#    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/migration
     container_name: gantt_migration
     build:
       context: .
@@ -73,13 +72,13 @@ services:
     # docker-compose run 実行時に実行されるコマンド
     tty:
       true
-#    command: go run ./main.go
+    #    command: go run ./main.go
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
   # postgres サービス
   gantt_session:
-#    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_postgres
+    #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_postgres
     # コンテナの名前
     container_name: gantt_session
     # Dockerfile のディレクトリパス

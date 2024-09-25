@@ -11,25 +11,27 @@ package openapi
 
 import (
 
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/logout"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -48,6 +50,13 @@ func DeleteDepartmentsId(c *gin.Context) {
 func DeleteFacilitiesId(c *gin.Context) {
 	var r openapi_models.DeleteFacilitiesIdResponse
 	r = facilities.DeleteFacilitiesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// DeleteFacilitySharedLinksId - DeleteFacilitySharedLinksId
+func DeleteFacilitySharedLinksId(c *gin.Context) {
+	var r openapi_models.DeleteFacilitySharedLinksIdResponse
+	r = facility_shared_links.DeleteFacilitySharedLinksIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 
@@ -153,6 +162,20 @@ func GetFacilities(c *gin.Context) {
 func GetFacilitiesId(c *gin.Context) {
 	var r openapi_models.GetFacilitiesIdResponse
 	r = facilities.GetFacilitiesIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetFacilitySharedLinks - GetFacilitySharedLinks
+func GetFacilitySharedLinks(c *gin.Context) {
+	var r openapi_models.GetFacilitySharedLinksResponse
+	r = facility_shared_links.GetFacilitySharedLinksInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// GetFacilitySharedLinksId - GetFacilitySharedLinksId
+func GetFacilitySharedLinksId(c *gin.Context) {
+	var r openapi_models.GetFacilitySharedLinksIdResponse
+	r = facility_shared_links.GetFacilitySharedLinksIdInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 
@@ -338,6 +361,20 @@ func PostFacilitiesId(c *gin.Context) {
 	c.JSON(http.StatusOK, r)
 }
 
+// PostFacilitySharedLinks - PostFacilitySharedLinks
+func PostFacilitySharedLinks(c *gin.Context) {
+	var r openapi_models.PostFacilitySharedLinksResponse
+	r = facility_shared_links.PostFacilitySharedLinksInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostFacilitySharedLinksId - PostFacilitySharedLinksId
+func PostFacilitySharedLinksId(c *gin.Context) {
+	var r openapi_models.PostFacilitySharedLinksIdResponse
+	r = facility_shared_links.PostFacilitySharedLinksIdInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
 // PostGanttGroups - PostGanttGroups
 func PostGanttGroups(c *gin.Context) {
 	var r openapi_models.PostGanttGroupsResponse
@@ -370,6 +407,13 @@ func PostHolidaysId(c *gin.Context) {
 func PostLogin(c *gin.Context) {
 	var r openapi_models.PostLoginResponse
 	r = login.PostLoginInvoke(c)
+	c.JSON(http.StatusOK, r)
+}
+
+// PostLogout - 
+func PostLogout(c *gin.Context) {
+	var r openapi_models.PostLogoutResponse
+	r = logout.PostLogoutInvoke(c)
 	c.JSON(http.StatusOK, r)
 }
 

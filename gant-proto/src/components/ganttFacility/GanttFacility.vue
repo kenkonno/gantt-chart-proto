@@ -320,6 +320,7 @@ const closeTicketMemo = (result: PostTicketMemoIdResponse) => {
 
 
 const openTicketDetail = (ticketId: number, unitId: number) => {
+  if (!allowed('UPDATE_PROGRESS')) return
   modalTicketId.value = ticketId
   modalUnitId.value = unitId
   modalIsOpen.value = true

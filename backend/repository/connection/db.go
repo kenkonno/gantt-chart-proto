@@ -1,4 +1,4 @@
-package repository
+package connection
 
 import (
 	"fmt"
@@ -11,6 +11,9 @@ import (
 
 var con *gorm.DB
 
+func GetCon() *gorm.DB {
+	return con
+}
 func init() {
 
 	fmt.Println("INITIALIZE DB CONNECTION")
@@ -41,7 +44,7 @@ func Commit() {
 	con.Commit()
 }
 
-func createInParam(arrStr []string) string {
+func CreateInParam(arrStr []string) string {
 	return "(" + strings.Join(lo.Map(arrStr, func(item string, index int) string {
 		return fmt.Sprintf("'%s'", item)
 	}), ",") + ")"
