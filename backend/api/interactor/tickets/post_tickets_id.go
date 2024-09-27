@@ -3,6 +3,7 @@ package tickets
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -13,7 +14,7 @@ import (
 
 func PostTicketsIdInvoke(c *gin.Context) openapi_models.PostTicketsIdResponse {
 
-	ticketRep := repository.NewTicketRepository()
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 
 	var ticketReq openapi_models.PostTicketsRequest
 	if err := c.ShouldBindJSON(&ticketReq); err != nil {

@@ -12,7 +12,7 @@ import (
 )
 
 func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
-	facilityRep := repository.NewFacilityRepository()
+	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
 
 	facilityList := facilityRep.FindAll([]string{}, []string{})
 

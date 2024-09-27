@@ -2625,7 +2625,7 @@ components:
       type: object
       properties:
         simulationName:
-          type: integer
+          type: string
         status:
           type: string
         lockedAt:

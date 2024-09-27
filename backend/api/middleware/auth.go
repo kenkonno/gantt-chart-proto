@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/simulation"
 	"github.com/samber/lo"
 	"net/http"
 	"os"
@@ -63,7 +64,11 @@ func isValidToken(sessionID string) bool {
 	return result != ""
 }
 
-func GetUserId(sessionID string) *int32 {
+func GetUserId(c *gin.Context) *int32 {
+	sessionID, err := c.Cookie("session_id")
+	if err != nil || sessionID == "" {
+		return nil
+	}
 	result, err := redisClient.Get(sessionID).Result()
 	if err != nil {
 		return nil
@@ -81,11 +86,7 @@ func UpdateSessionID(sessionID string, userId int32) {
 }
 
 func IsGuest(c *gin.Context) bool {
-	sessionID, err := c.Cookie("session_id")
-	if err != nil {
-		return false
-	}
-	userId := GetUserId(sessionID)
+	userId := GetUserId(c)
 	if userId != nil && *userId == constants.GuestID {
 		return true
 	}
@@ -97,4 +98,25 @@ func ClearSession(sessionID string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// GetRepositoryMode リポジトリーのモードを返却する。ここでやらないほうがいいかも？
+func GetRepositoryMode(c *gin.Context) []string {
+	// このキャッシュは１リクエスト間で有効
+	cache, exists := c.Get("repository_mode")
+	if exists {
+		return cache.([]string)
+	}
+
+	var result []string
+	if IsGuest(c) {
+		result = append(result, constants.RepositoryModeGuest)
+	}
+	simulationLock := simulation.NewSimulationLock().Find(constants.SimulateTypeSchedule)
+	userId := GetUserId(c)
+	if userId != nil && simulationLock.LockedBy == *userId && simulationLock.Status == constants.SimulateStatusInProgress {
+		result = append(result, constants.RepositoryModeSimulation)
+	}
+	c.Set("repository_mode", result)
+	return result
 }

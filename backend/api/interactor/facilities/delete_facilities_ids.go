@@ -2,6 +2,7 @@ package facilities
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -11,9 +12,9 @@ import (
 
 func DeleteFacilitiesIdInvoke(c *gin.Context) openapi_models.DeleteFacilitiesIdResponse {
 
-	facilityRep := repository.NewFacilityRepository()
-	ticketRep := repository.NewTicketRepository()
-	ganttGroupRep := repository.NewGanttGroupRepository()
+	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
+	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

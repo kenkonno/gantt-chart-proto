@@ -2,6 +2,7 @@ package copy_facilitys
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -13,12 +14,12 @@ import (
 func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysResponse {
 
 	// 案件のコピーを実施する
-	facilityRep := repository.NewFacilityRepository()
-	ganttGroupRep := repository.NewGanttGroupRepository()
-	unitRep := repository.NewUnitRepository()
-	ticketRep := repository.NewTicketRepository()
-	holidayRep := repository.NewHolidayRepository()
-	operationSettingRep := repository.NewOperationSettingRepository()
+	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
+	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
+	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
+	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
+	operationSettingRep := repository.NewOperationSettingRepository(middleware.GetRepositoryMode(c)...)
 
 	var copyFacilityReq openapi_models.PostCopyFacilitysRequest
 	if err := c.ShouldBindJSON(&copyFacilityReq); err != nil {

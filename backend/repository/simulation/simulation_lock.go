@@ -31,7 +31,7 @@ func (r *simulationLockRepository) FindAll() []db.SimulationLock {
 func (r *simulationLockRepository) Find(simulationName string) db.SimulationLock {
 	var simulationLock db.SimulationLock
 
-	result := r.con.First(&simulationLock, simulationName)
+	result := r.con.Find(&simulationLock, "simulation_name = ?", simulationName)
 	if result.Error != nil {
 		panic(result.Error)
 	}

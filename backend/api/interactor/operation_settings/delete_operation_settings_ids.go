@@ -2,6 +2,7 @@ package operation_settings
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
@@ -9,7 +10,7 @@ import (
 
 func DeleteOperationSettingsIdInvoke(c *gin.Context) openapi_models.DeleteOperationSettingsIdResponse {
 
-	operationSettingRep := repository.NewOperationSettingRepository()
+	operationSettingRep := repository.NewOperationSettingRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

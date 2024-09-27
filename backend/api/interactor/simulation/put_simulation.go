@@ -2,36 +2,33 @@ package simulation
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
-	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
-	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"net/http"
-	"strings"
-	"time"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/simulation"
 )
 
+// PutSimulationInvoke モードにより切り替える。シミュレーションを再開する or シミュレーションを保留する
 func PutSimulationInvoke(c *gin.Context) openapi_models.PutSimulationResponse {
 
-	facilityRep := repository.NewFacilityRepository()
-
-	var facilityReq openapi_models.PostFacilitiesRequest
-	if err := c.ShouldBindJSON(&facilityReq); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		panic(err)
+	req := openapi_models.PutSimulationRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"message": "Invalid request body"})
+		return openapi_models.PutSimulationResponse{}
 	}
 
-	facilityRep.Upsert(db.Facility{
-		Id:              facilityReq.Facility.Id,
-		Name:            strings.TrimSpace(facilityReq.Facility.Name),
-		TermFrom:        facilityReq.Facility.TermFrom,
-		TermTo:          facilityReq.Facility.TermTo,
-		Order:           int(facilityReq.Facility.Order),
-		Status:          facilityReq.Facility.Status,
-		Type:            facilityReq.Facility.Type,
-		ShipmentDueDate: facilityReq.Facility.ShipmentDueDate,
-		CreatedAt:       time.Time{},
-		UpdatedAt:       0,
-	})
+	simulationRep := simulation.NewSimulationLock()
+	simulationLock := simulationRep.Find(constants.SimulateTypeSchedule)
+
+
+	if req.Mode == "pending" {
+		simulationLock.Status = constants.SimulateStatusPending
+	}
+
+	if req.Mode == "Resume" {
+		simulationLock.Status = constants.SimulateStatusInProgress
+	}
+
+	simulationRep.Upsert(simulationLock)
 
 	return openapi_models.PutSimulationResponse{}
 

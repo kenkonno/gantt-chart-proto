@@ -2,6 +2,7 @@ package tickets
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -10,7 +11,7 @@ import (
 )
 
 func GetTicketsInvoke(c *gin.Context) openapi_models.GetTicketsResponse {
-	ticketRep := repository.NewTicketRepository()
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 
 	// TODO: メモ疲れたのでもうやめ。不要なAPIは有りそうなので精査する。unit追加時に gantt_groupsも追加するようにした。（そもそもこれもイランかもしれんけど・・
 	// TODO: 画面からgantt_groupsと tickets, units のAPIコールして描画するところまで頑張ってやってください。

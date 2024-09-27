@@ -2,6 +2,7 @@ package departments
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -9,7 +10,7 @@ import (
 )
 
 func GetDepartmentsInvoke(c *gin.Context) openapi_models.GetDepartmentsResponse {
-	departmentRep := repository.NewDepartmentRepository()
+	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
 
 	departmentList := departmentRep.FindAll()
 

@@ -2,6 +2,7 @@ package holidays
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -12,7 +13,7 @@ import (
 
 func PostHolidaysInvoke(c *gin.Context) openapi_models.PostHolidaysResponse {
 
-	holidayRep := repository.NewHolidayRepository()
+	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 
 	// TODO: HolidayRequestの binding:"min=1"を消す。 skeltonのyaml生成を見直す。
 	var holidayReq openapi_models.PostHolidaysRequest

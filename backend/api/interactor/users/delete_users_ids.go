@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
@@ -9,8 +10,8 @@ import (
 
 func DeleteUsersIdInvoke(c *gin.Context) openapi_models.DeleteUsersIdResponse {
 
-	userRep := repository.NewUserRepository()
-	ticketUserRep := repository.NewTicketUserRepository()
+	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
+	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

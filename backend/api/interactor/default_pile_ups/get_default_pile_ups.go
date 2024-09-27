@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -17,10 +18,10 @@ import (
 const errorStyle = "rgb(255 89 89)"
 
 func GetDefaultPileUpsInvoke(c *gin.Context) openapi_models.GetDefaultPileUpsResponse {
-	pileUpsRep := repository.NewPileUpsRepository()
-	facilityRep := repository.NewFacilityRepository()
-	departmentRep := repository.NewDepartmentRepository()
-	userRep := repository.NewUserRepository()
+	pileUpsRep := repository.NewPileUpsRepository(middleware.GetRepositoryMode(c)...)
+	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
+	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
+	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
 	excludeFacilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {

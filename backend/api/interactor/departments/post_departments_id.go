@@ -2,6 +2,7 @@ package departments
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -12,7 +13,7 @@ import (
 
 func PostDepartmentsIdInvoke(c *gin.Context) openapi_models.PostDepartmentsIdResponse {
 
-	departmentRep := repository.NewDepartmentRepository()
+	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
 
 	var departmentReq openapi_models.PostDepartmentsRequest
 	if err := c.ShouldBindJSON(&departmentReq); err != nil {

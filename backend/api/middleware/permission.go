@@ -78,17 +78,12 @@ var rolesNeeded = map[string][]string{
 	"POST /api/users/:id":             {constants.RoleAdmin, constants.RoleManager},
 }
 
-func getRolesFromToken(sessionID string) []string {
-	userId := GetUserId(sessionID)
-	userRep := repository.NewUserRepository()
-	if userId != nil {
-		if *userId == constants.GuestID {
-			userRep = repository.NewUserRepository(repository.GuestMode)
-		}
-		user := userRep.Find(*userId)
-		return []string{user.Role}
-	}
-	return []string{}
+func getRolesFromToken(c *gin.Context) []string {
+
+	userId := GetUserId(c)
+	userRep := repository.NewUserRepository(GetRepositoryMode(c)...)
+	user := userRep.Find(*userId)
+	return []string{user.Role}
 }
 
 func RoleBasedAccessControl() gin.HandlerFunc {
@@ -106,8 +101,7 @@ func RoleBasedAccessControl() gin.HandlerFunc {
 			return
 		}
 
-		sessionID, _ := c.Cookie("session_id")
-		userRoles := getRolesFromToken(sessionID)
+		userRoles := getRolesFromToken(c)
 
 		for _, userRole := range userRoles {
 			for _, requiredRole := range requiredRoles {

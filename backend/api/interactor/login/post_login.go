@@ -14,8 +14,8 @@ import (
 
 func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 
-	userRep := repository.NewUserRepository()
-	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository()
+	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
+	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
 	var userReq openapi_models.PostLoginRequest
 	if err := c.ShouldBindJSON(&userReq); err != nil {

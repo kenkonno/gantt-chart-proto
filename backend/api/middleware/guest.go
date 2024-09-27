@@ -34,7 +34,7 @@ func GuestAccessControl() gin.HandlerFunc {
 		facilityId, _ := strconv.Atoi(facilityIdStr)
 
 		// facilityIdが関連するリクエストなら整合性チェックをする。
-		facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository()
+		facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(GetRepositoryMode(c)...)
 		facilitySharedLink := facilitySharedLinkRep.FindByUUID(uuid)
 
 		if facilitySharedLink.FacilityId != int32(facilityId) {

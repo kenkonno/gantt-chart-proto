@@ -3,6 +3,7 @@ package facility_shared_links
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -12,7 +13,7 @@ import (
 
 // facilityIdをもとに取得する
 func GetFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.GetFacilitySharedLinksIdResponse {
-	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository()
+	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
 	// REST的にはおかしいが、工数簡略化のためidパラメータをfacilityIdとして利用する。
 	id, err := strconv.Atoi(c.Param("id"))
