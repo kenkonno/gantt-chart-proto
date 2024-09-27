@@ -24,7 +24,7 @@ func PutSimulationInvoke(c *gin.Context) openapi_models.PutSimulationResponse {
 		simulationLock.Status = constants.SimulateStatusPending
 	}
 
-	if req.Mode == "Resume" {
+	if req.Mode == "resume" {
 		simulationLock.Status = constants.SimulateStatusInProgress
 	}
 

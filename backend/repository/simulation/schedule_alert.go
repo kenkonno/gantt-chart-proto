@@ -41,8 +41,8 @@ func (r *scheduleAlertRepository) FindAll() []db.ScheduleAlert {
 				LEFT JOIN
 			simulation_operation_settings
 			ON
-						simulation_operation_settings.unit_id = units.id
-					AND simulation_operation_settings.process_id = processes.id
+						simulation_operation_settings.unit_id = simulation_units.id
+					AND simulation_operation_settings.process_id = simulation_processes.id
 		ORDER BY simulation_units.id, simulation_processes.id
 	), target_tickets AS (
 		SELECT

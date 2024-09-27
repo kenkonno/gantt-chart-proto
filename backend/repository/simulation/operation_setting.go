@@ -73,12 +73,12 @@ func (r *operationSettingRepository) FindByFacilityId(facilityId int32) []db.Ope
 	LEFT JOIN
 		simulation_operation_settings
 	ON
-		simulation_operation_settings.unit_id = units.id
-	AND simulation_operation_settings.process_id = processes.id
+		simulation_operation_settings.unit_id = simulation_units.id
+	AND simulation_operation_settings.process_id = simulation_processes.id
 	AND simulation_operation_settings.facility_id = %d
 	WHERE
 		simulation_units.facility_id = %d
-	ORDER BY simulation_units.id, processes.id
+	ORDER BY simulation_units.id, simulation_processes.id
 	`, facilityId, facilityId, facilityId)).Scan(&results)
 	return results
 }

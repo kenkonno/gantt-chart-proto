@@ -40,7 +40,7 @@ func (r *simulationLockRepository) Find(simulationName string) db.SimulationLock
 
 func (r *simulationLockRepository) Upsert(m db.SimulationLock) {
 	r.con.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "id"}},
+		Columns:   []clause.Column{{Name: "simulation_name"}},
 		UpdateAll: true,
 	}).Create(&m)
 }

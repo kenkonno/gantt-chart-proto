@@ -12,7 +12,7 @@ import (
 func NewSimulationFacilityRepository() interfaces.FacilityRepositoryIF {
 	return &facilityRepository{
 		con:   connection.GetCon(),
-		table: "simulation_departments",
+		table: "simulation_facilities",
 	}
 }
 
@@ -26,10 +26,10 @@ func (r *facilityRepository) FindAll(facilityTypes []string, facilityStatus []st
 
 	builder := r.con.Table(r.table).Order(`"order" ASC`)
 	if len(facilityTypes) > 0 {
-		builder.Where("facilities.type IN ?", facilityTypes)
+		builder.Where("simulation_facilities.type IN ?", facilityTypes)
 	}
 	if len(facilityStatus) > 0 {
-		builder.Where("facilities.status IN ?", facilityStatus)
+		builder.Where("simulation_facilities.status IN ?", facilityStatus)
 	}
 
 	result := builder.Find(&facilities)

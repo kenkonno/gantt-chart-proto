@@ -22,7 +22,7 @@ func PostSimulationInvoke(c *gin.Context) openapi_models.PostSimulationResponse 
 		db.SimulationLock{
 			SimulationName: constants.SimulateTypeSchedule,
 			Status:         constants.SimulateStatusInProgress,
-			LockedAt:       time.Time{},
+			LockedAt:       time.Now(),
 			LockedBy:       *userId,
 		})
 

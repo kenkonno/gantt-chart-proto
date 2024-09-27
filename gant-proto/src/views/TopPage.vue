@@ -48,6 +48,9 @@
       <ModalWithLink title="担当者一覧" icon="person">
         <user-view @update="updateFacility"></user-view>
       </ModalWithLink>
+      <ModalWithLink title="シミュレーション" icon="timeline">
+        <simulation-view @update="updateFacility"></simulation-view>
+      </ModalWithLink>
     </div>
   </nav>
   <Suspense v-if="modalIsOpen">
@@ -118,6 +121,7 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
+import SimulationView from "@/views/SimulationView.vue";
 
 // ローカルストレージの初期化
 initStateValue()
