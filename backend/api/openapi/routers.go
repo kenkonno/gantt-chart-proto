@@ -296,6 +296,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetSimulationMasterDiff",
+		http.MethodGet,
+		"/api/simulationMasterDiff",
+		GetSimulationMasterDiff,
+	},
+
+	{
 		"GetTicketMemoId",
 		http.MethodGet,
 		"/api/ticket-memo/:id",

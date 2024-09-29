@@ -1042,6 +1042,121 @@ export interface GetScheduleAlertsResponse {
 /**
  * 
  * @export
+ * @interface GetSimulationMasterDiffResponse
+ */
+export interface GetSimulationMasterDiffResponse {
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeProcesses': Array<Process>;
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffProcesses'?: Array<Process>;
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterProcesses': Array<Process>;
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeDepartments': Array<Department>;
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffDepartments'?: Array<Department>;
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterDepartments': Array<Department>;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeUsers': Array<User>;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffUsers'?: Array<User>;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterUsers': Array<User>;
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeUnits': Array<Unit>;
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffUnits'?: Array<Unit>;
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterUnits': Array<Unit>;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeHolidays': Array<Holiday>;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffHolidays'?: Array<Holiday>;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterHolidays': Array<Holiday>;
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeMilestones': Array<Milestone>;
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffMilestones'?: Array<Milestone>;
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterMilestones': Array<Milestone>;
+}
+/**
+ * 
+ * @export
  * @interface GetSimulationResponse
  */
 export interface GetSimulationResponse {
@@ -1213,6 +1328,12 @@ export interface GetUserInfoResponse {
      * @memberof GetUserInfoResponse
      */
     'user'?: User;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetUserInfoResponse
+     */
+    'isSimulateUser'?: boolean;
 }
 /**
  * 
@@ -3906,6 +4027,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSimulationMasterDiff: async (body?: object, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/simulationMasterDiff`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetTicketMemoId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -5618,6 +5773,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSimulationMasterDiff(body?: object, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSimulationMasterDiffResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSimulationMasterDiff(body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetTicketMemoId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -6381,6 +6547,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getSimulation(body?: object, options?: any): AxiosPromise<GetSimulationResponse> {
             return localVarFp.getSimulation(body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSimulationMasterDiff(body?: object, options?: any): AxiosPromise<GetSimulationMasterDiffResponse> {
+            return localVarFp.getSimulationMasterDiff(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7174,6 +7350,18 @@ export class DefaultApi extends BaseAPI {
      */
     public getSimulation(body?: object, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getSimulation(body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {object} [body] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getSimulationMasterDiff(body?: object, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getSimulationMasterDiff(body, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

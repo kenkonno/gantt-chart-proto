@@ -1068,6 +1068,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DeleteSimulationRequest'
+  /api/simulationMasterDiff:
+    get:
+      summary: ''
+      operationId: get-simulation-master-diff
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSimulationMasterDiffResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetSimulationMasterDiffRequest'
 components:
   schemas:
     User:
@@ -2249,6 +2265,8 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+        isSimulateUser:
+          type: boolean
     PostLoginRequest:
       title: PostLoginRequest
       x-stoplight:
@@ -2687,3 +2705,97 @@ components:
       properties:
         '':
           type: string
+    GetSimulationMasterDiffRequest:
+      title: GetSimulationMasterDiff
+      type: object
+      x-stoplight:
+        id: 081ee7a4af529
+    GetSimulationMasterDiffResponse:
+      title: GetSimulationMasterDiffResponse
+      type: object
+      properties:
+        beforeProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        diffProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        afterProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        beforeDepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        diffDepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        afterDepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        beforeUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        diffUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        afterUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        beforeUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        diffUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        afterUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        beforeHolidays:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+        diffHolidays:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+        afterHolidays:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+        beforeMilestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+        diffMilestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+        afterMilestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+      required:
+        - beforeProcesses
+        - afterProcesses
+        - beforeDepartments
+        - afterDepartments
+        - beforeUsers
+        - afterUsers
+        - beforeUnits
+        - afterUnits
+        - beforeHolidays
+        - afterHolidays
+        - beforeMilestones
+        - afterMilestones

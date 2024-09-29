@@ -1,23 +1,23 @@
 <template>
   <div class="container">
-    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)">新規追加</button>
+    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
     <table class="table">
-      <thead>
+      <thead v-if="!isNoHeader">
       <tr>
         <th>Id</th>
         <th>名称</th>
         <th>作成日</th>
         <th>更新日</th>
-        <th>並び替え</th>
+        <th v-if="!isViewOnly">並び替え</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="(item, index) in list" :key="item.id">
-        <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
+        <td @click="!isViewOnly && $emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ item.name }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
-        <td>
+        <td v-if="!isViewOnly">
           <a href="#" @click="$emit('moveUp', index)"><span class="material-symbols-outlined">arrow_upward</span></a>
           <a href="#" @click="$emit('moveDown', index)"><span class="material-symbols-outlined">arrow_downward</span></a>
         </td>
@@ -34,6 +34,9 @@ defineEmits(['openEditModal', 'moveUp', 'moveDown'])
 
 interface AsyncDepartmentTable {
   list: Department[]
+  isViewOnly?: boolean
+  isNoHeader?: boolean
+
 }
 
 defineProps<AsyncDepartmentTable>()

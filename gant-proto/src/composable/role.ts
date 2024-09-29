@@ -74,11 +74,11 @@ const Guest = {
 }
 
 export function allowed(section: Section) {
-    const role = getUserInfo()?.role
-    if (role === RoleType.Admin) {
+    const {userInfo} = getUserInfo()
+    if (userInfo?.role === RoleType.Admin) {
         return true
     }
-    switch (role) {
+    switch (userInfo?.role) {
         case RoleType.Manager:
             return Manager[section]
         case RoleType.Worker:

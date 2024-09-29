@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)">新規追加</button>
+    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
     <table class="table">
-      <thead>
+      <thead v-if="!isNoHeader">
       <tr>
         <th>Id</th>
         <th>部署</th>
@@ -17,7 +17,7 @@
       </thead>
       <tbody>
       <tr v-for="item in list" :key="item.id">
-        <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
+        <td @click="!isViewOnly && $emit('openEditModal', item.id)">{{ item.id }}</td>
         <td>{{ getDepartmentName(item.department_id) }}</td>
         <td>{{ `${item.lastName} ${item.firstName}` }}</td>
         <td v-if="false">{{ item.limit_of_operation }}</td>
@@ -46,6 +46,9 @@ const getDepartmentName = (id: number) => {
 
 interface AsyncUserTable {
   list: User[]
+  isViewOnly?: boolean
+  isNoHeader?: boolean
+
 }
 
 defineProps<AsyncUserTable>()

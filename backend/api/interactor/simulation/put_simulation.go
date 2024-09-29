@@ -16,19 +16,23 @@ func PutSimulationInvoke(c *gin.Context) openapi_models.PutSimulationResponse {
 		return openapi_models.PutSimulationResponse{}
 	}
 
-	simulationRep := simulation.NewSimulationLock()
-	simulationLock := simulationRep.Find(constants.SimulateTypeSchedule)
+	simulationLockRep := simulation.NewSimulationLock()
 
-
-	if req.Mode == "pending" {
-		simulationLock.Status = constants.SimulateStatusPending
+	if req.Mode == "apply" {
+		// 各種simulation_xxx テーブルをリネームして本チャンに切り替える。
+		simulationRep := simulation.NewSimulationRepository()
+		simulationRep.SwitchTable()
+		simulationRep.ResetSequence()
+		simulationLockRep.Delete(constants.SimulateTypeSchedule)
+	} else {
+		simulationLock := simulationLockRep.Find(constants.SimulateTypeSchedule)
+		if req.Mode == "pending" {
+			simulationLock.Status = constants.SimulateStatusPending
+		} else if req.Mode == "resume" {
+			simulationLock.Status = constants.SimulateStatusInProgress
+		}
+		simulationLockRep.Upsert(simulationLock)
 	}
-
-	if req.Mode == "resume" {
-		simulationLock.Status = constants.SimulateStatusInProgress
-	}
-
-	simulationRep.Upsert(simulationLock)
 
 	return openapi_models.PutSimulationResponse{}
 

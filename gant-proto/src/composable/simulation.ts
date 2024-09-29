@@ -4,6 +4,7 @@ import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
 import {Emit} from "@/const/common";
+import Swal from "sweetalert2";
 
 // ユーザー追加・更新。
 export async function useSimulation() {
@@ -14,24 +15,37 @@ export async function useSimulation() {
         lockedBy: 0,
         status: ""
     })
-    const {data} = await Api.getSimulation()
-    if (data.simulationLock != undefined) {
-        simulationLock.value.simulationName = data.simulationLock.simulationName
-        simulationLock.value.lockedAt = data.simulationLock.lockedAt
-        simulationLock.value.lockedBy = data.simulationLock.lockedBy
-        simulationLock.value.status = data.simulationLock.status
-    }
 
-    return {simulationLock}
+    const refresh = async () => {
+        const {data} = await Api.getSimulation()
+        if (data.simulationLock != undefined) {
+            simulationLock.value.simulationName = data.simulationLock.simulationName
+            simulationLock.value.lockedAt = data.simulationLock.lockedAt
+            simulationLock.value.lockedBy = data.simulationLock.lockedBy
+            simulationLock.value.status = data.simulationLock.status
+        }
+    }
+    await refresh()
+
+    return {simulationLock, refresh}
 
 }
 
 export async function postSimulation(emit: Emit) {
     const req: PostSimulationRequest = {}
     await Api.postSimulation(req).then(() => {
-        toast("成功しました。")
+        Swal.fire({
+            title: '成功しました。画面をリロードします。',
+            icon: 'success',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '閉じる',
+        }).then(() => {
+            window.location.reload()
+        })
     }).finally(() => {
-        emit('closeEditModal')
+        emit('update')
     })
 }
 
@@ -42,17 +56,35 @@ export async function putSimulation(mode: SimulationMode, emit: Emit) {
         mode: mode
     }
     await Api.putSimulation(req).then(() => {
-        toast("成功しました。")
+        Swal.fire({
+            title: '成功しました。画面をリロードします。',
+            icon: 'success',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '閉じる',
+        }).then(() => {
+            window.location.reload()
+        })
     }).finally(() => {
-        emit('closeEditModal')
+        emit('update')
     })
 }
 
 export async function deleteSimulation(emit: Emit) {
     await Api.deleteSimulation().then(() => {
-        toast("成功しました。")
+        Swal.fire({
+            title: '成功しました。画面をリロードします。',
+            icon: 'success',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '閉じる',
+        }).then(() => {
+            window.location.reload()
+        })
     }).finally(() => {
-        emit('closeEditModal')
+        emit('update')
     })
 }
 

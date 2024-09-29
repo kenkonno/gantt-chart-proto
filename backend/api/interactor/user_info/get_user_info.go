@@ -2,9 +2,11 @@ package user_info
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/simulation"
 )
 
 // Tokenからユーザー情報を返却する
@@ -16,6 +18,10 @@ func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
 	}
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
+	simulationLockRep := simulation.NewSimulationLock()
+	simulationLock := simulationLockRep.Find(constants.SimulateTypeSchedule)
+
+	isSimulateUser := simulationLock.Status == constants.SimulateStatusInProgress && simulationLock.LockedBy == *userId
 
 	var userInfoResponse openapi_models.GetUserInfoResponse
 	user := userRep.Find(*userId)
@@ -32,6 +38,7 @@ func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
 			UpdatedAt:        user.UpdatedAt,
 			Role:             user.Role,
 		},
+		IsSimulateUser: isSimulateUser,
 	}
 	return userInfoResponse
 }

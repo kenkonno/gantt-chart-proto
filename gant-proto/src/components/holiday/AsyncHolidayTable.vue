@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)">新規追加</button>
+    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
     <table class="table">
-      <thead>
+      <thead v-if="!isNoHeader">
       <tr>
         <th>Id</th>
         <th v-if="false">名称</th>
@@ -13,7 +13,7 @@
       </thead>
       <tbody>
       <tr v-for="item in list" :key="item.id">
-        <td @click="$emit('openEditModal', item.id)">{{ item.id }}</td>
+        <td @click="!isViewOnly && $emit('openEditModal', item.id)">{{ item.id }}</td>
         <td v-if="false">{{ item.name }}</td>
         <td>{{ $filters.dateFormatYMD(item.date) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
@@ -31,6 +31,9 @@ defineEmits(['openEditModal'])
 
 interface AsyncHolidayTable {
   list: Holiday[]
+  isViewOnly?: boolean
+  isNoHeader?: boolean
+
 }
 
 defineProps<AsyncHolidayTable>()
