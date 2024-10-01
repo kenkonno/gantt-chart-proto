@@ -2,7 +2,7 @@
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
     <div class="gantt-wrapper">
       <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
-           :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}">
+           :class="{'hide-scroll': allowed('VIEW_PILEUPS') && globalState.showPileUp, 'full-max-height': !allowed('VIEW_PILEUPS') || !globalState.showPileUp}">
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -143,27 +143,28 @@
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->
-      <hr>
-      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement"
-           v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS')">
-        <PileUps
-            :chart-start="chartStart"
-            :chart-end="chartEnd"
-            :display-type="displayType"
-            :holidays="getHolidays"
-            :tickets="getTickets"
-            :ticket-users="ticketUserList"
-            :width="getGanttChartWidth(displayType)"
-            :highlightedDates="getHolidaysForGantt(displayType)"
-            :syncWidth="syncWidth"
-            :current-facility-id="currentFacilityId"
-            :vertical-lines="milestoneVerticalLines"
-            :milestone-vertical-lines="[]"
-            @on-mounted="forceScroll"
-            :defaultPileUps="defaultPileUps"
-            :global-start-date="globalStartDate"
-        >
-        </PileUps>
+      <div v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp">
+        <hr>
+        <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+          <PileUps
+              :chart-start="chartStart"
+              :chart-end="chartEnd"
+              :display-type="displayType"
+              :holidays="getHolidays"
+              :tickets="getTickets"
+              :ticket-users="ticketUserList"
+              :width="getGanttChartWidth(displayType)"
+              :highlightedDates="getHolidaysForGantt(displayType)"
+              :syncWidth="syncWidth"
+              :current-facility-id="currentFacilityId"
+              :vertical-lines="milestoneVerticalLines"
+              :milestone-vertical-lines="[]"
+              @on-mounted="forceScroll"
+              :defaultPileUps="defaultPileUps"
+              :global-start-date="globalStartDate"
+          >
+          </PileUps>
+        </div>
       </div>
     </div>
   </div>

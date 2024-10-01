@@ -28,6 +28,14 @@
         </label>
       </div>
       <DepartmentUserFilter></DepartmentUserFilter>
+      <div v-if="allowed('VIEW_PILEUPS')">
+        <label>
+          <label>
+            <input type="checkbox" name="facilityType" :value="true" v-model="globalState.showPileUp" />
+            山積み表示
+          </label>
+        </label>
+      </div>
       <a href="#" @click.prevent="updateFacility">
         <span class="material-symbols-outlined">refresh</span>
         <span class="text">リロード</span>

@@ -10,7 +10,7 @@ import {FacilityType} from "@/const/common";
 import {allowed} from "@/composable/role";
 
 const LOCAL_STORAGE_KEY = "koteikanri"
-const VERSION = 1.1 // フィルタの項目が変わったときに変える
+const VERSION = 1.2 // フィルタの項目が変わったときに変える
 
 /**
  * WebStorageを用いて各種フィルタ系の値を保持するようにする。
@@ -43,7 +43,8 @@ type GlobalFilterState = {
     pileUpsFilter: PileUpFilter[],
     viewType: DisplayType,
     aggregationAxis: AggregationAxis,
-    version: number
+    version: number,
+    showPileUp: boolean,
 }
 
 
@@ -74,6 +75,7 @@ const state: GlobalFilterState = {
     pileUpsFilter: [],
     viewType: "day",
     aggregationAxis: "facility",
+    showPileUp: true,
     version: VERSION
 
 }
@@ -100,6 +102,7 @@ export const initStateValue = async () => {
         state.viewType = parsedState.viewType;
         state.aggregationAxis = parsedState.aggregationAxis;
         state.version = parsedState.version;
+        state.showPileUp = parsedState.showPileUp;
     } else {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
     }
@@ -142,9 +145,10 @@ export const globalFilterGetter = {
     getPileUpsFilter: () => state.pileUpsFilter,
     getViewType: () => state.viewType,
     getAggregationAxis: () => state.aggregationAxis,
+    getShowPileUp: () => state.showPileUp,
 }
 
-type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType' | 'aggregationAxis';
+type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType' | 'aggregationAxis' | 'showPileUp' ;
 
 function updateState(key: StateKey, value: any) {
     const storage = localStorage.getItem(LOCAL_STORAGE_KEY)
@@ -154,10 +158,12 @@ function updateState(key: StateKey, value: any) {
     if ( key == "aggregationAxis") {
         savedState[key] = value;
         state[key] = value;
+    } else if (key == "showPileUp"){
+        savedState[key] = value;
+        state[key] = value;
     } else {
         savedState[key] = value;
         state[key] = value;
-
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedState))
 }
@@ -181,4 +187,8 @@ export const globalFilterMutation = {
     updateAggregationAxisFilter: (aggregationAxis: AggregationAxis) => {
         updateState('aggregationAxis', aggregationAxis);
     },
+    updateShowPileUp: (showPileUp: boolean) => {
+        updateState('showPileUp', showPileUp);
+    },
+
 }
