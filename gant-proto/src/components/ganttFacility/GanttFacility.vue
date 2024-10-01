@@ -328,6 +328,8 @@ const closeTicketMemo = async (ticket: Ticket, userIds: number[]) => {
 
 
 const openTicketDetail = (ticketId: number, unitId: number) => {
+  // NOTE: simulationモードの本チャンのチケットは文字列を含むのでNaNになる。コードとしてはよろしくない
+  if (Number.isNaN(ticketId)) return
   if (!allowed('UPDATE_PROGRESS')) return
   modalTicketId.value = ticketId
   modalUnitId.value = unitId
