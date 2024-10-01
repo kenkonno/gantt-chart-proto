@@ -4,7 +4,7 @@
       <b class="m-auto">シミュレーション中</b>
     </div>
   </nav>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light bg-light" v-if="allowed('MENU')">
     <div class="d-flex w-100">
       <b class="d-flex align-items-center">ビューの選択</b>
       <router-link to="/">

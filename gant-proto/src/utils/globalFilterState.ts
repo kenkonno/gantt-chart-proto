@@ -7,6 +7,7 @@ import {AggregationAxis, DisplayType, GanttFacilityHeader} from "@/composable/ga
 import {Header} from "@/composable/ganttAllMenu";
 import {PileUpFilter} from "@/composable/pileUps";
 import {FacilityType} from "@/const/common";
+import {allowed} from "@/composable/role";
 
 const LOCAL_STORAGE_KEY = "koteikanri"
 const VERSION = 1.1 // フィルタの項目が変わったときに変える
@@ -80,7 +81,12 @@ const state: GlobalFilterState = {
 export const initStateValue = async () => {
     // ローカルストレージから取得
     const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedState) {
+
+    // メニュー非表示権限の対応（現状Guestのみ）
+    if (!allowed("MENU")){
+        state.ganttFacilityMenu = getGuestMenu()
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
+    } else if (savedState) {
         const parsedState = JSON.parse(savedState);
         // バージョンが異なる場合は初期化する
         if (parsedState.version != VERSION) {
@@ -111,6 +117,22 @@ const getFacilityMenu = (savedFacilityMenu: any): GanttFacilityHeader[] => {
         }
         return {name: v.name, visible: v.visible}
     })
+}
+
+const getGuestMenu = ():GanttFacilityHeader[] => {
+    return [
+        {name: "ユニット", visible: true},
+        {name: "工程", visible: true},
+        {name: "部署", visible: true},
+        {name: "担当者", visible: false},
+        {name: "人数", visible: false},
+        {name: "工数(h)", visible: false},
+        {name: "日後", visible: false},
+        {name: "開始日", visible: true},
+        {name: "終了日", visible: true},
+        {name: "進捗", visible: false},
+        {name: "操作", visible: false},
+    ]
 }
 
 export const globalFilterGetter = {

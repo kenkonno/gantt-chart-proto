@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light bg-light" v-if="allowed('MENU')">
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>案件設定</b>
       <select style="display: inline" v-model.number="globalState.currentFacilityId"
@@ -28,7 +28,7 @@
   </nav>
 
   <div style="display:none">{{ gantFacility != undefined }} vuejshack</div>
-  <div v-show="globalState.currentFacilityId > 0 && globalState.processList.length > 0" class="gantt-facility-menu">
+  <div v-show="globalState.currentFacilityId > 0 && globalState.processList.length > 0" class="gantt-facility-menu" v-if="allowed('MENU')">
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"

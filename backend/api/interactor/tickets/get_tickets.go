@@ -33,21 +33,41 @@ func GetTicketsInvoke(c *gin.Context) openapi_models.GetTicketsResponse {
 
 	return openapi_models.GetTicketsResponse{
 		List: lo.Map(ticketList, func(item db.Ticket, index int) openapi_models.Ticket {
-			return openapi_models.Ticket{
-				Id:              item.Id,
-				GanttGroupId:    item.GanttGroupId,
-				ProcessId:       item.ProcessId,
-				DepartmentId:    item.DepartmentId,
-				LimitDate:       item.LimitDate,
-				Estimate:        item.Estimate,
-				NumberOfWorker:  item.NumberOfWorker,
-				DaysAfter:       item.DaysAfter,
-				StartDate:       item.StartDate,
-				EndDate:         item.EndDate,
-				ProgressPercent: item.ProgressPercent,
-				Order:           item.Order,
-				CreatedAt:       item.CreatedAt,
-				UpdatedAt:       item.UpdatedAt,
+			// ゲストの場合はマスクをする
+			if middleware.IsGuest(c) {
+				return openapi_models.Ticket{
+					Id:              item.Id,
+					GanttGroupId:    item.GanttGroupId,
+					ProcessId:       item.ProcessId,
+					DepartmentId:    item.DepartmentId,
+					LimitDate:       nil,
+					Estimate:        nil,
+					NumberOfWorker:  nil,
+					DaysAfter:       nil,
+					StartDate:       item.StartDate,
+					EndDate:         item.EndDate,
+					ProgressPercent: nil,
+					Order:           item.Order,
+					CreatedAt:       item.CreatedAt,
+					UpdatedAt:       item.UpdatedAt,
+				}
+			} else {
+				return openapi_models.Ticket{
+					Id:              item.Id,
+					GanttGroupId:    item.GanttGroupId,
+					ProcessId:       item.ProcessId,
+					DepartmentId:    item.DepartmentId,
+					LimitDate:       item.LimitDate,
+					Estimate:        item.Estimate,
+					NumberOfWorker:  item.NumberOfWorker,
+					DaysAfter:       item.DaysAfter,
+					StartDate:       item.StartDate,
+					EndDate:         item.EndDate,
+					ProgressPercent: item.ProgressPercent,
+					Order:           item.Order,
+					CreatedAt:       item.CreatedAt,
+					UpdatedAt:       item.UpdatedAt,
+				}
 			}
 		}),
 	}
