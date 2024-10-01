@@ -13,7 +13,7 @@ import (
 func NewSimulationGanttGroupRepository() interfaces.GanttGroupRepositoryIF {
 	return &ganttGroupRepository{
 		con:   connection.GetCon(),
-		table: "simulation_departments",
+		table: "simulation_gantt_groups",
 	}
 }
 
@@ -64,9 +64,9 @@ func (r *ganttGroupRepository) FindByFacilityId(facilityId int32) []db.GanttGrou
 	,   %d as facility_id
 	,   gg.unit_id
 	FROM
-		gantt_groups gg
+		simulation_gantt_groups gg
 	INNER JOIN
-		units u 
+		simulation_units u 
 	ON
 		gg.unit_id = u.id
 	WHERE

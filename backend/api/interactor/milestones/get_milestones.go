@@ -11,12 +11,17 @@ import (
 )
 
 func GetMilestonesInvoke(c *gin.Context) openapi_models.GetMilestonesResponse {
-	milestoneRep := repository.NewMilestoneRepository(middleware.GetRepositoryMode(c)...)
 
 	facilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {
 		panic(err)
 	}
+	mode := c.Query("mode")
+	milestoneRep := repository.NewMilestoneRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		milestoneRep = repository.NewMilestoneRepository()
+	}
+
 	milestoneList := milestoneRep.FindByFacilityId(int32(facilityId))
 
 	return openapi_models.GetMilestonesResponse{

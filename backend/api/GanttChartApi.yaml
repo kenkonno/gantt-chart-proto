@@ -186,6 +186,11 @@ paths:
               examples: {}
       operationId: get-facilities-id
       description: ''
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: mode
     delete:
       summary: DeleteFacilitiesId
       operationId: delete-facilities-id
@@ -470,6 +475,10 @@ paths:
           in: query
           name: facilityId
           required: true
+        - schema:
+            type: string
+          in: query
+          name: mode
     post:
       summary: PostGanttGroups
       operationId: post-ganttGroups
@@ -730,6 +739,10 @@ paths:
               type: string
           in: query
           name: facilityTypes
+        - schema:
+            type: string
+          in: query
+          name: mode
     parameters: []
   /api/pileUps:
     get:
@@ -853,6 +866,10 @@ paths:
             type: integer
           in: query
           name: facilityId
+        - schema:
+            type: string
+          in: query
+          name: mode
     post:
       summary: PostMilestones
       operationId: post-milestones

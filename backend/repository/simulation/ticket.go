@@ -34,8 +34,8 @@ func (r *ticketRepository) FindAll() []db.Ticket {
 func (r *ticketRepository) FindByFacilityType(facilityTypes []string, facilityStatus []string) []db.Ticket {
 	var tickets []db.Ticket
 	builder := r.con.Table(r.table).Order(`"order" ASC`).
-		Joins("INNER JOIN simulation_gantt_groups ON gantt_groups.id = simulation_tickets.gantt_group_id").
-		Joins("INNER JOIN simulation_facilities ON facilities.id = simulation_gantt_groups.facility_id")
+		Joins("INNER JOIN simulation_gantt_groups ON simulation_gantt_groups.id = simulation_tickets.gantt_group_id").
+		Joins("INNER JOIN simulation_facilities ON simulation_facilities.id = simulation_gantt_groups.facility_id")
 	if len(facilityTypes) > 0 {
 		builder.Where("simulation_facilities.type IN ?", facilityTypes)
 	}

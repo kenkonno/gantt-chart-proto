@@ -12,9 +12,12 @@ import (
 
 func GetGanttGroupsInvoke(c *gin.Context) openapi_models.GetGanttGroupsResponse {
 
-	// TODO: ほかのいらないAPIを判断して消す
-
+	mode := c.Query("mode")
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		ganttGroupRep = repository.NewGanttGroupRepository()
+	}
+
 	facilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {
 		panic(err)

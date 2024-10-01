@@ -18,7 +18,7 @@ import {
     getNumberOfBusinessDays
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
-import {DEFAULT_PROCESS_COLOR} from "@/const/common";
+import {ApiMode, DEFAULT_PROCESS_COLOR} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
@@ -206,7 +206,7 @@ export async function useGanttFacility() {
         const result: GanttBarObject[] = []
         const isSimulateUser = getUserInfo().isSimulateUser
         if (isSimulateUser == true) {
-            const {data: prodTickets} = await Api.getTickets(ganttGroupIds, "prod")
+            const {data: prodTickets} = await Api.getTickets(ganttGroupIds, ApiMode.prod)
             result.push(...
                 prodTickets.list.map(v => {
                     return <GanttBarObject>{
@@ -220,7 +220,7 @@ export async function useGanttFacility() {
                             immobile: true, // TODO: なぜか判定が逆転している
                             id: v.id!.toString(),
                             label: getProcessName(v.process_id == null ? -1 : v.process_id),
-                            style: {backgroundColor: getProcessColor(v.process_id), opacity: 0.5}, // TODO: 色を薄くする対応をする
+                            style: {backgroundColor: getProcessColor(v.process_id), opacity: 0.5},
                             progress: v.progress_percent,
                             progressColor: BAR_COMPLETE_COLOR
                         }

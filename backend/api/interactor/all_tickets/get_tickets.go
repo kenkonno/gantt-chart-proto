@@ -14,6 +14,11 @@ import (
 func GetAllTicketsInvoke(c *gin.Context) openapi_models.GetAllTicketsResponse {
 
 	qFacilityTypes := c.QueryArray("facilityTypes")
+	mode := c.Query("mode")
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		ticketRep = repository.NewTicketRepository()
+	}
 
 	var facilityTypes []string
 
@@ -23,7 +28,6 @@ func GetAllTicketsInvoke(c *gin.Context) openapi_models.GetAllTicketsResponse {
 	if slices.Contains(qFacilityTypes, constants.FacilityTypePrepared) {
 		facilityTypes = append(facilityTypes, constants.FacilityTypePrepared)
 	}
-	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 	ticketList := ticketRep.FindByFacilityType(facilityTypes, []string{constants.FacilityStatusEnabled})
 
 	return openapi_models.GetAllTicketsResponse{

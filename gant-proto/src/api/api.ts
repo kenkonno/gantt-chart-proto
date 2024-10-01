@@ -3336,10 +3336,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetAllTicket
          * @param {Array<string>} [facilityTypes] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllTickets: async (facilityTypes?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllTickets: async (facilityTypes?: Array<string>, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/all-tickets`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3354,6 +3355,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityTypes) {
                 localVarQueryParameter['facilityTypes'] = facilityTypes;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -3516,10 +3521,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetFacilitiesId
          * @param {number} id 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFacilitiesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFacilitiesId: async (id: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getFacilitiesId', 'id', id)
             const localVarPath = `/api/facilities/{id}`
@@ -3534,6 +3540,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
+            }
 
 
     
@@ -3614,10 +3624,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetGanttGroups
          * @param {number} facilityId 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGanttGroups: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getGanttGroups: async (facilityId: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'facilityId' is not null or undefined
             assertParamExists('getGanttGroups', 'facilityId', facilityId)
             const localVarPath = `/api/ganttGroups`;
@@ -3634,6 +3645,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityId !== undefined) {
                 localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -3756,10 +3771,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetMilestones
          * @param {number} [facilityId] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMilestones: async (facilityId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMilestones: async (facilityId?: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/milestones`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3774,6 +3790,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityId !== undefined) {
                 localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -5562,11 +5582,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetAllTicket
          * @param {Array<string>} [facilityTypes] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(facilityTypes, options);
+        async getAllTickets(facilityTypes?: Array<string>, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(facilityTypes, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5617,11 +5638,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetFacilitiesId
          * @param {number} id 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFacilitiesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesIdResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitiesId(id, options);
+        async getFacilitiesId(id: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitiesId(id, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5649,11 +5671,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetGanttGroups
          * @param {number} facilityId 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getGanttGroups(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityId, options);
+        async getGanttGroups(facilityId: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityId, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5693,11 +5716,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetMilestones
          * @param {number} [facilityId] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMilestones(facilityId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityId, options);
+        async getMilestones(facilityId?: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityId, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6360,11 +6384,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetAllTicket
          * @param {Array<string>} [facilityTypes] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllTickets(facilityTypes?: Array<string>, options?: any): AxiosPromise<GetAllTicketsResponse> {
-            return localVarFp.getAllTickets(facilityTypes, options).then((request) => request(axios, basePath));
+        getAllTickets(facilityTypes?: Array<string>, mode?: string, options?: any): AxiosPromise<GetAllTicketsResponse> {
+            return localVarFp.getAllTickets(facilityTypes, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6410,11 +6435,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetFacilitiesId
          * @param {number} id 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFacilitiesId(id: number, options?: any): AxiosPromise<GetFacilitiesIdResponse> {
-            return localVarFp.getFacilitiesId(id, options).then((request) => request(axios, basePath));
+        getFacilitiesId(id: number, mode?: string, options?: any): AxiosPromise<GetFacilitiesIdResponse> {
+            return localVarFp.getFacilitiesId(id, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6439,11 +6465,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetGanttGroups
          * @param {number} facilityId 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGanttGroups(facilityId: number, options?: any): AxiosPromise<GetGanttGroupsResponse> {
-            return localVarFp.getGanttGroups(facilityId, options).then((request) => request(axios, basePath));
+        getGanttGroups(facilityId: number, mode?: string, options?: any): AxiosPromise<GetGanttGroupsResponse> {
+            return localVarFp.getGanttGroups(facilityId, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6479,11 +6506,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetMilestones
          * @param {number} [facilityId] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMilestones(facilityId?: number, options?: any): AxiosPromise<GetMilestonesResponse> {
-            return localVarFp.getMilestones(facilityId, options).then((request) => request(axios, basePath));
+        getMilestones(facilityId?: number, mode?: string, options?: any): AxiosPromise<GetMilestonesResponse> {
+            return localVarFp.getMilestones(facilityId, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7125,12 +7153,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetAllTicket
      * @param {Array<string>} [facilityTypes] 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getAllTickets(facilityTypes, options).then((request) => request(this.axios, this.basePath));
+    public getAllTickets(facilityTypes?: Array<string>, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getAllTickets(facilityTypes, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7185,12 +7214,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetFacilitiesId
      * @param {number} id 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getFacilitiesId(id: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getFacilitiesId(id, options).then((request) => request(this.axios, this.basePath));
+    public getFacilitiesId(id: number, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilitiesId(id, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7220,12 +7250,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetGanttGroups
      * @param {number} facilityId 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getGanttGroups(facilityId: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getGanttGroups(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getGanttGroups(facilityId: number, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getGanttGroups(facilityId, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7268,12 +7299,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetMilestones
      * @param {number} [facilityId] 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getMilestones(facilityId?: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getMilestones(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getMilestones(facilityId?: number, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getMilestones(facilityId, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

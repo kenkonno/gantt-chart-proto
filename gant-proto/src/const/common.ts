@@ -35,3 +35,7 @@ export const RoleTypeMap = {
     viewer: "閲覧者",
 }
 
+export const ApiMode = {
+    prod: "prod",
+}
+

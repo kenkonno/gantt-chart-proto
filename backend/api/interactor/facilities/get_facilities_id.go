@@ -9,7 +9,11 @@ import (
 )
 
 func GetFacilitiesIdInvoke(c *gin.Context) openapi_models.GetFacilitiesIdResponse {
+	mode := c.Query("mode")
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		facilityRep = repository.NewFacilityRepository()
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
