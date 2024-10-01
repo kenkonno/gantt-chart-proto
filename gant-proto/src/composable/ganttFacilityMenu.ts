@@ -23,6 +23,12 @@ export function useGanttFacilityMenu() {
         if (index >= 0) {
             GanttHeader.value.splice(index)
         }
+    } else {
+        // NOTE: 権限によってstorageから消したり増えたりするものをきちんと対応する必要がある。今回は全て末尾なのでこれでOK
+        const index = GanttHeader.value.findIndex(v => v.name == "操作")
+        if (index === -1) {
+            GanttHeader.value.push({name: "操作", visible: false})
+        }
     }
     const displayType = ref<DisplayType>(savedViewType)
 
