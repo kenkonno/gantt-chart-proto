@@ -88,11 +88,11 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     // 全案件の最小
     const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
-    }).shift()!.term_from.substring(0, 10)
+    }).shift()?.term_from.substring(0, 10) ?? dayjs(Date()).startOf('month').format("YYYYMMDD")
     // 全案件の最大
     const endDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_to > b.term_to ? 1 : -1
-    }).pop()!.term_to.substring(0, 10)
+    }).pop()?.term_to.substring(0, 10) ?? dayjs(Date()).endOf('month').format("YYYYMMDD")
 
     async function getMilestones(facility: Facility, mode?: string) {
         return await (async () => {
