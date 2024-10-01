@@ -27,16 +27,19 @@ import AsyncUnitEdit from "@/components/unit/AsyncUnitEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {inject} from "vue";
-import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_ACTION_KEY, GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 const {unitMap, currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {refreshUnitMap, updateUnitOrder} = inject(GLOBAL_ACTION_KEY)!
+const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 await refreshUnitMap(currentFacilityId)
 
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 const closeModalProxy = async () => {
   await refreshUnitMap(currentFacilityId)
+  // NOTE: Unitの場合はガントチャートの更新が必要。
+  refreshGantt(currentFacilityId, false)
   closeEditModal()
   emit("update")
 }

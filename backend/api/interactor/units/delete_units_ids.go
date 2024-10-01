@@ -45,7 +45,10 @@ func DeleteUnitsIdInvoke(c *gin.Context) openapi_models.DeleteUnitsIdResponse {
 	// 稼働設定。該当のユニットのみを削除
 	for _, item := range operationSettings {
 		if item.UnitId == int32(id) {
-			operationSettingRep.Delete(*item.Id)
+			// NOTE: 初期値を登録しないのでnilになるケースがある
+			if item.Id != nil {
+				operationSettingRep.Delete(*item.Id)
+			}
 		}
 	}
 
