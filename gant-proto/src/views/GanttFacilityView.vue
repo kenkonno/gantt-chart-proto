@@ -28,7 +28,7 @@
   </nav>
 
   <div style="display:none">{{ gantFacility != undefined }} vuejshack</div>
-  <div v-show="globalState.currentFacilityId > 0 && globalState.processList.length > 0" class="gantt-facility-menu" v-if="allowed('MENU')">
+  <div v-show="globalState.currentFacilityId > 0 && globalState.processList.length > 0" class="gantt-facility-menu">
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"

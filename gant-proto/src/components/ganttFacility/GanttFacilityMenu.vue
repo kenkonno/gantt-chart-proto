@@ -20,7 +20,7 @@
         </tippy>
       </template>
     </AccordionHorizontal>
-    <AccordionHorizontal class="justify-middle">
+    <AccordionHorizontal class="justify-middle" v-if="allowed('MENU')">
       <template v-slot:icon>
         <span class="material-symbols-outlined">filter_list</span>
       </template>
