@@ -36,7 +36,7 @@ func PostFacilitiesInvoke(c *gin.Context) openapi_models.PostFacilitiesResponse 
 		CreatedAt:       time.Time{},
 		UpdatedAt:       0,
 	})
-	holidayRep.InsertByFacilityId(*newFacility.Id)
+	holidayRep.InsertByFacilityId(*newFacility.Id, nil, nil)
 	// TODO: post_units.goと重複コード 本体ユニットをデフォルトで登録する
 	r := unitRep.Upsert(db.Unit{
 		Name:       "本体",

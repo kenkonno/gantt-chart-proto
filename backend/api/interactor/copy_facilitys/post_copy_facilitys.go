@@ -127,7 +127,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) openapi_models.PostCopyFacilitysRes
 	}
 
 	// 祝日の投入
-	holidayRep.InsertByFacilityId(*newFacility.Id)
+	holidayRep.InsertByFacilityId(*newFacility.Id, nil, nil)
 
 	return openapi_models.PostCopyFacilitysResponse{}
 
