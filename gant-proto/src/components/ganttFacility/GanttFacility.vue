@@ -256,7 +256,8 @@ const {
   hasFilter,
   milestones,
   mutation,
-  updateTicket
+  updateTicket,
+  getUnitIdByTicketId
 } = ret[1]
 
 const milestoneVerticalLines = computed(() => {
@@ -353,7 +354,8 @@ let isDragged = false;
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   if (!isDragged) {
-    openTicketDetail(Number(bar.ganttBarConfig.id), 1) // TODO: UnitId
+    console.log(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
+    openTicketDetail(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
   }
   isDragged = false
 }

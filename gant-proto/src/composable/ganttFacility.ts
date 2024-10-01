@@ -615,6 +615,12 @@ export async function useGanttFacility() {
         }
     }
 
+    const getUnitIdByTicketId = (ticketId: number) => {
+        const ticket = ticketList.value.find(v => v.id == ticketId)!
+        const ganttGroup = ganttGroupList.value.find(v => v.id === ticket.gantt_group_id)!
+        return ganttGroup.unit_id
+    }
+
     return {
         bars,
         chartEnd,
@@ -642,6 +648,7 @@ export async function useGanttFacility() {
         hasFilter,
         milestones,
         mutation,
+        getUnitIdByTicketId,
     }
 }
 

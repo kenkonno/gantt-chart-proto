@@ -207,11 +207,10 @@ export const useGlobalState = async () => {
 
     const getters: Getters = {
         getUnitName: (unitId: number) => {
-            let result = ""
-            try {
-                result = globalState.value.unitMap[globalState.value.currentFacilityId][unitId].name
-            } catch {
+            const result = globalState.value.unitMap[globalState.value.currentFacilityId].find(v => v.id === unitId)?.name
+            if (result === undefined) {
                 console.warn("unit not found", unitId)
+                return ""
             }
             return result
         },
