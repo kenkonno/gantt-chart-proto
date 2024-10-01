@@ -23,6 +23,7 @@ import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
 import {useMilestoneTable} from "@/composable/milestone";
+import {getUserInfo} from "@/composable/auth";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -153,10 +154,11 @@ export async function useGanttFacility() {
 
 
     // computedだとドラッグ関連が上手くいかない為やはりオブジェクトとして双方向に同期をとるようにする。
-    const bars = ref<GanttBarObject[]>([])
+    const bars = ref<GanttBarObject[][]>([])
     // ガントチャート描画用のオブジェクトの生成
-    const refreshBars = () => {
+    const refreshBars = async () => {
         bars.value.length = 0;
+        const prodGanttBarObjects = await getProdTicketsIfSimulation()
         ganttChartGroup.value.forEach(unit => {
             const emptyRow: GanttBarObject = {
                 beginDate: "",
@@ -166,34 +168,75 @@ export async function useGanttFacility() {
                     style: {backgroundColor: BAR_NORMAL_COLOR}
                 }
             }
-            bars.value.push(...unit.rows.map(task => <GanttBarObject>{
-                beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
-                endDate: endOfDay(task.ticket!.end_date!),
-                ganttGroupId: unit.ganttGroup.id,
-                ganttBarConfig: {
-                    dragLimitLeft: 0,
-                    dragLimitRight: 0,
-                    hasHandles: allowed('UPDATE_TICKET'),
-                    immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
-                    id: task.ticket?.id!.toString(),
-                    label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
-                    style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
-                    progress: task.ticket?.progress_percent,
-                    progressColor: BAR_COMPLETE_COLOR
+            bars.value.push(...unit.rows.map(task => {
+                const result: GanttBarObject[] = []
+                const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
+                if (prodBar != undefined) {
+                    prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
+                    result.push(prodBar)
                 }
+                result.push(<GanttBarObject>{
+                    beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
+                    endDate: endOfDay(task.ticket!.end_date!),
+                    ganttGroupId: unit.ganttGroup.id,
+                    ganttBarConfig: {
+                        dragLimitLeft: 0,
+                        dragLimitRight: 0,
+                        hasHandles: allowed('UPDATE_TICKET'),
+                        immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
+                        id: task.ticket?.id!.toString(),
+                        label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
+                        style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
+                        progress: task.ticket?.progress_percent,
+                        progressColor: BAR_COMPLETE_COLOR
+                    }
+                })
+                return result
             }))
             // ボタン用の空行を追加する
             if (!hasFilter.value && allowed('UPDATE_TICKET')) {
-                bars.value.push(emptyRow)
+                bars.value.push([emptyRow])
             }
         })
+        console.log(bars.value)
     }
+
+    // シミュレーション中の場合本番のチケットを習得する
+    const getProdTicketsIfSimulation = async () => {
+        const result: GanttBarObject[] = []
+        const isSimulateUser = getUserInfo().isSimulateUser
+        if (isSimulateUser == true) {
+            const {data: prodTickets} = await Api.getTickets(ganttGroupIds, "prod")
+            result.push(...
+                prodTickets.list.map(v => {
+                    return <GanttBarObject>{
+                        beginDate: dayjs(v.start_date!).format(DAYJS_FORMAT),
+                        endDate: endOfDay(v.end_date!),
+                        ganttGroupId: v.gantt_group_id,
+                        ganttBarConfig: {
+                            dragLimitLeft: 0,
+                            dragLimitRight: 0,
+                            hasHandles: false,
+                            immobile: true, // TODO: なぜか判定が逆転している
+                            id: v.id!.toString(),
+                            label: getProcessName(v.process_id == null ? -1 : v.process_id),
+                            style: {backgroundColor: getProcessColor(v.process_id), opacity: 0.5}, // TODO: 色を薄くする対応をする
+                            progress: v.progress_percent,
+                            progressColor: BAR_COMPLETE_COLOR
+                        }
+                    }
+                })
+            )
+        }
+        return result
+    }
+
     refreshLocalGantt()
-    refreshBars()
+    await refreshBars()
 
     const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
-        // ソート前にガントチャート上のIndexを検索しておく。
-        const barIndex = bars.value.findIndex(v => v.ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
+        // ソート前にガントチャート上のIndexを検索しておく。 TODO: シミュレーション対応
+        const barIndex = bars.value.findIndex(v => v[0].ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
         const sorted = changeSort(ganttRows, index, direction)
         const newTickets: Ticket[] = []
         // 変更がった場合はガントチャートのオブジェクトと同期をとる
@@ -224,7 +267,7 @@ export async function useGanttFacility() {
         // チケット情報をリフレッシュする
         await ticketRefresh(ganttGroupIds)
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -255,7 +298,7 @@ export async function useGanttFacility() {
     }
 
     // DBからのチケット更新をフロントに反映させる。
-    const refreshTicket = (ticket: Ticket) => {
+    const refreshTicket = async (ticket: Ticket) => {
         const target = ticketList.value.find(v => v.id === ticket.id)
         if (target == undefined) {
             console.error("チケットが存在しません。")
@@ -273,9 +316,9 @@ export async function useGanttFacility() {
         target.updated_at = ticket.updated_at
         target.number_of_worker = ticket.number_of_worker
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
-    const refreshTickets = (ticket: Ticket[]) => {
+    const refreshTickets = async (ticket: Ticket[]) => {
         ticket.forEach(ticket => {
             const target = ticketList.value.find(v => v.id === ticket.id)
             if (target == undefined) {
@@ -295,7 +338,7 @@ export async function useGanttFacility() {
             target.number_of_worker = ticket.number_of_worker
         })
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
 
 
@@ -336,7 +379,7 @@ export async function useGanttFacility() {
         const {data} = await Api.postTickets({ticket: newTicket})
         ticketList.value.push(data.ticket!)
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
     // DBへのストア及びローカルのガントに情報を反映する
     const ticketUserUpdate = async (ticket: Ticket, userIds: number[]) => {
@@ -501,7 +544,7 @@ export async function useGanttFacility() {
         }, setDepartmentId: async (departmentId: string, ticket?: Ticket) => {
             console.log("########### setDepartmentId", departmentId)
             const clone = Object.assign({}, ticket)
-            if (departmentId == "" ) {
+            if (departmentId == "") {
                 clone.department_id = undefined
             } else {
                 clone.department_id = Number(departmentId)
@@ -601,7 +644,6 @@ export async function useGanttFacility() {
         mutation,
     }
 }
-
 
 
 const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGroup: GanttGroup) => {

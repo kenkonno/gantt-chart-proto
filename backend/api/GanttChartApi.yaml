@@ -543,6 +543,11 @@ paths:
           in: query
           name: ganttGroupIds
           required: true
+        - schema:
+            type: string
+          in: query
+          name: mode
+          description: prod or null
     post:
       summary: PostTickets
       operationId: post-tickets

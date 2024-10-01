@@ -4168,10 +4168,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetTickets
          * @param {Array<number>} ganttGroupIds 
+         * @param {string} [mode] prod or null
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTickets: async (ganttGroupIds: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getTickets: async (ganttGroupIds: Array<number>, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'ganttGroupIds' is not null or undefined
             assertParamExists('getTickets', 'ganttGroupIds', ganttGroupIds)
             const localVarPath = `/api/tickets`;
@@ -4188,6 +4189,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (ganttGroupIds) {
                 localVarQueryParameter['ganttGroupIds'] = ganttGroupIds;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -5819,11 +5824,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetTickets
          * @param {Array<number>} ganttGroupIds 
+         * @param {string} [mode] prod or null
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTickets(ganttGroupIds: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTickets(ganttGroupIds, options);
+        async getTickets(ganttGroupIds: Array<number>, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTickets(ganttGroupIds, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6592,11 +6598,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetTickets
          * @param {Array<number>} ganttGroupIds 
+         * @param {string} [mode] prod or null
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTickets(ganttGroupIds: Array<number>, options?: any): AxiosPromise<GetTicketsResponse> {
-            return localVarFp.getTickets(ganttGroupIds, options).then((request) => request(axios, basePath));
+        getTickets(ganttGroupIds: Array<number>, mode?: string, options?: any): AxiosPromise<GetTicketsResponse> {
+            return localVarFp.getTickets(ganttGroupIds, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7404,12 +7411,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetTickets
      * @param {Array<number>} ganttGroupIds 
+     * @param {string} [mode] prod or null
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getTickets(ganttGroupIds: Array<number>, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getTickets(ganttGroupIds, options).then((request) => request(this.axios, this.basePath));
+    public getTickets(ganttGroupIds: Array<number>, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTickets(ganttGroupIds, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -139,7 +139,7 @@
               </tbody>
             </table>
           </template>
-          <g-gantt-row v-for="bar in bars" :key="bar.ganttBarConfig.id" :bars="[bar]"/>
+          <g-gantt-row v-for="bar in bars" :key="bar[0].ganttBarConfig.id" :bars="bar"/>
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->

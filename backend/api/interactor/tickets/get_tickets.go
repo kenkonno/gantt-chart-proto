@@ -11,13 +11,15 @@ import (
 )
 
 func GetTicketsInvoke(c *gin.Context) openapi_models.GetTicketsResponse {
-	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
-
-	// TODO: メモ疲れたのでもうやめ。不要なAPIは有りそうなので精査する。unit追加時に gantt_groupsも追加するようにした。（そもそもこれもイランかもしれんけど・・
-	// TODO: 画面からgantt_groupsと tickets, units のAPIコールして描画するところまで頑張ってやってください。
-
-	// TODO: GETで配列ってどうする？
 	ganttGroupIdsParam := c.QueryArray("ganttGroupIds")
+	// シミュレーション中に本番のチケットを取得するために用意
+	mode := c.Query("mode")
+
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		ticketRep = repository.NewTicketRepository()
+	}
+
 	var ganttGroupIds []int32
 	for _, v := range ganttGroupIdsParam {
 		vv, err := strconv.Atoi(v)

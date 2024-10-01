@@ -18,7 +18,7 @@
     </table>
   </div>
   <hr>
-  <MasterDiffTables></MasterDiffTables>
+  <MasterDiffTables v-if="simulationLock.status == 'in_progress'"></MasterDiffTables>
   <div class="d-flex justify-content-between">
     <div>
       <button type="submit" class="btn btn-primary"
