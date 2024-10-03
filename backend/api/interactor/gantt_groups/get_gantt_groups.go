@@ -2,6 +2,7 @@ package gantt_groups
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -11,9 +12,12 @@ import (
 
 func GetGanttGroupsInvoke(c *gin.Context) openapi_models.GetGanttGroupsResponse {
 
-	// TODO: ほかのいらないAPIを判断して消す
+	mode := c.Query("mode")
+	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		ganttGroupRep = repository.NewGanttGroupRepository()
+	}
 
-	ganttGroupRep := repository.NewGanttGroupRepository()
 	facilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {
 		panic(err)

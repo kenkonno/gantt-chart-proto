@@ -43,6 +43,7 @@ export async function useTicket(ticketId?: number) {
             ticket.value.department_id = data.ticket.department_id
             ticket.value.limit_date = data.ticket.limit_date
             ticket.value.estimate = data.ticket.estimate
+            ticket.value.number_of_worker = data.ticket.number_of_worker
             ticket.value.days_after = data.ticket.days_after
             ticket.value.start_date = data.ticket.start_date
             ticket.value.end_date = data.ticket.end_date

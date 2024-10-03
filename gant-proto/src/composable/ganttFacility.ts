@@ -1,7 +1,7 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref, toValue} from "vue";
-import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser} from "@/api";
+import {GanttGroup, OperationSetting, Ticket, TicketUser} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -11,18 +11,18 @@ import {changeSort} from "@/utils/sort";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
     addBusinessDays,
-    dayBetween,
     endOfDay,
     ganttDateToYMDDate,
     getEndDateByRequiredBusinessDay,
     getNumberOfBusinessDays
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
-import {DEFAULT_PROCESS_COLOR} from "@/const/common";
+import {ApiMode, DEFAULT_PROCESS_COLOR} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
 import {useMilestoneTable} from "@/composable/milestone";
+import {getUserInfo} from "@/composable/auth";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -153,10 +153,11 @@ export async function useGanttFacility() {
 
 
     // computedだとドラッグ関連が上手くいかない為やはりオブジェクトとして双方向に同期をとるようにする。
-    const bars = ref<GanttBarObject[]>([])
+    const bars = ref<GanttBarObject[][]>([])
     // ガントチャート描画用のオブジェクトの生成
-    const refreshBars = () => {
+    const refreshBars = async () => {
         bars.value.length = 0;
+        const prodGanttBarObjects = await getProdTicketsIfSimulation()
         ganttChartGroup.value.forEach(unit => {
             const emptyRow: GanttBarObject = {
                 beginDate: "",
@@ -166,34 +167,75 @@ export async function useGanttFacility() {
                     style: {backgroundColor: BAR_NORMAL_COLOR}
                 }
             }
-            bars.value.push(...unit.rows.map(task => <GanttBarObject>{
-                beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
-                endDate: endOfDay(task.ticket!.end_date!),
-                ganttGroupId: unit.ganttGroup.id,
-                ganttBarConfig: {
-                    dragLimitLeft: 0,
-                    dragLimitRight: 0,
-                    hasHandles: allowed('UPDATE_TICKET'),
-                    immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
-                    id: task.ticket?.id!.toString(),
-                    label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
-                    style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
-                    progress: task.ticket?.progress_percent,
-                    progressColor: BAR_COMPLETE_COLOR
+            bars.value.push(...unit.rows.map(task => {
+                const result: GanttBarObject[] = []
+                const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
+                if (prodBar != undefined) {
+                    prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
+                    result.push(prodBar)
                 }
+                result.push(<GanttBarObject>{
+                    beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
+                    endDate: endOfDay(task.ticket!.end_date!),
+                    ganttGroupId: unit.ganttGroup.id,
+                    ganttBarConfig: {
+                        dragLimitLeft: 0,
+                        dragLimitRight: 0,
+                        hasHandles: allowed('UPDATE_TICKET'),
+                        immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
+                        id: task.ticket?.id!.toString(),
+                        label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
+                        style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
+                        progress: task.ticket?.progress_percent,
+                        progressColor: BAR_COMPLETE_COLOR
+                    }
+                })
+                return result
             }))
             // ボタン用の空行を追加する
             if (!hasFilter.value && allowed('UPDATE_TICKET')) {
-                bars.value.push(emptyRow)
+                bars.value.push([emptyRow])
             }
         })
+        console.log(bars.value)
     }
+
+    // シミュレーション中の場合本番のチケットを習得する
+    const getProdTicketsIfSimulation = async () => {
+        const result: GanttBarObject[] = []
+        const isSimulateUser = getUserInfo().isSimulateUser
+        if (isSimulateUser == true) {
+            const {data: prodTickets} = await Api.getTickets(ganttGroupIds, ApiMode.prod)
+            result.push(...
+                prodTickets.list.map(v => {
+                    return <GanttBarObject>{
+                        beginDate: dayjs(v.start_date!).format(DAYJS_FORMAT),
+                        endDate: endOfDay(v.end_date!),
+                        ganttGroupId: v.gantt_group_id,
+                        ganttBarConfig: {
+                            dragLimitLeft: 0,
+                            dragLimitRight: 0,
+                            hasHandles: false,
+                            immobile: true, // TODO: なぜか判定が逆転している
+                            id: v.id!.toString(),
+                            label: getProcessName(v.process_id == null ? -1 : v.process_id),
+                            style: {backgroundColor: getProcessColor(v.process_id), opacity: 0.5},
+                            progress: v.progress_percent,
+                            progressColor: BAR_COMPLETE_COLOR
+                        }
+                    }
+                })
+            )
+        }
+        return result
+    }
+
     refreshLocalGantt()
-    refreshBars()
+    await refreshBars()
 
     const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
-        // ソート前にガントチャート上のIndexを検索しておく。
-        const barIndex = bars.value.findIndex(v => v.ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
+        // ソート前にガントチャート上のIndexを検索しておく。 TODO: シミュレーション対応
+        const barIndex = bars.value.findIndex(v => v[0].ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
         const sorted = changeSort(ganttRows, index, direction)
         const newTickets: Ticket[] = []
         // 変更がった場合はガントチャートのオブジェクトと同期をとる
@@ -207,7 +249,7 @@ export async function useGanttFacility() {
                 newTickets.push(newTicket!)
             }
         }
-        refreshTickets(newTickets)
+        await refreshTickets(newTickets)
     }
 
     // 部署の変更。
@@ -224,7 +266,7 @@ export async function useGanttFacility() {
         // チケット情報をリフレッシュする
         await ticketRefresh(ganttGroupIds)
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -255,7 +297,7 @@ export async function useGanttFacility() {
     }
 
     // DBからのチケット更新をフロントに反映させる。
-    const refreshTicket = (ticket: Ticket) => {
+    const refreshTicket = async (ticket: Ticket) => {
         const target = ticketList.value.find(v => v.id === ticket.id)
         if (target == undefined) {
             console.error("チケットが存在しません。")
@@ -273,9 +315,9 @@ export async function useGanttFacility() {
         target.updated_at = ticket.updated_at
         target.number_of_worker = ticket.number_of_worker
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
-    const refreshTickets = (ticket: Ticket[]) => {
+    const refreshTickets = async (ticket: Ticket[]) => {
         ticket.forEach(ticket => {
             const target = ticketList.value.find(v => v.id === ticket.id)
             if (target == undefined) {
@@ -295,7 +337,7 @@ export async function useGanttFacility() {
             target.number_of_worker = ticket.number_of_worker
         })
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
 
 
@@ -311,7 +353,7 @@ export async function useGanttFacility() {
             return
         }
         const {data} = await Api.getTicketsId(ticketId)
-        refreshTicket(data.ticket!)
+        await refreshTicket(data.ticket!)
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -336,7 +378,7 @@ export async function useGanttFacility() {
         const {data} = await Api.postTickets({ticket: newTicket})
         ticketList.value.push(data.ticket!)
         refreshLocalGantt()
-        refreshBars()
+        await refreshBars()
     }
     // DBへのストア及びローカルのガントに情報を反映する
     const ticketUserUpdate = async (ticket: Ticket, userIds: number[]) => {
@@ -368,7 +410,7 @@ export async function useGanttFacility() {
                 clone.start_date = ganttDateToYMDDate(bar.beginDate)
                 clone.end_date = ganttDateToYMDDate(bar.endDate)
                 const newTicket = await updateTicket(clone)
-                refreshTicket(newTicket!)
+                await refreshTicket(newTicket!)
             }
         }
     }
@@ -408,19 +450,19 @@ export async function useGanttFacility() {
                     !clone?.number_of_worker || !clone?.process_id
                 ) {
                     console.log("###### SKIP due to first row")
-                    return;
+                    continue;
                 }
                 startDate = dayjs(clone!.start_date)
             } else {
                 // 先頭行以降は (開始日 or days_after)・工数・工程・人数が未設定の場合はスキップする
                 if (!clone?.estimate || !clone?.number_of_worker || !clone?.process_id) {
                     console.log("###### SKIP due to after first row pt1")
-                    return;
+                    continue;
                 } else {
                     // 開始日も日後も設定がなければスキップ
                     if (!clone?.start_date && !clone?.days_after) {
                         console.log("###### SKIP due to after first row pt2")
-                        return;
+                        continue;
                     } else {
                         // 日後が0でなければ優先
                         if (clone?.days_after != null) {
@@ -450,7 +492,7 @@ export async function useGanttFacility() {
             prevEndDate = dayjs(newTicket!.end_date)
             console.log("########### 工数重視の完了", startDate.format(DAYJS_FORMAT))
         }
-        refreshTickets(newTickets)
+        await refreshTickets(newTickets)
     }
 
     /**
@@ -486,7 +528,7 @@ export async function useGanttFacility() {
             }
             prevEndDate = dayjs(clone.end_date)
         }
-        refreshTickets(newTickets)
+        await refreshTickets(newTickets)
     }
 
     const mutation = {
@@ -495,13 +537,13 @@ export async function useGanttFacility() {
             const clone = Object.assign({}, ticket)
             clone.process_id = Number(processId)
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
 
         }, setDepartmentId: async (departmentId: string, ticket?: Ticket) => {
             console.log("########### setDepartmentId", departmentId)
             const clone = Object.assign({}, ticket)
-            if (departmentId == "" ) {
+            if (departmentId == "") {
                 clone.department_id = undefined
             } else {
                 clone.department_id = Number(departmentId)
@@ -519,43 +561,43 @@ export async function useGanttFacility() {
             newTicketUserList.push(...newTicketUsers!)
             ticketUserList.value.length = 0
             ticketUserList.value.push(...newTicketUserList)
-            refreshTicket(newTicket!)
+            await refreshTicket(newTicket!)
 
         }, setNumberOfWorker: async (numberOfWorker: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.number_of_worker = numberOfWorker
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setEstimate: async (estimate: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.estimate = estimate
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setDaysAfter: async (daysAfter: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.days_after = daysAfter
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setStartDate: async (startDate: string, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.start_date = startDate
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setEndDate: async (endDate: string, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.end_date = endDate
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setProgressPercent: async (progressPercent: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.progress_percent = progressPercent
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setTicketUser: async (ticket: Ticket, value: number[]) => {
             const clone = Object.assign({}, ticket)
@@ -567,9 +609,15 @@ export async function useGanttFacility() {
             newTicketUserList.push(...newTicketUsers!)
             ticketUserList.value.length = 0
             ticketUserList.value.push(...newTicketUserList)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }
+    }
+
+    const getUnitIdByTicketId = (ticketId: number) => {
+        const ticket = ticketList.value.find(v => v.id == ticketId)!
+        const ganttGroup = ganttGroupList.value.find(v => v.id === ticket.gantt_group_id)!
+        return ganttGroup.unit_id
     }
 
     return {
@@ -599,9 +647,9 @@ export async function useGanttFacility() {
         hasFilter,
         milestones,
         mutation,
+        getUnitIdByTicketId,
     }
 }
-
 
 
 const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGroup: GanttGroup) => {

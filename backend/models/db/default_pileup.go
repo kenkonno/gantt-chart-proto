@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// TODO: tableは存在しない。Entityのほうが正しい。
+
 type DefaultPileUp struct {
 	Id             *int32 `gorm:"primaryKey;autoIncrement"`
 	FacilityId     int32

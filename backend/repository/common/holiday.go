@@ -7,6 +7,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/interfaces"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"time"
 )
 
 // Auto generated start
@@ -61,10 +62,18 @@ func (r *holidayRepository) FindByFacilityId(facilityId int32) []db.Holiday {
 	return holidays
 }
 
-func (r *holidayRepository) InsertByFacilityId(facilityId int32) []db.Holiday {
+func (r *holidayRepository) InsertByFacilityId(facilityId int32, from *time.Time, to *time.Time) []db.Holiday {
 	var results []db.Holiday
 
-	r.con.Raw(fmt.Sprintf(`
+	var fromToWhere = ""
+
+	if from != nil && to != nil {
+		fromToWhere = fmt.Sprintf(`
+	AND (date < '%s'::date OR '%s'::date < date)
+	`, from.Format(time.RFC3339), to.Format(time.RFC3339))
+	}
+
+	r.con.Debug().Raw(fmt.Sprintf(`
 	WITH date_master AS (SELECT date                                                  as date,
 								CASE
 									WHEN extract(dow FROM date) = 6 THEN '土曜日'
@@ -72,11 +81,13 @@ func (r *holidayRepository) InsertByFacilityId(facilityId int32) []db.Holiday {
 						 FROM generate_series((SELECT term_from FROM facilities WHERE id = %d),
 											  (SELECT term_to FROM facilities WHERE id = %d), '1 days') as date
 	                     WHERE extract(dow FROM date) IN (6, 0)
-    	                 AND NOT EXISTS (SELECT * FROM holidays h WHERE h.facility_id = %d AND h.date = date.date))
+    	                 AND NOT EXISTS (SELECT * FROM holidays h WHERE h.facility_id = %d AND h.date = date.date)
+						 %s
+						)
 	INSERT
 	INTO holidays (name, date, created_at, facility_id, updated_at)
 	SELECT youbi, date, now(), %d, EXTRACT(EPOCH FROM now())
 	FROM date_master
-	`, facilityId, facilityId, facilityId, facilityId)).Scan(&results)
+	`, facilityId, facilityId, facilityId, fromToWhere, facilityId)).Scan(&results)
 	return results
 }

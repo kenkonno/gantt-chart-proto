@@ -3,6 +3,7 @@ package ticket_memo
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -13,7 +14,7 @@ import (
 
 func PostTicketMemoIdInvoke(c *gin.Context) openapi_models.PostTicketMemoIdResponse {
 
-	ticketRep := repository.NewTicketRepository()
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	id32 := int32(id)

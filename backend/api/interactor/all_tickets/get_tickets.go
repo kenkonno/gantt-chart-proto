@@ -3,6 +3,7 @@ package all_tickets
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -13,6 +14,11 @@ import (
 func GetAllTicketsInvoke(c *gin.Context) openapi_models.GetAllTicketsResponse {
 
 	qFacilityTypes := c.QueryArray("facilityTypes")
+	mode := c.Query("mode")
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
+	if mode == "prod" {
+		ticketRep = repository.NewTicketRepository()
+	}
 
 	var facilityTypes []string
 
@@ -22,7 +28,6 @@ func GetAllTicketsInvoke(c *gin.Context) openapi_models.GetAllTicketsResponse {
 	if slices.Contains(qFacilityTypes, constants.FacilityTypePrepared) {
 		facilityTypes = append(facilityTypes, constants.FacilityTypePrepared)
 	}
-	ticketRep := repository.NewTicketRepository()
 	ticketList := ticketRep.FindByFacilityType(facilityTypes, []string{constants.FacilityStatusEnabled})
 
 	return openapi_models.GetAllTicketsResponse{

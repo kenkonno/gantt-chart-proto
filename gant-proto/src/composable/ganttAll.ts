@@ -1,17 +1,18 @@
 import dayjs from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref} from "vue";
-import {Facility, Holiday, Ticket, User} from "@/api";
+import {Facility, GanttGroup, Holiday, Ticket, User} from "@/api";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {endOfDay,} from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {Api} from "@/api/axios";
 import {GanttBarConfig} from "@infectoone/vue-ganttastic/lib_types/types";
 import {round} from "@/utils/math";
-import {DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
+import {ApiMode, DEFAULT_PROCESS_COLOR, FacilityStatus} from "@/const/common";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {useMilestoneTable} from "@/composable/milestone";
 import {AggregationAxis, DisplayType} from "@/composable/ganttFacilityMenu";
+import {getUserInfo} from "@/composable/auth";
 
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
 
@@ -49,6 +50,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     }
 
     const {data: allTickets} = await Api.getAllTickets()
+    const {data: originalAllTickets} = await Api.getAllTickets(undefined, ApiMode.prod)
     const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
 
     let filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
@@ -86,16 +88,16 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     // 全案件の最小
     const startDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_from > b.term_from ? 1 : -1
-    }).shift()!.term_from.substring(0, 10)
+    }).shift()?.term_from.substring(0, 10) ?? dayjs(Date()).startOf('month').format("YYYYMMDD")
     // 全案件の最大
     const endDate: string = filteredFacilityList.slice().sort((a, b) => {
         return a.term_to > b.term_to ? 1 : -1
-    }).pop()!.term_to.substring(0, 10)
+    }).pop()?.term_to.substring(0, 10) ?? dayjs(Date()).endOf('month').format("YYYYMMDD")
 
-    async function getMilestones(facility: Facility) {
+    async function getMilestones(facility: Facility, mode?: string) {
         return await (async () => {
             const result: GanttBarObject[] = []
-            const {list} = await useMilestoneTable(facility.id!)
+            const {list} = await useMilestoneTable(facility.id!, mode)
             result.push(<GanttBarObject>{
                 beginDate: dayjs(facility.shipment_due_date).format(DAYJS_FORMAT),
                 endDate: endOfDay(facility.shipment_due_date),
@@ -107,7 +109,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
                     immobile: false,
                     pushOnOverlap: false,
                     id: 90000 + facility.id! + "", // TODO: IDのルールの決定
-                    label: "出荷期日".substring(0,1), // 工程名
+                    label: "出荷期日".substring(0, 1), // 工程名
                     progress: 0,
                     progressColor: BAR_COMPLETE_COLOR,
                     style: {
@@ -132,7 +134,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
                             immobile: false,
                             pushOnOverlap: false,
                             id: 80000 + facility.id! + "", // TODO: IDのルールの決定
-                            label: v.description.substring(0,1), // 工程名
+                            label: v.description.substring(0, 1), // 工程名
                             progress: 0,
                             progressColor: BAR_COMPLETE_COLOR,
                             style: {
@@ -141,7 +143,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
                                 height: "90%",
                                 opacity: 0.9,
                                 borderRadius: "30px",
-                                color:  "white"
+                                color: "white"
                             },
                         }
                     }
@@ -151,15 +153,8 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         })();
     }
 
-    // 案件ごとに行を作成する
-    const ganttAllRowPromise = filteredFacilityList.map(async facility => {
-        // 案件に紐づくチケット一覧
-        const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
-        const {data} = await Api.getHolidays(facility.id!)
-        holidays.push(...data.list)
-        const tickets = filteredAllTickets.list.filter(v => ganttGroups.list.map(v => v.id!).includes(v.gantt_group_id))
-        const ticketUsers = filteredAllTicketUsers.list.filter(v => tickets.map(vv => vv.id!).includes(v.ticket_id))
-        // 全てのチケットの予定工数を計上する
+    const getFacilityInfos = async (ganttGroups: GanttGroup[], sourceTickets: Ticket[]) => {
+        const tickets = sourceTickets.filter(v => ganttGroups.map(v => v.id!).includes(v.gantt_group_id))
         const estimate = tickets.reduce((p, c) => {
             if (c.estimate != null) {
                 return p + c.estimate
@@ -176,6 +171,47 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
             }
         }, 0) / estimate * 100
 
+
+        return {
+            tickets,
+            estimate,
+            progress_percent
+        }
+    }
+
+    const getProdBarsIfSimulation = async (facility: Facility) => {
+        const {data} = await Api.getFacilitiesId(facility.id!, ApiMode.prod)
+        const prodFacility = data.facility!
+
+        const isSimulateUser = getUserInfo().isSimulateUser
+        const bars: GanttBarObject[] = []
+        if (isSimulateUser == true) {
+            const {data: ganttGroups} = await Api.getGanttGroups(prodFacility.id!, ApiMode.prod)
+            const milestones = await getMilestones(prodFacility, ApiMode.prod);
+            const {
+                tickets,
+                estimate,
+                progress_percent
+            } = await getFacilityInfos(ganttGroups.list, originalAllTickets.list)
+            bars.push(...(hasFilter() || aggregationAxis == 'process' ? createBars(tickets) : [
+                createBar(progress_percent, prodFacility.name, prodFacility.id!, prodFacility.term_from, prodFacility.term_to),
+                ...milestones
+            ]))
+
+        }
+        return bars
+    }
+
+    // 案件ごとに行を作成する
+    const ganttAllRowPromise = filteredFacilityList.map(async facility => {
+        // 案件に紐づくチケット一覧
+        const {data} = await Api.getHolidays(facility.id!)
+        holidays.push(...data.list)
+        const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
+        const {tickets, estimate, progress_percent} = await getFacilityInfos(ganttGroups.list, filteredAllTickets.list)
+
+        const ticketUsers = filteredAllTicketUsers.list.filter(v => tickets.map(vv => vv.id!).includes(v.ticket_id))
+        // 全てのチケットの予定工数を計上する
         const users: User[] = []
         {
             const r = ticketUsers.map(ticketUser => {
@@ -186,6 +222,25 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
 
         const milestones = await getMilestones(facility);
 
+        const bars = hasFilter() || aggregationAxis == 'process' ? createBars(tickets) : [
+            createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to),
+            ...milestones
+        ]
+        const prodBars = await getProdBarsIfSimulation(facility)
+        console.log("prodBars vs bars", prodBars, bars)
+        if (prodBars.length > 0) {
+            // 表示用のbarsにprodBarsに存在している者だけ追加する。
+            const targets = prodBars.filter(v => {
+                return bars.find(vv => vv.ganttBarConfig.id == v.ganttBarConfig.id) != undefined
+            })
+            bars.unshift(...targets.map(v => {
+                const style = v.ganttBarConfig.style!
+                style.opacity = 0.5
+                v.ganttBarConfig.style = style
+                return v
+            }))
+        }
+
         // ここのbarsが複数なので１つにして日付を最小最大にする。
         // TODO: CreateBarsでCSSをさらに変更させる
         return <GanttAllRow>{
@@ -195,12 +250,10 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
             users: users,
             estimate: estimate,
             progress_percent: round(progress_percent),
-            bars: hasFilter() || aggregationAxis == 'process' ? createBars(tickets) : [
-                createBar(progress_percent, facility.name, facility.id!, facility.term_from, facility.term_to),
-                ...milestones
-            ],
+            bars: bars,
         }
     })
+
     const createBar = (progressPercent: number, facilityName: string, facilityId: number, startDate: string, endDate: string) => {
         return <GanttBarObject>{
             beginDate: dayjs(startDate).format(DAYJS_FORMAT),
@@ -252,7 +305,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     const chartStart = ref(dayjs(startDate).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(endDate).format(DAYJS_FORMAT))
     const holidaysAsDate = computed(() => (displayType: DisplayType) => {
-        if ( displayType === "week") {
+        if (displayType === "week") {
             return Array.from([])
         } else {
             const r = holidays.map(v => new Date(v.date))

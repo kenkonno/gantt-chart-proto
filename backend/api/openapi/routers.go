@@ -121,6 +121,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteSimulation",
+		http.MethodDelete,
+		"/api/simulation",
+		DeleteSimulation,
+	},
+
+	{
 		"DeleteTicketUsersId",
 		http.MethodDelete,
 		"/api/ticketUsers/:id",
@@ -279,6 +286,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/scheduleAlerts",
 		GetScheduleAlerts,
+	},
+
+	{
+		"GetSimulation",
+		http.MethodGet,
+		"/api/simulation",
+		GetSimulation,
+	},
+
+	{
+		"GetSimulationMasterDiff",
+		http.MethodGet,
+		"/api/simulationMasterDiff",
+		GetSimulationMasterDiff,
 	},
 
 	{
@@ -478,6 +499,13 @@ var routes = Routes{
 	},
 
 	{
+		"PostSimulation",
+		http.MethodPost,
+		"/api/simulation",
+		PostSimulation,
+	},
+
+	{
 		"PostTicketMemoId",
 		http.MethodPost,
 		"/api/ticket-memo/:id",
@@ -531,5 +559,12 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/users/:id",
 		PostUsersId,
+	},
+
+	{
+		"PutSimulation",
+		http.MethodPut,
+		"/api/simulation",
+		PutSimulation,
 	},
 }

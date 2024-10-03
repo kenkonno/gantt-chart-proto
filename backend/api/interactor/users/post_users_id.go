@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -13,7 +14,7 @@ import (
 
 func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 
-	userRep := repository.NewUserRepository()
+	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
 	var userReq openapi_models.PostUsersRequest
 	if err := c.ShouldBindJSON(&userReq); err != nil {

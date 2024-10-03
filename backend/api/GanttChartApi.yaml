@@ -186,6 +186,11 @@ paths:
               examples: {}
       operationId: get-facilities-id
       description: ''
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: mode
     delete:
       summary: DeleteFacilitiesId
       operationId: delete-facilities-id
@@ -470,6 +475,10 @@ paths:
           in: query
           name: facilityId
           required: true
+        - schema:
+            type: string
+          in: query
+          name: mode
     post:
       summary: PostGanttGroups
       operationId: post-ganttGroups
@@ -543,6 +552,11 @@ paths:
           in: query
           name: ganttGroupIds
           required: true
+        - schema:
+            type: string
+          in: query
+          name: mode
+          description: prod or null
     post:
       summary: PostTickets
       operationId: post-tickets
@@ -725,6 +739,10 @@ paths:
               type: string
           in: query
           name: facilityTypes
+        - schema:
+            type: string
+          in: query
+          name: mode
     parameters: []
   /api/pileUps:
     get:
@@ -848,6 +866,10 @@ paths:
             type: integer
           in: query
           name: facilityId
+        - schema:
+            type: string
+          in: query
+          name: mode
     post:
       summary: PostMilestones
       operationId: post-milestones
@@ -1003,6 +1025,87 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostFacilitySharedLinksRequest'
+  /api/simulation:
+    post:
+      summary: PostSimulation
+      operationId: post-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostSimulationRequest'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+    get:
+      summary: ''
+      operationId: get-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetSimulationRequest'
+    put:
+      summary: ''
+      operationId: put-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutSimulationRequest'
+    delete:
+      summary: ''
+      operationId: delete-simulation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSimulationResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteSimulationRequest'
+  /api/simulationMasterDiff:
+    get:
+      summary: ''
+      operationId: get-simulation-master-diff
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSimulationMasterDiffResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetSimulationMasterDiffRequest'
 components:
   schemas:
     User:
@@ -2184,6 +2287,8 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+        isSimulateUser:
+          type: boolean
     PostLoginRequest:
       title: PostLoginRequest
       x-stoplight:
@@ -2555,3 +2660,164 @@ components:
       properties:
         facilitySharedLink:
           $ref: '#/components/schemas/FacilitySharedLink'
+    SimulationLock:
+      title: SimulationLock
+      type: object
+      properties:
+        simulationName:
+          type: string
+        status:
+          type: string
+        lockedAt:
+          type: string
+          format: date-time
+        lockedBy:
+          type: integer
+      required:
+        - simulationName
+        - status
+        - lockedAt
+        - lockedBy
+    GetSimulationRequest:
+      title: GetSimulationRequest
+      type: object
+    GetSimulationResponse:
+      title: GetSimulationResponse
+      type: object
+      properties:
+        simulationLock:
+          $ref: '#/components/schemas/SimulationLock'
+      required:
+        - simulationLock
+    PostSimulationRequest:
+      title: PostSimulationRequest
+      type: object
+      properties:
+        '':
+          type: string
+    PostSimulationResponse:
+      title: PostSimulationResponse
+      type: object
+      properties:
+        '':
+          type: string
+    PutSimulationRequest:
+      title: PutSimulationRequest
+      type: object
+      properties:
+        mode:
+          type: string
+      required:
+        - mode
+    PutSimulationResponse:
+      title: PutSimulationResponse
+      type: object
+      properties:
+        '':
+          type: string
+    DeleteSimulationRequest:
+      title: DeleteSimulationRequest
+      type: object
+      properties:
+        '':
+          type: string
+    DeleteSimulationResponse:
+      title: DeleteSimulationResponse
+      type: object
+      properties:
+        '':
+          type: string
+    GetSimulationMasterDiffRequest:
+      title: GetSimulationMasterDiff
+      type: object
+      x-stoplight:
+        id: 081ee7a4af529
+    GetSimulationMasterDiffResponse:
+      title: GetSimulationMasterDiffResponse
+      type: object
+      properties:
+        beforeProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        diffProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        afterProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        beforeDepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        diffDepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        afterDepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        beforeUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        diffUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        afterUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        beforeUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        diffUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        afterUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        beforeHolidays:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+        diffHolidays:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+        afterHolidays:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holiday'
+        beforeMilestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+        diffMilestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+        afterMilestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+      required:
+        - beforeProcesses
+        - afterProcesses
+        - beforeDepartments
+        - afterDepartments
+        - beforeUsers
+        - afterUsers
+        - beforeUnits
+        - afterUnits
+        - beforeHolidays
+        - afterHolidays
+        - beforeMilestones
+        - afterMilestones

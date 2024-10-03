@@ -2,6 +2,7 @@ package tickets
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
@@ -9,7 +10,7 @@ import (
 
 func DeleteTicketsIdInvoke(c *gin.Context) openapi_models.DeleteTicketsIdResponse {
 
-	ticketRep := repository.NewTicketRepository()
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

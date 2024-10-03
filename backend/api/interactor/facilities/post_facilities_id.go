@@ -2,6 +2,7 @@ package facilities
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -12,13 +13,16 @@ import (
 
 func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdResponse {
 
-	facilityRep := repository.NewFacilityRepository()
+	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
+	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 
 	var facilityReq openapi_models.PostFacilitiesRequest
 	if err := c.ShouldBindJSON(&facilityReq); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
+
+	oldFacility := facilityRep.Find(*facilityReq.Facility.Id)
 
 	facilityRep.Upsert(db.Facility{
 		Id:              facilityReq.Facility.Id,
@@ -32,6 +36,9 @@ func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdRespo
 		CreatedAt:       time.Time{},
 		UpdatedAt:       0,
 	})
+
+	holidayRep.InsertByFacilityId(*facilityReq.Facility.Id, &oldFacility.TermFrom, &oldFacility.TermTo)
+
 
 	return openapi_models.PostFacilitiesIdResponse{}
 

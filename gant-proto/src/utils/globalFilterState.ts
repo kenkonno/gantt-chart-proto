@@ -7,9 +7,10 @@ import {AggregationAxis, DisplayType, GanttFacilityHeader} from "@/composable/ga
 import {Header} from "@/composable/ganttAllMenu";
 import {PileUpFilter} from "@/composable/pileUps";
 import {FacilityType} from "@/const/common";
+import {allowed} from "@/composable/role";
 
 const LOCAL_STORAGE_KEY = "koteikanri"
-const VERSION = 1.1 // フィルタの項目が変わったときに変える
+const VERSION = 1.2 // フィルタの項目が変わったときに変える
 
 /**
  * WebStorageを用いて各種フィルタ系の値を保持するようにする。
@@ -42,7 +43,8 @@ type GlobalFilterState = {
     pileUpsFilter: PileUpFilter[],
     viewType: DisplayType,
     aggregationAxis: AggregationAxis,
-    version: number
+    version: number,
+    showPileUp: boolean,
 }
 
 
@@ -73,6 +75,7 @@ const state: GlobalFilterState = {
     pileUpsFilter: [],
     viewType: "day",
     aggregationAxis: "facility",
+    showPileUp: true,
     version: VERSION
 
 }
@@ -80,7 +83,12 @@ const state: GlobalFilterState = {
 export const initStateValue = async () => {
     // ローカルストレージから取得
     const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedState) {
+
+    // メニュー非表示権限の対応（現状Guestのみ）
+    if (!allowed("MENU")){
+        state.ganttFacilityMenu = getGuestMenu()
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
+    } else if (savedState) {
         const parsedState = JSON.parse(savedState);
         // バージョンが異なる場合は初期化する
         if (parsedState.version != VERSION) {
@@ -94,6 +102,7 @@ export const initStateValue = async () => {
         state.viewType = parsedState.viewType;
         state.aggregationAxis = parsedState.aggregationAxis;
         state.version = parsedState.version;
+        state.showPileUp = parsedState.showPileUp;
     } else {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
     }
@@ -113,6 +122,22 @@ const getFacilityMenu = (savedFacilityMenu: any): GanttFacilityHeader[] => {
     })
 }
 
+const getGuestMenu = ():GanttFacilityHeader[] => {
+    return [
+        {name: "ユニット", visible: true},
+        {name: "工程", visible: true},
+        {name: "部署", visible: true},
+        {name: "担当者", visible: false},
+        {name: "人数", visible: false},
+        {name: "工数(h)", visible: false},
+        {name: "日後", visible: false},
+        {name: "開始日", visible: true},
+        {name: "終了日", visible: true},
+        {name: "進捗", visible: false},
+        {name: "操作", visible: false},
+    ]
+}
+
 export const globalFilterGetter = {
     getOrderStatus: () => state.orderStatus,
     getGanttFacilityMenu: () => state.ganttFacilityMenu,
@@ -120,9 +145,10 @@ export const globalFilterGetter = {
     getPileUpsFilter: () => state.pileUpsFilter,
     getViewType: () => state.viewType,
     getAggregationAxis: () => state.aggregationAxis,
+    getShowPileUp: () => state.showPileUp,
 }
 
-type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType' | 'aggregationAxis';
+type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType' | 'aggregationAxis' | 'showPileUp' ;
 
 function updateState(key: StateKey, value: any) {
     const storage = localStorage.getItem(LOCAL_STORAGE_KEY)
@@ -132,10 +158,12 @@ function updateState(key: StateKey, value: any) {
     if ( key == "aggregationAxis") {
         savedState[key] = value;
         state[key] = value;
+    } else if (key == "showPileUp"){
+        savedState[key] = value;
+        state[key] = value;
     } else {
         savedState[key] = value;
         state[key] = value;
-
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedState))
 }
@@ -159,4 +187,8 @@ export const globalFilterMutation = {
     updateAggregationAxisFilter: (aggregationAxis: AggregationAxis) => {
         updateState('aggregationAxis', aggregationAxis);
     },
+    updateShowPileUp: (showPileUp: boolean) => {
+        updateState('showPileUp', showPileUp);
+    },
+
 }

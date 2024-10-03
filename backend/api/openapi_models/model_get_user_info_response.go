@@ -12,4 +12,6 @@ package openapi_models
 type GetUserInfoResponse struct {
 
 	User User `json:"user,omitempty"`
+
+	IsSimulateUser bool `json:"isSimulateUser,omitempty"`
 }

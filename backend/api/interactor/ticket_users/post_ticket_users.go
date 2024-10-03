@@ -2,6 +2,7 @@ package ticket_users
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -13,7 +14,7 @@ import (
 // PostTicketUsersInvoke このAPIはticketIdを受け取ってユーザーを更新するものとする。
 func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersResponse {
 
-	ticketUserRep := repository.NewTicketUserRepository()
+	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 	var ticketUserReq openapi_models.PostTicketUsersRequest
 	if err := c.ShouldBindJSON(&ticketUserReq); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())

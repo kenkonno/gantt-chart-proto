@@ -1,5 +1,10 @@
 <template>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light bg-warning" v-if="isSimulateUser">
+    <div class="d-flex w-100">
+      <b class="m-auto">シミュレーション中</b>
+    </div>
+  </nav>
+  <nav class="navbar navbar-light bg-light" v-if="allowed('MENU')">
     <div class="d-flex w-100">
       <b class="d-flex align-items-center">ビューの選択</b>
       <router-link to="/">
@@ -23,6 +28,14 @@
         </label>
       </div>
       <DepartmentUserFilter></DepartmentUserFilter>
+      <div v-if="allowed('VIEW_PILEUPS')">
+        <label>
+          <label>
+            <input type="checkbox" name="facilityType" :value="true" v-model="globalState.showPileUp" />
+            山積み表示
+          </label>
+        </label>
+      </div>
       <a href="#" @click.prevent="updateFacility">
         <span class="material-symbols-outlined">refresh</span>
         <span class="text">リロード</span>
@@ -47,6 +60,9 @@
       </ModalWithLink>
       <ModalWithLink title="担当者一覧" icon="person">
         <user-view @update="updateFacility"></user-view>
+      </ModalWithLink>
+      <ModalWithLink title="シミュレーション" icon="timeline">
+        <simulation-view @update="updateSimulation"></simulation-view>
       </ModalWithLink>
     </div>
   </nav>
@@ -100,7 +116,7 @@ import {
   GLOBAL_STATE_KEY,
   useGlobalState
 } from "@/composable/globalState";
-import {provide} from "vue";
+import {provide, ref} from "vue";
 import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
 import {FacilityTypeMap} from "@/const/common";
 import router from "@/router";
@@ -118,6 +134,7 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
+import SimulationView from "@/views/SimulationView.vue";
 
 // ローカルストレージの初期化
 initStateValue()
@@ -135,7 +152,9 @@ provide(GLOBAL_SCHEDULE_ALERT_KEY, globalScheduleAlert)
 const globalDepartmentUserFilter = useDepartmentUserFilter()
 provide(GLOBAL_DEPARTMENT_USER_FILTER_KEY, globalDepartmentUserFilter)
 
-const userInfo = await getUserInfo()!
+let {userInfo: tempUserInfo, isSimulateUser: tempIsSimulateUser} = getUserInfo()!
+const userInfo = ref(tempUserInfo)
+const isSimulateUser = ref(tempIsSimulateUser)
 
 const changeFacilityType = () => {
   // 案件ビューの時はpileUpsだけ
@@ -163,9 +182,18 @@ const closeModalProxy = async () => {
   closeEditModal()
   const {user} = await loggedIn()
   if (user != undefined) {
-    userInfo.lastName = user.lastName
-    userInfo.firstName = user.firstName
+    userInfo.value.lastName = user.lastName
+    userInfo.value.firstName = user.firstName
   }
+}
+
+// simulation関連
+const updateSimulation = async () => {
+  await loggedIn()
+  let {userInfo: tempUserInfo, isSimulateUser: tempIsSimulateUser} = getUserInfo()!
+  userInfo.value = tempUserInfo
+  isSimulateUser.value = tempIsSimulateUser
+  console.log('AAAAAAAAAAAAA', isSimulateUser.value, tempIsSimulateUser)
 }
 
 </script>

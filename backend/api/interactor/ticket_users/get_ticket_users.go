@@ -2,6 +2,7 @@ package ticket_users
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -10,7 +11,7 @@ import (
 )
 
 func GetTicketUsersInvoke(c *gin.Context) openapi_models.GetTicketUsersResponse {
-	ticketUserRep := repository.NewTicketUserRepository()
+	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 
 	ticketIdParam := c.QueryArray("ticketIds")
 	var ticketIds []int32

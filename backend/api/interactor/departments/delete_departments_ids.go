@@ -2,6 +2,7 @@ package departments
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
@@ -9,8 +10,8 @@ import (
 
 func DeleteDepartmentsIdInvoke(c *gin.Context) openapi_models.DeleteDepartmentsIdResponse {
 
-	departmentRep := repository.NewDepartmentRepository()
-	ticketRep := repository.NewTicketRepository()
+	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

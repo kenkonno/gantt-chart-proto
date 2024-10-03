@@ -1,6 +1,7 @@
 package db
 
 import "time"
+// TODO: tableは存在しない。Entityのほうが正しい。
 
 type ScheduleAlert struct {
 	FacilityId         int32

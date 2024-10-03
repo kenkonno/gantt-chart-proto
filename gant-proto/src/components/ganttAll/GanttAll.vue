@@ -1,7 +1,7 @@
 <template>
   <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter(), byProcess:byProcess()}">
     <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
-         :class="{'hide-scroll': allowed('VIEW_PILEUPS'), 'full-max-height': !allowed('VIEW_PILEUPS')}"
+         :class="{'hide-scroll': allowed('VIEW_PILEUPS')&& globalState.showPileUp, 'full-max-height': !allowed('VIEW_PILEUPS')  || !globalState.showPileUp}"
     >
       <g-gantt-chart
           :chart-start="chartStart"
@@ -61,25 +61,28 @@
       </g-gantt-chart>
     </div>
     <!-- 山積み部分 -->
-    <hr>
-    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement" v-if="allowed('VIEW_PILEUPS')">
-      <PileUps
-          :chart-start="chartStart"
-          :chart-end="chartEnd"
-          :display-type="displayType"
-          :holidays="holidays"
-          :tickets="tickets"
-          :ticket-users="ticketUsers"
-          :width="getGanttChartWidth(displayType)"
-          :highlightedDates="holidaysAsDate(displayType)"
-          :syncWidth="syncWidth"
-          :current-facility-id="-1"
-          :milestone-vertical-lines="[]"
-          @on-mounted="forceScroll"
-          :defaultPileUps="defaultPileUps"
-          :global-start-date="globalStartDate"
-      >
-      </PileUps>
+    <div v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp">
+      <hr>
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+        <PileUps
+            :chart-start="chartStart"
+            :chart-end="chartEnd"
+            :display-type="displayType"
+            :holidays="holidays"
+            :tickets="tickets"
+            :ticket-users="ticketUsers"
+            :width="getGanttChartWidth(displayType)"
+            :highlightedDates="holidaysAsDate(displayType)"
+            :syncWidth="syncWidth"
+            :current-facility-id="-1"
+            :milestone-vertical-lines="[]"
+            @on-mounted="forceScroll"
+            :defaultPileUps="defaultPileUps"
+            :global-start-date="globalStartDate"
+        >
+        </PileUps>
+      </div>
+
     </div>
   </div>
 </template>
@@ -171,6 +174,7 @@ import {getDefaultPileUps} from "@/composable/pileUps";
 
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 const {facilityTypes} = inject(GLOBAL_STATE_KEY)!
+const globalState = inject(GLOBAL_STATE_KEY)!
 
 type GanttAllProps = {
   ganttAllHeader: Header[],

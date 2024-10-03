@@ -21,6 +21,7 @@ export type Section =
     | "VIEW_SCHEDULE_ALERT" // スケジュールアラーとの表示
     | "ALL_VIEW"    // 全体ビュー
     | "UPDATE_USER" // ユーザー編集の更新ボタンお押せるかどうか。ゲストユーザーように作成
+    | "MENU" // Guest権限の時はメニュー系非表示
 
 
 // 大枠の制御のセット。とりあえずつけただけで使わないものが多いかも。
@@ -35,6 +36,7 @@ const Manager = {
     "VIEW_SCHEDULE_ALERT": true,
     "ALL_VIEW": true,
     "UPDATE_USER": true,
+    "MENU": true,
 }
 const Viewer = {
     "ALL_SETTINGS": false,
@@ -47,6 +49,7 @@ const Viewer = {
     "VIEW_SCHEDULE_ALERT": true,
     "ALL_VIEW": true,
     "UPDATE_USER": true,
+    "MENU": true,
 }
 const Worker = {
     "ALL_SETTINGS": false,
@@ -59,6 +62,7 @@ const Worker = {
     "VIEW_SCHEDULE_ALERT": true,
     "ALL_VIEW": true,
     "UPDATE_USER": true,
+    "MENU": true,
 }
 const Guest = {
     "ALL_SETTINGS": false,
@@ -71,14 +75,15 @@ const Guest = {
     "VIEW_SCHEDULE_ALERT": false,
     "ALL_VIEW": false,
     "UPDATE_USER": false,
+    "MENU": false,
 }
 
 export function allowed(section: Section) {
-    const role = getUserInfo()?.role
-    if (role === RoleType.Admin) {
+    const {userInfo} = getUserInfo()
+    if (userInfo?.role === RoleType.Admin) {
         return true
     }
-    switch (role) {
+    switch (userInfo?.role) {
         case RoleType.Manager:
             return Manager[section]
         case RoleType.Worker:

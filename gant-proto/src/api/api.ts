@@ -314,6 +314,32 @@ export interface DeleteProcessesIdResponse {
 /**
  * 
  * @export
+ * @interface DeleteSimulationRequest
+ */
+export interface DeleteSimulationRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteSimulationRequest
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteSimulationResponse
+ */
+export interface DeleteSimulationResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteSimulationResponse
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
  * @interface DeleteTicketUsersIdRequest
  */
 export interface DeleteTicketUsersIdRequest {
@@ -1016,6 +1042,134 @@ export interface GetScheduleAlertsResponse {
 /**
  * 
  * @export
+ * @interface GetSimulationMasterDiffResponse
+ */
+export interface GetSimulationMasterDiffResponse {
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeProcesses': Array<Process>;
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffProcesses'?: Array<Process>;
+    /**
+     * 
+     * @type {Array<Process>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterProcesses': Array<Process>;
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeDepartments': Array<Department>;
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffDepartments'?: Array<Department>;
+    /**
+     * 
+     * @type {Array<Department>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterDepartments': Array<Department>;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeUsers': Array<User>;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffUsers'?: Array<User>;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterUsers': Array<User>;
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeUnits': Array<Unit>;
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffUnits'?: Array<Unit>;
+    /**
+     * 
+     * @type {Array<Unit>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterUnits': Array<Unit>;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeHolidays': Array<Holiday>;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffHolidays'?: Array<Holiday>;
+    /**
+     * 
+     * @type {Array<Holiday>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterHolidays': Array<Holiday>;
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'beforeMilestones': Array<Milestone>;
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'diffMilestones'?: Array<Milestone>;
+    /**
+     * 
+     * @type {Array<Milestone>}
+     * @memberof GetSimulationMasterDiffResponse
+     */
+    'afterMilestones': Array<Milestone>;
+}
+/**
+ * 
+ * @export
+ * @interface GetSimulationResponse
+ */
+export interface GetSimulationResponse {
+    /**
+     * 
+     * @type {SimulationLock}
+     * @memberof GetSimulationResponse
+     */
+    'simulationLock': SimulationLock;
+}
+/**
+ * 
+ * @export
  * @interface GetTicketMemoIdRequest
  */
 export interface GetTicketMemoIdRequest {
@@ -1174,6 +1328,12 @@ export interface GetUserInfoResponse {
      * @memberof GetUserInfoResponse
      */
     'user'?: User;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetUserInfoResponse
+     */
+    'isSimulateUser'?: boolean;
 }
 /**
  * 
@@ -1963,6 +2123,32 @@ export interface PostProcessesResponse {
 /**
  * 
  * @export
+ * @interface PostSimulationRequest
+ */
+export interface PostSimulationRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostSimulationRequest
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
+ * @interface PostSimulationResponse
+ */
+export interface PostSimulationResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostSimulationResponse
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
  * @interface PostTicketMemoIdRequest
  */
 export interface PostTicketMemoIdRequest {
@@ -2264,6 +2450,32 @@ export interface Process {
 /**
  * 
  * @export
+ * @interface PutSimulationRequest
+ */
+export interface PutSimulationRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PutSimulationRequest
+     */
+    'mode': string;
+}
+/**
+ * 
+ * @export
+ * @interface PutSimulationResponse
+ */
+export interface PutSimulationResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PutSimulationResponse
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
  * @interface ScheduleAlert
  */
 export interface ScheduleAlert {
@@ -2339,6 +2551,37 @@ export interface ScheduleAlert {
      * @memberof ScheduleAlert
      */
     'ticket_id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface SimulationLock
+ */
+export interface SimulationLock {
+    /**
+     * 
+     * @type {string}
+     * @memberof SimulationLock
+     */
+    'simulationName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimulationLock
+     */
+    'status': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimulationLock
+     */
+    'lockedAt': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SimulationLock
+     */
+    'lockedBy': number;
 }
 /**
  * 
@@ -2921,6 +3164,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary 
+         * @param {DeleteSimulationRequest} [deleteSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteSimulation: async (deleteSimulationRequest?: DeleteSimulationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/simulation`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(deleteSimulationRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary DeleteTicketUsersId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -3059,10 +3336,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetAllTicket
          * @param {Array<string>} [facilityTypes] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllTickets: async (facilityTypes?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllTickets: async (facilityTypes?: Array<string>, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/all-tickets`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3077,6 +3355,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityTypes) {
                 localVarQueryParameter['facilityTypes'] = facilityTypes;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -3239,10 +3521,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetFacilitiesId
          * @param {number} id 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFacilitiesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFacilitiesId: async (id: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getFacilitiesId', 'id', id)
             const localVarPath = `/api/facilities/{id}`
@@ -3257,6 +3540,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
+            }
 
 
     
@@ -3337,10 +3624,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetGanttGroups
          * @param {number} facilityId 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGanttGroups: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getGanttGroups: async (facilityId: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'facilityId' is not null or undefined
             assertParamExists('getGanttGroups', 'facilityId', facilityId)
             const localVarPath = `/api/ganttGroups`;
@@ -3357,6 +3645,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityId !== undefined) {
                 localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -3479,10 +3771,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetMilestones
          * @param {number} [facilityId] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMilestones: async (facilityId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMilestones: async (facilityId?: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/milestones`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3497,6 +3790,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (facilityId !== undefined) {
                 localVarQueryParameter['facilityId'] = facilityId;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -3716,6 +4013,74 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSimulation: async (body?: object, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/simulation`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSimulationMasterDiff: async (body?: object, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/simulationMasterDiff`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetTicketMemoId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -3823,10 +4188,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary GetTickets
          * @param {Array<number>} ganttGroupIds 
+         * @param {string} [mode] prod or null
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTickets: async (ganttGroupIds: Array<number>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getTickets: async (ganttGroupIds: Array<number>, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'ganttGroupIds' is not null or undefined
             assertParamExists('getTickets', 'ganttGroupIds', ganttGroupIds)
             const localVarPath = `/api/tickets`;
@@ -3843,6 +4209,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (ganttGroupIds) {
                 localVarQueryParameter['ganttGroupIds'] = ganttGroupIds;
+            }
+
+            if (mode !== undefined) {
+                localVarQueryParameter['mode'] = mode;
             }
 
 
@@ -4701,6 +5071,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostSimulation
+         * @param {PostSimulationRequest} [postSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postSimulation: async (postSimulationRequest?: PostSimulationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/simulation`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postSimulationRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostTicketMemoId
          * @param {number} id 
          * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
@@ -4987,6 +5391,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary 
+         * @param {PutSimulationRequest} [putSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putSimulation: async (putSimulationRequest?: PutSimulationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/simulation`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(putSimulationRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -5087,6 +5525,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary 
+         * @param {DeleteSimulationRequest} [deleteSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteSimulation(deleteSimulationRequest?: DeleteSimulationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteSimulationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSimulation(deleteSimulationRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary DeleteTicketUsersId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -5133,11 +5582,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetAllTicket
          * @param {Array<string>} [facilityTypes] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(facilityTypes, options);
+        async getAllTickets(facilityTypes?: Array<string>, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTickets(facilityTypes, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5188,11 +5638,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetFacilitiesId
          * @param {number} id 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFacilitiesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesIdResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitiesId(id, options);
+        async getFacilitiesId(id: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilitiesIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilitiesId(id, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5220,11 +5671,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetGanttGroups
          * @param {number} facilityId 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getGanttGroups(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityId, options);
+        async getGanttGroups(facilityId: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityId, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5264,11 +5716,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetMilestones
          * @param {number} [facilityId] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMilestones(facilityId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityId, options);
+        async getMilestones(facilityId?: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityId, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5338,6 +5791,28 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSimulation(body?: object, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSimulationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSimulation(body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSimulationMasterDiff(body?: object, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSimulationMasterDiffResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSimulationMasterDiff(body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetTicketMemoId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -5373,11 +5848,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary GetTickets
          * @param {Array<number>} ganttGroupIds 
+         * @param {string} [mode] prod or null
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTickets(ganttGroupIds: Array<number>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTickets(ganttGroupIds, options);
+        async getTickets(ganttGroupIds: Array<number>, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTickets(ganttGroupIds, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5652,6 +6128,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary PostSimulation
+         * @param {PostSimulationRequest} [postSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postSimulation(postSimulationRequest?: PostSimulationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostSimulationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postSimulation(postSimulationRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostTicketMemoId
          * @param {number} id 
          * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
@@ -5740,6 +6227,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postUsersId(id: number, postUsersRequest?: PostUsersRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postUsersId(id, postUsersRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary 
+         * @param {PutSimulationRequest} [putSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putSimulation(putSimulationRequest?: PutSimulationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PutSimulationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putSimulation(putSimulationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -5834,6 +6332,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary 
+         * @param {DeleteSimulationRequest} [deleteSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteSimulation(deleteSimulationRequest?: DeleteSimulationRequest, options?: any): AxiosPromise<DeleteSimulationResponse> {
+            return localVarFp.deleteSimulation(deleteSimulationRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary DeleteTicketUsersId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -5876,11 +6384,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetAllTicket
          * @param {Array<string>} [facilityTypes] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllTickets(facilityTypes?: Array<string>, options?: any): AxiosPromise<GetAllTicketsResponse> {
-            return localVarFp.getAllTickets(facilityTypes, options).then((request) => request(axios, basePath));
+        getAllTickets(facilityTypes?: Array<string>, mode?: string, options?: any): AxiosPromise<GetAllTicketsResponse> {
+            return localVarFp.getAllTickets(facilityTypes, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5926,11 +6435,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetFacilitiesId
          * @param {number} id 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFacilitiesId(id: number, options?: any): AxiosPromise<GetFacilitiesIdResponse> {
-            return localVarFp.getFacilitiesId(id, options).then((request) => request(axios, basePath));
+        getFacilitiesId(id: number, mode?: string, options?: any): AxiosPromise<GetFacilitiesIdResponse> {
+            return localVarFp.getFacilitiesId(id, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5955,11 +6465,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetGanttGroups
          * @param {number} facilityId 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGanttGroups(facilityId: number, options?: any): AxiosPromise<GetGanttGroupsResponse> {
-            return localVarFp.getGanttGroups(facilityId, options).then((request) => request(axios, basePath));
+        getGanttGroups(facilityId: number, mode?: string, options?: any): AxiosPromise<GetGanttGroupsResponse> {
+            return localVarFp.getGanttGroups(facilityId, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -5995,11 +6506,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetMilestones
          * @param {number} [facilityId] 
+         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMilestones(facilityId?: number, options?: any): AxiosPromise<GetMilestonesResponse> {
-            return localVarFp.getMilestones(facilityId, options).then((request) => request(axios, basePath));
+        getMilestones(facilityId?: number, mode?: string, options?: any): AxiosPromise<GetMilestonesResponse> {
+            return localVarFp.getMilestones(facilityId, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6062,6 +6574,26 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSimulation(body?: object, options?: any): AxiosPromise<GetSimulationResponse> {
+            return localVarFp.getSimulation(body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary 
+         * @param {object} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSimulationMasterDiff(body?: object, options?: any): AxiosPromise<GetSimulationMasterDiffResponse> {
+            return localVarFp.getSimulationMasterDiff(body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetTicketMemoId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -6094,11 +6626,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary GetTickets
          * @param {Array<number>} ganttGroupIds 
+         * @param {string} [mode] prod or null
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTickets(ganttGroupIds: Array<number>, options?: any): AxiosPromise<GetTicketsResponse> {
-            return localVarFp.getTickets(ganttGroupIds, options).then((request) => request(axios, basePath));
+        getTickets(ganttGroupIds: Array<number>, mode?: string, options?: any): AxiosPromise<GetTicketsResponse> {
+            return localVarFp.getTickets(ganttGroupIds, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6348,6 +6881,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary PostSimulation
+         * @param {PostSimulationRequest} [postSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postSimulation(postSimulationRequest?: PostSimulationRequest, options?: any): AxiosPromise<PostSimulationResponse> {
+            return localVarFp.postSimulation(postSimulationRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary PostTicketMemoId
          * @param {number} id 
          * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
@@ -6429,6 +6972,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postUsersId(id: number, postUsersRequest?: PostUsersRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postUsersId(id, postUsersRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary 
+         * @param {PutSimulationRequest} [putSimulationRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putSimulation(putSimulationRequest?: PutSimulationRequest, options?: any): AxiosPromise<PutSimulationResponse> {
+            return localVarFp.putSimulation(putSimulationRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -6538,6 +7091,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary 
+     * @param {DeleteSimulationRequest} [deleteSimulationRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteSimulation(deleteSimulationRequest?: DeleteSimulationRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteSimulation(deleteSimulationRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary DeleteTicketUsersId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -6588,12 +7153,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetAllTicket
      * @param {Array<string>} [facilityTypes] 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getAllTickets(facilityTypes?: Array<string>, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getAllTickets(facilityTypes, options).then((request) => request(this.axios, this.basePath));
+    public getAllTickets(facilityTypes?: Array<string>, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getAllTickets(facilityTypes, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6648,12 +7214,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetFacilitiesId
      * @param {number} id 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getFacilitiesId(id: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getFacilitiesId(id, options).then((request) => request(this.axios, this.basePath));
+    public getFacilitiesId(id: number, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilitiesId(id, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6683,12 +7250,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetGanttGroups
      * @param {number} facilityId 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getGanttGroups(facilityId: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getGanttGroups(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getGanttGroups(facilityId: number, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getGanttGroups(facilityId, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6731,12 +7299,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetMilestones
      * @param {number} [facilityId] 
+     * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getMilestones(facilityId?: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getMilestones(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getMilestones(facilityId?: number, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getMilestones(facilityId, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6812,6 +7381,30 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary 
+     * @param {object} [body] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getSimulation(body?: object, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getSimulation(body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {object} [body] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getSimulationMasterDiff(body?: object, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getSimulationMasterDiff(body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary GetTicketMemoId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -6850,12 +7443,13 @@ export class DefaultApi extends BaseAPI {
      * 
      * @summary GetTickets
      * @param {Array<number>} ganttGroupIds 
+     * @param {string} [mode] prod or null
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getTickets(ganttGroupIds: Array<number>, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getTickets(ganttGroupIds, options).then((request) => request(this.axios, this.basePath));
+    public getTickets(ganttGroupIds: Array<number>, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTickets(ganttGroupIds, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7154,6 +7748,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary PostSimulation
+     * @param {PostSimulationRequest} [postSimulationRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postSimulation(postSimulationRequest?: PostSimulationRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postSimulation(postSimulationRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary PostTicketMemoId
      * @param {number} id 
      * @param {PostTicketMemoIdRequest} [postTicketMemoIdRequest] 
@@ -7250,6 +7856,18 @@ export class DefaultApi extends BaseAPI {
      */
     public postUsersId(id: number, postUsersRequest?: PostUsersRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postUsersId(id, postUsersRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {PutSimulationRequest} [putSimulationRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public putSimulation(putSimulationRequest?: PutSimulationRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).putSimulation(putSimulationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

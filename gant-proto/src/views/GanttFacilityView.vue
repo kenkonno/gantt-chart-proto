@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light bg-light" v-if="allowed('MENU')">
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>案件設定</b>
       <select style="display: inline" v-model.number="globalState.currentFacilityId"

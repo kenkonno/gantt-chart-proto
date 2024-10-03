@@ -10,3 +10,4 @@ type Department struct {
 	CreatedAt time.Time
 	UpdatedAt int32
 }
+

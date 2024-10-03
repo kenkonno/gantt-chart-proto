@@ -5,10 +5,10 @@ import {toast} from "vue3-toastify";
 
 
 // ユーザー一覧。特別ref系は必要ない。
-export async function useMilestoneTable(facilityId: number) {
+export async function useMilestoneTable(facilityId: number, mode?: string) {
     const list = ref<Milestone[]>([])
     const refresh = async () => {
-        const resp = await Api.getMilestones(facilityId)
+        const resp = await Api.getMilestones(facilityId, mode)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }

@@ -24,6 +24,7 @@ type GlobalState = {
     ganttFacilityRefresh: boolean
     ganttAllRefresh: boolean
     pileUpsRefresh: boolean
+    showPileUp: boolean
 }
 
 export const GLOBAL_STATE_KEY = Symbol() as InjectionKey<GlobalState>
@@ -54,6 +55,8 @@ interface Mutations {
 
     setFacilityTypes(facilityType: string[]): void;
 
+    setShowPileUp(showPileUp: boolean): void;
+
     refreshPileUpsRefresh(): void;
 
     refreshGanttAll(): void;
@@ -71,6 +74,7 @@ interface Getters {
 export const useGlobalState = async () => {
 
     const savedOrder = globalFilterGetter.getOrderStatus()
+    const savedShowPileUp = globalFilterGetter.getShowPileUp()
 
     const globalState = ref<GlobalState>({
         currentFacilityId: -1,
@@ -82,7 +86,8 @@ export const useGlobalState = async () => {
         unitMap: {},
         userList: [],
         scheduleAlert: [],
-        facilityTypes: savedOrder, // TODO: 初期値を記憶するようにする
+        facilityTypes: savedOrder,
+        showPileUp: savedShowPileUp,
         ganttFacilityRefresh: true, // refreshさせるだけのフラグ
         ganttAllRefresh: true,
         pileUpsRefresh: true,
@@ -202,16 +207,18 @@ export const useGlobalState = async () => {
         setFacilityTypes: (facilityTypes: string[]) => {
             globalState.value.facilityTypes.length = 0
             globalState.value.facilityTypes = facilityTypes
+        },
+        setShowPileUp(showPileUp: boolean): void {
+            globalState.value.showPileUp = showPileUp
         }
     }
 
     const getters: Getters = {
         getUnitName: (unitId: number) => {
-            let result = ""
-            try {
-                result = globalState.value.unitMap[globalState.value.currentFacilityId][unitId].name
-            } catch {
+            const result = globalState.value.unitMap[globalState.value.currentFacilityId].find(v => v.id === unitId)?.name
+            if (result === undefined) {
                 console.warn("unit not found", unitId)
+                return ""
             }
             return result
         },
@@ -249,6 +256,7 @@ export const useGlobalState = async () => {
     // filter保存
     const safeFilter = () => {
         globalFilterMutation.updateOrderStatus(globalState.value.facilityTypes)
+        globalFilterMutation.updateShowPileUp(globalState.value.showPileUp)
     }
     onBeforeUnmount(() => {
         safeFilter()

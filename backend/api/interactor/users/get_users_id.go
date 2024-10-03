@@ -2,7 +2,6 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
@@ -10,12 +9,7 @@ import (
 )
 
 func GetUsersIdInvoke(c *gin.Context) openapi_models.GetUsersIdResponse {
-	sessionID, err := c.Cookie("session_id")
-	// TODO: この辺のDIをAPIとinteractorで分けて処理するべきだが、自動生成の兼ね合いで対応できず。コスト的にはinteractorに記述したほうがいったんはよい？と思ったけどそうでもないか。GetInteractorで gin.Contextを渡してInteractorの構造を返す形にするのがいいかも。そうするとロジックとDIで分離できる。シミュレーション機能のリファクタリングのタイミングで実施する。
-	userRep := repository.NewUserRepository()
-	if *middleware.GetUserId(sessionID) == constants.GuestID {
-		userRep = repository.NewUserRepository(repository.GuestMode)
-	}
+	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

@@ -1,6 +1,7 @@
 package login
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
@@ -14,14 +15,24 @@ import (
 
 func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 
-	userRep := repository.NewUserRepository()
-	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository()
-
 	var userReq openapi_models.PostLoginRequest
 	if err := c.ShouldBindJSON(&userReq); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
+
+	/**
+	NOTE: かなり微妙な設計。ゲストから通常ログインの復帰のためのコード。
+	権限チェックのmiddlewareで既にゲストモードとして特定されているが、repository_modeを上書きして通常モードにしている。
+	ただし、シミュレーション実行中ユーザーのことを考えるとおかしくなりそう。一旦通常テーブルを見に行けば運用上問題なさそうなので、こうする。
+	 */
+	if userReq.Id != "" && userReq.Password != "" {
+		c.Set("repository_mode", []string{})
+	}
+
+	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
+	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
+
 
 	isAuthenticated := false
 	var userId *int32
@@ -41,6 +52,7 @@ func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 		isAuthenticated = VerifyPassword(userReq.Password, user.Password)
 		userId = user.Id
 	}
+	fmt.Println("############################ ", isAuthenticated, middleware.GetRepositoryMode(c))
 
 	if isAuthenticated {
 		sessionId := uuid.New().String()
