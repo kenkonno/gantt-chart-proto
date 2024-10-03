@@ -1,7 +1,7 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref, toValue} from "vue";
-import {GanttGroup, Holiday, OperationSetting, Ticket, TicketUser} from "@/api";
+import {GanttGroup, OperationSetting, Ticket, TicketUser} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -11,7 +11,6 @@ import {changeSort} from "@/utils/sort";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {
     addBusinessDays,
-    dayBetween,
     endOfDay,
     ganttDateToYMDDate,
     getEndDateByRequiredBusinessDay,
@@ -250,7 +249,7 @@ export async function useGanttFacility() {
                 newTickets.push(newTicket!)
             }
         }
-        refreshTickets(newTickets)
+        await refreshTickets(newTickets)
     }
 
     // 部署の変更。
@@ -354,7 +353,7 @@ export async function useGanttFacility() {
             return
         }
         const {data} = await Api.getTicketsId(ticketId)
-        refreshTicket(data.ticket!)
+        await refreshTicket(data.ticket!)
     }
 
     // DBへのストア及びローカルのガントに情報を反映する
@@ -411,7 +410,7 @@ export async function useGanttFacility() {
                 clone.start_date = ganttDateToYMDDate(bar.beginDate)
                 clone.end_date = ganttDateToYMDDate(bar.endDate)
                 const newTicket = await updateTicket(clone)
-                refreshTicket(newTicket!)
+                await refreshTicket(newTicket!)
             }
         }
     }
@@ -451,19 +450,19 @@ export async function useGanttFacility() {
                     !clone?.number_of_worker || !clone?.process_id
                 ) {
                     console.log("###### SKIP due to first row")
-                    return;
+                    continue;
                 }
                 startDate = dayjs(clone!.start_date)
             } else {
                 // 先頭行以降は (開始日 or days_after)・工数・工程・人数が未設定の場合はスキップする
                 if (!clone?.estimate || !clone?.number_of_worker || !clone?.process_id) {
                     console.log("###### SKIP due to after first row pt1")
-                    return;
+                    continue;
                 } else {
                     // 開始日も日後も設定がなければスキップ
                     if (!clone?.start_date && !clone?.days_after) {
                         console.log("###### SKIP due to after first row pt2")
-                        return;
+                        continue;
                     } else {
                         // 日後が0でなければ優先
                         if (clone?.days_after != null) {
@@ -493,7 +492,7 @@ export async function useGanttFacility() {
             prevEndDate = dayjs(newTicket!.end_date)
             console.log("########### 工数重視の完了", startDate.format(DAYJS_FORMAT))
         }
-        refreshTickets(newTickets)
+        await refreshTickets(newTickets)
     }
 
     /**
@@ -529,7 +528,7 @@ export async function useGanttFacility() {
             }
             prevEndDate = dayjs(clone.end_date)
         }
-        refreshTickets(newTickets)
+        await refreshTickets(newTickets)
     }
 
     const mutation = {
@@ -538,7 +537,7 @@ export async function useGanttFacility() {
             const clone = Object.assign({}, ticket)
             clone.process_id = Number(processId)
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
 
         }, setDepartmentId: async (departmentId: string, ticket?: Ticket) => {
@@ -562,43 +561,43 @@ export async function useGanttFacility() {
             newTicketUserList.push(...newTicketUsers!)
             ticketUserList.value.length = 0
             ticketUserList.value.push(...newTicketUserList)
-            refreshTicket(newTicket!)
+            await refreshTicket(newTicket!)
 
         }, setNumberOfWorker: async (numberOfWorker: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.number_of_worker = numberOfWorker
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setEstimate: async (estimate: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.estimate = estimate
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setDaysAfter: async (daysAfter: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.days_after = daysAfter
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setStartDate: async (startDate: string, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.start_date = startDate
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setEndDate: async (endDate: string, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.end_date = endDate
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setProgressPercent: async (progressPercent: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.progress_percent = progressPercent
             const newTicket = await updateTicket(clone)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }, setTicketUser: async (ticket: Ticket, value: number[]) => {
             const clone = Object.assign({}, ticket)
@@ -610,7 +609,7 @@ export async function useGanttFacility() {
             newTicketUserList.push(...newTicketUsers!)
             ticketUserList.value.length = 0
             ticketUserList.value.push(...newTicketUserList)
-            refreshTicket(newTicket!)
+            await refreshTicket (newTicket!)
             await getScheduleAlert()
         }
     }

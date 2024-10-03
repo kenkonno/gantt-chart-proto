@@ -355,7 +355,6 @@ let isDragged = false;
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
   if (!isDragged) {
-    console.log(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
     openTicketDetail(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
   }
   isDragged = false
