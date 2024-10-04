@@ -15,7 +15,10 @@ func GetCon() *gorm.DB {
 	return con
 }
 func init() {
+	con = openConnection()
+}
 
+func openConnection() *gorm.DB {
 	fmt.Println("INITIALIZE DB CONNECTION")
 	// connectionの取得
 	host := os.Getenv("POSTGRES_HOST")
@@ -29,7 +32,11 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	con = d
+	return d
+}
+
+func ReOpenConnection() {
+	con = openConnection()
 }
 
 func GetConnection() *gorm.DB {

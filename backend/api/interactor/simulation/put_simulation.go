@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/repository/connection"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/simulation"
 )
 
@@ -24,6 +25,7 @@ func PutSimulationInvoke(c *gin.Context) openapi_models.PutSimulationResponse {
 		simulationRep.SwitchTable()
 		simulationRep.ResetSequence()
 		simulationLockRep.Delete(constants.SimulateTypeSchedule)
+		connection.ReOpenConnection()
 	} else {
 		simulationLock := simulationLockRep.Find(constants.SimulateTypeSchedule)
 		if req.Mode == "pending" {
