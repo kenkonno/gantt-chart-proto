@@ -3,6 +3,8 @@
     <async-user-table
         @open-edit-modal="openEditModal($event)"
         :list="userList"
+        :is-view-only="isViewOnly"
+        :is-simulate="isSimulate"
     />
     <template #fallback>
       Loading...
@@ -23,8 +25,12 @@ import AsyncUserTable from "@/components/user/AsyncUserTable.vue";
 import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
-import {inject} from "vue";
+import {computed, inject} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import AsyncProcessTable from "@/components/process/AsyncProcessTable.vue";
+import {Api} from "@/api/axios";
+import {getUserInfo} from "@/composable/auth";
+import {useIsSimulate} from "@/composable/isSimulate";
 
 const {userList} = inject(GLOBAL_STATE_KEY)!
 const {refreshUserList, refreshDepartmentList} = inject(GLOBAL_ACTION_KEY)!
@@ -37,5 +43,7 @@ const closeModalProxy = async () => {
   closeEditModal()
   emit("update")
 }
+
+const { isViewOnlyUser: isViewOnly, isSimulateUser: isSimulate } = await useIsSimulate()
 
 </script>
