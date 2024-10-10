@@ -94,6 +94,8 @@ docker-compose -p env2 logs gantt_api_2
 
 docker-compose -p env2 up gantt_migration_2
 
+docker logs $(docker ps -ql) -f
+
 # AWS環境へbuild
 $ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com

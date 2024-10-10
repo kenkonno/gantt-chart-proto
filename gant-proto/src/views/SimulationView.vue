@@ -11,7 +11,7 @@
       <tbody>
       <tr v-if="simulationLock.simulationName != ''">
         <td>{{ simulationLock.status }}</td>
-        <td>{{ username }}</td>
+        <td>{{ getUserName(simulationLock.lockedBy) }}</td>
         <td>{{ simulationLock.lockedAt }}</td>
       </tr>
       </tbody>
@@ -56,22 +56,15 @@
 <script setup lang="ts">
 
 import {deleteSimulation, postSimulation, putSimulation, useSimulation} from "@/composable/simulation";
-import {computed} from "vue";
+import {computed, inject} from "vue";
 import MasterDiffTables from "@/components/masterDiff/MasterDiffTables.vue";
-import {getUserInfo, loggedIn} from "@/composable/auth";
+import {getUserInfo} from "@/composable/auth";
 import {allowed} from "@/composable/role";
-import {useUser} from "@/composable/user";
+import {GLOBAL_GETTER_KEY} from "@/composable/globalState";
 
 const {simulationLock, refresh} = await useSimulation()
+const {getUserName} = inject(GLOBAL_GETTER_KEY)!
 
-const username = computed(async () => {
-  if (simulationLock.value.lockedBy != 0) {
-    const user = await useUser(simulationLock.value.lockedBy)
-    return user.user.value.lastName + user.user.value.firstName
-  } else {
-    return ""
-  }
-})
 const userInfo = getUserInfo()
 
 const isSimulateUser = () => {
@@ -80,7 +73,6 @@ const isSimulateUser = () => {
 
 const startDisabled = computed(() => {
   // 開始はロックがないときだけ
-  if (!allowed('FORCE_SIMULATE_USER') && !isSimulateUser()) return true
   return !(simulationLock.value.status === '')
 })
 const pendingDisabled = computed(() => {

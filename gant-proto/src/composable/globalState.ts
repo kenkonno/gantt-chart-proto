@@ -68,6 +68,7 @@ interface Getters {
     getProcessName: (processId: number) => string;
     getDepartmentName: (departmentId: number) => string;
     getFacilityName: (facilityId: number) => string;
+    getUserName: (userId: number) => string;
 }
 
 
@@ -249,6 +250,13 @@ export const useGlobalState = async () => {
             }
             return result
         },
+        getUserName: (userId: number) =>{
+            const user = globalState.value.userList.find(u => u.id === userId);
+            if (user) {
+                return user.lastName + user.firstName;
+            }
+            return ""
+        }
     }
 
     await init()
