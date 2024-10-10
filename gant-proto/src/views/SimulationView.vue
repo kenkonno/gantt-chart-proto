@@ -11,7 +11,7 @@
       <tbody>
       <tr v-if="simulationLock.simulationName != ''">
         <td>{{ simulationLock.status }}</td>
-        <td>{{ simulationLock.lockedBy }}</td>
+        <td>{{ user.user.value.lastName + user.user.value.firstName}}</td>
         <td>{{ simulationLock.lockedAt }}</td>
       </tr>
       </tbody>
@@ -60,8 +60,10 @@ import {computed} from "vue";
 import MasterDiffTables from "@/components/masterDiff/MasterDiffTables.vue";
 import {getUserInfo} from "@/composable/auth";
 import {allowed} from "@/composable/role";
+import {useUser} from "@/composable/user";
 
 const {simulationLock, refresh} = await useSimulation()
+const user = await useUser(simulationLock.value.lockedBy)
 const userInfo = getUserInfo()
 
 const startDisabled = computed(() => {
