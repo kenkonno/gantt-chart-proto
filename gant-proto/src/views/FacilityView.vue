@@ -5,6 +5,8 @@
         @move-up="innerUpdateFacilityOrder($event, -1)"
         @move-down="innerUpdateFacilityOrder($event, 1)"
         :list="sortedFacilityList"
+        :is-view-only="isViewOnly"
+        :is-simulate="isSimulate"
     />
     <template #fallback>
       Loading...
@@ -31,6 +33,9 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {computed, inject} from "vue";
+import {Api} from "@/api/axios";
+import AsyncProcessTable from "@/components/process/AsyncProcessTable.vue";
+import {useIsSimulate} from "@/composable/isSimulate";
 
 const {facilityList} = inject(GLOBAL_STATE_KEY)!
 const {updateFacilityOrder} = inject(GLOBAL_ACTION_KEY)!
@@ -51,6 +56,8 @@ const innerUpdateFacilityOrder = (index: number, direction: number) => {
   // 方向は正と負を逆転させる。
   updateFacilityOrder((facilityList.length - 1) - index, direction * -1)
 }
+
+const { isViewOnly, isSimulate } = await useIsSimulate()
 
 
 </script>

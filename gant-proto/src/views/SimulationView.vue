@@ -11,7 +11,7 @@
       <tbody>
       <tr v-if="simulationLock.simulationName != ''">
         <td>{{ simulationLock.status }}</td>
-        <td>{{ simulationLock.lockedBy }}</td>
+        <td>{{ user.user.value.lastName + user.user.value.firstName}}</td>
         <td>{{ simulationLock.lockedAt }}</td>
       </tr>
       </tbody>
@@ -58,26 +58,36 @@
 import {deleteSimulation, postSimulation, putSimulation, useSimulation} from "@/composable/simulation";
 import {computed} from "vue";
 import MasterDiffTables from "@/components/masterDiff/MasterDiffTables.vue";
+import {getUserInfo} from "@/composable/auth";
+import {allowed} from "@/composable/role";
+import {useUser} from "@/composable/user";
 
 const {simulationLock, refresh} = await useSimulation()
+const user = await useUser(simulationLock.value.lockedBy)
+const userInfo = getUserInfo()
 
 const startDisabled = computed(() => {
   // 開始はロックがないときだけ
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === '')
 })
 const pendingDisabled = computed(() => {
   // 保留は開始中だけ
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === 'in_progress')
 })
 const resumeDisabled = computed(() => {
   // 再開は保留中だけ
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === 'in_pending')
 })
 const applyDisabled = computed(() => {
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === 'in_progress')
 })
 const deleteDisabled = computed(() => {
   // 破棄は何かあるときにだけ押せる。
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status !== '')
 })
 

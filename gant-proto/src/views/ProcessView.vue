@@ -5,6 +5,8 @@
         @move-up="updateProcessOrder($event, -1)"
         @move-down="updateProcessOrder($event, 1)"
         :list="processList"
+        :is-view-only="isViewOnly"
+        :is-simulate="isSimulate"
     />
     <template #fallback>
       Loading...
@@ -27,17 +29,21 @@ import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {inject} from "vue";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {Api} from "@/api/axios";
+import {useIsSimulate} from "@/composable/isSimulate";
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 
 const {processList} = inject(GLOBAL_STATE_KEY)!
 const {refreshProcessList,updateProcessOrder} = inject(GLOBAL_ACTION_KEY)!
 
-
 const closeModalProxy = async () => {
   await refreshProcessList()
   closeEditModal()
   emit("update")
 }
+
+const { isViewOnly, isSimulate } = await useIsSimulate()
+
 
 </script>

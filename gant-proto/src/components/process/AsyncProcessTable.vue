@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div v-if="isSimulate" class="mb-2 bg-warning text-center">シミュレーション中のため変更できません。</div>
     <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
     <table class="table">
       <thead v-if="!isNoHeader">
@@ -41,6 +42,7 @@ interface AsyncProcessTable {
   list: Process[]
   isViewOnly?: boolean
   isNoHeader?: boolean
+  isSimulate?: boolean
 }
 
 defineProps<AsyncProcessTable>()
