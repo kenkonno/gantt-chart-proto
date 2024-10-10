@@ -64,9 +64,9 @@ import {useUser} from "@/composable/user";
 
 const {simulationLock, refresh} = await useSimulation()
 
-const user = await useUser(simulationLock.value.lockedBy)
-const username = computed(() => {
+const username = computed(async () => {
   if (simulationLock.value.lockedBy != 0) {
+    const user = await useUser(simulationLock.value.lockedBy)
     return user.user.value.lastName + user.user.value.firstName
   } else {
     return ""
