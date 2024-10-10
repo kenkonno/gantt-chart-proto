@@ -22,6 +22,7 @@ export type Section =
     | "ALL_VIEW"    // 全体ビュー
     | "UPDATE_USER" // ユーザー編集の更新ボタンお押せるかどうか。ゲストユーザーように作成
     | "MENU" // Guest権限の時はメニュー系非表示
+    | "FORCE_SIMULATE_USER" // シミュレーション操作ユーザー扱いにする。管理者のみ利用。
 
 
 // 大枠の制御のセット。とりあえずつけただけで使わないものが多いかも。
@@ -37,6 +38,7 @@ const Manager = {
     "ALL_VIEW": true,
     "UPDATE_USER": true,
     "MENU": true,
+    "FORCE_SIMULATE_USER": false,
 }
 const Viewer = {
     "ALL_SETTINGS": false,
@@ -50,6 +52,7 @@ const Viewer = {
     "ALL_VIEW": true,
     "UPDATE_USER": true,
     "MENU": true,
+    "FORCE_SIMULATE_USER": false,
 }
 const Worker = {
     "ALL_SETTINGS": false,
@@ -63,6 +66,7 @@ const Worker = {
     "ALL_VIEW": true,
     "UPDATE_USER": true,
     "MENU": true,
+    "FORCE_SIMULATE_USER": false,
 }
 const Guest = {
     "ALL_SETTINGS": false,
@@ -76,6 +80,7 @@ const Guest = {
     "ALL_VIEW": false,
     "UPDATE_USER": false,
     "MENU": false,
+    "FORCE_SIMULATE_USER": false,
 }
 
 export function allowed(section: Section) {

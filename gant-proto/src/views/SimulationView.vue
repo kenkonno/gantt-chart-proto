@@ -58,26 +58,34 @@
 import {deleteSimulation, postSimulation, putSimulation, useSimulation} from "@/composable/simulation";
 import {computed} from "vue";
 import MasterDiffTables from "@/components/masterDiff/MasterDiffTables.vue";
+import {getUserInfo} from "@/composable/auth";
+import {allowed} from "@/composable/role";
 
 const {simulationLock, refresh} = await useSimulation()
+const userInfo = getUserInfo()
 
 const startDisabled = computed(() => {
   // 開始はロックがないときだけ
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === '')
 })
 const pendingDisabled = computed(() => {
   // 保留は開始中だけ
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === 'in_progress')
 })
 const resumeDisabled = computed(() => {
   // 再開は保留中だけ
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === 'in_pending')
 })
 const applyDisabled = computed(() => {
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status === 'in_progress')
 })
 const deleteDisabled = computed(() => {
   // 破棄は何かあるときにだけ押せる。
+  if (!allowed('FORCE_SIMULATE_USER') && !userInfo.isSimulateUser) return true
   return !(simulationLock.value.status !== '')
 })
 
