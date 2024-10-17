@@ -61,7 +61,7 @@
       </g-gantt-chart>
     </div>
     <!-- 山積み部分 -->
-    <div v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp">
+    <template v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp">
       <hr>
       <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <PileUps
@@ -83,7 +83,7 @@
         </PileUps>
       </div>
 
-    </div>
+    </template>
   </div>
 </template>
 <style>
