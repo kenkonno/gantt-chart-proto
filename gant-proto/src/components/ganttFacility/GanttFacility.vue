@@ -143,29 +143,28 @@
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->
-      <template v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp">
-        <hr>
-        <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
-          <PileUps
-              :chart-start="chartStart"
-              :chart-end="chartEnd"
-              :display-type="displayType"
-              :holidays="getHolidays"
-              :tickets="getTickets"
-              :ticket-users="ticketUserList"
-              :width="getGanttChartWidth(displayType)"
-              :highlightedDates="getHolidaysForGantt(displayType)"
-              :syncWidth="syncWidth"
-              :current-facility-id="currentFacilityId"
-              :vertical-lines="milestoneVerticalLines"
-              :milestone-vertical-lines="[]"
-              @on-mounted="forceScroll"
-              :defaultPileUps="defaultPileUps"
-              :global-start-date="globalStartDate"
-          >
-          </PileUps>
-        </div>
-      </template>
+      <hr v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp" />
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+        <PileUps
+            :chart-start="chartStart"
+            :chart-end="chartEnd"
+            :display-type="displayType"
+            :holidays="getHolidays"
+            :tickets="getTickets"
+            :ticket-users="ticketUserList"
+            :width="getGanttChartWidth(displayType)"
+            :highlightedDates="getHolidaysForGantt(displayType)"
+            :syncWidth="syncWidth"
+            :current-facility-id="currentFacilityId"
+            :vertical-lines="milestoneVerticalLines"
+            :milestone-vertical-lines="[]"
+            @on-mounted="forceScroll"
+            :defaultPileUps="defaultPileUps"
+            :global-start-date="globalStartDate"
+            v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp"
+        >
+        </PileUps>
+      </div>
     </div>
   </div>
   <div v-else>

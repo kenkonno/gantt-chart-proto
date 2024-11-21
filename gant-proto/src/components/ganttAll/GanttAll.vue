@@ -61,29 +61,27 @@
       </g-gantt-chart>
     </div>
     <!-- 山積み部分 -->
-    <template v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp">
-      <hr>
-      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
-        <PileUps
-            :chart-start="chartStart"
-            :chart-end="chartEnd"
-            :display-type="displayType"
-            :holidays="holidays"
-            :tickets="tickets"
-            :ticket-users="ticketUsers"
-            :width="getGanttChartWidth(displayType)"
-            :highlightedDates="holidaysAsDate(displayType)"
-            :syncWidth="syncWidth"
-            :current-facility-id="-1"
-            :milestone-vertical-lines="[]"
-            @on-mounted="forceScroll"
-            :defaultPileUps="defaultPileUps"
-            :global-start-date="globalStartDate"
-        >
-        </PileUps>
-      </div>
-
-    </template>
+    <hr v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp" />
+    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+      <PileUps
+          :chart-start="chartStart"
+          :chart-end="chartEnd"
+          :display-type="displayType"
+          :holidays="holidays"
+          :tickets="tickets"
+          :ticket-users="ticketUsers"
+          :width="getGanttChartWidth(displayType)"
+          :highlightedDates="holidaysAsDate(displayType)"
+          :syncWidth="syncWidth"
+          :current-facility-id="-1"
+          :milestone-vertical-lines="[]"
+          @on-mounted="forceScroll"
+          :defaultPileUps="defaultPileUps"
+          :global-start-date="globalStartDate"
+          v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp"
+      >
+      </PileUps>
+    </div>
   </div>
 </template>
 <style>
