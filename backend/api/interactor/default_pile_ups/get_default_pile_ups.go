@@ -85,6 +85,10 @@ func GetDefaultPileUpsInvoke(c *gin.Context) openapi_models.GetDefaultPileUpsRes
 							continue
 						}
 
+						if len(targetPileUp.Labels) >= int(validIndex) {
+							continue
+						}
+
 						// 足し上げ処理
 						targetPileUp.Labels[validIndex] += ticket.WorkPerDay / float32(len(ticket.UserIds))
 						targetPileUp.AssignedUser.Labels[validIndex] += ticket.WorkPerDay / float32(len(ticket.UserIds))
@@ -119,6 +123,9 @@ func GetDefaultPileUpsInvoke(c *gin.Context) openapi_models.GetDefaultPileUpsRes
 				fmt.Println("未アサイン", ticket.ValidIndexes)
 				for _, validIndex := range ticket.ValidIndexes {
 					fmt.Println("validIndex", validIndex)
+					if len(targetPileUp.Labels) >= int(validIndex) {
+						continue
+					}
 					targetPileUp.Labels[validIndex] += ticket.WorkPerDay
 					targetPileUp.UnAssignedPileUp.Labels[validIndex] += ticket.WorkPerDay
 
@@ -146,6 +153,9 @@ func GetDefaultPileUpsInvoke(c *gin.Context) openapi_models.GetDefaultPileUpsRes
 			}
 			// 未確定の場合 [未確定の設備] [積み上げ, 未確定の積み上げ]に計上する
 			for _, validIndex := range ticket.ValidIndexes {
+				if len(targetPileUp.Labels) >= int(validIndex) {
+					continue
+				}
 				targetPileUp.Labels[validIndex] += ticket.WorkPerDay
 				targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += ticket.WorkPerDay
 
