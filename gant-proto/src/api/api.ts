@@ -2863,6 +2863,12 @@ export interface User {
      * @memberof User
      */
     'role': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof User
+     */
+    'password_reset': boolean;
 }
 /**
  * 

@@ -26,7 +26,13 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('../views/GanttAllView.vue')
             },
         ]
-    }
+    },
+    {
+        path: '/reset-password',
+        name: 'reset-password',
+        meta: {title: "工程管理ツール | パスワード初期化", requiresAuth: false},
+        component: () => import('../views/ResetPasswordView.vue')
+    },
 ]
 
 const router = createRouter({
@@ -41,8 +47,18 @@ router.beforeEach(async (to, from, next) => {
         await Api.postLogin({id: "", password: "", uuid: String(to.query.uuid)});
     }
 
+    const {user} = await loggedIn()
+
+    if (user?.id != undefined) {
+        if (!user.password_reset && to.name !== 'reset-password') {
+            next({
+                path: '/reset-password',
+                query: {redirect: to.fullPath},
+            });
+        }
+    }
+
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        const {user} = await loggedIn()
         if (user?.id == undefined) {
             // ログインしていない場合、ログインページへリダイレクトします
             next({

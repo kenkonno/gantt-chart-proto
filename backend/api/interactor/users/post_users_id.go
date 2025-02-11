@@ -44,6 +44,7 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 			c.JSON(http.StatusBadRequest, `パスワードは小文字、大文字、数字、特殊文字「 [!@#\$%^&*()] 」を含み8文字以上にしてください。`)
 			return openapi_models.PostUsersIdResponse{}, errors.New("")
 		}
+		passwordReset = true
 	}
 
 	// パスワードは空文字の場合は更新しない。
