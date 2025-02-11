@@ -37,6 +37,7 @@ func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
 			CreatedAt:        user.CreatedAt,
 			UpdatedAt:        user.UpdatedAt,
 			Role:             user.Role,
+			PasswordReset:    user.PasswordReset,
 		},
 		IsSimulateUser: isSimulateUser,
 	}

@@ -34,4 +34,6 @@ type User struct {
 	UpdatedAt int64 `json:"updated_at,omitempty"`
 
 	Role string `json:"role"`
+
+	PasswordReset bool `json:"password_reset"`
 }

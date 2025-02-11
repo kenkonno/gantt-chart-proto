@@ -29,6 +29,20 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 	}
 	oldUser := userRep.Find(*userReq.User.Id)
 	pw := string(hashedPassword)
+
+	// パスワードリセット
+	passwordReset := false
+	if oldUser.PasswordReset {
+		// 過去設定済みであればtrue固定
+		passwordReset = true
+	} else {
+		// パスワードが更新されていない場合はエラーとする
+		if userReq.User.Password == "" || pw == oldUser.Password {
+			c.JSON(http.StatusBadRequest, "Password cannot be empty or the same as the current password")
+			return openapi_models.PostUsersIdResponse{}
+		}
+	}
+
 	// パスワードは空文字の場合は更新しない。
 	if userReq.User.Password == "" {
 		pw = oldUser.Password
@@ -45,6 +59,7 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 		Role:             userReq.User.Role,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        0,
+		PasswordReset:    passwordReset,
 	})
 
 	return openapi_models.PostUsersIdResponse{}

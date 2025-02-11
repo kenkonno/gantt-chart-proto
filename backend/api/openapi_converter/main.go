@@ -35,8 +35,11 @@ func main() {
 		if rewrite {
 			result += fmt.Sprintf(
 				`	var r openapi_models.%sResponse
-	r = %s.%sInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := %s.%sInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 `, funcName, packageName, funcName)
 			rewrite = false
 		} else {
