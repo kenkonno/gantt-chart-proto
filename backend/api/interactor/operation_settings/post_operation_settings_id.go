@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func PostOperationSettingsIdInvoke(c *gin.Context) openapi_models.PostOperationSettingsIdResponse {
+func PostOperationSettingsIdInvoke(c *gin.Context) (openapi_models.PostOperationSettingsIdResponse, error) {
 
 	operationSettingRep := repository.NewOperationSettingRepository(middleware.GetRepositoryMode(c)...)
 	facilityId, err := strconv.Atoi(c.Param("id")) // facility_id
@@ -36,6 +36,6 @@ func PostOperationSettingsIdInvoke(c *gin.Context) openapi_models.PostOperationS
 		}
 	}
 
-	return openapi_models.PostOperationSettingsIdResponse{}
+	return openapi_models.PostOperationSettingsIdResponse{}, nil
 	//
 }

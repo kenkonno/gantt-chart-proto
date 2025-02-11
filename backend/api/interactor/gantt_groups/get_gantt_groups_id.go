@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetGanttGroupsIdInvoke(c *gin.Context) openapi_models.GetGanttGroupsIdResponse {
+func GetGanttGroupsIdInvoke(c *gin.Context) (openapi_models.GetGanttGroupsIdResponse, error) {
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -26,5 +26,5 @@ func GetGanttGroupsIdInvoke(c *gin.Context) openapi_models.GetGanttGroupsIdRespo
 			CreatedAt:  ganttGroup.CreatedAt,
 			UpdatedAt:  ganttGroup.UpdatedAt,
 		},
-	}
+	}, nil
 }

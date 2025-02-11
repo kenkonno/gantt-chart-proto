@@ -13,7 +13,7 @@ import (
 	"os"
 )
 
-func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
+func PostLoginInvoke(c *gin.Context) (openapi_models.PostLoginResponse, error) {
 
 	var userReq openapi_models.PostLoginRequest
 	if err := c.ShouldBindJSON(&userReq); err != nil {
@@ -67,7 +67,7 @@ func PostLoginInvoke(c *gin.Context) openapi_models.PostLoginResponse {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
 	}
 
-	return openapi_models.PostLoginResponse{}
+	return openapi_models.PostLoginResponse{}, nil
 
 }
 

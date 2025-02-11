@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func DeleteUnitsIdInvoke(c *gin.Context) openapi_models.DeleteUnitsIdResponse {
+func DeleteUnitsIdInvoke(c *gin.Context) (openapi_models.DeleteUnitsIdResponse, error) {
 
 	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
 	ganttGroupsRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
@@ -52,6 +52,6 @@ func DeleteUnitsIdInvoke(c *gin.Context) openapi_models.DeleteUnitsIdResponse {
 		}
 	}
 
-	return openapi_models.DeleteUnitsIdResponse{}
+	return openapi_models.DeleteUnitsIdResponse{}, nil
 
 }

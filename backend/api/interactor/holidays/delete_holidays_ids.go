@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DeleteHolidaysIdInvoke(c *gin.Context) openapi_models.DeleteHolidaysIdResponse {
+func DeleteHolidaysIdInvoke(c *gin.Context) (openapi_models.DeleteHolidaysIdResponse, error) {
 
 	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 
@@ -19,6 +19,6 @@ func DeleteHolidaysIdInvoke(c *gin.Context) openapi_models.DeleteHolidaysIdRespo
 
 	holidayRep.Delete(int32(id))
 
-	return openapi_models.DeleteHolidaysIdResponse{}
+	return openapi_models.DeleteHolidaysIdResponse{}, nil
 
 }

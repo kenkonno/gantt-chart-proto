@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetMilestonesInvoke(c *gin.Context) openapi_models.GetMilestonesResponse {
+func GetMilestonesInvoke(c *gin.Context) (openapi_models.GetMilestonesResponse, error) {
 
 	facilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {
@@ -36,5 +36,5 @@ func GetMilestonesInvoke(c *gin.Context) openapi_models.GetMilestonesResponse {
 				UpdatedAt:   int(item.UpdatedAt),
 			}
 		}),
-	}
+	}, nil
 }

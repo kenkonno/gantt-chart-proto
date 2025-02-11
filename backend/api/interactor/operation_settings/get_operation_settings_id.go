@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSettingsIdResponse {
+func GetOperationSettingsIdInvoke(c *gin.Context) (openapi_models.GetOperationSettingsIdResponse, error) {
 	operationSettingRep := repository.NewOperationSettingRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -55,5 +55,5 @@ func GetOperationSettingsIdInvoke(c *gin.Context) openapi_models.GetOperationSet
 
 	return openapi_models.GetOperationSettingsIdResponse{
 		OperationSettings: results,
-	}
+	}, nil
 }

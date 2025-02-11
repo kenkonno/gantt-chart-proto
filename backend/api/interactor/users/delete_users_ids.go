@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DeleteUsersIdInvoke(c *gin.Context) openapi_models.DeleteUsersIdResponse {
+func DeleteUsersIdInvoke(c *gin.Context) (openapi_models.DeleteUsersIdResponse, error) {
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
@@ -27,6 +27,6 @@ func DeleteUsersIdInvoke(c *gin.Context) openapi_models.DeleteUsersIdResponse {
 		}
 	}
 
-	return openapi_models.DeleteUsersIdResponse{}
+	return openapi_models.DeleteUsersIdResponse{}, nil
 
 }

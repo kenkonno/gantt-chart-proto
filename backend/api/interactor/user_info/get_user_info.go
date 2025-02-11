@@ -10,11 +10,11 @@ import (
 )
 
 // Tokenからユーザー情報を返却する
-func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
+func GetUserInfoInvoke(c *gin.Context) (openapi_models.GetUserInfoResponse, error) {
 	userId := middleware.GetUserId(c)
 	// セッション切れの場合は空で戻す
 	if userId == nil {
-		return openapi_models.GetUserInfoResponse{}
+		return openapi_models.GetUserInfoResponse{}, nil
 	}
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
@@ -41,5 +41,5 @@ func GetUserInfoInvoke(c *gin.Context) openapi_models.GetUserInfoResponse {
 		},
 		IsSimulateUser: isSimulateUser,
 	}
-	return userInfoResponse
+	return userInfoResponse, nil
 }

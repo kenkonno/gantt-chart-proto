@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetMilestonesIdInvoke(c *gin.Context) openapi_models.GetMilestonesIdResponse {
+func GetMilestonesIdInvoke(c *gin.Context) (openapi_models.GetMilestonesIdResponse, error) {
 	milestoneRep := repository.NewMilestoneRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -28,5 +28,5 @@ func GetMilestonesIdInvoke(c *gin.Context) openapi_models.GetMilestonesIdRespons
 			CreatedAt:       milestone.CreatedAt,
 			UpdatedAt:       int(milestone.UpdatedAt),
 		},
-	}
+	}, nil
 }

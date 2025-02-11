@@ -11,7 +11,7 @@ import (
 )
 
 // 未使用。取得時に存在しなければ追加するため。
-func PostFacilitySharedLinksInvoke(c *gin.Context) openapi_models.PostFacilitySharedLinksResponse {
+func PostFacilitySharedLinksInvoke(c *gin.Context) (openapi_models.PostFacilitySharedLinksResponse, error) {
 
 	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
@@ -27,6 +27,6 @@ func PostFacilitySharedLinksInvoke(c *gin.Context) openapi_models.PostFacilitySh
 		UpdatedAt:  0,
 	})
 
-	return openapi_models.PostFacilitySharedLinksResponse{}
+	return openapi_models.PostFacilitySharedLinksResponse{}, nil
 
 }

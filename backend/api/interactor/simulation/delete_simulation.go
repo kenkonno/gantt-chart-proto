@@ -8,11 +8,11 @@ import (
 )
 
 // DeleteSimulationInvoke シミュレーションをキャンセルする。
-func DeleteSimulationInvoke(c *gin.Context) openapi_models.DeleteSimulationResponse {
+func DeleteSimulationInvoke(c *gin.Context) (openapi_models.DeleteSimulationResponse, error) {
 
 	simulationRep := simulation.NewSimulationLock()
 	simulationRep.Delete(constants.SimulateTypeSchedule)
 
-	return openapi_models.DeleteSimulationResponse{}
+	return openapi_models.DeleteSimulationResponse{}, nil
 
 }

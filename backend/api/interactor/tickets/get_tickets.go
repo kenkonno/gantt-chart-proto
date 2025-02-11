@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetTicketsInvoke(c *gin.Context) openapi_models.GetTicketsResponse {
+func GetTicketsInvoke(c *gin.Context) (openapi_models.GetTicketsResponse, error) {
 	ganttGroupIdsParam := c.QueryArray("ganttGroupIds")
 	// シミュレーション中に本番のチケットを取得するために用意
 	mode := c.Query("mode")
@@ -70,5 +70,5 @@ func GetTicketsInvoke(c *gin.Context) openapi_models.GetTicketsResponse {
 				}
 			}
 		}),
-	}
+	}, nil
 }

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetUnitsIdInvoke(c *gin.Context) openapi_models.GetUnitsIdResponse {
+func GetUnitsIdInvoke(c *gin.Context) (openapi_models.GetUnitsIdResponse, error) {
 	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -27,5 +27,5 @@ func GetUnitsIdInvoke(c *gin.Context) openapi_models.GetUnitsIdResponse {
 			CreatedAt:  unit.CreatedAt,
 			UpdatedAt:  unit.UpdatedAt,
 		},
-	}
+	}, nil
 }

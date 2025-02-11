@@ -10,7 +10,7 @@ import (
 	"reflect"
 )
 
-func GetSimulationMasterDiffInvoke(c *gin.Context) openapi_models.GetSimulationMasterDiffResponse {
+func GetSimulationMasterDiffInvoke(c *gin.Context) (openapi_models.GetSimulationMasterDiffResponse, error) {
 
 	processRep := repository.NewProcessRepository()
 	simulateProcessRep := repository.NewProcessRepository(repository.SimulationMode)
@@ -57,7 +57,7 @@ func GetSimulationMasterDiffInvoke(c *gin.Context) openapi_models.GetSimulationM
 		BeforeMilestones:  convertMilestones(beforeMilestones),
 		DiffMilestones:    convertMilestones(diffMilestones),
 		AfterMilestones:   convertMilestones(afterMilestones),
-	}
+	}, nil
 }
 
 func getBeforeAfter[V comparable](preList []V, postList []V) ([]V, []V, []V) {

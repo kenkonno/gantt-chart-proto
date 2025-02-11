@@ -6,7 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"strconv"
 )
-func DeleteMilestonesIdInvoke(c *gin.Context) openapi_models.DeleteMilestonesIdResponse {
+func DeleteMilestonesIdInvoke(c *gin.Context) (openapi_models.DeleteMilestonesIdResponse, error) {
 
 	milestoneRep := repository.NewMilestoneRepository(middleware.GetRepositoryMode(c)...)
 
@@ -17,6 +17,6 @@ func DeleteMilestonesIdInvoke(c *gin.Context) openapi_models.DeleteMilestonesIdR
 
 	milestoneRep.Delete(int32(id))
 
-	return openapi_models.DeleteMilestonesIdResponse{}
+	return openapi_models.DeleteMilestonesIdResponse{}, nil
 
 }

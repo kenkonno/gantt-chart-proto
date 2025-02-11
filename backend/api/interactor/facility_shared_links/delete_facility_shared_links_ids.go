@@ -8,7 +8,7 @@ import (
 )
 
 // 未使用
-func DeleteFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.DeleteFacilitySharedLinksIdResponse {
+func DeleteFacilitySharedLinksIdInvoke(c *gin.Context) (openapi_models.DeleteFacilitySharedLinksIdResponse, error) {
 
 	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
@@ -19,6 +19,6 @@ func DeleteFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.DeleteFaci
 
 	facilitySharedLinkRep.Delete(int32(id))
 
-	return openapi_models.DeleteFacilitySharedLinksIdResponse{}
+	return openapi_models.DeleteFacilitySharedLinksIdResponse{}, nil
 
 }

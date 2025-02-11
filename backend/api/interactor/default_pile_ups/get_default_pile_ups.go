@@ -17,7 +17,7 @@ import (
 
 const errorStyle = "rgb(255 89 89)"
 
-func GetDefaultPileUpsInvoke(c *gin.Context) openapi_models.GetDefaultPileUpsResponse {
+func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsResponse, error) {
 	pileUpsRep := repository.NewPileUpsRepository(middleware.GetRepositoryMode(c)...)
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
 	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
@@ -179,7 +179,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) openapi_models.GetDefaultPileUpsRes
 	return openapi_models.GetDefaultPileUpsResponse{
 		DefaultPileUps:  defaultPileUps,
 		GlobalStartDate: globalStartDate,
-	}
+	}, nil
 }
 
 // getDefaultPileUps 山積みの初期化を行う。期間は設備の最小開始日、最大終了日とする。

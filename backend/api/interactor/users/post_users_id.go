@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
+func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, error) {
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
@@ -39,7 +39,7 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 		// パスワードが更新されていない場合はエラーとする
 		if userReq.User.Password == "" || pw == oldUser.Password {
 			c.JSON(http.StatusBadRequest, "Password cannot be empty or the same as the current password")
-			return openapi_models.PostUsersIdResponse{}
+			return openapi_models.PostUsersIdResponse{}, nil
 		}
 	}
 
@@ -62,6 +62,6 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 		PasswordReset:    passwordReset,
 	})
 
-	return openapi_models.PostUsersIdResponse{}
+	return openapi_models.PostUsersIdResponse{}, nil
 
 }

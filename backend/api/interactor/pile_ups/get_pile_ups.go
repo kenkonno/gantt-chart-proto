@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-func GetPileUpsInvoke(c *gin.Context) openapi_models.GetPileUpsResponse {
+func GetPileUpsInvoke(c *gin.Context) (openapi_models.GetPileUpsResponse, error) {
 	excludeFacilityId, err := strconv.Atoi(c.Query("facilityId"))
 	qFacilityTypes := c.QueryArray("facilityTypes")
 	var facilityTypes []string
@@ -66,5 +66,5 @@ func GetPileUpsInvoke(c *gin.Context) openapi_models.GetPileUpsResponse {
 				}),
 			}
 		}),
-	}
+	}, nil
 }
