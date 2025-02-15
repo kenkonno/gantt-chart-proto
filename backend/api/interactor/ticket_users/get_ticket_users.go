@@ -23,7 +23,12 @@ func GetTicketUsersInvoke(c *gin.Context) (openapi_models.GetTicketUsersResponse
 		ticketIds = append(ticketIds, int32(vv))
 	}
 
-	ticketUserList := ticketUserRep.FindAllByTicketIds(ticketIds)
+	var ticketUserList []db.TicketUser
+	if len(ticketIds) == 0 {
+		ticketUserList = ticketUserRep.FindAll()
+	} else {
+		ticketUserList = ticketUserRep.FindAllByTicketIds(ticketIds)
+	}
 
 	return openapi_models.GetTicketUsersResponse{
 		List: lo.Map(ticketUserList, func(item db.TicketUser, index int) openapi_models.TicketUser {

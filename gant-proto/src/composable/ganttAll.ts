@@ -51,7 +51,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
 
     const {data: allTickets} = await Api.getAllTickets()
     const {data: originalAllTickets} = await Api.getAllTickets(undefined, ApiMode.prod)
-    const {data: allTicketUsers} = await Api.getTicketUsers(allTickets.list.map(v => v.id!))
+    const {data: allTicketUsers} = await Api.getTicketUsers([])
 
     let filteredFacilityList = facilityList.filter(v => v.status === FacilityStatus.Enabled)
     if (facilityTypes.length > 0) {
