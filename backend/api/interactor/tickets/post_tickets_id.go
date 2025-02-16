@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func PostTicketsIdInvoke(c *gin.Context) openapi_models.PostTicketsIdResponse {
+func PostTicketsIdInvoke(c *gin.Context) (openapi_models.PostTicketsIdResponse, error) {
 
 	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 
@@ -64,6 +64,6 @@ func PostTicketsIdInvoke(c *gin.Context) openapi_models.PostTicketsIdResponse {
 			CreatedAt:       result.CreatedAt,
 			UpdatedAt:       result.UpdatedAt,
 		},
-	}
+	}, nil
 
 }

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func PostGanttGroupsIdInvoke(c *gin.Context) openapi_models.PostGanttGroupsIdResponse {
+func PostGanttGroupsIdInvoke(c *gin.Context) (openapi_models.PostGanttGroupsIdResponse, error) {
 
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
 
@@ -28,6 +28,6 @@ func PostGanttGroupsIdInvoke(c *gin.Context) openapi_models.PostGanttGroupsIdRes
 		UpdatedAt:  0,
 	})
 
-	return openapi_models.PostGanttGroupsIdResponse{}
+	return openapi_models.PostGanttGroupsIdResponse{}, nil
 
 }

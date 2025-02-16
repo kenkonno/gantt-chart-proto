@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetProcessesIdInvoke(c *gin.Context) openapi_models.GetProcessesIdResponse {
+func GetProcessesIdInvoke(c *gin.Context) (openapi_models.GetProcessesIdResponse, error) {
 	processRep := repository.NewProcessRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -27,5 +27,5 @@ func GetProcessesIdInvoke(c *gin.Context) openapi_models.GetProcessesIdResponse 
 			CreatedAt: process.CreatedAt,
 			UpdatedAt: process.UpdatedAt,
 		},
-	}
+	}, nil
 }

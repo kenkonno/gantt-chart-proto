@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetUnitsInvoke(c *gin.Context) openapi_models.GetUnitsResponse {
+func GetUnitsInvoke(c *gin.Context) (openapi_models.GetUnitsResponse, error) {
 	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
 
 	facilityId, err := strconv.Atoi(c.Query("facilityId"))
@@ -30,5 +30,5 @@ func GetUnitsInvoke(c *gin.Context) openapi_models.GetUnitsResponse {
 				UpdatedAt:  item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

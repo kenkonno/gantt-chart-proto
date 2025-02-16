@@ -6,14 +6,14 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 )
 
-func PostLogoutInvoke(c *gin.Context) openapi_models.PostLogoutResponse {
+func PostLogoutInvoke(c *gin.Context) (openapi_models.PostLogoutResponse, error) {
 
 	// セッションとクッキーをクリアする
 	sessionId, _ := c.Cookie("session_id")
 	if sessionId == "" {
-		return openapi_models.PostLogoutResponse{}
+		return openapi_models.PostLogoutResponse{}, nil
 	}
 	middleware.ClearSession(sessionId)
-	return openapi_models.PostLogoutResponse{}
+	return openapi_models.PostLogoutResponse{}, nil
 
 }

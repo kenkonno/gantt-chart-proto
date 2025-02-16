@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdResponse {
+func PostFacilitiesIdInvoke(c *gin.Context) (openapi_models.PostFacilitiesIdResponse, error) {
 
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
 	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
@@ -40,6 +40,6 @@ func PostFacilitiesIdInvoke(c *gin.Context) openapi_models.PostFacilitiesIdRespo
 	holidayRep.InsertByFacilityId(*facilityReq.Facility.Id, &oldFacility.TermFrom, &oldFacility.TermTo)
 
 
-	return openapi_models.PostFacilitiesIdResponse{}
+	return openapi_models.PostFacilitiesIdResponse{}, nil
 
 }

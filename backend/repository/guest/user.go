@@ -23,7 +23,9 @@ var guestUser = db.User{
 	Role:             "guest", // TODO: これも本当はだめ
 	CreatedAt:        time.Time{},
 	UpdatedAt:        0,
+	PasswordReset:    true,
 }
+
 type userRepository struct {
 }
 

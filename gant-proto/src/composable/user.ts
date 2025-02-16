@@ -30,7 +30,8 @@ export async function useUser(userId?: number) {
         email: "",
         role: RoleType.Viewer,
         created_at: undefined,
-        updated_at: undefined
+        updated_at: undefined,
+        password_reset: false,
     })
     if (userId !== undefined) {
         const {data} = await Api.getUsersId(userId)
@@ -45,6 +46,7 @@ export async function useUser(userId?: number) {
             user.value.role = data.user.role
             user.value.created_at = data.user.created_at
             user.value.updated_at = data.user.updated_at
+            user.value.password_reset = data.user.password_reset
         }
     }
 

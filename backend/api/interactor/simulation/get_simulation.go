@@ -8,7 +8,7 @@ import (
 )
 
 // GetSimulationInvoke シミュレーション状況を返却する。
-func GetSimulationInvoke(c *gin.Context) openapi_models.GetSimulationResponse {
+func GetSimulationInvoke(c *gin.Context) (openapi_models.GetSimulationResponse, error) {
 
 	simulationRep := simulation.NewSimulationLock()
 	simulationLock := simulationRep.Find(constants.SimulateTypeSchedule)
@@ -20,5 +20,5 @@ func GetSimulationInvoke(c *gin.Context) openapi_models.GetSimulationResponse {
 			LockedAt:       simulationLock.LockedAt,
 			LockedBy:       simulationLock.LockedBy,
 		},
-	}
+	}, nil
 }

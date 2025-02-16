@@ -9,7 +9,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func GetProcessesInvoke(c *gin.Context) openapi_models.GetProcessesResponse {
+func GetProcessesInvoke(c *gin.Context) (openapi_models.GetProcessesResponse, error) {
 	processRep := repository.NewProcessRepository(middleware.GetRepositoryMode(c)...)
 
 	processList := processRep.FindAll()
@@ -25,5 +25,5 @@ func GetProcessesInvoke(c *gin.Context) openapi_models.GetProcessesResponse {
 				UpdatedAt: item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

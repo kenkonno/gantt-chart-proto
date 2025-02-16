@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func PostMilestonesInvoke(c *gin.Context) openapi_models.PostMilestonesResponse {
+func PostMilestonesInvoke(c *gin.Context) (openapi_models.PostMilestonesResponse, error) {
 
 	milestoneRep := repository.NewMilestoneRepository(middleware.GetRepositoryMode(c)...)
 
@@ -29,6 +29,6 @@ func PostMilestonesInvoke(c *gin.Context) openapi_models.PostMilestonesResponse 
 		UpdatedAt:       0,
 	})
 
-	return openapi_models.PostMilestonesResponse{}
+	return openapi_models.PostMilestonesResponse{}, nil
 
 }

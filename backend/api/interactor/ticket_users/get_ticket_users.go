@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetTicketUsersInvoke(c *gin.Context) openapi_models.GetTicketUsersResponse {
+func GetTicketUsersInvoke(c *gin.Context) (openapi_models.GetTicketUsersResponse, error) {
 	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 
 	ticketIdParam := c.QueryArray("ticketIds")
@@ -23,7 +23,12 @@ func GetTicketUsersInvoke(c *gin.Context) openapi_models.GetTicketUsersResponse 
 		ticketIds = append(ticketIds, int32(vv))
 	}
 
-	ticketUserList := ticketUserRep.FindAllByTicketIds(ticketIds)
+	var ticketUserList []db.TicketUser
+	if len(ticketIds) == 0 {
+		ticketUserList = ticketUserRep.FindAll()
+	} else {
+		ticketUserList = ticketUserRep.FindAllByTicketIds(ticketIds)
+	}
 
 	return openapi_models.GetTicketUsersResponse{
 		List: lo.Map(ticketUserList, func(item db.TicketUser, index int) openapi_models.TicketUser {
@@ -36,5 +41,5 @@ func GetTicketUsersInvoke(c *gin.Context) openapi_models.GetTicketUsersResponse 
 				UpdatedAt: item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

@@ -11,7 +11,7 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func GetAllTicketsInvoke(c *gin.Context) openapi_models.GetAllTicketsResponse {
+func GetAllTicketsInvoke(c *gin.Context) (openapi_models.GetAllTicketsResponse, error) {
 
 	qFacilityTypes := c.QueryArray("facilityTypes")
 	mode := c.Query("mode")
@@ -49,5 +49,5 @@ func GetAllTicketsInvoke(c *gin.Context) openapi_models.GetAllTicketsResponse {
 				UpdatedAt:       item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

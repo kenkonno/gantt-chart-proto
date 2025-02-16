@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func PostUsersInvoke(c *gin.Context) openapi_models.PostUsersResponse {
+func PostUsersInvoke(c *gin.Context) (openapi_models.PostUsersResponse, error) {
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
@@ -40,6 +40,6 @@ func PostUsersInvoke(c *gin.Context) openapi_models.PostUsersResponse {
 		UpdatedAt:        0,
 	})
 
-	return openapi_models.PostUsersResponse{}
+	return openapi_models.PostUsersResponse{}, nil
 
 }

@@ -10,7 +10,7 @@ import (
 )
 
 // 未使用
-func GetFacilitySharedLinksInvoke(c *gin.Context) openapi_models.GetFacilitySharedLinksResponse {
+func GetFacilitySharedLinksInvoke(c *gin.Context) (openapi_models.GetFacilitySharedLinksResponse, error) {
 	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
 	facilitySharedLinkList := facilitySharedLinkRep.FindAll()
@@ -25,5 +25,5 @@ func GetFacilitySharedLinksInvoke(c *gin.Context) openapi_models.GetFacilityShar
 				UpdatedAt:  int(item.UpdatedAt),
 			}
 		}),
-	}
+	}, nil
 }

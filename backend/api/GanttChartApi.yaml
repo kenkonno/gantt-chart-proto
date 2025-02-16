@@ -1141,6 +1141,8 @@ components:
           format: int64
         role:
           type: string
+        password_reset:
+          type: boolean
       required:
         - department_id
         - limit_of_operation
@@ -1149,6 +1151,7 @@ components:
         - password
         - email
         - role
+        - password_reset
     GetUsersRequest:
       title: GetUsersRequest
       type: object

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetDepartmentsIdInvoke(c *gin.Context) openapi_models.GetDepartmentsIdResponse {
+func GetDepartmentsIdInvoke(c *gin.Context) (openapi_models.GetDepartmentsIdResponse, error) {
 	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -26,5 +26,5 @@ func GetDepartmentsIdInvoke(c *gin.Context) openapi_models.GetDepartmentsIdRespo
 			CreatedAt: department.CreatedAt,
 			UpdatedAt: department.UpdatedAt,
 		},
-	}
+	}, nil
 }

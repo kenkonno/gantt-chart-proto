@@ -11,7 +11,7 @@ import (
 )
 
 // 未使用 更新されることがないため
-func PostFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.PostFacilitySharedLinksIdResponse {
+func PostFacilitySharedLinksIdInvoke(c *gin.Context) (openapi_models.PostFacilitySharedLinksIdResponse, error) {
 
 	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
@@ -29,6 +29,6 @@ func PostFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.PostFacility
 		UpdatedAt:  0,
 	})
 
-	return openapi_models.PostFacilitySharedLinksIdResponse{}
+	return openapi_models.PostFacilitySharedLinksIdResponse{}, nil
 
 }

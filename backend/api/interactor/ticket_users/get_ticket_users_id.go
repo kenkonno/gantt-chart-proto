@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetTicketUsersIdInvoke(c *gin.Context) openapi_models.GetTicketUsersIdResponse {
+func GetTicketUsersIdInvoke(c *gin.Context) (openapi_models.GetTicketUsersIdResponse, error) {
 	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -27,5 +27,5 @@ func GetTicketUsersIdInvoke(c *gin.Context) openapi_models.GetTicketUsersIdRespo
 			CreatedAt: ticketUser.CreatedAt,
 			UpdatedAt: ticketUser.UpdatedAt,
 		},
-	}
+	}, nil
 }
