@@ -9,7 +9,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func GetDepartmentsInvoke(c *gin.Context) openapi_models.GetDepartmentsResponse {
+func GetDepartmentsInvoke(c *gin.Context) (openapi_models.GetDepartmentsResponse, error) {
 	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
 
 	departmentList := departmentRep.FindAll()
@@ -24,5 +24,5 @@ func GetDepartmentsInvoke(c *gin.Context) openapi_models.GetDepartmentsResponse 
 				UpdatedAt: item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

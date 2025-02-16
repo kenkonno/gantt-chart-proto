@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DeleteGanttGroupsIdInvoke(c *gin.Context) openapi_models.DeleteGanttGroupsIdResponse {
+func DeleteGanttGroupsIdInvoke(c *gin.Context) (openapi_models.DeleteGanttGroupsIdResponse, error) {
 
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
 
@@ -19,6 +19,6 @@ func DeleteGanttGroupsIdInvoke(c *gin.Context) openapi_models.DeleteGanttGroupsI
 
 	ganttGroupRep.Delete(int32(id))
 
-	return openapi_models.DeleteGanttGroupsIdResponse{}
+	return openapi_models.DeleteGanttGroupsIdResponse{}, nil
 
 }

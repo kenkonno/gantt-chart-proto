@@ -12,7 +12,7 @@ import (
 )
 
 // PostTicketUsersInvoke このAPIはticketIdを受け取ってユーザーを更新するものとする。
-func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersResponse {
+func PostTicketUsersInvoke(c *gin.Context) (openapi_models.PostTicketUsersResponse, error) {
 
 	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 	var ticketUserReq openapi_models.PostTicketUsersRequest
@@ -54,6 +54,6 @@ func PostTicketUsersInvoke(c *gin.Context) openapi_models.PostTicketUsersRespons
 
 	return openapi_models.PostTicketUsersResponse{
 		TicketUsers: result,
-	}
+	}, nil
 
 }

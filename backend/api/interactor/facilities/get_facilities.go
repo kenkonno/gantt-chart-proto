@@ -11,7 +11,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
+func GetFacilitiesInvoke(c *gin.Context) (openapi_models.GetFacilitiesResponse, error) {
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
 
 	facilityList := facilityRep.FindAll([]string{}, []string{})
@@ -42,5 +42,5 @@ func GetFacilitiesInvoke(c *gin.Context) openapi_models.GetFacilitiesResponse {
 				ShipmentDueDate: item.ShipmentDueDate,
 			}
 		}),
-	}
+	}, nil
 }

@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetHolidaysInvoke(c *gin.Context) openapi_models.GetHolidaysResponse {
+func GetHolidaysInvoke(c *gin.Context) (openapi_models.GetHolidaysResponse, error) {
 	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 	facilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {
@@ -30,5 +30,5 @@ func GetHolidaysInvoke(c *gin.Context) openapi_models.GetHolidaysResponse {
 				UpdatedAt:  item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

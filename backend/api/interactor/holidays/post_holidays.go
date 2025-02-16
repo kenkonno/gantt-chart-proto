@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func PostHolidaysInvoke(c *gin.Context) openapi_models.PostHolidaysResponse {
+func PostHolidaysInvoke(c *gin.Context) (openapi_models.PostHolidaysResponse, error) {
 
 	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 
@@ -29,6 +29,6 @@ func PostHolidaysInvoke(c *gin.Context) openapi_models.PostHolidaysResponse {
 		UpdatedAt:  0,
 	})
 
-	return openapi_models.PostHolidaysResponse{}
+	return openapi_models.PostHolidaysResponse{}, nil
 
 }

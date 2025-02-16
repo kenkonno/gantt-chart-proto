@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DeleteProcessesIdInvoke(c *gin.Context) openapi_models.DeleteProcessesIdResponse {
+func DeleteProcessesIdInvoke(c *gin.Context) (openapi_models.DeleteProcessesIdResponse, error) {
 
 	processRep := repository.NewProcessRepository(middleware.GetRepositoryMode(c)...)
 	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
@@ -38,6 +38,6 @@ func DeleteProcessesIdInvoke(c *gin.Context) openapi_models.DeleteProcessesIdRes
 		}
 	}
 
-	return openapi_models.DeleteProcessesIdResponse{}
+	return openapi_models.DeleteProcessesIdResponse{}, nil
 
 }

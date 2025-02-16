@@ -11,29 +11,29 @@ package openapi
 
 import (
 
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation_master_diff"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/logout"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation_master_diff"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -44,504 +44,720 @@ import (
 // DeleteDepartmentsId - DeleteDepartmentsId
 func DeleteDepartmentsId(c *gin.Context) {
 	var r openapi_models.DeleteDepartmentsIdResponse
-	r = departments.DeleteDepartmentsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := departments.DeleteDepartmentsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteFacilitiesId - DeleteFacilitiesId
 func DeleteFacilitiesId(c *gin.Context) {
 	var r openapi_models.DeleteFacilitiesIdResponse
-	r = facilities.DeleteFacilitiesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facilities.DeleteFacilitiesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteFacilitySharedLinksId - DeleteFacilitySharedLinksId
 func DeleteFacilitySharedLinksId(c *gin.Context) {
 	var r openapi_models.DeleteFacilitySharedLinksIdResponse
-	r = facility_shared_links.DeleteFacilitySharedLinksIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facility_shared_links.DeleteFacilitySharedLinksIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteGanttGroupsId - DeleteGanttGroupsId
 func DeleteGanttGroupsId(c *gin.Context) {
 	var r openapi_models.DeleteGanttGroupsIdResponse
-	r = gantt_groups.DeleteGanttGroupsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := gantt_groups.DeleteGanttGroupsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteHolidaysId - DeleteHolidaysId
 func DeleteHolidaysId(c *gin.Context) {
 	var r openapi_models.DeleteHolidaysIdResponse
-	r = holidays.DeleteHolidaysIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := holidays.DeleteHolidaysIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteMilestonesId - DeleteMilestonesId
 func DeleteMilestonesId(c *gin.Context) {
 	var r openapi_models.DeleteMilestonesIdResponse
-	r = milestones.DeleteMilestonesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := milestones.DeleteMilestonesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteOperationSettingsId - DeleteOperationSettingsId
 func DeleteOperationSettingsId(c *gin.Context) {
 	var r openapi_models.DeleteOperationSettingsIdResponse
-	r = operation_settings.DeleteOperationSettingsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := operation_settings.DeleteOperationSettingsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteProcessesId - DeleteProcessesId
 func DeleteProcessesId(c *gin.Context) {
 	var r openapi_models.DeleteProcessesIdResponse
-	r = processes.DeleteProcessesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := processes.DeleteProcessesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteSimulation - 
 func DeleteSimulation(c *gin.Context) {
 	var r openapi_models.DeleteSimulationResponse
-	r = simulation.DeleteSimulationInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := simulation.DeleteSimulationInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteTicketUsersId - DeleteTicketUsersId
 func DeleteTicketUsersId(c *gin.Context) {
 	var r openapi_models.DeleteTicketUsersIdResponse
-	r = ticket_users.DeleteTicketUsersIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := ticket_users.DeleteTicketUsersIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteTicketsId - DeleteTicketsId
 func DeleteTicketsId(c *gin.Context) {
 	var r openapi_models.DeleteTicketsIdResponse
-	r = tickets.DeleteTicketsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := tickets.DeleteTicketsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteUnitsId - DeleteUnitsId
 func DeleteUnitsId(c *gin.Context) {
 	var r openapi_models.DeleteUnitsIdResponse
-	r = units.DeleteUnitsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := units.DeleteUnitsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // DeleteUsersId - DeleteUsersId
 func DeleteUsersId(c *gin.Context) {
 	var r openapi_models.DeleteUsersIdResponse
-	r = users.DeleteUsersIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := users.DeleteUsersIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetAllTickets - GetAllTicket
 func GetAllTickets(c *gin.Context) {
 	var r openapi_models.GetAllTicketsResponse
-	r = all_tickets.GetAllTicketsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := all_tickets.GetAllTicketsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetDefaultPileUps - GetDefaultPileUps
 func GetDefaultPileUps(c *gin.Context) {
 	var r openapi_models.GetDefaultPileUpsResponse
-	r = default_pile_ups.GetDefaultPileUpsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := default_pile_ups.GetDefaultPileUpsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetDepartments - GetDepartments
 func GetDepartments(c *gin.Context) {
 	var r openapi_models.GetDepartmentsResponse
-	r = departments.GetDepartmentsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := departments.GetDepartmentsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetDepartmentsId - GetDepartmentsId
 func GetDepartmentsId(c *gin.Context) {
 	var r openapi_models.GetDepartmentsIdResponse
-	r = departments.GetDepartmentsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := departments.GetDepartmentsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetFacilities - GetFacilities
 func GetFacilities(c *gin.Context) {
 	var r openapi_models.GetFacilitiesResponse
-	r = facilities.GetFacilitiesInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facilities.GetFacilitiesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetFacilitiesId - GetFacilitiesId
 func GetFacilitiesId(c *gin.Context) {
 	var r openapi_models.GetFacilitiesIdResponse
-	r = facilities.GetFacilitiesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facilities.GetFacilitiesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetFacilitySharedLinks - GetFacilitySharedLinks
 func GetFacilitySharedLinks(c *gin.Context) {
 	var r openapi_models.GetFacilitySharedLinksResponse
-	r = facility_shared_links.GetFacilitySharedLinksInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facility_shared_links.GetFacilitySharedLinksInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetFacilitySharedLinksId - GetFacilitySharedLinksId
 func GetFacilitySharedLinksId(c *gin.Context) {
 	var r openapi_models.GetFacilitySharedLinksIdResponse
-	r = facility_shared_links.GetFacilitySharedLinksIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facility_shared_links.GetFacilitySharedLinksIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetGanttGroups - GetGanttGroups
 func GetGanttGroups(c *gin.Context) {
 	var r openapi_models.GetGanttGroupsResponse
-	r = gantt_groups.GetGanttGroupsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := gantt_groups.GetGanttGroupsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetGanttGroupsId - GetGanttGroupsId
 func GetGanttGroupsId(c *gin.Context) {
 	var r openapi_models.GetGanttGroupsIdResponse
-	r = gantt_groups.GetGanttGroupsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := gantt_groups.GetGanttGroupsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetHolidays - GetHolidays
 func GetHolidays(c *gin.Context) {
 	var r openapi_models.GetHolidaysResponse
-	r = holidays.GetHolidaysInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := holidays.GetHolidaysInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetHolidaysId - GetHolidaysId
 func GetHolidaysId(c *gin.Context) {
 	var r openapi_models.GetHolidaysIdResponse
-	r = holidays.GetHolidaysIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := holidays.GetHolidaysIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetMilestones - GetMilestones
 func GetMilestones(c *gin.Context) {
 	var r openapi_models.GetMilestonesResponse
-	r = milestones.GetMilestonesInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := milestones.GetMilestonesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetMilestonesId - GetMilestonesId
 func GetMilestonesId(c *gin.Context) {
 	var r openapi_models.GetMilestonesIdResponse
-	r = milestones.GetMilestonesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := milestones.GetMilestonesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetOperationSettingsId - GetOperationSettingsId
 func GetOperationSettingsId(c *gin.Context) {
 	var r openapi_models.GetOperationSettingsIdResponse
-	r = operation_settings.GetOperationSettingsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := operation_settings.GetOperationSettingsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetPileUps - GetPileUps
 func GetPileUps(c *gin.Context) {
 	var r openapi_models.GetPileUpsResponse
-	r = pile_ups.GetPileUpsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := pile_ups.GetPileUpsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetProcesses - GetProcesses
 func GetProcesses(c *gin.Context) {
 	var r openapi_models.GetProcessesResponse
-	r = processes.GetProcessesInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := processes.GetProcessesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetProcessesId - GetProcessesId
 func GetProcessesId(c *gin.Context) {
 	var r openapi_models.GetProcessesIdResponse
-	r = processes.GetProcessesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := processes.GetProcessesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetScheduleAlerts - GetScheduleAlerts
 func GetScheduleAlerts(c *gin.Context) {
 	var r openapi_models.GetScheduleAlertsResponse
-	r = schedule_alerts.GetScheduleAlertsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := schedule_alerts.GetScheduleAlertsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetSimulation - 
 func GetSimulation(c *gin.Context) {
 	var r openapi_models.GetSimulationResponse
-	r = simulation.GetSimulationInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := simulation.GetSimulationInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetSimulationMasterDiff - 
 func GetSimulationMasterDiff(c *gin.Context) {
 	var r openapi_models.GetSimulationMasterDiffResponse
-	r = simulation_master_diff.GetSimulationMasterDiffInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := simulation_master_diff.GetSimulationMasterDiffInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetTicketMemoId - GetTicketMemoId
 func GetTicketMemoId(c *gin.Context) {
 	var r openapi_models.GetTicketMemoIdResponse
-	r = ticket_memo.GetTicketMemoIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := ticket_memo.GetTicketMemoIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetTicketUsers - GetTicketUsers
 func GetTicketUsers(c *gin.Context) {
 	var r openapi_models.GetTicketUsersResponse
-	r = ticket_users.GetTicketUsersInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := ticket_users.GetTicketUsersInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetTicketUsersId - GetTicketUsersId
 func GetTicketUsersId(c *gin.Context) {
 	var r openapi_models.GetTicketUsersIdResponse
-	r = ticket_users.GetTicketUsersIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := ticket_users.GetTicketUsersIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetTickets - GetTickets
 func GetTickets(c *gin.Context) {
 	var r openapi_models.GetTicketsResponse
-	r = tickets.GetTicketsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := tickets.GetTicketsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetTicketsId - GetTicketsId
 func GetTicketsId(c *gin.Context) {
 	var r openapi_models.GetTicketsIdResponse
-	r = tickets.GetTicketsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := tickets.GetTicketsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetUnits - GetUnits
 func GetUnits(c *gin.Context) {
 	var r openapi_models.GetUnitsResponse
-	r = units.GetUnitsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := units.GetUnitsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetUnitsId - GetUnitsId
 func GetUnitsId(c *gin.Context) {
 	var r openapi_models.GetUnitsIdResponse
-	r = units.GetUnitsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := units.GetUnitsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetUserInfo - GetUserInfo
 func GetUserInfo(c *gin.Context) {
 	var r openapi_models.GetUserInfoResponse
-	r = user_info.GetUserInfoInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := user_info.GetUserInfoInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetUsers - GetUsers
 func GetUsers(c *gin.Context) {
 	var r openapi_models.GetUsersResponse
-	r = users.GetUsersInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := users.GetUsersInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // GetUsersId - GetUsersId
 func GetUsersId(c *gin.Context) {
 	var r openapi_models.GetUsersIdResponse
-	r = users.GetUsersIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := users.GetUsersIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostCopyFacilitys - PostCopyFacilitys
 func PostCopyFacilitys(c *gin.Context) {
 	var r openapi_models.PostCopyFacilitysResponse
-	r = copy_facilitys.PostCopyFacilitysInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := copy_facilitys.PostCopyFacilitysInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostDepartments - PostDepartments
 func PostDepartments(c *gin.Context) {
 	var r openapi_models.PostDepartmentsResponse
-	r = departments.PostDepartmentsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := departments.PostDepartmentsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostDepartmentsId - PostDepartmentsId
 func PostDepartmentsId(c *gin.Context) {
 	var r openapi_models.PostDepartmentsIdResponse
-	r = departments.PostDepartmentsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := departments.PostDepartmentsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostFacilities - PostFacilities
 func PostFacilities(c *gin.Context) {
 	var r openapi_models.PostFacilitiesResponse
-	r = facilities.PostFacilitiesInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facilities.PostFacilitiesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostFacilitiesId - PostFacilitiesId
 func PostFacilitiesId(c *gin.Context) {
 	var r openapi_models.PostFacilitiesIdResponse
-	r = facilities.PostFacilitiesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facilities.PostFacilitiesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostFacilitySharedLinks - PostFacilitySharedLinks
 func PostFacilitySharedLinks(c *gin.Context) {
 	var r openapi_models.PostFacilitySharedLinksResponse
-	r = facility_shared_links.PostFacilitySharedLinksInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facility_shared_links.PostFacilitySharedLinksInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostFacilitySharedLinksId - PostFacilitySharedLinksId
 func PostFacilitySharedLinksId(c *gin.Context) {
 	var r openapi_models.PostFacilitySharedLinksIdResponse
-	r = facility_shared_links.PostFacilitySharedLinksIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := facility_shared_links.PostFacilitySharedLinksIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostGanttGroups - PostGanttGroups
 func PostGanttGroups(c *gin.Context) {
 	var r openapi_models.PostGanttGroupsResponse
-	r = gantt_groups.PostGanttGroupsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := gantt_groups.PostGanttGroupsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostGanttGroupsId - PostGanttGroupsId
 func PostGanttGroupsId(c *gin.Context) {
 	var r openapi_models.PostGanttGroupsIdResponse
-	r = gantt_groups.PostGanttGroupsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := gantt_groups.PostGanttGroupsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostHolidays - PostHolidays
 func PostHolidays(c *gin.Context) {
 	var r openapi_models.PostHolidaysResponse
-	r = holidays.PostHolidaysInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := holidays.PostHolidaysInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostHolidaysId - PostHolidaysId
 func PostHolidaysId(c *gin.Context) {
 	var r openapi_models.PostHolidaysIdResponse
-	r = holidays.PostHolidaysIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := holidays.PostHolidaysIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostLogin - 
 func PostLogin(c *gin.Context) {
 	var r openapi_models.PostLoginResponse
-	r = login.PostLoginInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := login.PostLoginInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostLogout - 
 func PostLogout(c *gin.Context) {
 	var r openapi_models.PostLogoutResponse
-	r = logout.PostLogoutInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := logout.PostLogoutInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostMilestones - PostMilestones
 func PostMilestones(c *gin.Context) {
 	var r openapi_models.PostMilestonesResponse
-	r = milestones.PostMilestonesInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := milestones.PostMilestonesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostMilestonesId - PostMilestonesId
 func PostMilestonesId(c *gin.Context) {
 	var r openapi_models.PostMilestonesIdResponse
-	r = milestones.PostMilestonesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := milestones.PostMilestonesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostOperationSettingsId - PostOperationSettingsId
 func PostOperationSettingsId(c *gin.Context) {
 	var r openapi_models.PostOperationSettingsIdResponse
-	r = operation_settings.PostOperationSettingsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := operation_settings.PostOperationSettingsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostProcesses - PostProcesses
 func PostProcesses(c *gin.Context) {
 	var r openapi_models.PostProcessesResponse
-	r = processes.PostProcessesInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := processes.PostProcessesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostProcessesId - PostProcessesId
 func PostProcessesId(c *gin.Context) {
 	var r openapi_models.PostProcessesIdResponse
-	r = processes.PostProcessesIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := processes.PostProcessesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostSimulation - PostSimulation
 func PostSimulation(c *gin.Context) {
 	var r openapi_models.PostSimulationResponse
-	r = simulation.PostSimulationInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := simulation.PostSimulationInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostTicketMemoId - PostTicketMemoId
 func PostTicketMemoId(c *gin.Context) {
 	var r openapi_models.PostTicketMemoIdResponse
-	r = ticket_memo.PostTicketMemoIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := ticket_memo.PostTicketMemoIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostTicketUsers - PostTicketUsers
 func PostTicketUsers(c *gin.Context) {
 	var r openapi_models.PostTicketUsersResponse
-	r = ticket_users.PostTicketUsersInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := ticket_users.PostTicketUsersInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostTickets - PostTickets
 func PostTickets(c *gin.Context) {
 	var r openapi_models.PostTicketsResponse
-	r = tickets.PostTicketsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := tickets.PostTicketsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostTicketsId - PostTicketsId
 func PostTicketsId(c *gin.Context) {
 	var r openapi_models.PostTicketsIdResponse
-	r = tickets.PostTicketsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := tickets.PostTicketsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostUnits - PostUnits
 func PostUnits(c *gin.Context) {
 	var r openapi_models.PostUnitsResponse
-	r = units.PostUnitsInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := units.PostUnitsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostUnitsId - PostUnitsId
 func PostUnitsId(c *gin.Context) {
 	var r openapi_models.PostUnitsIdResponse
-	r = units.PostUnitsIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := units.PostUnitsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostUsers - PostUsers
 func PostUsers(c *gin.Context) {
 	var r openapi_models.PostUsersResponse
-	r = users.PostUsersInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := users.PostUsersInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PostUsersId - PostUsersId
 func PostUsersId(c *gin.Context) {
 	var r openapi_models.PostUsersIdResponse
-	r = users.PostUsersIdInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := users.PostUsersIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 
 // PutSimulation - 
 func PutSimulation(c *gin.Context) {
 	var r openapi_models.PutSimulationResponse
-	r = simulation.PutSimulationInvoke(c)
-	c.JSON(http.StatusOK, r)
+	r, err := simulation.PutSimulationInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
 }
 

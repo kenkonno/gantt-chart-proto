@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func PostProcessesInvoke(c *gin.Context) openapi_models.PostProcessesResponse {
+func PostProcessesInvoke(c *gin.Context) (openapi_models.PostProcessesResponse, error) {
 
 	processRep := repository.NewProcessRepository(middleware.GetRepositoryMode(c)...)
 
@@ -28,6 +28,6 @@ func PostProcessesInvoke(c *gin.Context) openapi_models.PostProcessesResponse {
 		UpdatedAt: 0,
 	})
 
-	return openapi_models.PostProcessesResponse{}
+	return openapi_models.PostProcessesResponse{}, nil
 
 }

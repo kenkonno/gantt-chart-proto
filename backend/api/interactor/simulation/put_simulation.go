@@ -9,12 +9,12 @@ import (
 )
 
 // PutSimulationInvoke モードにより切り替える。シミュレーションを再開する or シミュレーションを保留する
-func PutSimulationInvoke(c *gin.Context) openapi_models.PutSimulationResponse {
+func PutSimulationInvoke(c *gin.Context) (openapi_models.PutSimulationResponse, error) {
 
 	req := openapi_models.PutSimulationRequest{}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"message": "Invalid request body"})
-		return openapi_models.PutSimulationResponse{}
+		return openapi_models.PutSimulationResponse{}, nil
 	}
 
 	simulationLockRep := simulation.NewSimulationLock()
@@ -36,6 +36,6 @@ func PutSimulationInvoke(c *gin.Context) openapi_models.PutSimulationResponse {
 		simulationLockRep.Upsert(simulationLock)
 	}
 
-	return openapi_models.PutSimulationResponse{}
+	return openapi_models.PutSimulationResponse{}, nil
 
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func GetScheduleAlertsInvoke(c *gin.Context) openapi_models.GetScheduleAlertsResponse {
+func GetScheduleAlertsInvoke(c *gin.Context) (openapi_models.GetScheduleAlertsResponse, error) {
 	scheduleAlertRep := repository.NewScheduleAlertRepository(middleware.GetRepositoryMode(c)...)
 	scheduleAlerts := scheduleAlertRep.FindAll()
 	return openapi_models.GetScheduleAlertsResponse{
@@ -29,5 +29,5 @@ func GetScheduleAlertsInvoke(c *gin.Context) openapi_models.GetScheduleAlertsRes
 				DelayDays:          item.DelayDays,
 			}
 		}),
-	}
+	}, nil
 }

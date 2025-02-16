@@ -12,7 +12,7 @@ import (
 )
 
 // facilityIdをもとに取得する
-func GetFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.GetFacilitySharedLinksIdResponse {
+func GetFacilitySharedLinksIdInvoke(c *gin.Context) (openapi_models.GetFacilitySharedLinksIdResponse, error) {
 	facilitySharedLinkRep := repository.NewFacilitySharedLinkRepository(middleware.GetRepositoryMode(c)...)
 
 	// REST的にはおかしいが、工数簡略化のためidパラメータをfacilityIdとして利用する。
@@ -43,5 +43,5 @@ func GetFacilitySharedLinksIdInvoke(c *gin.Context) openapi_models.GetFacilitySh
 			CreatedAt:  facilitySharedLink.CreatedAt,
 			UpdatedAt:  int(facilitySharedLink.UpdatedAt),
 		},
-	}
+	}, nil
 }

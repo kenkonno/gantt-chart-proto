@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func PostDepartmentsIdInvoke(c *gin.Context) openapi_models.PostDepartmentsIdResponse {
+func PostDepartmentsIdInvoke(c *gin.Context) (openapi_models.PostDepartmentsIdResponse, error) {
 
 	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
 
@@ -29,6 +29,6 @@ func PostDepartmentsIdInvoke(c *gin.Context) openapi_models.PostDepartmentsIdRes
 		UpdatedAt: 0,
 	})
 
-	return openapi_models.PostDepartmentsIdResponse{}
+	return openapi_models.PostDepartmentsIdResponse{}, nil
 
 }

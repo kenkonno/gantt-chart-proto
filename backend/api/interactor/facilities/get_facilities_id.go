@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetFacilitiesIdInvoke(c *gin.Context) openapi_models.GetFacilitiesIdResponse {
+func GetFacilitiesIdInvoke(c *gin.Context) (openapi_models.GetFacilitiesIdResponse, error) {
 	mode := c.Query("mode")
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
 	if mode == "prod" {
@@ -35,5 +35,5 @@ func GetFacilitiesIdInvoke(c *gin.Context) openapi_models.GetFacilitiesIdRespons
 			Type:      facility.Type,
 			ShipmentDueDate: facility.ShipmentDueDate,
 		},
-	}
+	}, nil
 }

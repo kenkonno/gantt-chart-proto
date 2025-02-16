@@ -11,7 +11,7 @@ import (
 )
 
 // PostSimulationInvoke シミュレーションを開始する。
-func PostSimulationInvoke(c *gin.Context) openapi_models.PostSimulationResponse {
+func PostSimulationInvoke(c *gin.Context) (openapi_models.PostSimulationResponse, error) {
 
 	simulationLockRep := simulation.NewSimulationLock()
 
@@ -31,5 +31,5 @@ func PostSimulationInvoke(c *gin.Context) openapi_models.PostSimulationResponse 
 	simulationRep.InitAllData()
 	simulationRep.ResetSequence()
 
-	return openapi_models.PostSimulationResponse{}
+	return openapi_models.PostSimulationResponse{}, nil
 }

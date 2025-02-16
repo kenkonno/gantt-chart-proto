@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DeleteOperationSettingsIdInvoke(c *gin.Context) openapi_models.DeleteOperationSettingsIdResponse {
+func DeleteOperationSettingsIdInvoke(c *gin.Context) (openapi_models.DeleteOperationSettingsIdResponse, error) {
 
 	operationSettingRep := repository.NewOperationSettingRepository(middleware.GetRepositoryMode(c)...)
 
@@ -19,6 +19,6 @@ func DeleteOperationSettingsIdInvoke(c *gin.Context) openapi_models.DeleteOperat
 
 	operationSettingRep.Delete(int32(id))
 
-	return openapi_models.DeleteOperationSettingsIdResponse{}
+	return openapi_models.DeleteOperationSettingsIdResponse{}, nil
 
 }

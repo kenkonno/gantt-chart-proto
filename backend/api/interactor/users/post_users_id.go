@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
@@ -8,11 +9,12 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 )
 
-func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
+func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, error) {
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
@@ -29,6 +31,22 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 	}
 	oldUser := userRep.Find(*userReq.User.Id)
 	pw := string(hashedPassword)
+
+	// パスワードリセット
+	passwordReset := false
+	if oldUser.PasswordReset {
+		// 過去設定済みであればtrue固定
+		passwordReset = true
+	} else {
+		// パスワードが更新されていない場合はエラーとする
+		if !validatePassword(userReq.User.Password) {
+			// TODO: 本来はカスタムエラーを作ってエラーハンドリングすべきだが速度優先で一旦エラーを返したらapi側ではレスポンスの制御をしないようにした。
+			c.JSON(http.StatusBadRequest, `パスワードは小文字、大文字、数字、特殊文字「 [!@#\$%^&*()] 」を含み8文字以上にしてください。`)
+			return openapi_models.PostUsersIdResponse{}, errors.New("")
+		}
+		passwordReset = true
+	}
+
 	// パスワードは空文字の場合は更新しない。
 	if userReq.User.Password == "" {
 		pw = oldUser.Password
@@ -45,8 +63,21 @@ func PostUsersIdInvoke(c *gin.Context) openapi_models.PostUsersIdResponse {
 		Role:             userReq.User.Role,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        0,
+		PasswordReset:    passwordReset,
 	})
 
-	return openapi_models.PostUsersIdResponse{}
+	return openapi_models.PostUsersIdResponse{}, nil
 
+}
+
+func validatePassword(password string) bool {
+	var (
+		containsMin   = regexp.MustCompile(`[a-z]`).MatchString
+		containsMax   = regexp.MustCompile(`[A-Z]`).MatchString
+		containsNum   = regexp.MustCompile(`[0-9]`).MatchString
+		containsSpecial = regexp.MustCompile(`[!@#\$%^&*()]`).MatchString
+		lengthValid   = regexp.MustCompile(`.{8,}`).MatchString
+	)
+
+	return containsMin(password) && containsMax(password) && containsNum(password) && containsSpecial(password) && lengthValid(password)
 }

@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetGanttGroupsInvoke(c *gin.Context) openapi_models.GetGanttGroupsResponse {
+func GetGanttGroupsInvoke(c *gin.Context) (openapi_models.GetGanttGroupsResponse, error) {
 
 	mode := c.Query("mode")
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
@@ -35,5 +35,5 @@ func GetGanttGroupsInvoke(c *gin.Context) openapi_models.GetGanttGroupsResponse 
 				UpdatedAt:  item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

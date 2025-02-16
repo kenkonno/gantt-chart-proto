@@ -9,7 +9,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func GetUsersInvoke(c *gin.Context) openapi_models.GetUsersResponse {
+func GetUsersInvoke(c *gin.Context) (openapi_models.GetUsersResponse, error) {
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
 
 	userList := userRep.FindAll()
@@ -29,5 +29,5 @@ func GetUsersInvoke(c *gin.Context) openapi_models.GetUsersResponse {
 				UpdatedAt:        item.UpdatedAt,
 			}
 		}),
-	}
+	}, nil
 }

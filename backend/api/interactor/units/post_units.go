@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func PostUnitsInvoke(c *gin.Context) openapi_models.PostUnitsResponse {
+func PostUnitsInvoke(c *gin.Context) (openapi_models.PostUnitsResponse, error) {
 
 	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
 	ganttGroupsRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
@@ -37,6 +37,6 @@ func PostUnitsInvoke(c *gin.Context) openapi_models.PostUnitsResponse {
 		UpdatedAt:  0,
 	})
 
-	return openapi_models.PostUnitsResponse{}
+	return openapi_models.PostUnitsResponse{}, nil
 
 }
