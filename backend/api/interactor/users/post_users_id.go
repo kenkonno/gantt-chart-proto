@@ -32,24 +32,21 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 	oldUser := userRep.Find(*userReq.User.Id)
 	pw := string(hashedPassword)
 
-	// パスワードリセット
+
+	// パスワードリセット 空文字の時は前回の設定を引き継ぐ（管理者が別のユーザーを更新するケースがあるため）
 	passwordReset := false
-	if oldUser.PasswordReset {
-		// 過去設定済みであればtrue固定
-		passwordReset = true
+	// パスワードは空文字の場合は更新しない。
+	if userReq.User.Password == "" {
+		pw = oldUser.Password
+		passwordReset = oldUser.PasswordReset
 	} else {
-		// パスワードが更新されていない場合はエラーとする
+		// バリデーション
 		if !validatePassword(userReq.User.Password) {
 			// TODO: 本来はカスタムエラーを作ってエラーハンドリングすべきだが速度優先で一旦エラーを返したらapi側ではレスポンスの制御をしないようにした。
 			c.JSON(http.StatusBadRequest, `パスワードは小文字、大文字、数字、特殊文字「 [!@#\$%^&*()] 」を含み8文字以上にしてください。`)
 			return openapi_models.PostUsersIdResponse{}, errors.New("")
 		}
 		passwordReset = true
-	}
-
-	// パスワードは空文字の場合は更新しない。
-	if userReq.User.Password == "" {
-		pw = oldUser.Password
 	}
 
 	userRep.Upsert(db.User{
