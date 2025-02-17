@@ -13,6 +13,7 @@ type SimulationUser struct {
 	Password         string
 	Email            string
 	Role             string
+	PasswordReset    bool `gorm:"default:false"`
 
 	CreatedAt time.Time
 	UpdatedAt int64
