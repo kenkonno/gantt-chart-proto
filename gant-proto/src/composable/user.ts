@@ -94,7 +94,6 @@ export async function postUserById(user: User, emit: Emit) {
     if (user.id != null) {
         await Api.postUsersId(user.id, req).then(() => {
             toast("成功しました。")
-        }).finally(() => {
             emit('closeEditModal')
         })
     }
