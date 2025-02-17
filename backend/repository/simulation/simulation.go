@@ -46,7 +46,7 @@ func (r *simulationRepository) InitAllData() {
 		{"id", "gantt_group_id", "process_id", "department_id", "limit_date", "estimate", "number_of_worker", "days_after", "start_date", "end_date", "progress_percent", "order", "created_at", "updated_at", "memo"},
 		{"id", "ticket_id", "user_id", "order", "created_at", "updated_at"},
 		{"id", "name", "facility_id", "order", "created_at", "updated_at"},
-		{"id", "department_id", "limit_of_operation", "password", "email", "created_at", "updated_at", "role", "last_name", "first_name"},
+		{"id", "department_id", "limit_of_operation", "password", "email", "created_at", "updated_at", "role", "last_name", "first_name", "password_reset"},
 	}
 
 	// Truncate, Copy
