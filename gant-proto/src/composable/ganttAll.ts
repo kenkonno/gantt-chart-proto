@@ -190,7 +190,6 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
             const milestones = await getMilestones(prodFacility, ApiMode.prod);
             const {
                 tickets,
-                estimate,
                 progress_percent
             } = await getFacilityInfos(ganttGroups.list, originalAllTickets.list)
             bars.push(...(hasFilter() || aggregationAxis == 'process' ? createBars(tickets) : [

@@ -201,7 +201,7 @@ import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import {initScroll} from "@/utils/initScroll";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {allowed} from "@/composable/role";
-import {Department, PostTicketMemoIdResponse, Ticket} from "@/api";
+import {Department, Ticket} from "@/api";
 import {useModalWithId} from "@/composable/modalWIthId";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import AsyncTicketEdit from "@/components/ticket/AsyncTicketEdit.vue";

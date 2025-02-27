@@ -107,8 +107,8 @@ import {Department, TicketUser} from "@/api";
 import UserMultiselect from "@/components/form/UserMultiselect.vue";
 import FormNumber from "@/components/form/FormNumber.vue";
 
-const {getUnitName, getDepartmentName, getProcessName} = inject(GLOBAL_GETTER_KEY)!
-const {processList, departmentList, facilityTypes, userList} = inject(GLOBAL_STATE_KEY)!
+const {getUnitName} = inject(GLOBAL_GETTER_KEY)!
+const {processList, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
 const cDepartmentList = computed(() => {
   const result: Department[] = [{created_at: "", id: undefined, name: "", order: 0, updated_at: 0}]
   result.push(...departmentList)
