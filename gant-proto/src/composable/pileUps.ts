@@ -371,7 +371,7 @@ export const usePileUps = (
                 rowErrorFunc = facilityErrorFunc
             }
         } else if (facility.type === FacilityType.Prepared) {
-            workHour = ticket.estimate / numberOfBusinessDays
+            workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
             const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
             if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
             rows.push(pileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!)
