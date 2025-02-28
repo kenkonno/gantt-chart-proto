@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
@@ -22,6 +23,13 @@ func PostUsersInvoke(c *gin.Context) (openapi_models.PostUsersResponse, error) {
 		panic(err)
 	}
 
+	// 登録済みのEmailははじく
+	userIsExists := userRep.FindByEmail(userReq.User.Email)
+	if userIsExists.Id != nil {
+		c.JSON(http.StatusBadRequest, "登録済みのメールアドレスです。")
+		return openapi_models.PostUsersResponse{}, errors.New("Email is already taken.")
+	}
+
 	// パスワードをハッシュ化
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.User.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -34,7 +42,7 @@ func PostUsersInvoke(c *gin.Context) (openapi_models.PostUsersResponse, error) {
 		LastName:         strings.TrimSpace(userReq.User.LastName),
 		FirstName:        strings.TrimSpace(userReq.User.FirstName),
 		Password:         string(hashedPassword),
-		Email:            strings.TrimSpace(userReq.User.Email),
+		Email:            strings.ToLower(strings.TrimSpace(userReq.User.Email)),
 		Role:             userReq.User.Role,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        0,
