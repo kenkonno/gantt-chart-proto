@@ -75,7 +75,7 @@ var rolesNeeded = map[string][]string{
 	"POST /api/units":                 {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/units/:id":             {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/users":                 {constants.RoleAdmin, constants.RoleManager},
-	"POST /api/users/:id":             {constants.RoleAdmin, constants.RoleManager},
+	"POST /api/users/:id":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker},
 }
 
 func getRolesFromToken(c *gin.Context) []string {

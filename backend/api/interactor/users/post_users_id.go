@@ -3,6 +3,7 @@ package users
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
@@ -23,6 +24,14 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
+
+	// Role.Workerの時のみ自分の更新かのチェックをする
+	sessionUser := userRep.Find(*middleware.GetUserId(c))
+	if sessionUser.Role == constants.RoleWorker && *userReq.User.Id != *sessionUser.Id {
+		c.JSON(http.StatusForbidden, "他者を更新する権限がありません。")
+		return openapi_models.PostUsersIdResponse{}, errors.New("forbidden")
+	}
+
 	// パスワードをハッシュ化
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.User.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -30,13 +39,21 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 		panic(err)
 	}
 	oldUser := userRep.Find(*userReq.User.Id)
-	pw := string(hashedPassword)
 
+	// 登録済みのEmailははじく
+	userIsExists := userRep.FindByEmail(userReq.User.Email)
+	// メールアドレスの重複チェック。メールアドレスが変更されているかつ既に存在していればNG
+	if oldUser.Email != userReq.User.Email && userIsExists.Id != nil {
+		c.JSON(http.StatusBadRequest, "メールアドレスが重複しています。")
+		return openapi_models.PostUsersIdResponse{}, errors.New("Email is already taken.")
+	}
+
+	pw := string(hashedPassword)
 
 	// パスワードリセット 空文字の時は前回の設定を引き継ぐ（管理者が別のユーザーを更新するケースがあるため）
 	passwordReset := false
-	// パスワードは空文字の場合は更新しない。
-	if userReq.User.Password == "" {
+	// パスワードリセット済みかつ、パスワードは空文字の場合は更新しない。
+	if userReq.User.Password == "" && oldUser.PasswordReset == true {
 		pw = oldUser.Password
 		passwordReset = oldUser.PasswordReset
 	} else {
@@ -56,7 +73,7 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 		LastName:         strings.TrimSpace(userReq.User.LastName),
 		FirstName:        strings.TrimSpace(userReq.User.FirstName),
 		Password:         pw,
-		Email:            strings.TrimSpace(userReq.User.Email),
+		Email:            strings.ToLower(strings.TrimSpace(userReq.User.Email)),
 		Role:             userReq.User.Role,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        0,
@@ -69,11 +86,11 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 
 func validatePassword(password string) bool {
 	var (
-		containsMin   = regexp.MustCompile(`[a-z]`).MatchString
-		containsMax   = regexp.MustCompile(`[A-Z]`).MatchString
-		containsNum   = regexp.MustCompile(`[0-9]`).MatchString
+		containsMin     = regexp.MustCompile(`[a-z]`).MatchString
+		containsMax     = regexp.MustCompile(`[A-Z]`).MatchString
+		containsNum     = regexp.MustCompile(`[0-9]`).MatchString
 		containsSpecial = regexp.MustCompile(`[!@#\$%^&*()]`).MatchString
-		lengthValid   = regexp.MustCompile(`.{8,}`).MatchString
+		lengthValid     = regexp.MustCompile(`.{8,}`).MatchString
 	)
 
 	return containsMin(password) && containsMax(password) && containsNum(password) && containsSpecial(password) && lengthValid(password)

@@ -1,8 +1,6 @@
 import {Api} from "@/api/axios";
 import {PostSimulationRequest, PutSimulationRequest, SimulationLock} from "@/api";
 import {ref} from "vue";
-import {toast} from "vue3-toastify";
-import {changeSort} from "@/utils/sort";
 import {Emit} from "@/const/common";
 import Swal from "sweetalert2";
 

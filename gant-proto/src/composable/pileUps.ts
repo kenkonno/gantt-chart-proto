@@ -360,7 +360,7 @@ export const usePileUps = (
                     summaryLimit.push(userList.filter(v => v.department_id === user.department_id).length)
                 })
             } else {
-                workHour = ticket.estimate / numberOfBusinessDays
+                workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
                 // チケットに紐づく部署を設定
                 const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
                 if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
