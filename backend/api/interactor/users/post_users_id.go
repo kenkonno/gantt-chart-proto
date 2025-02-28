@@ -35,8 +35,8 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 
 	// パスワードリセット 空文字の時は前回の設定を引き継ぐ（管理者が別のユーザーを更新するケースがあるため）
 	passwordReset := false
-	// パスワードは空文字の場合は更新しない。
-	if userReq.User.Password == "" {
+	// パスワードリセット済みかつ、パスワードは空文字の場合は更新しない。
+	if userReq.User.Password == "" && oldUser.PasswordReset == true {
 		pw = oldUser.Password
 		passwordReset = oldUser.PasswordReset
 	} else {
