@@ -17,7 +17,12 @@ type pileUpsRepository struct {
 	con *gorm.DB
 }
 
-// GetDefaultPileUps 全ての設備の積み上げを返却する
+// GetDefaultPileUps 全ての設備の積み上げを返却する。クエリーが非常に複雑なのでメモを残す。
+// w_facilitiesは自分以外の設備を除外する
+// date_masterは全設備の開始日からindexを採番している。
+// 日付毎にその設備が祝日なのか、その日に稼動できるユーザーの一覧を持っている。
+// target_tickets_by_userではチケット×紐づくユーザー分の行数となる。在籍期間対応でそうなった。どうしても日毎に稼動可能なユーザー数を計算することができなかったため。
+// 最後のSELECTはチケット単位に日毎に稼動可能なユーザーを集計している。
 func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityTypes []string) []db.DefaultPileUp {
 	var results []db.DefaultPileUp
 
@@ -27,13 +32,15 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 	), date_master AS (
 		SELECT
 			date.date
-			 , ARRAY_REMOVE(ARRAY_AGG(th.facility_id), NULL) as facility_ids
+			 , ARRAY_REMOVE(ARRAY_AGG(th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
+			 , ARRAY_REMOVE(ARRAY_AGG(u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
 			 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as index
 		FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 				 LEFT JOIN holidays th ON date.date = th.date
+				 LEFT JOIN users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
 		GROUP BY
 			date.date
-	), target_tickets AS (
+	), target_tickets_by_user AS (
 		SELECT
 			t.id
 			 ,   f.id as facility_id
@@ -42,8 +49,7 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 			 ,   t.number_of_worker
 			 ,   t.start_date
 			 ,   t.end_date
-			 ,   ARRAY_REMOVE(ARRAY_AGG(tu.user_id), null) as user_ids
-			 ,   t.estimate::numeric / (SELECT COUNT(*) FROM date_master dm WHERE dm.date BETWEEN t.start_date AND t.end_date AND NOT(f.id = ANY (dm.facility_ids))) as work_per_day
+			 ,   tu.user_id
 			 ,   (SELECT ARRAY_AGG(index) FROM date_master dm WHERE dm.date BETWEEN t.start_date AND t.end_date AND NOT(f.id = ANY (dm.facility_ids))) as valid_indexes
 		FROM tickets t
 				 INNER JOIN gantt_groups gg ON gg.id = t.gantt_group_id
@@ -62,9 +68,57 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 			   ,   t.number_of_worker
 			   ,   t.start_date
 			   ,   t.end_date
+			   ,   tu.user_id
 	)
-	SELECT * FROM target_tickets tt
+	SELECT
+        ttbu.id
+         ,   ttbu.facility_id
+         ,   ttbu.department_id
+         ,   ttbu.estimate
+         ,   ttbu.number_of_worker
+         ,   ttbu.start_date
+         ,   ttbu.end_date
+		 ,   ARRAY_REMOVE(ARRAY_AGG(DISTINCT ttbu.user_id), null) as user_ids
+         ,   ttbu.valid_indexes
+         ,   COUNT(*) as number_of_worker_by_day
+	     ,   (SELECT COUNT(*) FROM date_master dm WHERE dm.date BETWEEN ttbu.start_date AND ttbu.end_date AND NOT( ttbu.facility_id = ANY (dm.facility_ids))) as number_of_work_day
+    FROM
+        target_tickets_by_user ttbu
+    LEFT JOIN
+        date_master dm ON dm.index = ANY(ttbu.valid_indexes)AND ttbu.user_id = ANY(dm.user_ids)
+    GROUP BY
+        ttbu.id
+         ,   ttbu.facility_id
+         ,   ttbu.department_id
+         ,   ttbu.estimate
+         ,   ttbu.number_of_worker
+         ,   ttbu.start_date
+         ,   ttbu.end_date
+         ,   ttbu.valid_indexes
 	`, excludeFacilityId, connection.CreateInParam(facilityTypes), excludeFacilityId, connection.CreateInParam(facilityTypes))).Scan(&results)
+
+	return results
+}
+
+// GetUserInfos validIndex毎にどのユーザーが稼動可能なのかを格納した情報
+func (r *pileUpsRepository) GetValidIndexUsers(excludeFacilityId int32, facilityTypes []string) []db.ValidIndexUser {
+	var results []db.ValidIndexUser
+
+	r.con.Raw(fmt.Sprintf(`
+	WITH w_facilities AS (
+		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM facilities WHERE id != %d AND type IN %s AND status IN ('Enabled')
+	)
+	SELECT
+		date.date
+		 , ARRAY_REMOVE(ARRAY_AGG(th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
+		 , ARRAY_REMOVE(ARRAY_AGG(u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
+		 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as valid_index
+	FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
+			 LEFT JOIN holidays th ON date.date = th.date
+			 LEFT JOIN users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
+	GROUP BY
+		date.date
+	`, excludeFacilityId, connection.CreateInParam(facilityTypes))).Scan(&results)
 
 	return results
 }
