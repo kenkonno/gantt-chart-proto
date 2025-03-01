@@ -37,15 +37,17 @@ func PostUsersInvoke(c *gin.Context) (openapi_models.PostUsersResponse, error) {
 		panic(err)
 	}
 	userRep.Upsert(db.User{
-		DepartmentId:     userReq.User.DepartmentId,
-		LimitOfOperation: userReq.User.LimitOfOperation,
-		LastName:         strings.TrimSpace(userReq.User.LastName),
-		FirstName:        strings.TrimSpace(userReq.User.FirstName),
-		Password:         string(hashedPassword),
-		Email:            strings.ToLower(strings.TrimSpace(userReq.User.Email)),
-		Role:             userReq.User.Role,
-		CreatedAt:        time.Time{},
-		UpdatedAt:        0,
+		DepartmentId:        userReq.User.DepartmentId,
+		LimitOfOperation:    userReq.User.LimitOfOperation,
+		LastName:            strings.TrimSpace(userReq.User.LastName),
+		FirstName:           strings.TrimSpace(userReq.User.FirstName),
+		Password:            string(hashedPassword),
+		Email:               strings.ToLower(strings.TrimSpace(userReq.User.Email)),
+		Role:                userReq.User.Role,
+		CreatedAt:           time.Time{},
+		UpdatedAt:           0,
+		EmploymentStartDate: userReq.User.EmploymentStartDate,
+		EmploymentEndDate:   userReq.User.EmploymentEndDate,
 	})
 
 	return openapi_models.PostUsersResponse{}, nil

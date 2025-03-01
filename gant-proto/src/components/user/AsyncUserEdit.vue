@@ -43,8 +43,13 @@
     </div>
 
     <div class="mb-2" v-if="mode != 'reset-password'">
-      <label class="form-label" for="id">Email</label>
-      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false" autocomplete="off">
+      <label class="form-label" for="id">在籍期間(開始)</label>
+      <input class="form-control" type="date" name="employment_start_date" id="employment_start_date" v-model="user.employment_start_date" :disabled="false">
+    </div>
+
+    <div class="mb-2" v-if="mode != 'reset-password'">
+      <label class="form-label" for="id">在籍期間(終了)</label>
+      <input class="form-control" type="date" name="employment_end_date" id="employment_end_date" v-model="user.employment_end_date" :disabled="false">
     </div>
 
     <div class="mb-2" v-if="mode != 'reset-password'">
