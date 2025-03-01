@@ -35,6 +35,11 @@
       </select>
     </div>
 
+    <div class="mb-2" v-if="mode != 'reset-password'">
+      <label class="form-label" for="id">Email</label>
+      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false" autocomplete="off">
+    </div>
+
     <div class="mb-2">
       <label class="form-label" for="id">Password</label>
       <input class="form-control" type="password" name="password" id="password" v-model="user.password"
