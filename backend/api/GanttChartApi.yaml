@@ -2556,6 +2556,21 @@ components:
         - labels
         - styles
         - display
+    DefautValidIndexUsers:
+      title: DefaultPileUp
+      x-stoplight:
+        id: f6aa84233e81b
+      type: object
+      properties:
+        UserIds:
+          type: array
+          items:
+            type: integer
+        ValidIndex:
+          type: integer
+      required:
+        - UserIds
+        - ValidIndex
     GetDefaultPileUpsRequest:
       title: GetDefaultPileUpsRequest
       type: object
@@ -2582,9 +2597,14 @@ components:
         globalStartDate:
           type: string
           format: date-time
+        defaultValidUserIndexes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DefautValidIndexUsers'
       required:
         - defaultPileUps
         - globalStartDate
+        - defaultValidUserIndexes
     FacilitySharedLink:
       title: FacilitySharedLink
       type: object

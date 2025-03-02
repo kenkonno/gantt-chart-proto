@@ -62,7 +62,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	}
 	allFacilityPileUps := pileUpsRep.GetDefaultPileUps(int32(excludeFacilityId), facilityTypes)
 	// validIndexに対する稼動可能なユーザーの一覧
-	validUserIndexes := pileUpsRep.GetValidIndexUsers(int32(excludeFacilityId), facilityTypes)
+	validUserIndexes := pileUpsRep.GetValidIndexUsers()
 	validUserMap := lo.Associate(validUserIndexes, func(item db.ValidIndexUser) (int32, []int32) {
 		return item.ValidIndex, item.UserIds
 	})
@@ -91,11 +91,12 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 					targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
 						return item.DepartmentId == userMap[userId].DepartmentId
 					})
+
 					if !exists {
 						continue
 					}
 
-					// 設備の期間内のうちは計算を続ける。
+					// 設備の期間外の場合は処理を中断。
 					if len(targetPileUp.Labels) <= int(validIndex) {
 						continue
 					}
@@ -105,8 +106,19 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 						continue
 					}
 
+					// 部署人数合計
+					numberOfDepartmentUsers := float64(len(
+						lo.Filter(departmentUserMap[targetPileUp.DepartmentId], func(item db.User, index int) bool {
+							return lo.Contains(validUserMap[validIndex], *item.Id)
+						}),
+					))
+
 					// 部署への積み上げ(共通)
 					targetPileUp.Labels[validIndex] += workPerDay
+					// エラー判定
+					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
+						applyErrorStyle(&targetPileUp.Styles[validIndex])
+					}
 					// ユーザーの足し上げ処理
 					targetUserPileUp, userExists := lo.Find(targetPileUp.AssignedUser.Users, func(item openapi_models.PileUpByPerson) bool {
 						return *item.User.Id == userId
@@ -120,22 +132,13 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 					if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
 						// アサイン済みへの積み上げ
 						targetPileUp.AssignedUser.Labels[validIndex] += workPerDay
-						// エラー判定
-						if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-							applyErrorStyle(&targetPileUp.Styles[validIndex])
-						}
-						if pileUpLabelFormat(targetPileUp.AssignedUser.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
+						if pileUpLabelFormat(targetPileUp.AssignedUser.Labels[validIndex]) > numberOfDepartmentUsers {
 							applyErrorStyle(&targetPileUp.AssignedUser.Styles[validIndex])
 						}
-
 					} else {
 						// 未確定の場合 への積み上げ
 						targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += workPerDay
-
-						if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-							applyErrorStyle(&targetPileUp.Styles[validIndex])
-						}
-						if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
+						if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 							applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
 						}
 
@@ -150,25 +153,34 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 				}
 			}
 		} else {
+			// 未アサインの場合は部署の設定がされていないと計上しない
 			targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
 				return ticket.DepartmentId != nil && item.DepartmentId == *ticket.DepartmentId
 			})
 			if !exists {
 				continue
 			}
+
 			// 未アサインの場合 [未アサインのその設備] [積み上げ、未アサイン積み上げ]に計上する
 			for _, validIndex := range ticket.ValidIndexes {
 				if len(targetPileUp.Labels) <= int(validIndex) {
 					continue
 				}
-				if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
-					targetPileUp.Labels[validIndex] += workPerDay
-					targetPileUp.UnAssignedPileUp.Labels[validIndex] += workPerDay
+				// 部署人数合計
+				numberOfDepartmentUsers := float64(len(
+					lo.Filter(departmentUserMap[targetPileUp.DepartmentId], func(item db.User, index int) bool {
+						return lo.Contains(validUserMap[validIndex], *item.Id)
+					}),
+				))
+				targetPileUp.Labels[validIndex] += workPerDay
+				if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
+					applyErrorStyle(&targetPileUp.Styles[validIndex])
+				}
 
-					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-						applyErrorStyle(&targetPileUp.Styles[validIndex])
-					}
-					if pileUpLabelFormat(targetPileUp.UnAssignedPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
+				if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
+
+					targetPileUp.UnAssignedPileUp.Labels[validIndex] += workPerDay
+					if pileUpLabelFormat(targetPileUp.UnAssignedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.UnAssignedPileUp.Styles[validIndex])
 					}
 
@@ -182,10 +194,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 					// 未確定の場合 への積み上げ
 					targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += workPerDay
 
-					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-						applyErrorStyle(&targetPileUp.Styles[validIndex])
-					}
-					if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
+					if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
 					}
 
@@ -204,6 +213,12 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	return openapi_models.GetDefaultPileUpsResponse{
 		DefaultPileUps:  defaultPileUps,
 		GlobalStartDate: globalStartDate,
+		DefaultValidUserIndexes: lo.Map(validUserIndexes, func(item db.ValidIndexUser, index int) openapi_models.DefautValidIndexUsers {
+			return openapi_models.DefautValidIndexUsers{
+				UserIds:    item.UserIds,
+				ValidIndex: item.ValidIndex,
+			}
+		}),
 	}, nil
 }
 

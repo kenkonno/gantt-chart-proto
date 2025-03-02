@@ -106,6 +106,25 @@ export interface DefaultPileUp {
 /**
  * 
  * @export
+ * @interface DefautValidIndexUsers
+ */
+export interface DefautValidIndexUsers {
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof DefautValidIndexUsers
+     */
+    'UserIds': Array<number>;
+    /**
+     * 
+     * @type {number}
+     * @memberof DefautValidIndexUsers
+     */
+    'ValidIndex': number;
+}
+/**
+ * 
+ * @export
  * @interface DeleteDepartmentsIdRequest
  */
 export interface DeleteDepartmentsIdRequest {
@@ -675,6 +694,12 @@ export interface GetDefaultPileUpsResponse {
      * @memberof GetDefaultPileUpsResponse
      */
     'globalStartDate': string;
+    /**
+     * 
+     * @type {Array<DefautValidIndexUsers>}
+     * @memberof GetDefaultPileUpsResponse
+     */
+    'defaultValidUserIndexes': Array<DefautValidIndexUsers>;
 }
 /**
  * 

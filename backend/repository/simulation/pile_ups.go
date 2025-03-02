@@ -100,12 +100,12 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 }
 
 // GetUserInfos validIndex毎にどのユーザーが稼動可能なのかを格納した情報
-func (r *pileUpsRepository) GetValidIndexUsers(excludeFacilityId int32, facilityTypes []string) []db.ValidIndexUser {
+func (r *pileUpsRepository) GetValidIndexUsers() []db.ValidIndexUser {
 	var results []db.ValidIndexUser
 
 	r.con.Raw(fmt.Sprintf(`
 	WITH w_facilities AS (
-		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM simulation_facilities WHERE id != %d AND type IN %s AND status IN ('Enabled')
+		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM simulation_facilities WHERE status IN ('Enabled')
 	)
 	SELECT
 		date.date
@@ -117,7 +117,7 @@ func (r *pileUpsRepository) GetValidIndexUsers(excludeFacilityId int32, facility
 			 LEFT JOIN simulation_users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
 	GROUP BY
 		date.date
-	`, excludeFacilityId, connection.CreateInParam(facilityTypes))).Scan(&results)
+	`)).Scan(&results)
 
 	return results
 }

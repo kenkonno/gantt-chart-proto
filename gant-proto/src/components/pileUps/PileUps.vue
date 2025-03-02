@@ -176,6 +176,7 @@ type PileUpsProps = {
   milestoneVerticalLines: VerticalLine[],
   defaultPileUps: PileUps[],
   globalStartDate: string,
+  defaultValidUserIndexMap: Map<number, number[]>,
 }
 const props = defineProps<PileUpsProps>()
 const {facilityList, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
@@ -212,8 +213,9 @@ const {
     departmentList,
     userList,
     facilityList,
+    props.defaultValidUserIndexMap,
     props.defaultPileUps,
-    props.globalStartDate
+    props.globalStartDate,
 )
 
 const toggleDisplay = (departmentId: number, type: "" | "assignedUser" | "noOrdersReceivedPileUp" | "unAssignedPileUp") => {
