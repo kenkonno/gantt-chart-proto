@@ -12,6 +12,8 @@
         <th>Role</th>
         <th v-if="false">Password</th>
         <th>Email</th>
+        <th>在籍期間(開始)</th>
+        <th>在籍期間(終了)</th>
         <th>作成日</th>
         <th>更新日</th>
       </tr>
@@ -25,6 +27,8 @@
         <td>{{ RoleTypeMap[item.role] }}</td>
         <td v-if="false">{{ item.password }}</td>
         <td>{{ item.email }}</td>
+        <td>{{ $filters.dateFormat(item.employment_start_date) }}</td>
+        <td>{{ $filters.dateFormat(item.employment_end_date) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>

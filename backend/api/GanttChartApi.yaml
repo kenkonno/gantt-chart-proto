@@ -1143,6 +1143,13 @@ components:
           type: string
         password_reset:
           type: boolean
+        employment_start_date:
+          type: string
+          format: date-time
+        employment_end_date:
+          type: string
+          format: date-time
+          nullable: true
       required:
         - department_id
         - limit_of_operation
@@ -1152,6 +1159,7 @@ components:
         - email
         - role
         - password_reset
+        - employment_start_date
     GetUsersRequest:
       title: GetUsersRequest
       type: object

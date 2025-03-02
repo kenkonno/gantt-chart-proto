@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 
 export function dateFormat(date: string) {
-    return dayjs(date).format("YYYY-MM-DD HH:mm:ss")
+    return date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : ""
 }
 
 export function dateFormatYMD(date: string) {

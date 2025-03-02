@@ -2869,6 +2869,18 @@ export interface User {
      * @memberof User
      */
     'password_reset': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'employment_start_date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'employment_end_date'?: string | null;
 }
 /**
  * 

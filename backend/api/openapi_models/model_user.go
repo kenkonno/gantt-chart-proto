@@ -14,7 +14,6 @@ import (
 )
 
 type User struct {
-
 	Id *int32 `json:"id,omitempty"`
 
 	DepartmentId int32 `json:"department_id"`
@@ -36,4 +35,8 @@ type User struct {
 	Role string `json:"role"`
 
 	PasswordReset bool `json:"password_reset"`
+
+	EmploymentStartDate time.Time `json:"employment_start_date"`
+
+	EmploymentEndDate *time.Time `json:"employment_end_date,omitempty"`
 }
