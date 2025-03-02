@@ -8,6 +8,7 @@ import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 import {pileUpLabelFormat} from "@/utils/filters";
 import {allowed} from "@/composable/role";
+import {DAYJS_FORMAT_YMD} from "@/utils/day";
 
 
 export type PileUps = {
@@ -269,6 +270,35 @@ export const usePileUps = (
         if (displayType.value === "week") {
             aggregatePileUpsByWeek(startDate, endDate, pileUps.value, holidays.value)
         }
+
+        // 在籍期間による非表示の処理を行う。
+        const excludeUserIds: number[] = []
+        if (facility){
+            // 案件ビューの場合はその案件の期間内であれば表示
+            excludeUserIds.push(...userList.filter(user => {
+                const userEmployStart = new Date(user.employment_start_date);
+                const userEmployEnd = user.employment_end_date ? new Date(user.employment_end_date) : Infinity; // If null, set to Infinity
+                const facilityTermStart = new Date(facility.term_from);
+                const facilityTermEnd = new Date(facility.term_to);
+                return userEmployStart > facilityTermEnd || userEmployEnd < facilityTermStart;
+            }).map(v => v.id!))
+        } else {
+            // 全体ビューであれば、在籍期間が過去であれば非表示
+            const currentDate = new Date()
+            currentDate.setHours(0,0,0,0)
+            excludeUserIds.push(...userList.filter(user => {
+                const userEmployEnd = user.employment_end_date ? new Date(user.employment_end_date) : Infinity; // If null, set to Infinity
+                return userEmployEnd < currentDate;
+            }).map(v => v.id!))
+        }
+
+        pileUps.value.forEach(pileUp => {
+            pileUp.assignedUser.users = pileUp.assignedUser.users.filter(userPileUp => {
+                return !excludeUserIds.includes(userPileUp.user.id!)
+            })
+        })
+
+
         refreshPileUpByPersonExclusive = false
     }
 
