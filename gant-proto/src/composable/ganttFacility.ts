@@ -253,11 +253,23 @@ export async function useGanttFacility() {
     }
 
     // 部署の変更。
-    const getUserListByDepartmentId = (departmentId?: number) => {
-        if (departmentId == null) {
-            return userList
+    const getUserListByDepartmentId = (departmentId?: number, startDate?: string, endDate?: string ) => {
+        let filteredUsers = (departmentId == null) ? userList : userList.filter(v => v.department_id === departmentId);
+
+        if (startDate && endDate) {
+            const start = new Date(startDate).getTime();
+            const end = new Date(endDate).getTime();
+
+            filteredUsers = filteredUsers.filter(user => {
+                const userStart = new Date(user.employment_start_date).getTime();
+                const userEnd = user.employment_end_date ? new Date(user.employment_end_date).getTime() : Infinity;
+
+                // 指定された日付範囲が、利用者の雇用期間と被っている場合にのみ、その利用者を含めます。
+                return (userStart <= end && userEnd >= start);
+            });
         }
-        return userList.filter(v => v.department_id === departmentId)
+
+        return filteredUsers;
     }
 
     const deleteTicket = async (ticket: Ticket) => {

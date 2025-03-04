@@ -194,7 +194,6 @@ const displayPrepared = (display: boolean) => {
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
 const isAllMode = props.currentFacilityId === -1
 const {tickets, ticketUsers, holidays, displayType} = toRefs(props)
-
 const {
   // pileUpFilters,
   // pileUpsByDepartment,

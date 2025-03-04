@@ -95,12 +95,10 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 					if !exists {
 						continue
 					}
-
 					// 設備の期間外の場合は処理を中断。
 					if len(targetPileUp.Labels) <= int(validIndex) {
 						continue
 					}
-
 					// 在籍期間外の場合は対象外とする。
 					if !lo.Contains(validUserMap[validIndex], userId) {
 						continue
@@ -119,6 +117,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.Styles[validIndex])
 					}
+
 					// ユーザーの足し上げ処理
 					targetUserPileUp, userExists := lo.Find(targetPileUp.AssignedUser.Users, func(item openapi_models.PileUpByPerson) bool {
 						return *item.User.Id == userId

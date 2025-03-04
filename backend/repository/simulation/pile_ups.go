@@ -27,12 +27,12 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 
 	r.con.Table(r.table).Raw(fmt.Sprintf(`
 	WITH w_facilities AS (
-		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM simulation_facilities WHERE id != %d AND type IN %s AND status IN ('Enabled')
+		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM simulation_facilities WHERE type IN %s AND status IN ('Enabled')
 	), date_master AS (
 		SELECT
 			date.date
-			 , ARRAY_REMOVE(ARRAY_AGG(th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
-			 , ARRAY_REMOVE(ARRAY_AGG(u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
+			 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
+			 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
 			 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as index
 		FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 				 LEFT JOIN simulation_holidays th ON date.date = th.date
@@ -94,7 +94,7 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
          ,   ttbu.start_date
          ,   ttbu.end_date
          ,   ttbu.valid_indexes
-	`, excludeFacilityId, connection.CreateInParam(facilityTypes), excludeFacilityId, connection.CreateInParam(facilityTypes))).Scan(&results)
+	`, connection.CreateInParam(facilityTypes), excludeFacilityId, connection.CreateInParam(facilityTypes))).Scan(&results)
 
 	return results
 }
@@ -109,8 +109,8 @@ func (r *pileUpsRepository) GetValidIndexUsers() []db.ValidIndexUser {
 	)
 	SELECT
 		date.date
-		 , ARRAY_REMOVE(ARRAY_AGG(th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
-		 , ARRAY_REMOVE(ARRAY_AGG(u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
+		 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
+		 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
 		 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as index
 	FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 			 LEFT JOIN simulation_holidays th ON date.date = th.date

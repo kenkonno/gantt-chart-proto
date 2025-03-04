@@ -76,7 +76,7 @@
                     </select>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
-                    <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id)"
+                    <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id, row.ticket.start_date, row.ticket.end_date)"
                                      :ticketUser="row.ticketUsers"
                                      :disabled="!allowed('UPDATE_TICKET')"
                                      @update:modelValue="mutation.setTicketUser(row.ticket ,$event)"></UserMultiselect>
