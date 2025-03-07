@@ -77,6 +77,10 @@ export function validate(user: User, validatePassword = false) {
         toast.warning("Emailは必須です")
         isValid = false
     }
+    if (!user.email) {
+        toast.warning("在籍期間(開始)は必須です")
+        isValid = false
+    }
     return isValid
 }
 

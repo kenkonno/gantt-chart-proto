@@ -26,9 +26,9 @@
         <td v-if="false">{{ item.limit_of_operation }}</td>
         <td>{{ RoleTypeMap[item.role] }}</td>
         <td v-if="false">{{ item.password }}</td>
-        <td>{{ item.email }}</td>
-        <td>{{ $filters.dateFormat(item.employment_start_date) }}</td>
-        <td>{{ $filters.dateFormat(item.employment_end_date) }}</td>
+        <td class="text-break">{{ item.email }}</td>
+        <td>{{ $filters.dateFormatYMD(item.employment_start_date) }}</td>
+        <td>{{ $filters.dateFormatYMD(item.employment_end_date) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>

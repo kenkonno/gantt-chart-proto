@@ -47,7 +47,7 @@ export async function useMilestone(facilityId: number, milestoneId?: number) {
 export function validate(milestone: Milestone) {
     let isValid = true
     if (!milestone.description) {
-        toast.warning("名称は必須です")
+        toast.warning("説明は必須です")
         isValid = false
     }
     if (!milestone.date) {

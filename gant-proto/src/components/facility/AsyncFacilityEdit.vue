@@ -6,23 +6,23 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">名称</label>
+      <label class="form-label" for="id">名称<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="facility.name" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">開始日</label>
+      <label class="form-label" for="id">開始日<input-required /></label>
       <input class="form-control" type="date" name="termFrom" id="termFrom" v-model="facility.term_from"
              :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">終了日</label>
+      <label class="form-label" for="id">終了日<input-required /></label>
       <input class="form-control" type="date" name="termTo" id="termTo" v-model="facility.term_to" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="shipmentDueDate">出荷期日</label>
+      <label class="form-label" for="shipmentDueDate">出荷期日<input-required /></label>
       <input class="form-control" type="date" name="shipmentDueDate" id="shipmentDueDate" v-model="facility.shipment_due_date" :disabled="false">
     </div>
 
@@ -75,6 +75,7 @@ import {
   validate
 } from "@/composable/facility";
 import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
+import InputRequired from "@/components/form/InputRequired.vue";
 
 interface AsyncFacilityEdit {
   id: number | undefined,

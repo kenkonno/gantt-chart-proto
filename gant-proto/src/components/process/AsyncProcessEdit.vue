@@ -6,7 +6,7 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">名称</label>
+      <label class="form-label" for="id">名称<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="process.name" :disabled="false">
     </div>
 
@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import {ColorPicker} from "vue3-colorpicker";
 import {useProcess, postProcessById, postProcess, deleteProcessById, validate} from "@/composable/process";
+import InputRequired from "@/components/form/InputRequired.vue";
 
 interface AsyncProcessEdit {
   id: number | undefined,

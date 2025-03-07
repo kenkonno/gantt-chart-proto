@@ -6,7 +6,7 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">名称</label>
+      <label class="form-label" for="id">名称<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="department.name" :disabled="false">
     </div>
 
@@ -38,6 +38,7 @@ import {
   deleteDepartmentById,
   validate
 } from "@/composable/department";
+import InputRequired from "@/components/form/InputRequired.vue";
 
 interface AsyncDepartmentEdit {
   id: number | undefined,
