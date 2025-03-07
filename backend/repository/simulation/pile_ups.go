@@ -111,7 +111,7 @@ func (r *pileUpsRepository) GetValidIndexUsers() []db.ValidIndexUser {
 		date.date
 		 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
 		 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
-		 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as index
+		 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as valid_index
 	FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 			 LEFT JOIN simulation_holidays th ON date.date = th.date
 			 LEFT JOIN simulation_users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
