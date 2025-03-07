@@ -270,9 +270,8 @@ export async function useGanttFacility() {
             const end = new Date(endDate).getTime();
 
             userList = userList.filter(user => {
-                const userStart = new Date(user.employment_start_date).getTime();
-                const userEnd = user.employment_end_date ? new Date(user.employment_end_date).getTime() : Infinity;
-
+                const userStart = new Date(user.employment_start_date.substring(0,10)).getTime();
+                const userEnd = user.employment_end_date ? new Date(user.employment_end_date.substring(0,10)).getTime(): Infinity;
                 // 指定された日付範囲が、利用者の雇用期間と被っている場合にのみ、その利用者を含めます。
                 return (userStart <= end && userEnd >= start);
             });
