@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <div v-if="isSimulate" class="mb-2 bg-warning text-center">シミュレーション中のため変更できません。</div>
-    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
+      <UploadFile description="CSVアップロード：" @file-upload="postUploadUsersCsvFile" :sample="csvSample"/>
+    </div>
     <table class="table">
       <thead v-if="!isNoHeader">
       <tr>
@@ -42,12 +45,15 @@ import {User} from "@/api";
 import {inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {RoleTypeMap} from "../../const/common";
+import UploadFile from "@/components/form/UploadFile.vue";
+import {postUploadUsersCsvFile} from "@/composable/user";
 
 defineEmits(['openEditModal'])
 const {departmentList} = inject(GLOBAL_STATE_KEY)!
 const getDepartmentName = (id: number) => {
   return departmentList.find(v => v.id === id)?.name
 }
+
 
 interface AsyncUserTable {
   list: User[]
@@ -57,6 +63,10 @@ interface AsyncUserTable {
 }
 
 defineProps<AsyncUserTable>()
+
+const csvSample = `部署ID,性,名,Role,Email,Password,在籍期間(開始),在籍期間(終了)
+1,タスマップ,太郎,マネージャー,abcd@tasmap.com,password, 2025-06-14,
+`.split("\n").map(v => v.split(","))
 
 </script>
 

@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostUsersRequest, User} from "@/api";
+import {PostUploadUsersCsvFileRequest, PostUsersRequest, User} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {Emit, RoleType} from "@/const/common";
@@ -50,8 +50,8 @@ export async function useUser(userId?: number) {
             user.value.created_at = data.user.created_at
             user.value.updated_at = data.user.updated_at
             user.value.password_reset = data.user.password_reset
-            user.value.employment_start_date = data.user.employment_start_date.substring(0,10)
-            user.value.employment_end_date = data.user.employment_end_date?.substring(0,10)
+            user.value.employment_start_date = data.user.employment_start_date.substring(0, 10)
+            user.value.employment_end_date = data.user.employment_end_date?.substring(0, 10)
         }
     }
 
@@ -129,4 +129,14 @@ export async function deleteUserById(id: number, emit: Emit) {
 }
 
 
+export async function postUploadUsersCsvFile(csv: File) {
+    console.log(csv)
 
+    await Api.postUploadUsersCsvFile(csv, {
+        headers: {
+            'Content-Type': 'application/octet-stream',
+        }
+    }).then(() => {
+        toast("成功しました。")
+    })
+}

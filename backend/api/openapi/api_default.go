@@ -31,6 +31,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/upload_users_csv_file"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
 
@@ -724,6 +725,16 @@ func PostUnits(c *gin.Context) {
 func PostUnitsId(c *gin.Context) {
 	var r openapi_models.PostUnitsIdResponse
 	r, err := units.PostUnitsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostUploadUsersCsvFile - UploadUsersCsvFile
+func PostUploadUsersCsvFile(c *gin.Context) {
+	var r openapi_models.PostUploadUsersCsvFileResponse
+	r, err := upload_users_csv_file.PostUploadUsersCsvFileInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)

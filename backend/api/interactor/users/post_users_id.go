@@ -6,11 +6,10 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/utils"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -33,10 +32,10 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 	}
 
 	// パスワードをハッシュ化
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.User.Password), bcrypt.DefaultCost)
+	pw, err := utils.CryptPassword(userReq.User.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		panic(err)
+		c.JSON(http.StatusInternalServerError, err)
+		return openapi_models.PostUsersIdResponse{}, errors.New("パスワードの暗号化に失敗しました。")
 	}
 	oldUser := userRep.Find(*userReq.User.Id)
 
@@ -48,8 +47,6 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 		return openapi_models.PostUsersIdResponse{}, errors.New("Email is already taken.")
 	}
 
-	pw := string(hashedPassword)
-
 	// パスワードリセット 空文字の時は前回の設定を引き継ぐ（管理者が別のユーザーを更新するケースがあるため）
 	passwordReset := false
 	// パスワードリセット済みかつ、パスワードは空文字の場合は更新しない。
@@ -58,9 +55,9 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 		passwordReset = oldUser.PasswordReset
 	} else {
 		// バリデーション
-		if !validatePassword(userReq.User.Password) {
+		if !utils.ValidatePassword(userReq.User.Password) {
 			// TODO: 本来はカスタムエラーを作ってエラーハンドリングすべきだが速度優先で一旦エラーを返したらapi側ではレスポンスの制御をしないようにした。
-			c.JSON(http.StatusBadRequest, `パスワードは小文字、大文字、数字、特殊文字「 [!@#\$%^&*()] 」を含み8文字以上にしてください。`)
+			c.JSON(http.StatusBadRequest, constants.E0001)
 			return openapi_models.PostUsersIdResponse{}, errors.New("")
 		}
 		passwordReset = true
@@ -84,16 +81,4 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 
 	return openapi_models.PostUsersIdResponse{}, nil
 
-}
-
-func validatePassword(password string) bool {
-	var (
-		containsMin     = regexp.MustCompile(`[a-z]`).MatchString
-		containsMax     = regexp.MustCompile(`[A-Z]`).MatchString
-		containsNum     = regexp.MustCompile(`[0-9]`).MatchString
-		containsSpecial = regexp.MustCompile(`[!@#\$%^&*()]`).MatchString
-		lengthValid     = regexp.MustCompile(`.{8,}`).MatchString
-	)
-
-	return containsMin(password) && containsMax(password) && containsNum(password) && containsSpecial(password) && lengthValid(password)
 }
