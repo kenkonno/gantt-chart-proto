@@ -426,19 +426,18 @@ export const usePileUps = (
                     if (pileUpLabelFormat(targetPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                         targetPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                     }
-                    // TODO: 部署の合計人数によるエラーチェックの在籍期間対応
 
-                    // ユーザーの足し上げ処理
-                    const targetUserPileUp = targetPileUp.assignedUser.users.find(v => v.user.id == userId)!
-                    targetUserPileUp.labels[validIndex] += workPerDay
-                    if (pileUpLabelFormat(targetUserPileUp.labels[validIndex]) > 1) {
-                        targetUserPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
-                    }
                     if (facility.type == FacilityType.Ordered) {
                         // アサイン済みへの積み上げ
                         targetPileUp.assignedUser.labels[validIndex] += workPerDay
                         if (pileUpLabelFormat(targetPileUp.assignedUser.labels[validIndex]) > numberOfDepartmentUsers) {
                             targetPileUp.assignedUser.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                        }
+                        // ユーザーの足し上げ処理
+                        const targetUserPileUp = targetPileUp.assignedUser.users.find(v => v.user.id == userId)!
+                        targetUserPileUp.labels[validIndex] += workPerDay
+                        if (pileUpLabelFormat(targetUserPileUp.labels[validIndex]) > 1) {
+                            targetUserPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                         }
                     } else {
                         // 未確定の場合 への積み上げ
@@ -467,17 +466,19 @@ export const usePileUps = (
 
                 const numberOfDepartmentUsers = userList.filter(v => v.department_id === targetPileUp.departmentId).filter(v => defaultValidUserIndexMap.get(validIndex)?.includes(v.id!)).length
 
+                // 部署への積み上げ（共通）
                 targetPileUp.labels[validIndex] += workPerDay
                 if (pileUpLabelFormat(targetPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                     targetPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                 }
                 if (facility.type === FacilityType.Ordered) {
-
+                    // 未アサインへ積み上げ
                     targetPileUp.unAssignedPileUp.labels[validIndex] += workPerDay
                     if (pileUpLabelFormat(targetPileUp.unAssignedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                         targetPileUp.unAssignedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                     }
 
+                    // 未アサインの設備へ積み上げ
                     const targetFacilityPileUp = targetPileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!
                     targetFacilityPileUp.labels[validIndex] += workPerDay
                 } else {

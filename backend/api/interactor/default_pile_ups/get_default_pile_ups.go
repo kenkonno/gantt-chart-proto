@@ -118,21 +118,21 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 						applyErrorStyle(&targetPileUp.Styles[validIndex])
 					}
 
-					// ユーザーの足し上げ処理
-					targetUserPileUp, userExists := lo.Find(targetPileUp.AssignedUser.Users, func(item openapi_models.PileUpByPerson) bool {
-						return *item.User.Id == userId
-					})
-					if userExists {
-						targetUserPileUp.Labels[validIndex] += workPerDay
-						if pileUpLabelFormat(targetUserPileUp.Labels[validIndex]) > 1 {
-							applyErrorStyle(&targetUserPileUp.Styles[validIndex])
-						}
-					}
 					if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
 						// アサイン済みへの積み上げ
 						targetPileUp.AssignedUser.Labels[validIndex] += workPerDay
 						if pileUpLabelFormat(targetPileUp.AssignedUser.Labels[validIndex]) > numberOfDepartmentUsers {
 							applyErrorStyle(&targetPileUp.AssignedUser.Styles[validIndex])
+						}
+						// ユーザーの足し上げ処理
+						targetUserPileUp, userExists := lo.Find(targetPileUp.AssignedUser.Users, func(item openapi_models.PileUpByPerson) bool {
+							return *item.User.Id == userId
+						})
+						if userExists {
+							targetUserPileUp.Labels[validIndex] += workPerDay
+							if pileUpLabelFormat(targetUserPileUp.Labels[validIndex]) > 1 {
+								applyErrorStyle(&targetUserPileUp.Styles[validIndex])
+							}
 						}
 					} else {
 						// 未確定の場合 への積み上げ
@@ -171,6 +171,8 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 						return lo.Contains(validUserMap[validIndex], *item.Id)
 					}),
 				))
+
+				// 部署への積み上げ
 				targetPileUp.Labels[validIndex] += workPerDay
 				if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 					applyErrorStyle(&targetPileUp.Styles[validIndex])
@@ -178,11 +180,13 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 
 				if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
 
+					// 未アサインへの積み上げ
 					targetPileUp.UnAssignedPileUp.Labels[validIndex] += workPerDay
 					if pileUpLabelFormat(targetPileUp.UnAssignedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.UnAssignedPileUp.Styles[validIndex])
 					}
 
+					// 未アサインの設備の積み上げ
 					targetFacilityPileUp, facilityExists := lo.Find(targetPileUp.UnAssignedPileUp.Facilities, func(item openapi_models.PileUpByFacility) bool {
 						return ticket.FacilityId == item.FacilityId
 					})
