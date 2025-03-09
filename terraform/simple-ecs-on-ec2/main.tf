@@ -429,19 +429,6 @@ resource "aws_ecs_service" "api_ecs_service" {
   }
 
   // TODO: 次回デプロイ時に確認。ServiceConnectが設定されていればOK なぜかうまくいかない。。。一旦手順に加える
-  // │ Error: creating ECS Service (mds-prod-koteikanri-ecs-service-api): ClientException: Service already exists. (Service: ServiceDiscovery, Status Code: 400, Request ID: d5bb8989-cb64-413f-969f-c85d43f10c75)
-#  service_connect_configuration {
-#    enabled = true
-#    namespace = aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name // epson-prod-namespace
-#    service {
-#      client_alias {
-#        port     = 80
-#        dns_name = "api-80-tcp.${aws_service_discovery_private_dns_namespace.service_discovery_private_dns_namespace.name}"
-#      }
-#      port_name      = "api-80-tcp"
-#      discovery_name = "api-80-tcp"
-#    }
-#  }
 
   deployment_circuit_breaker {
     enable   = true
