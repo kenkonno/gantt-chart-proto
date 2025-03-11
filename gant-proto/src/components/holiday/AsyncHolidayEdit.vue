@@ -6,12 +6,12 @@
     </div>
 
     <div class="mb-2" v-if="false">
-      <label class="form-label" for="id">名称</label>
+      <label class="form-label" for="id">名称<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="holiday.name" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">日付</label>
+      <label class="form-label" for="id">日付<input-required /></label>
       <input class="form-control" type="date" name="date" id="date" v-model="holiday.date" :disabled="false">
     </div>
 
@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import {useHoliday, postHolidayById, postHoliday, deleteHolidayById, validate} from "@/composable/holiday";
+import InputRequired from "@/components/form/InputRequired.vue";
 
 interface AsyncHolidayEdit {
   id: number | undefined,

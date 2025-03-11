@@ -78,6 +78,7 @@
           @on-mounted="forceScroll"
           :defaultPileUps="defaultPileUps"
           :global-start-date="globalStartDate"
+          :default-valid-user-index-map="defaultValidUserIndexMap"
           v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp"
       >
       </PileUps>
@@ -186,6 +187,7 @@ const ret = await Promise.all([getDefaultPileUps(-1, "day", true, facilityTypes)
 const {
   globalStartDate,
   defaultPileUps,
+  defaultValidUserIndexMap,
 } =  ret[0]
 
 const {

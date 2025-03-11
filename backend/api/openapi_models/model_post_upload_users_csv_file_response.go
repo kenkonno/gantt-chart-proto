@@ -9,14 +9,6 @@
 
 package openapi_models
 
-import (
-	"time"
-)
-
-type GetDefaultPileUpsResponse struct {
-	DefaultPileUps []DefaultPileUp `json:"defaultPileUps"`
-
-	GlobalStartDate time.Time `json:"globalStartDate"`
-
-	DefaultValidUserIndexes []DefautValidIndexUsers `json:"defaultValidUserIndexes"`
+type PostUploadUsersCsvFileResponse struct {
+	string `json:",omitempty"`
 }

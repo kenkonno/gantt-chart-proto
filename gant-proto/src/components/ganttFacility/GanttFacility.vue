@@ -76,7 +76,7 @@
                     </select>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
-                    <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id)"
+                    <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id, row.ticket.start_date, row.ticket.end_date)"
                                      :ticketUser="row.ticketUsers"
                                      :disabled="!allowed('UPDATE_TICKET')"
                                      @update:modelValue="mutation.setTicketUser(row.ticket ,$event)"></UserMultiselect>
@@ -143,7 +143,7 @@
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->
-      <hr v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp" />
+      <hr v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp"/>
       <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
         <PileUps
             :chart-start="chartStart"
@@ -161,6 +161,7 @@
             @on-mounted="forceScroll"
             :defaultPileUps="defaultPileUps"
             :global-start-date="globalStartDate"
+            :default-valid-user-index-map="defaultValidUserIndexMap"
             v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp"
         >
         </PileUps>
@@ -230,6 +231,7 @@ const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", false
 const {
   globalStartDate,
   defaultPileUps,
+  defaultValidUserIndexMap,
 } = ret[0]
 
 const {

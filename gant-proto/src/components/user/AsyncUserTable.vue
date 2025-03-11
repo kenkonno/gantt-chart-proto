@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <div v-if="isSimulate" class="mb-2 bg-warning text-center">シミュレーション中のため変更できません。</div>
-    <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">新規追加</button>
+      <UploadFile description="CSVアップロード：" @file-upload="postUploadUsersCsvFile" :sample="csvSample"/>
+    </div>
     <table class="table">
       <thead v-if="!isNoHeader">
       <tr>
@@ -12,6 +15,8 @@
         <th>Role</th>
         <th v-if="false">Password</th>
         <th>Email</th>
+        <th>在籍期間(開始)</th>
+        <th>在籍期間(終了)</th>
         <th>作成日</th>
         <th>更新日</th>
       </tr>
@@ -24,7 +29,9 @@
         <td v-if="false">{{ item.limit_of_operation }}</td>
         <td>{{ RoleTypeMap[item.role] }}</td>
         <td v-if="false">{{ item.password }}</td>
-        <td>{{ item.email }}</td>
+        <td class="text-break">{{ item.email }}</td>
+        <td>{{ $filters.dateFormatYMD(item.employment_start_date) }}</td>
+        <td>{{ $filters.dateFormatYMD(item.employment_end_date) }}</td>
         <td>{{ $filters.dateFormat(item.created_at) }}</td>
         <td>{{ $filters.unixTimeFormat(item.updated_at) }}</td>
       </tr>
@@ -38,12 +45,15 @@ import {User} from "@/api";
 import {inject} from "vue";
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {RoleTypeMap} from "../../const/common";
+import UploadFile from "@/components/form/UploadFile.vue";
+import {postUploadUsersCsvFile} from "@/composable/user";
 
 defineEmits(['openEditModal'])
 const {departmentList} = inject(GLOBAL_STATE_KEY)!
 const getDepartmentName = (id: number) => {
   return departmentList.find(v => v.id === id)?.name
 }
+
 
 interface AsyncUserTable {
   list: User[]
@@ -53,6 +63,10 @@ interface AsyncUserTable {
 }
 
 defineProps<AsyncUserTable>()
+
+const csvSample = `部署ID,性,名,Role,Email,Password,在籍期間(開始),在籍期間(終了)
+1,タスマップ,太郎,マネージャー,abcd@tasmap.com,password, 2025-06-14,
+`.split("\n").map(v => v.split(","))
 
 </script>
 

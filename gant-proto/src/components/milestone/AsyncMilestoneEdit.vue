@@ -6,12 +6,12 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">日付</label>
+      <label class="form-label" for="id">日付<input-required /></label>
       <input class="form-control" type="date" name="date" id="date" v-model="milestone.date" :disabled="false">
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">説明</label>
+      <label class="form-label" for="id">説明<input-required /></label>
       <input class="form-control" type="text" name="description" id="description" v-model="milestone.description"
              :disabled="false">
     </div>
@@ -29,17 +29,17 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="postMilestone(milestone, order, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(milestone) && postMilestone(milestone, order, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="postMilestoneById(milestone, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(milestone) && postMilestoneById(milestone, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteMilestoneById(id, $emit)">削除</button>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useMilestone, postMilestoneById, postMilestone, deleteMilestoneById} from "@/composable/milestone";
+import {useMilestone, postMilestoneById, postMilestone, deleteMilestoneById, validate} from "@/composable/milestone";
 
 interface AsyncMilestoneEdit {
   id: number | undefined
@@ -48,6 +48,7 @@ interface AsyncMilestoneEdit {
 
 import {GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {inject} from "vue";
+import InputRequired from "@/components/form/InputRequired.vue";
 
 const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 

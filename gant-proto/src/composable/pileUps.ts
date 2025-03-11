@@ -8,6 +8,7 @@ import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 import {pileUpLabelFormat} from "@/utils/filters";
 import {allowed} from "@/composable/role";
+import {DAYJS_FORMAT_YMD} from "@/utils/day";
 
 
 export type PileUps = {
@@ -69,7 +70,7 @@ const PILEUP_MERGE_COLOR = "rgb(68 141 255)"
 
 function initPileUps(
     endDate: string, startDate: string, isALlMode: boolean,
-    userList: User[], pileUps: Ref<UnwrapRef<PileUps[]>>, departmentList: Department[], facilityList: Facility[],
+    userList: User[], pileUps: Ref<UnwrapRef<PileUps[]>>, departmentList: Department[], facilityList: Facility[], defaultValidUserIndexMap: Map<number, number[]>,
     defaultPileUps: PileUps[] = [], globalStartDate?: string,) {
 
     pileUps.value.length = 0
@@ -165,8 +166,14 @@ function initPileUps(
                 if (vv == undefined) return console.warn("facilityId is not exists", v.facilityId)
                 mergeAndUpdate(vv, v, mergeStartIndex, isALlMode)
             })
-
         });
+        // 在籍確認Mapを詰める
+        const newMap = new Map<number, number[]>();
+        let currentKey = 0;
+        for (const [, value] of Array.from(defaultValidUserIndexMap.entries()).slice(mergeStartIndex)) {
+            newMap.set(currentKey++, value);
+        }
+        return newMap
     }
 
     function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean, mergedColor = true) {
@@ -176,10 +183,10 @@ function initPileUps(
                 row.labels[index] += target.labels[targetIndex];
                 // TODO: エラーをスタイルで管理しているので微妙なコード。
                 const hasError = target.styles[targetIndex].color == PILEUP_DANGER_COLOR
-                if(isALlMode) {
+                if (isALlMode) {
                     row.styles[index] = target.styles[targetIndex]
                 } else {
-                    if(hasError) {
+                    if (hasError) {
                         row.styles[index] = {color: PILEUP_DANGER_COLOR}
                     } else {
                         if (mergedColor) {
@@ -200,6 +207,7 @@ export const usePileUps = (
     tickets: Ref<Ticket[]>, ticketUsers: Ref<TicketUser[]>,
     displayType: Ref<"day" | "week" | "hour" | "month">,
     holidays: Ref<Holiday[]>, departmentList: Department[], userList: User[], facilityList: Facility[],
+    defaultValidUserIndexMap: Map<number, number[]>,
     defaultPileUps?: PileUps[],
     globalStartDate?: string,
 ) => {
@@ -230,7 +238,7 @@ export const usePileUps = (
     window.addEventListener("beforeunload", saveFilter)
 
     let refreshPileUpByPersonExclusive = false
-    watch([displayType, tickets, ticketUsers,holidays], () => {
+    watch([displayType, tickets, ticketUsers, holidays], () => {
         refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？
     }, {
         deep: true
@@ -246,7 +254,7 @@ export const usePileUps = (
         }
         // 初期表示時（pileUps未作成）の状態での呼び出し防止
         if (pileUps.value.length > 0) saveFilter()
-        initPileUps(endDate, startDate, isAllMode, userList, pileUps, departmentList, filteredFacilityList, defaultPileUps, globalStartDate);
+        const validUserIndexMap = initPileUps(endDate, startDate, isAllMode, userList, pileUps, departmentList, filteredFacilityList, defaultValidUserIndexMap, defaultPileUps, globalStartDate);
 
         // 全てのチケットから積み上げを更新する
         tickets.value.forEach(ticket => {
@@ -255,13 +263,42 @@ export const usePileUps = (
                 facility,
                 ticket,
                 ticketUsers.value.filter(v => v.ticket_id === ticket.id),
-                startDate, endDate, holidays.value, userList
+                startDate, endDate, holidays.value, userList, validUserIndexMap!
             )
         })
 
         if (displayType.value === "week") {
             aggregatePileUpsByWeek(startDate, endDate, pileUps.value, holidays.value)
         }
+
+        // 在籍期間による非表示の処理を行う。
+        const excludeUserIds: number[] = []
+        if (facility){
+            // 案件ビューの場合はその案件の期間内であれば表示
+            excludeUserIds.push(...userList.filter(user => {
+                const userEmployStart = new Date(user.employment_start_date);
+                const userEmployEnd = user.employment_end_date ? new Date(user.employment_end_date) : Infinity; // If null, set to Infinity
+                const facilityTermStart = new Date(facility.term_from);
+                const facilityTermEnd = new Date(facility.term_to);
+                return userEmployStart > facilityTermEnd || userEmployEnd < facilityTermStart;
+            }).map(v => v.id!))
+        } else {
+            // 全体ビューであれば、在籍期間が過去であれば非表示
+            const currentDate = new Date()
+            currentDate.setHours(0,0,0,0)
+            excludeUserIds.push(...userList.filter(user => {
+                const userEmployEnd = user.employment_end_date ? new Date(user.employment_end_date) : Infinity; // If null, set to Infinity
+                return userEmployEnd < currentDate;
+            }).map(v => v.id!))
+        }
+
+        pileUps.value.forEach(pileUp => {
+            pileUp.assignedUser.users = pileUp.assignedUser.users.filter(userPileUp => {
+                return !excludeUserIds.includes(userPileUp.user.id!)
+            })
+        })
+
+
         refreshPileUpByPersonExclusive = false
     }
 
@@ -290,6 +327,7 @@ export const usePileUps = (
      * @param facilityEndDate
      * @param holidays
      * @param userList
+     * @param defaultValidUserIndexMap
      */
     const setWorkHour = (pileUps: PileUps[],
                          facility: Facility,
@@ -297,7 +335,7 @@ export const usePileUps = (
                          ticketUsers: TicketUser[],
                          facilityStartDate: string,
                          facilityEndDate: string,
-                         holidays: Holiday[], userList: User[]) => {
+                         holidays: Holiday[], userList: User[], defaultValidUserIndexMap: Map<number, number[]>) => {
 
         // TODO: validationは変更する
         if (ticket.start_date == null || ticket.end_date == null || ticket.estimate == null) {
@@ -311,7 +349,6 @@ export const usePileUps = (
         const dayjsEndDate = maxDate.isBefore(dayjs(ticket.end_date)) ? maxDate : dayjs(ticket.end_date)
         const startIndex = getIndexByDate(dayjsFacilityStartDate, dayjsStartDate)
         const endIndex = getIndexByDate(dayjsFacilityStartDate, dayjsEndDate)
-        const numberOfBusinessDays = getNumberOfBusinessDays(dayjsStartDate, dayjsEndDate, holidays)
         const holidayIndexes = holidays.filter(v => {
             return dayBetween(dayjs(v.date), dayjsStartDate, dayjsEndDate)
         }).map(v => getIndexByDate(dayjsFacilityStartDate, dayjs(v.date)))
@@ -327,59 +364,175 @@ export const usePileUps = (
                 validIndexes.splice(i, 1)
             }
         })
-        const estimate = ticket.estimate
-
-        // 場合によって変化するもの
-        let workHour = 0
         // 対象の取得
-        const rows: PileUpRow[] = []
-        const summaryRows: PileUpRow[][] = []
         const summaryLimit: number[] = []
-        const userErrorFunc = (v: number) => {
-            return pileUpLabelFormat(v) > 1
-        }
-        const facilityErrorFunc = (v: number) => {
-            return false
-        }
-        let rowErrorFunc = userErrorFunc
 
-        // 確定の場合
-        if (facility.type === FacilityType.Ordered) {
-            const ticketUserIds = ticketUsers.map(v => v.user_id)
-            // アサイン済み
-            if (ticketUserIds.length > 0) {
-                workHour = ticket.estimate / numberOfBusinessDays / ticketUsers.length
-                // ユーザーに紐づく部署を設定
+        // NOTE: APIのget_default_pile_ups.go と必ず合わせること
+        const ticketUserIds = ticketUsers.map(v => v.user_id)
+        let workPerDay: number
+        if (ticketUserIds.length > 0) {
+            const numberOfWorkerByDay = validIndexes.reduce((sum, key) => {
+                return sum + (defaultValidUserIndexMap.get(key)?.filter(v => ticketUserIds.includes(v)).length || 0)
+            }, 0)
+            workPerDay = ticket.estimate / numberOfWorkerByDay
+        } else if (ticket.number_of_worker != undefined && ticket.number_of_worker > 0) {
+            workPerDay = ticket.estimate / validIndexes.length / ticket.number_of_worker
+        } else {
+            return
+        }
+
+        /**
+         * 集計とエラーの仕様を整理する
+         * ・担当有
+         *  ・ユーザー：ユーザーは1より大きい、部署、アサイン済み
+         *   ・部署：部署人数計
+         *・確定
+         *   ・アサイン済み：部署人数計
+         * ・担当無
+         *  ・確定
+         *   ・未アサインの設備：エラー無
+         *   ・部署：部署人数系
+         *   ・未アサイン：部署人数系
+         * ・未確定（担当の有無は関係ない）
+         *   ・未確定の設備：エラー無
+         *   ・部署：部署人数系
+         *   ・未確定：部署人数計
+         */
+        if (ticketUserIds.length > 0) {
+            // アサイン済みの場合 [担当者] [積み上げ、アサイン済み]に計上する
+            validIndexes.forEach(validIndex => {
                 ticketUserIds.forEach(userId => {
+                    // アサイン済みの場合はユーザーから対象のpileUpsを指定する（部署が指定されていないケースがあるため）
                     const user = userList.find(user => user.id === userId)
                     if (user == undefined) return console.warn("user is not exists", userId)
-                    const pileUp = pileUps.find(pileUp => pileUp.departmentId === user.department_id)!
-                    if (pileUp == undefined) return console.warn("departmentId is not exists", user.department_id)
-                    rows.push(pileUp.assignedUser.users.find(v => v.user.id === user.id)!)
-                    summaryRows.push([pileUp, pileUp.assignedUser])
-                    summaryLimit.push(userList.filter(v => v.department_id === user.department_id).length)
+                    const targetPileUp = pileUps.find(pileUp => pileUp.departmentId === user.department_id)!
+                    if (targetPileUp == undefined) return console.warn("departmentId is not exists", user.department_id)
+
+                    // 設備の期間外の場合は処理を中断
+                    if (targetPileUp.labels.length <= validIndex) {
+                        return
+                    }
+
+                    // 在籍期間外の場合は対象外とする。
+                    if (!(defaultValidUserIndexMap.get(validIndex)?.includes(userId))) {
+                        return
+                    }
+
+                    // 部署人数合計
+                    const numberOfDepartmentUsers = userList.filter(v => v.department_id === user.department_id).filter(v => defaultValidUserIndexMap.get(validIndex)?.includes(v.id!)).length
+
+                    // 部署への積み上げ(共通)
+                    targetPileUp.labels[validIndex] += workPerDay
+                    if (pileUpLabelFormat(targetPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
+                        targetPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                    }
+
+                    if (facility.type == FacilityType.Ordered) {
+                        // アサイン済みへの積み上げ
+                        targetPileUp.assignedUser.labels[validIndex] += workPerDay
+                        if (pileUpLabelFormat(targetPileUp.assignedUser.labels[validIndex]) > numberOfDepartmentUsers) {
+                            targetPileUp.assignedUser.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                        }
+                        // ユーザーの足し上げ処理
+                        const targetUserPileUp = targetPileUp.assignedUser.users.find(v => v.user.id == userId)!
+                        targetUserPileUp.labels[validIndex] += workPerDay
+                        if (pileUpLabelFormat(targetUserPileUp.labels[validIndex]) > 1) {
+                            targetUserPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                        }
+                    } else {
+                        // 未確定の場合 への積み上げ
+                        targetPileUp.noOrdersReceivedPileUp.labels[validIndex] += workPerDay
+                        if (pileUpLabelFormat(targetPileUp.noOrdersReceivedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
+                            targetPileUp.noOrdersReceivedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                        }
+
+                        // 未確定の場合の設備への積み上げ
+                        const targetFacilityPileUp = targetPileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!
+                        targetFacilityPileUp.labels[validIndex] += workPerDay
+                    }
                 })
-            } else {
-                workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
-                // チケットに紐づく部署を設定
-                const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
-                if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
-                rows.push(pileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!)
-                // TODO: サマリーの計上先にするかヒアリング。絵面的には含めないっぽい。含める場合はpileUp事態をsummaryRowsに追加する
-                summaryRows.push([pileUp, pileUp.unAssignedPileUp])
-                summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length, 9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
-                rowErrorFunc = facilityErrorFunc
-            }
-        } else if (facility.type === FacilityType.Prepared) {
-            workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
-            const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
-            if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
-            rows.push(pileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!)
-            summaryRows.push([pileUp, pileUp.noOrdersReceivedPileUp])
-            summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length)
-            rowErrorFunc = facilityErrorFunc
+            })
+        } else {
+            // 未アサインの場合は部署の設定がされていないと計上しない
+            const targetPileUp = pileUps.find(pileUp => ticket.department_id != undefined && pileUp.departmentId === ticket.department_id)!
+            if (targetPileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
+
+            // 未アサインの場合 [未アサインのその設備] [積み上げ、未アサイン積み上げ]に計上する
+            validIndexes.forEach(validIndex => {
+                // 設備の期間外の場合は処理を中断
+                if (targetPileUp.labels.length <= validIndex) {
+                    return
+                }
+
+                const numberOfDepartmentUsers = userList.filter(v => v.department_id === targetPileUp.departmentId).filter(v => defaultValidUserIndexMap.get(validIndex)?.includes(v.id!)).length
+
+                // 部署への積み上げ（共通）
+                targetPileUp.labels[validIndex] += workPerDay
+                if (pileUpLabelFormat(targetPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
+                    targetPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                }
+                if (facility.type === FacilityType.Ordered) {
+                    // 未アサインへ積み上げ
+                    targetPileUp.unAssignedPileUp.labels[validIndex] += workPerDay
+                    if (pileUpLabelFormat(targetPileUp.unAssignedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
+                        targetPileUp.unAssignedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                    }
+
+                    // 未アサインの設備へ積み上げ
+                    const targetFacilityPileUp = targetPileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!
+                    targetFacilityPileUp.labels[validIndex] += workPerDay
+                } else {
+                    // 未確定の場合 への積み上げ
+                    targetPileUp.noOrdersReceivedPileUp.labels[validIndex] += workPerDay
+                    if (pileUpLabelFormat(targetPileUp.noOrdersReceivedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
+                        targetPileUp.noOrdersReceivedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+                    }
+                    // 設備への積み上げ
+                    const targetFacilityPileUp = targetPileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!
+                    targetFacilityPileUp.labels[validIndex] += workPerDay
+                }
+            })
         }
-        allocateWorkingHours(rows, summaryRows, rowErrorFunc, summaryLimit, validIndexes, estimate, workHour)
+        // 旧資産をメモとして残しておくgithubつかえやってはなしではあるが。
+        // // 確定の場合
+        // if (facility.type === FacilityType.Ordered) {
+        //     const ticketUserIds = ticketUsers.map(v => v.user_id)
+        //     // アサイン済み
+        //     if (ticketUserIds.length > 0) {
+        //         // 総稼働日数を計算
+        //         // 予定工数 / 総稼働日数で分配する
+        //
+        //         // ユーザーに紐づく部署を設定
+        //         ticketUserIds.forEach(userId => {
+        //             const user = userList.find(user => user.id === userId)
+        //             if (user == undefined) return console.warn("user is not exists", userId)
+        //             const pileUp = pileUps.find(pileUp => pileUp.departmentId === user.department_id)!
+        //             if (pileUp == undefined) return console.warn("departmentId is not exists", user.department_id)
+        //             rows.push(pileUp.assignedUser.users.find(v => v.user.id === user.id)!)
+        //             summaryRows.push([pileUp, pileUp.assignedUser])
+        //             summaryLimit.push(userList.filter(v => v.department_id === user.department_id).length)
+        //         })
+        //     } else {
+        //         workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
+        //         // チケットに紐づく部署を設定
+        //         const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
+        //         if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
+        //         rows.push(pileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!)
+        //         // TODO: サマリーの計上先にするかヒアリング。絵面的には含めないっぽい。含める場合はpileUp事態をsummaryRowsに追加する
+        //         summaryRows.push([pileUp, pileUp.unAssignedPileUp])
+        //         summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length, 9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
+        //         rowErrorFunc = facilityErrorFunc
+        //     }
+        // } else if (facility.type === FacilityType.Prepared) {
+        //     workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
+        //     const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
+        //     if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
+        //     rows.push(pileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!)
+        //     summaryRows.push([pileUp, pileUp.noOrdersReceivedPileUp])
+        //     summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length)
+        //     rowErrorFunc = facilityErrorFunc
+        // }
+        // allocateWorkingHours(rows, summaryRows, rowErrorFunc, summaryLimit, validIndexes, estimate, workHour)
     }
     /**
      * 作業時間の割り当てを実施する。
@@ -437,11 +590,11 @@ export const usePileUps = (
         const indexMap: { [index: number]: number[] } = {}
         const holidayMap: { [index: number]: number } = {}
 
-        const padding = (v: number)=> {
-            return (v+"").padStart(2,'0');
+        const padding = (v: number) => {
+            return (v + "").padStart(2, '0');
         }
         const dayjsToString = (v: Dayjs) => {
-            return v.year() + "-" + padding(v.month()+1) + "-" + padding(v.date())
+            return v.year() + "-" + padding(v.month() + 1) + "-" + padding(v.date())
         }
 
         while (currentDate.isBefore(dayjsEndDate)) {
@@ -459,7 +612,7 @@ export const usePileUps = (
             indexMap[currentWeekIndex].push(currentDayIndex)
             // 祝日だった場合祝日の数を増やす
             // NOTE:パフォーマンス対応のために文字列での比較を行っている。そもそもHolidayをDate型で定義すべきだった。
-            if (holidays.find(v => v.date.substring(0,10) == dayjsToString(currentDate))) holidayMap[currentWeekIndex]++
+            if (holidays.find(v => v.date.substring(0, 10) == dayjsToString(currentDate))) holidayMap[currentWeekIndex]++
             // シーケンスを進める
             currentDate = currentDate.add(1, "day")
             currentDayIndex++
@@ -556,7 +709,7 @@ export const usePileUps = (
             // 週表示の場合は 営業日 * 8 を 1とする
             const numOfWorkdays = (indexMap[key].length - holidayMap[key])
             // その週の稼働日が0の場合は計算しない(NaN, Infinity対策)
-            if ( numOfWorkdays <= 0 ) {
+            if (numOfWorkdays <= 0) {
                 result.labels.push(0)
             } else {
                 result.labels.push(workHour / (8 * numOfWorkdays))
@@ -645,16 +798,19 @@ export const getDefaultPileUps = async (
     // TODO: どうなんだろうこれ。APIでは呼び出せない権限なのでUIガワで対応する。
     if (allowed("VIEW_PILEUPS")) {
         const {data} = await Api.getDefaultPileUps(excludeFacilityId, isAllMode, facilityTypes)
+
         // styleの適応を実施する
         return {
             globalStartDate: data.globalStartDate,
-            defaultPileUps: data.defaultPileUps
+            defaultPileUps: data.defaultPileUps,
+            defaultValidUserIndexMap: new Map(data.defaultValidUserIndexes.map(v => [v.ValidIndex, v.UserIds])),
         }
     } else {
         // styleの適応を実施する
         return {
             globalStartDate: "",
-            defaultPileUps: []
+            defaultPileUps: [],
+            defaultValidUserIndexMap: new Map(),
         }
     }
 }

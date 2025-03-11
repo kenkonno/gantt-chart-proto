@@ -17,16 +17,19 @@ func GetUsersInvoke(c *gin.Context) (openapi_models.GetUsersResponse, error) {
 	return openapi_models.GetUsersResponse{
 		List: lo.Map(userList, func(item db.User, index int) openapi_models.User {
 			return openapi_models.User{
-				Id:               item.Id,
-				DepartmentId:     item.DepartmentId,
-				LimitOfOperation: item.LimitOfOperation,
-				LastName:         item.LastName,
-				FirstName:        item.FirstName,
-				Password:         "", // Passwordはレスポンスに含めない
-				Email:            item.Email,
-				Role:             item.Role,
-				CreatedAt:        item.CreatedAt,
-				UpdatedAt:        item.UpdatedAt,
+				Id:                  item.Id,
+				DepartmentId:        item.DepartmentId,
+				LimitOfOperation:    item.LimitOfOperation,
+				LastName:            item.LastName,
+				FirstName:           item.FirstName,
+				Password:            "", // Passwordはレスポンスに含めない
+				Email:               item.Email,
+				CreatedAt:           item.CreatedAt,
+				UpdatedAt:           item.UpdatedAt,
+				Role:                item.Role,
+				PasswordReset:       item.PasswordReset,
+				EmploymentStartDate: item.EmploymentStartDate,
+				EmploymentEndDate:   item.EmploymentEndDate,
 			}
 		}),
 	}, nil

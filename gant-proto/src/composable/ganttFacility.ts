@@ -1,7 +1,7 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref, toValue} from "vue";
-import {GanttGroup, OperationSetting, Ticket, TicketUser} from "@/api";
+import {GanttGroup, OperationSetting, Ticket, TicketUser, User} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -14,7 +14,7 @@ import {
     endOfDay,
     ganttDateToYMDDate,
     getEndDateByRequiredBusinessDay,
-    getNumberOfBusinessDays
+    getNumberOfBusinessDays, YMDDateToGanttEndDate, YMDDateToGanttStartDate
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
 import {ApiMode, DEFAULT_PROCESS_COLOR} from "@/const/common";
@@ -23,6 +23,7 @@ import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilt
 import {allowed} from "@/composable/role";
 import {useMilestoneTable} from "@/composable/milestone";
 import {getUserInfo} from "@/composable/auth";
+import Swal from "sweetalert2";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -253,11 +254,29 @@ export async function useGanttFacility() {
     }
 
     // 部署の変更。
-    const getUserListByDepartmentId = (departmentId?: number) => {
-        if (departmentId == null) {
-            return userList
+    const getUserListByDepartmentId = (departmentId?: number, startDate?: string, endDate?: string) => {
+        let filteredUsers = (departmentId == null) ? userList : userList.filter(v => v.department_id === departmentId);
+
+        if (startDate && endDate) {
+            filteredUsers = filterEmploymentDuration(filteredUsers, startDate, endDate)
         }
-        return userList.filter(v => v.department_id === departmentId)
+
+        return filteredUsers;
+    }
+
+    const filterEmploymentDuration = (userList: User[], startDate?: string | null, endDate?: string | null) => {
+        if (startDate && endDate) {
+            const start = new Date(startDate).getTime();
+            const end = new Date(endDate).getTime();
+
+            userList = userList.filter(user => {
+                const userStart = new Date(user.employment_start_date.substring(0,10)).getTime();
+                const userEnd = user.employment_end_date ? new Date(user.employment_end_date.substring(0,10)).getTime(): Infinity;
+                // 指定された日付範囲が、利用者の雇用期間と被っている場合にのみ、その利用者を含めます。
+                return (userStart <= end && userEnd >= start);
+            });
+        }
+        return userList;
     }
 
     const deleteTicket = async (ticket: Ticket) => {
@@ -271,7 +290,6 @@ export async function useGanttFacility() {
 
     // DBへのストア及びローカルのガントに情報を反映する
     const updateTicket = async (ticket: Ticket) => {
-        console.log("########### UPDATE_TICKET")
         const reqTicket = Object.assign({}, ticket)
         if (reqTicket.start_date) {
             reqTicket.start_date = ticket.start_date + "T00:00:00.00000+09:00"
@@ -294,6 +312,35 @@ export async function useGanttFacility() {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    /**
+     * 与えられたチケットに関連付けられたユーザーが雇用期間内にいるかどうかを検証します
+     *
+     * @param {Ticket} ticket - チケットの詳細が格納されたチケットオブジェクト
+     * @returns {boolean} - チケットに関連付けられたユーザーが雇用期間内にいる場合はtrueを返し、そうでない場合はfalseを返します
+     */
+    const validateEmploymentTicketUser = async (ticket: Ticket) => {
+        const ticketId = ticket.id!
+        const ticketUserIds = ticketUserList.value.filter(v => v.ticket_id == ticketId).map(v => v.user_id)
+        const ticketUsers = userList.filter(v => ticketUserIds.includes(v.id!))
+        const afterUserList = filterEmploymentDuration(ticketUsers, ticket.start_date, ticket.end_date)
+        const invalidUsers = ticketUsers.filter(v => !afterUserList.find(vv => vv.id == v.id))
+        let result = true
+        if (invalidUsers.length > 0) {
+            const userNames = invalidUsers.map(v => v.lastName + v.firstName).join("\n")
+            const swalResult = await Swal.fire({
+                title: '在籍期間外になる担当者が存在します。',
+                text: userNames,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '更新',
+            })
+            result = swalResult.isConfirmed
+        }
+        return {result, afterUserList}
     }
 
     // DBからのチケット更新をフロントに反映させる。
@@ -409,8 +456,18 @@ export async function useGanttFacility() {
                 const clone = Object.assign({}, targetTicket.ticket)
                 clone.start_date = ganttDateToYMDDate(bar.beginDate)
                 clone.end_date = ganttDateToYMDDate(bar.endDate)
-                const newTicket = await updateTicket(clone)
-                await refreshTicket(newTicket!)
+                const {result, afterUserList} = await validateEmploymentTicketUser(clone)
+                if (!result) {
+                    bar.beginDate = YMDDateToGanttStartDate(targetTicket.ticket!.start_date!)
+                    bar.endDate = YMDDateToGanttEndDate(targetTicket.ticket!.end_date!)
+                    return
+                } else {
+                    await mutation.setTicketUser(clone, afterUserList.map(v => v.id!))
+                }
+                // NOTE:少し気持ち悪いが setTicketUserでTicketの更新も行うのでコメントアウト。
+                // 担当の変更が起きるticketの人数を同時に更新する必要があるため。
+                // const newTicket = await updateTicket(clone)
+                // await refreshTicket(newTicket!)
             }
         }
     }
@@ -567,37 +624,51 @@ export async function useGanttFacility() {
             const clone = Object.assign({}, ticket)
             clone.number_of_worker = numberOfWorker
             const newTicket = await updateTicket(clone)
-            await refreshTicket (newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
         }, setEstimate: async (estimate: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.estimate = estimate
             const newTicket = await updateTicket(clone)
-            await refreshTicket (newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
         }, setDaysAfter: async (daysAfter: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.days_after = daysAfter
             const newTicket = await updateTicket(clone)
-            await refreshTicket (newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
         }, setStartDate: async (startDate: string, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.start_date = startDate
-            const newTicket = await updateTicket(clone)
-            await refreshTicket (newTicket!)
-            await getScheduleAlert()
+            const {result, afterUserList} = await validateEmploymentTicketUser(clone)
+            if (!result) {
+                await refreshTicket(ticket!)
+                return
+            } else {
+                await mutation.setTicketUser(clone, afterUserList.map(v => v.id!))
+            }
+            // const newTicket = await updateTicket(clone)
+            // await refreshTicket(newTicket!)
+            // await getScheduleAlert()
         }, setEndDate: async (endDate: string, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.end_date = endDate
-            const newTicket = await updateTicket(clone)
-            await refreshTicket (newTicket!)
-            await getScheduleAlert()
+            const {result, afterUserList} = await validateEmploymentTicketUser(clone)
+            if (!result) {
+                await refreshTicket(ticket!)
+                return
+            } else {
+                await mutation.setTicketUser(clone, afterUserList.map(v => v.id!))
+            }
+            // const newTicket = await updateTicket(clone)
+            // await refreshTicket(newTicket!)
+            // await getScheduleAlert()
         }, setProgressPercent: async (progressPercent: number, ticket?: Ticket) => {
             const clone = Object.assign({}, ticket)
             clone.progress_percent = progressPercent
             const newTicket = await updateTicket(clone)
-            await refreshTicket (newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
         }, setTicketUser: async (ticket: Ticket, value: number[]) => {
             const clone = Object.assign({}, ticket)
@@ -609,7 +680,7 @@ export async function useGanttFacility() {
             newTicketUserList.push(...newTicketUsers!)
             ticketUserList.value.length = 0
             ticketUserList.value.push(...newTicketUserList)
-            await refreshTicket (newTicket!)
+            await refreshTicket(newTicket!)
             await getScheduleAlert()
         }
     }

@@ -22,6 +22,14 @@ export const ganttDateToYMDDate = (date: string) => {
     const e = date.split(" ")[0].split(".")
     return `${e[2]}-${e[1]}-${e[0]}`
 }
+export const YMDDateToGanttStartDate = (date: string) => {
+    const e = date.split("-");
+    return `${e[2]}.${e[1]}.${e[0]} 00:00`;
+}
+export const YMDDateToGanttEndDate = (date: string) => {
+    const e = date.split("-");
+    return `${e[2]}.${e[1]}.${e[0]} 23:59`;
+}
 export const endOfDay = (dateString: string) => {
     return dayjs(dateString).add(1, 'day').add(-1, 'minute').format(DAYJS_FORMAT)
 }

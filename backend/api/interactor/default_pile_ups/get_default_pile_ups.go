@@ -1,7 +1,6 @@
 package default_pile_ups
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
@@ -37,7 +36,6 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 		facilityTypes = append(facilityTypes, constants.FacilityTypePrepared)
 	}
 
-
 	departments := departmentRep.FindAll()
 	facilities := facilityRep.FindAll(facilityTypes, []string{constants.FacilityStatusEnabled})
 	facilityMap := lo.Associate(facilities, func(item db.Facility) (int32, db.Facility) {
@@ -63,114 +61,153 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 		excludeFacilityId = -1 // 全件取得モード（全体ビュー）の場合は除外するFacilityIdを存在しないものにする。
 	}
 	allFacilityPileUps := pileUpsRep.GetDefaultPileUps(int32(excludeFacilityId), facilityTypes)
+	// validIndexに対する稼動可能なユーザーの一覧
+	validUserIndexes := pileUpsRep.GetValidIndexUsers()
+	validUserMap := lo.Associate(validUserIndexes, func(item db.ValidIndexUser) (int32, []int32) {
+		return item.ValidIndex, item.UserIds
+	})
 
 	// 積み上げ情報をマージして返却する
 	for _, ticket := range allFacilityPileUps {
+		// 一日当たりの稼働工数の算出（どこかで使用齟齬が起きたと思われる、操作していて自然な方に合わせる）
+		var workPerDay float32
+		if len(ticket.UserIds) > 0 {
+			// アサイン済みの場合は一日当たりの稼働は総工数 / 総稼動可能日数
+			workPerDay = float32(*ticket.Estimate) / ticket.NumberOfWorkerByDay
+		} else {
+			// 未アサインの場合は総工数 / 営業日 / 人数
+			workPerDay = float32(*ticket.Estimate) / float32(ticket.NumberOfWorkDay) / float32(*ticket.NumberOfWorker)
+		}
 		// 対象部署の取得
 		// 確定の場合
 		// TODO: スタイルとエラーの適応。一旦は数字が合うのかフロントとの結合も大事なので保留とする
 		// アサイン済みの場合は 8で割って 1より大きいとエラー
 		// それ以外は部署の人数を超過したらエラー フロントも直す必要がある。
-		fmt.Println("ticket", ticket)
-		if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
-			if len(ticket.UserIds) > 0 {
-				// アサイン済みの場合 [担当者] [積み上げ、アサイン済み]に計上する
-				for _, validIndex := range ticket.ValidIndexes {
-					for _, userId := range ticket.UserIds {
-						// アサイン済みの場合はユーザーから対象のpileUpsを指定する（部署が指定されていないケースがあるため）
-						targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
-							return item.DepartmentId == userMap[userId].DepartmentId
-						})
-						if !exists {
-							continue
-						}
+		if len(ticket.UserIds) > 0 {
+			// アサイン済みの場合 [担当者] [積み上げ、アサイン済み]に計上する
+			for _, validIndex := range ticket.ValidIndexes {
+				for _, userId := range ticket.UserIds {
+					// アサイン済みの場合はユーザーから対象のpileUpsを指定する（部署が指定されていないケースがあるため）
+					targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
+						return item.DepartmentId == userMap[userId].DepartmentId
+					})
 
-						if len(targetPileUp.Labels) <= int(validIndex) {
-							continue
-						}
+					if !exists {
+						continue
+					}
+					// 設備の期間外の場合は処理を中断。
+					if len(targetPileUp.Labels) <= int(validIndex) {
+						continue
+					}
+					// 在籍期間外の場合は対象外とする。
+					if !lo.Contains(validUserMap[validIndex], userId) {
+						continue
+					}
 
-						// 足し上げ処理
-						targetPileUp.Labels[validIndex] += ticket.WorkPerDay / float32(len(ticket.UserIds))
-						targetPileUp.AssignedUser.Labels[validIndex] += ticket.WorkPerDay / float32(len(ticket.UserIds))
-						// エラー判定
-						if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-							applyErrorStyle(&targetPileUp.Styles[validIndex])
-						}
-						if pileUpLabelFormat(targetPileUp.AssignedUser.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
+					// 部署人数合計
+					numberOfDepartmentUsers := float64(len(
+						lo.Filter(departmentUserMap[targetPileUp.DepartmentId], func(item db.User, index int) bool {
+							return lo.Contains(validUserMap[validIndex], *item.Id)
+						}),
+					))
+
+					// 部署への積み上げ(共通)
+					targetPileUp.Labels[validIndex] += workPerDay
+					// エラー判定
+					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
+						applyErrorStyle(&targetPileUp.Styles[validIndex])
+					}
+
+					if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
+						// アサイン済みへの積み上げ
+						targetPileUp.AssignedUser.Labels[validIndex] += workPerDay
+						if pileUpLabelFormat(targetPileUp.AssignedUser.Labels[validIndex]) > numberOfDepartmentUsers {
 							applyErrorStyle(&targetPileUp.AssignedUser.Styles[validIndex])
 						}
-
 						// ユーザーの足し上げ処理
 						targetUserPileUp, userExists := lo.Find(targetPileUp.AssignedUser.Users, func(item openapi_models.PileUpByPerson) bool {
 							return *item.User.Id == userId
 						})
 						if userExists {
-							targetUserPileUp.Labels[validIndex] += ticket.WorkPerDay / float32(len(ticket.UserIds))
+							targetUserPileUp.Labels[validIndex] += workPerDay
 							if pileUpLabelFormat(targetUserPileUp.Labels[validIndex]) > 1 {
 								applyErrorStyle(&targetUserPileUp.Styles[validIndex])
 							}
 						}
-					}
-				}
-			} else {
-				targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
-					return ticket.DepartmentId != nil && item.DepartmentId == *ticket.DepartmentId
-				})
-				if !exists {
-					continue
-				}
-				// 未アサインの場合 [未アサインのその設備] [積み上げ、未アサイン積み上げ]に計上する
-				fmt.Println("未アサイン", ticket.ValidIndexes)
-				for _, validIndex := range ticket.ValidIndexes {
-					fmt.Println("validIndex", validIndex)
-					if len(targetPileUp.Labels) <= int(validIndex) {
-						continue
-					}
-					targetPileUp.Labels[validIndex] += ticket.WorkPerDay
-					targetPileUp.UnAssignedPileUp.Labels[validIndex] += ticket.WorkPerDay
+					} else {
+						// 未確定の場合 への積み上げ
+						targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += workPerDay
+						if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
+							applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
+						}
 
-					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-						applyErrorStyle(&targetPileUp.Styles[validIndex])
-					}
-					if pileUpLabelFormat(targetPileUp.UnAssignedPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-						applyErrorStyle(&targetPileUp.UnAssignedPileUp.Styles[validIndex])
-					}
-
-					targetFacilityPileUp, facilityExists := lo.Find(targetPileUp.UnAssignedPileUp.Facilities, func(item openapi_models.PileUpByFacility) bool {
-						return ticket.FacilityId == item.FacilityId
-					})
-					if facilityExists {
-						targetFacilityPileUp.Labels[validIndex] += ticket.WorkPerDay
+						// 未確定の場合の設備への積み上げ
+						targetFacilityPileUp, facilityExists := lo.Find(targetPileUp.NoOrdersReceivedPileUp.Facilities, func(item openapi_models.PileUpByFacility) bool {
+							return ticket.FacilityId == item.FacilityId
+						})
+						if facilityExists {
+							targetFacilityPileUp.Labels[validIndex] += workPerDay
+						}
 					}
 				}
 			}
 		} else {
+			// 未アサインの場合は部署の設定がされていないと計上しない
 			targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
 				return ticket.DepartmentId != nil && item.DepartmentId == *ticket.DepartmentId
 			})
 			if !exists {
 				continue
 			}
-			// 未確定の場合 [未確定の設備] [積み上げ, 未確定の積み上げ]に計上する
+
+			// 未アサインの場合 [未アサインのその設備] [積み上げ、未アサイン積み上げ]に計上する
 			for _, validIndex := range ticket.ValidIndexes {
 				if len(targetPileUp.Labels) <= int(validIndex) {
 					continue
 				}
-				targetPileUp.Labels[validIndex] += ticket.WorkPerDay
-				targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += ticket.WorkPerDay
+				// 部署人数合計
+				numberOfDepartmentUsers := float64(len(
+					lo.Filter(departmentUserMap[targetPileUp.DepartmentId], func(item db.User, index int) bool {
+						return lo.Contains(validUserMap[validIndex], *item.Id)
+					}),
+				))
 
-				if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
+				// 部署への積み上げ
+				targetPileUp.Labels[validIndex] += workPerDay
+				if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 					applyErrorStyle(&targetPileUp.Styles[validIndex])
 				}
-				if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > float64(len(departmentUserMap[targetPileUp.DepartmentId])) {
-					applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
-				}
 
-				targetFacilityPileUp, facilityExists := lo.Find(targetPileUp.NoOrdersReceivedPileUp.Facilities, func(item openapi_models.PileUpByFacility) bool {
-					return ticket.FacilityId == item.FacilityId
-				})
-				if facilityExists {
-					targetFacilityPileUp.Labels[validIndex] += ticket.WorkPerDay
+				if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
+
+					// 未アサインへの積み上げ
+					targetPileUp.UnAssignedPileUp.Labels[validIndex] += workPerDay
+					if pileUpLabelFormat(targetPileUp.UnAssignedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
+						applyErrorStyle(&targetPileUp.UnAssignedPileUp.Styles[validIndex])
+					}
+
+					// 未アサインの設備の積み上げ
+					targetFacilityPileUp, facilityExists := lo.Find(targetPileUp.UnAssignedPileUp.Facilities, func(item openapi_models.PileUpByFacility) bool {
+						return ticket.FacilityId == item.FacilityId
+					})
+					if facilityExists {
+						targetFacilityPileUp.Labels[validIndex] += workPerDay
+					}
+				} else {
+					// 未確定の場合 への積み上げ
+					targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += workPerDay
+
+					if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
+						applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
+					}
+
+					// 未確定の場合の設備への積み上げ
+					targetFacilityPileUp, facilityExists := lo.Find(targetPileUp.NoOrdersReceivedPileUp.Facilities, func(item openapi_models.PileUpByFacility) bool {
+						return ticket.FacilityId == item.FacilityId
+					})
+					if facilityExists {
+						targetFacilityPileUp.Labels[validIndex] += workPerDay
+					}
 				}
 			}
 		}
@@ -179,6 +216,12 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	return openapi_models.GetDefaultPileUpsResponse{
 		DefaultPileUps:  defaultPileUps,
 		GlobalStartDate: globalStartDate,
+		DefaultValidUserIndexes: lo.Map(validUserIndexes, func(item db.ValidIndexUser, index int) openapi_models.DefautValidIndexUsers {
+			return openapi_models.DefautValidIndexUsers{
+				UserIds:    item.UserIds,
+				ValidIndex: item.ValidIndex,
+			}
+		}),
 	}, nil
 }
 
@@ -191,8 +234,6 @@ func getDefaultPileUps(departments []db.Department, defaultPileUps []openapi_mod
 		return a.TermTo.After(b.TermTo)
 	})
 	days := int(maxFacility.TermTo.Sub(minFacility.TermFrom).Hours() / 24)
-
-	fmt.Println("############### ", minFacility.TermFrom, maxFacility.TermTo, days)
 
 	for _, department := range departments {
 		// 配列は基本日数分用意する
@@ -260,12 +301,12 @@ func getDefaultPileUps(departments []db.Department, defaultPileUps []openapi_mod
 }
 
 func pileUpLabelFormat(v float32) float64 {
-	return math.Round(float64(v) * 10 / 8) / 10
+	return math.Round(float64(v)*10/8) / 10
 }
 
 func createDefaultStyles(days int) []map[string]interface{} {
 	result := make([]map[string]interface{}, days)
-	for i :=0 ; i < days; i++ {
+	for i := 0; i < days; i++ {
 		result[i] = make(map[string]interface{})
 	}
 	return result

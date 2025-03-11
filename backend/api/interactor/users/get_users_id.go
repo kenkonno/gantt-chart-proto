@@ -20,16 +20,18 @@ func GetUsersIdInvoke(c *gin.Context) (openapi_models.GetUsersIdResponse, error)
 
 	return openapi_models.GetUsersIdResponse{
 		User: openapi_models.User{
-			Id:               user.Id,
-			DepartmentId:     user.DepartmentId,
-			LimitOfOperation: user.LimitOfOperation,
-			LastName:         user.LastName,
-			FirstName:        user.FirstName,
-			Password:         "", // Passwordはユーザーに含めない
-			Email:            user.Email,
-			Role:             user.Role,
-			CreatedAt:        user.CreatedAt,
-			UpdatedAt:        user.UpdatedAt,
+			Id:                  user.Id,
+			DepartmentId:        user.DepartmentId,
+			LimitOfOperation:    user.LimitOfOperation,
+			LastName:            user.LastName,
+			FirstName:           user.FirstName,
+			Password:            "", // Passwordはユーザーに含めない
+			Email:               user.Email,
+			Role:                user.Role,
+			CreatedAt:           user.CreatedAt,
+			UpdatedAt:           user.UpdatedAt,
+			EmploymentStartDate: user.EmploymentStartDate,
+			EmploymentEndDate:   user.EmploymentEndDate,
 		},
 	}, nil
 }

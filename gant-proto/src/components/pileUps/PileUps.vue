@@ -176,6 +176,7 @@ type PileUpsProps = {
   milestoneVerticalLines: VerticalLine[],
   defaultPileUps: PileUps[],
   globalStartDate: string,
+  defaultValidUserIndexMap: Map<number, number[]>,
 }
 const props = defineProps<PileUpsProps>()
 const {facilityList, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
@@ -193,7 +194,6 @@ const displayPrepared = (display: boolean) => {
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
 const isAllMode = props.currentFacilityId === -1
 const {tickets, ticketUsers, holidays, displayType} = toRefs(props)
-
 const {
   // pileUpFilters,
   // pileUpsByDepartment,
@@ -212,8 +212,9 @@ const {
     departmentList,
     userList,
     facilityList,
+    props.defaultValidUserIndexMap,
     props.defaultPileUps,
-    props.globalStartDate
+    props.globalStartDate,
 )
 
 const toggleDisplay = (departmentId: number, type: "" | "assignedUser" | "noOrdersReceivedPileUp" | "unAssignedPileUp") => {

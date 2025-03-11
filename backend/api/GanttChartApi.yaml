@@ -72,6 +72,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostUsersRequest'
+  /api/users/upload:
+    post:
+      summary: UploadUsersCsvFile
+      operationId: post-upload-users-csv-file
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        description: ''
   /api/departments:
     get:
       summary: GetDepartments
@@ -1143,6 +1157,13 @@ components:
           type: string
         password_reset:
           type: boolean
+        employment_start_date:
+          type: string
+          format: date-time
+        employment_end_date:
+          type: string
+          format: date-time
+          nullable: true
       required:
         - department_id
         - limit_of_operation
@@ -1152,6 +1173,7 @@ components:
         - email
         - role
         - password_reset
+        - employment_start_date
     GetUsersRequest:
       title: GetUsersRequest
       type: object
@@ -1215,6 +1237,18 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+    PostUploadUsersCsvFileRequest:
+      title: PostUploadUsersCsvFileRequest
+      type: object
+      properties:
+        '':
+          type: string
+    PostUploadUsersCsvFileResponse:
+      title: PostUploadUsersCsvFileResponse
+      type: object
+      properties:
+        '':
+          type: string
     Department:
       title: Department
       type: object
@@ -2548,6 +2582,21 @@ components:
         - labels
         - styles
         - display
+    DefautValidIndexUsers:
+      title: DefaultPileUp
+      x-stoplight:
+        id: f6aa84233e81b
+      type: object
+      properties:
+        UserIds:
+          type: array
+          items:
+            type: integer
+        ValidIndex:
+          type: integer
+      required:
+        - UserIds
+        - ValidIndex
     GetDefaultPileUpsRequest:
       title: GetDefaultPileUpsRequest
       type: object
@@ -2574,9 +2623,14 @@ components:
         globalStartDate:
           type: string
           format: date-time
+        defaultValidUserIndexes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DefautValidIndexUsers'
       required:
         - defaultPileUps
         - globalStartDate
+        - defaultValidUserIndexes
     FacilitySharedLink:
       title: FacilitySharedLink
       type: object

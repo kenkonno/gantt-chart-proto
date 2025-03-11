@@ -6,7 +6,7 @@
     </div>
 
     <div class="mb-2">
-      <label class="form-label" for="id">名称</label>
+      <label class="form-label" for="id">名称<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="unit.name" :disabled="false">
     </div>
 
@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import {useUnit, postUnitById, postUnit, deleteUnitById, validate} from "@/composable/unit";
-
+import InputRequired from "@/components/form/InputRequired.vue";
 interface AsyncUnitEdit {
   id: number | undefined,
   facilityId: number,

@@ -13,12 +13,12 @@
     </div>
 
     <div class="mb-2" v-if="mode != 'reset-password'">
-      <label class="form-label" for="id">姓</label>
+      <label class="form-label" for="id">姓<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="user.lastName" :disabled="false" autocomplete="off">
     </div>
 
     <div class="mb-2" v-if="mode != 'reset-password'">
-      <label class="form-label" for="id">名</label>
+      <label class="form-label" for="id">名<input-required /></label>
       <input class="form-control" type="text" name="name" id="name" v-model="user.firstName" :disabled="false" autocomplete="off">
     </div>
 
@@ -35,16 +35,26 @@
       </select>
     </div>
 
+    <div class="mb-2" v-if="mode != 'reset-password'">
+      <label class="form-label" for="id">Email<input-required /></label>
+      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false" autocomplete="off">
+    </div>
+
     <div class="mb-2">
-      <label class="form-label" for="id">Password</label>
+      <label class="form-label" for="id">Password<input-required /></label>
       <input class="form-control" type="password" name="password" id="password" v-model="user.password"
              :disabled="false" autocomplete="off">
       <small>パスワードは小文字、大文字、数字、特殊文字「 [!@#\$%^&*()] 」を含み8文字以上にしてください。</small>
     </div>
 
     <div class="mb-2" v-if="mode != 'reset-password'">
-      <label class="form-label" for="id">Email</label>
-      <input class="form-control" type="text" name="email" id="email" v-model="user.email" :disabled="false" autocomplete="off">
+      <label class="form-label" for="id">在籍期間(開始)<input-required /></label>
+      <input class="form-control" type="date" name="employment_start_date" id="employment_start_date" v-model="user.employment_start_date" :disabled="false">
+    </div>
+
+    <div class="mb-2" v-if="mode != 'reset-password'">
+      <label class="form-label" for="id">在籍期間(終了)</label>
+      <input class="form-control" type="date" name="employment_end_date" id="employment_end_date" v-model="user.employment_end_date" :disabled="false">
     </div>
 
     <div class="mb-2" v-if="mode != 'reset-password'">
@@ -80,6 +90,7 @@ import {RoleTypeMap} from "@/const/common";
 import {allowed} from "@/composable/role";
 import {Api} from "@/api/axios";
 import router from "@/router";
+import InputRequired from "@/components/form/InputRequired.vue";
 
 interface AsyncUserEdit {
   id: number | undefined

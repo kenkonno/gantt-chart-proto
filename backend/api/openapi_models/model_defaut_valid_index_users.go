@@ -9,14 +9,8 @@
 
 package openapi_models
 
-import (
-	"time"
-)
+type DefautValidIndexUsers struct {
+	UserIds []int32 `json:"UserIds"`
 
-type GetDefaultPileUpsResponse struct {
-	DefaultPileUps []DefaultPileUp `json:"defaultPileUps"`
-
-	GlobalStartDate time.Time `json:"globalStartDate"`
-
-	DefaultValidUserIndexes []DefautValidIndexUsers `json:"defaultValidUserIndexes"`
+	ValidIndex int32 `json:"ValidIndex"`
 }

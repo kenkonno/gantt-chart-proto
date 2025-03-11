@@ -106,6 +106,25 @@ export interface DefaultPileUp {
 /**
  * 
  * @export
+ * @interface DefautValidIndexUsers
+ */
+export interface DefautValidIndexUsers {
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof DefautValidIndexUsers
+     */
+    'UserIds': Array<number>;
+    /**
+     * 
+     * @type {number}
+     * @memberof DefautValidIndexUsers
+     */
+    'ValidIndex': number;
+}
+/**
+ * 
+ * @export
  * @interface DeleteDepartmentsIdRequest
  */
 export interface DeleteDepartmentsIdRequest {
@@ -675,6 +694,12 @@ export interface GetDefaultPileUpsResponse {
      * @memberof GetDefaultPileUpsResponse
      */
     'globalStartDate': string;
+    /**
+     * 
+     * @type {Array<DefautValidIndexUsers>}
+     * @memberof GetDefaultPileUpsResponse
+     */
+    'defaultValidUserIndexes': Array<DefautValidIndexUsers>;
 }
 /**
  * 
@@ -2355,6 +2380,32 @@ export interface PostUnitsResponse {
 /**
  * 
  * @export
+ * @interface PostUploadUsersCsvFileRequest
+ */
+export interface PostUploadUsersCsvFileRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostUploadUsersCsvFileRequest
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
+ * @interface PostUploadUsersCsvFileResponse
+ */
+export interface PostUploadUsersCsvFileResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostUploadUsersCsvFileResponse
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
  * @interface PostUsersIdRequest
  */
 export interface PostUsersIdRequest {
@@ -2869,6 +2920,18 @@ export interface User {
      * @memberof User
      */
     'password_reset': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'employment_start_date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'employment_end_date'?: string | null;
 }
 /**
  * 
@@ -5327,6 +5390,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary UploadUsersCsvFile
+         * @param {File} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUploadUsersCsvFile: async (body?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/users/upload`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/octet-stream';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostUsers
          * @param {PostUsersRequest} [postUsersRequest] 
          * @param {*} [options] Override http request option.
@@ -6214,6 +6311,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary UploadUsersCsvFile
+         * @param {File} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postUploadUsersCsvFile(body?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postUploadUsersCsvFile(body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostUsers
          * @param {PostUsersRequest} [postUsersRequest] 
          * @param {*} [options] Override http request option.
@@ -6957,6 +7065,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postUnitsId(id: number, postUnitsRequest?: PostUnitsRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postUnitsId(id, postUnitsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary UploadUsersCsvFile
+         * @param {File} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUploadUsersCsvFile(body?: File, options?: any): AxiosPromise<void> {
+            return localVarFp.postUploadUsersCsvFile(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7837,6 +7955,18 @@ export class DefaultApi extends BaseAPI {
      */
     public postUnitsId(id: number, postUnitsRequest?: PostUnitsRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postUnitsId(id, postUnitsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary UploadUsersCsvFile
+     * @param {File} [body] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postUploadUsersCsvFile(body?: File, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postUploadUsersCsvFile(body, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
