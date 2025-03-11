@@ -6,7 +6,7 @@ export function dateFormat(date: string) {
 }
 
 export function dateFormatYMD(date: string) {
-    return dayjs(date).format("YYYY-MM-DD")
+    return date ? dayjs(date).format("YYYY-MM-DD") : ""
 }
 
 export function unixTimeFormat(unixTime: number) {
