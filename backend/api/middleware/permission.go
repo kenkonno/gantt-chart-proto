@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
+	"log"
 	"net/http"
 )
 
@@ -76,6 +77,7 @@ var rolesNeeded = map[string][]string{
 	"POST /api/units/:id":             {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/users":                 {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/users/:id":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker},
+	"POST /api/users/upload":          {constants.RoleAdmin, constants.RoleManager},
 }
 
 func getRolesFromToken(c *gin.Context) []string {
@@ -92,11 +94,14 @@ func RoleBasedAccessControl() gin.HandlerFunc {
 		path := c.FullPath()
 		method := c.Request.Method
 
-		requiredRoles, ok := rolesNeeded[method+" "+path]
+		fullPath := method + " " + path
+
+		requiredRoles, ok := rolesNeeded[fullPath]
 
 		if !ok {
 			//c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "no permission to this resource"})
 			// TODO: パスが見つからないときは認証をさせない。作りとしていまいちな気がするけど一旦速度優先。
+			log.Default().Println("パスに対するロールが見つかりません。 " + fullPath)
 			c.Next()
 			return
 		}

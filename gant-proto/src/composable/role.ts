@@ -23,6 +23,7 @@ export type Section =
     | "UPDATE_USER" // ユーザー編集の更新ボタンお押せるかどうか。ゲストユーザーように作成
     | "MENU" // Guest権限の時はメニュー系非表示
     | "FORCE_SIMULATE_USER" // シミュレーション操作ユーザー扱いにする。管理者のみ利用。
+    | "CSV_UPLOAD"  // CSVアップロード全般
 
 
 // 大枠の制御のセット。とりあえずつけただけで使わないものが多いかも。
@@ -39,6 +40,7 @@ const Manager = {
     "UPDATE_USER": true,
     "MENU": true,
     "FORCE_SIMULATE_USER": false,
+    "CSV_UPLOAD": true,
 }
 const Viewer = {
     "ALL_SETTINGS": false,
@@ -53,6 +55,7 @@ const Viewer = {
     "UPDATE_USER": true,
     "MENU": true,
     "FORCE_SIMULATE_USER": false,
+    "CSV_UPLOAD": false,
 }
 const Worker = {
     "ALL_SETTINGS": false,
@@ -67,6 +70,7 @@ const Worker = {
     "UPDATE_USER": true,
     "MENU": true,
     "FORCE_SIMULATE_USER": false,
+    "CSV_UPLOAD": false,
 }
 const Guest = {
     "ALL_SETTINGS": false,
@@ -81,6 +85,7 @@ const Guest = {
     "UPDATE_USER": false,
     "MENU": false,
     "FORCE_SIMULATE_USER": false,
+    "CSV_UPLOAD": false,
 }
 
 export function allowed(section: Section) {
