@@ -43,7 +43,11 @@ const onFileChange = (e: Event) => {
 const downloadSample = () => {
   const csvContent = props.sample.map(e => e.join(",")).join("\n");
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  // Add UTF-8 BOM at the start of the content
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const csv = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([bom, csv]);
+
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
   link.href = url;
