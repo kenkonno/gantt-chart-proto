@@ -11,7 +11,7 @@
 
       <div class="filter-item">
         <label>データ選択：</label>
-        <div v-for="(series, index) in availableSeries" :key="index" class="checkbox-item">
+        <div v-for="(series, index) in series" :key="index" class="checkbox-item">
           <input
               type="checkbox"
               :id="`series-${index}`"
@@ -37,7 +37,7 @@
       <apex-charts
           ref="chartRef"
           :options="chartOptions"
-          :series="filteredSeries"
+          :series="series"
           height="350"
           @legendClick="handleLegendClick"
       />
@@ -56,8 +56,7 @@ const {
   pileUps,
   facilityTypes,
   timeFilter,
-  barSeries,
-  lineSeries,
+  series,
   xLabels,
   selectedSeries
 } = await usePileUpGraph()
@@ -74,58 +73,8 @@ const toggleFilterPanel = () => {
 };
 
 
-// 日付データの生成（過去30日分）
-const generateDates = (days: number) => {
-  const dates = []
-  const today = new Date()
-
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date()
-    date.setDate(today.getDate() - i)
-    dates.push(date.toISOString().split('T')[0]) // YYYY-MM-DD形式
-  }
-
-  return dates
-}
-
-// 利用可能なシリーズデータ
-const availableSeries = ref(barSeries)
-
-// 折れ線グラフのデータを計算する関数
-const calculateLineSeries = () => {
-  return lineSeries
-}
-
 // 選択状態の管理
 const selectedPeriod = ref('month') // 初期値は1ヶ月
-
-// フィルターに基づいたデータを計算
-const filteredSeries = computed(() => {
-  // 期間に応じたデータの抽出
-  let periodDays = 90 // デフォルト1ヶ月 お尻から取る日数
-  if (selectedPeriod.value === 'week') {
-    periodDays = 7
-  } else if (selectedPeriod.value === 'quarter') {
-    periodDays = 90
-  }
-
-  // 表示する系列を選択
-  const barSeries = availableSeries.value
-      .map((series, index) => {
-        return {
-          name: series.name,
-          data: series.data.slice(-periodDays), // 指定期間のみ抽出
-          type: series.type,
-          color: series.color
-        }
-      })
-
-  // 折れ線グラフのデータを計算
-  const lineSeries = calculateLineSeries()
-
-  // 棒グラフと折れ線グラフを結合
-  return [...barSeries, ...lineSeries]
-})
 
 // チャートのオプション
 const chartOptions = reactive({
@@ -159,7 +108,7 @@ const chartOptions = reactive({
   xaxis: {
     type: 'category', // datetime から category に変更
     categories: computed(() => {
-      return xLabels // 横軸のラベル
+      return xLabels.value // 横軸のラベル
     }),
     labels: {
       rotate: -90, // ラベルを縦に表示（90度回転）
@@ -210,7 +159,7 @@ const updateChart = () => {
   if (chartRef.value?.chart) {
     // 表示するシリーズの配列を作成
     // 棒グラフのシリーズをチェックボックスに応じて振り分け
-    availableSeries.value.forEach((v, index) => {
+    series.value.forEach((v, index) => {
       if (selectedSeries[index]) {
         chartRef.value.chart.showSeries(v.name);
       } else {
@@ -235,7 +184,6 @@ type ChartContext = {
 const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
   console.log('レジェンドがクリックされました:', seriesIndex);
 
-  // クリック時の状態を取得（チャートの内部状態を確認） TODO: 横棒の線がクリックされるとエラーになる。シリーズは一つにまとめるべき。
   selectedSeries[seriesIndex] = chartContext.w.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1;
 };
 

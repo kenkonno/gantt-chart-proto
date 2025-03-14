@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import {Emit, FacilityStatus, FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import dayjs from "dayjs";
@@ -32,44 +32,48 @@ export async function usePileUpGraph() {
     const globalStartDate = pileUps.globalStartDate
 
     const color = ["#008FFB", "#FF4560", "#FFEA00"]
-    const barSeries = pileUps.defaultPileUps.map(v => {
-        return <Series>{
-            color: color.pop(), // TODO: 色を部署に持たせる
-            data: splitByTimeFilter(v.labels, timeFilter.value, globalStartDate),
-            name: getDepartmentName(v.departmentId!, departments.list),
-            type: "bar"
-        }
+
+    const series = computed(() => {
+        const barSeries = pileUps.defaultPileUps.map(v => {
+            return <Series>{
+                color: color.pop(), // TODO: 色を部署に持たせる
+                data: splitByTimeFilter(v.labels, timeFilter.value, globalStartDate),
+                name: getDepartmentName(v.departmentId!, departments.list),
+                type: "bar"
+            }
+        })
+        // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
+        const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
+        const averageLabels = sumArrays(averageLineByDepartment.map(v => v.labels))
+        // TODO: 部署のフィルタ
+        // TODO: 週次表示の時に最終週が日曜日までないとちょっと違和感のある表示になる。
+        // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
+        // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
+        const lineSeries: Series[] = [{
+            color: "green",
+            data: splitByTimeFilter(averageLabels.map(v => v * 8), timeFilter.value, globalStartDate),
+            name: "100%",
+            type: "line"
+        }, {
+            color: "red",
+            data: splitByTimeFilter(averageLabels.map(v => v * 8 * 1.25), timeFilter.value, globalStartDate),
+            name: "125%",
+            type: "line"
+        }]
+        return [...barSeries, ...lineSeries]
     })
 
-    // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
-    const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
-    const averageLabels = sumArrays(averageLineByDepartment.map(v => v.labels))
-    // TODO: 部署のフィルタ
-    // TODO: 週次表示の時に最終週が日曜日までないとちょっと違和感のある表示になる。
-    // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
-    // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
-    const lineSeries: Series[] = [{
-        color: "green",
-        data: splitByTimeFilter(averageLabels.map(v => v * 8), timeFilter.value, globalStartDate),
-        name: "100%",
-        type: "line"
-    }, {
-        color: "red",
-        data: splitByTimeFilter(averageLabels.map(v => v * 8 * 1.25), timeFilter.value, globalStartDate),
-        name: "125%",
-        type: "line"
-    }]
-
     // 部署のフィルタ
-    const selectedSeries = reactive(departments.list.map(v => true ))
-
+    const selectedSeries = reactive(series.value.map(v => true ))
 
     // 横軸のラベル作成
-    const xLabels = getXLabels(globalStartDate, timeFilter.value, barSeries[0].data.length)
+    const xLabels = computed(() =>{
+        return getXLabels(globalStartDate, timeFilter.value, series.value[0].data.length)
+    })
 
     // TODO: barSeries, lineSeriesをまとめて computedにして返す
     // TODO: lineSeries を ocmputeにして返す
-    return {facilities, departments, pileUps, facilityTypes, timeFilter, barSeries, lineSeries, xLabels, selectedSeries}
+    return {facilities, departments, pileUps, facilityTypes, timeFilter, xLabels, selectedSeries, series}
 }
 
 /**
