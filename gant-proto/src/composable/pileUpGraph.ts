@@ -3,7 +3,7 @@ import {reactive, ref} from "vue";
 import {Emit, FacilityStatus, FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import dayjs from "dayjs";
-import {Department} from "@/api";
+import {DefautValidIndexUsers, Department, User} from "@/api";
 
 export type Series = {
     name: string;
@@ -19,10 +19,12 @@ export async function usePileUpGraph() {
     const {data: facilities} = reactive(await Api.getFacilities())
     // 部署一覧
     const {data: departments} = reactive(await Api.getDepartments())
+    // ユーザー一覧
+    const {data: userList} = reactive(await Api.getUsers())
     // フィルタ 設備の種類を定数から取得し、リアクティブに設定する
     const facilityTypes = reactive<string[]>([FacilityType.Ordered, FacilityType.Prepared])
     // 日次・週次・月次の絞り込みの選択肢
-    const timeFilter = ref<DisplayType>('day');
+    const timeFilter = ref<DisplayType>('week');
 
     // 積み上げ（getDefaultPileUps
     const {data: pileUps} = await Api.getDefaultPileUps(-1, true, facilityTypes)
@@ -32,31 +34,116 @@ export async function usePileUpGraph() {
     const color = ["#008FFB", "#FF4560", "#FFEA00"]
     const barSeries = pileUps.defaultPileUps.map(v => {
         return <Series>{
-            color: color.pop(),
+            color: color.pop(), // TODO: 色を部署に持たせる
             data: splitByTimeFilter(v.labels, timeFilter.value, globalStartDate),
             name: getDepartmentName(v.departmentId!, departments.list),
             type: "bar"
         }
     })
 
+    // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
+    const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
+    const averageLabels = sumArrays(averageLineByDepartment.map(v => v.labels))
+    // TODO: 部署のフィルタ
+    // TODO: 週次表示の時に最終週が日曜日までないとちょっと違和感のある表示になる。
+    // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
     // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
     const lineSeries: Series[] = [{
-        color: "black",
-        data: splitByTimeFilter(pileUps.defaultPileUps[0].labels, timeFilter.value, globalStartDate),
+        color: "green",
+        data: splitByTimeFilter(averageLabels.map(v => v * 8), timeFilter.value, globalStartDate),
         name: "100%",
         type: "line"
     }, {
         color: "red",
-        data: splitByTimeFilter(pileUps.defaultPileUps[1].labels, timeFilter.value, globalStartDate),
-        name: "100%",
+        data: splitByTimeFilter(averageLabels.map(v => v * 8 * 1.25), timeFilter.value, globalStartDate),
+        name: "125%",
         type: "line"
     }]
+
+    // 部署のフィルタ
+    const selectedSeries = reactive(departments.list.map(v => true ))
+
 
     // 横軸のラベル作成
     const xLabels = getXLabels(globalStartDate, timeFilter.value, barSeries[0].data.length)
 
-    return {facilities, departments, pileUps, facilityTypes, timeFilter, barSeries, lineSeries, xLabels}
+    // TODO: barSeries, lineSeriesをまとめて computedにして返す
+    // TODO: lineSeries を ocmputeにして返す
+    return {facilities, departments, pileUps, facilityTypes, timeFilter, barSeries, lineSeries, xLabels, selectedSeries}
 }
+
+/**
+ * 複数の数値配列の要素同士を足し合わせる関数
+ * @param arrays 足し合わせる数値配列の二次元配列
+ * @returns 各要素を足し合わせた新しい配列
+ */
+const sumArrays = (arrays: number[][]): number[] => {
+    // 配列が空の場合は空配列を返す
+    if (arrays.length === 0) {
+        return [];
+    }
+
+    // 最初の配列をベースとする
+    const result = [...arrays[0]];
+
+    // 2つ目以降の配列を足していく
+    for (let i = 1; i < arrays.length; i++) {
+        const currentArray = arrays[i];
+
+        // 各要素を足していく
+        for (let j = 0; j < currentArray.length; j++) {
+            // resultの長さよりもインデックスが大きい場合は、resultを拡張
+            if (j >= result.length) {
+                result.push(currentArray[j]);
+            } else {
+                result[j] += currentArray[j];
+            }
+        }
+    }
+
+    return result;
+};
+
+/**
+ * 部署ごとに稼働可能な人数を集計する関数
+ * @param defaultValidUserIndexes validIndexごとに稼動可能なユーザーIDの配列
+ * @param departmentIds 集計対象の部署ID配列
+ * @param userList ユーザーリスト
+ * @return {Array<{departmentId: number, labels: number[]}>} 部署IDと各validIndexごとの稼働可能人数の配列
+ */
+const getAverageLine = (defaultValidUserIndexes: DefautValidIndexUsers[], departmentIds: number[], userList: User[]) => {
+    // 結果を格納する配列
+    const result: Array<{ departmentId: number, labels: number[] }> = [];
+
+    // 各部署IDに対して処理
+    departmentIds.forEach(departmentId => {
+        // この部署に所属するユーザーのIDを抽出
+        const departmentUserIds = userList
+            .filter(user => user.department_id === departmentId)
+            .map(user => user.id)
+            .filter((id): id is number => id !== null && id !== undefined);
+
+        // 各validIndexごとの稼働可能人数を格納する配列
+        const labels: number[] = [];
+
+        defaultValidUserIndexes.forEach((validIndexData, i) => {
+            // この部署のユーザーで、現在のvalidIndexで稼働可能なユーザー数をカウント
+            const count = departmentUserIds.filter(userId =>
+                validIndexData.UserIds.includes(userId)
+            ).length;
+
+            labels.push(count);
+
+        })
+        // 結果に追加
+        result.push({
+            departmentId,
+            labels
+        });
+    });
+
+    return result;
+};
 
 const getXLabels = (globalStartDate: string, timeFilter: DisplayType, len: number) => {
     // DisplayTypeの特定のキーだけを選んで新しい型を作成

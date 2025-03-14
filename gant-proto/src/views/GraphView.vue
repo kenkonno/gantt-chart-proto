@@ -1,7 +1,12 @@
 <template>
   <div class="graph-container">
-    <!-- フィルターパネル（左側） -->
-    <div class="filter-panel">
+    <!-- トグルボタンを追加 -->
+    <button class="toggle-filter-btn" @click="toggleFilterPanel">
+      {{ filterVisible ? '◀' : '▶' }}
+    </button>
+
+    <!-- フィルターパネル（左側） - v-showで表示・非表示を切り替え -->
+    <div class="filter-panel" :class="{ 'hidden': !filterVisible }">
       <h3>フィルター</h3>
 
       <div class="filter-item">
@@ -27,20 +32,21 @@
       </div>
     </div>
 
-    <!-- グラフ表示エリア -->
-    <div class="chart-area">
+    <!-- グラフ表示エリア - フィルター非表示時に全幅表示 -->
+    <div class="chart-area" :class="{ 'full-width': !filterVisible }">
       <apex-charts
-          type="bar"
+          ref="chartRef"
           :options="chartOptions"
           :series="filteredSeries"
           height="350"
+          @legendClick="handleLegendClick"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, onMounted} from 'vue'
+import {computed, reactive, ref, Ref} from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import {usePileUpGraph} from "@/composable/pileUpGraph";
 
@@ -52,8 +58,20 @@ const {
   timeFilter,
   barSeries,
   lineSeries,
-  xLabels
+  xLabels,
+  selectedSeries
 } = await usePileUpGraph()
+
+// チャートの参照を作成
+const chartRef = ref<null | any>(null) as Ref<typeof ApexCharts>;
+
+// フィルターパネルの表示状態を管理するリアクティブな変数
+const filterVisible = ref(true);
+
+// フィルターパネルの表示/非表示を切り替える関数
+const toggleFilterPanel = () => {
+  filterVisible.value = !filterVisible.value;
+};
 
 
 // 日付データの生成（過去30日分）
@@ -79,34 +97,28 @@ const calculateLineSeries = () => {
 }
 
 // 選択状態の管理
-const selectedSeries = reactive([true, true, true]) // 初期値は全て表示
 const selectedPeriod = ref('month') // 初期値は1ヶ月
 
 // フィルターに基づいたデータを計算
 const filteredSeries = computed(() => {
   // 期間に応じたデータの抽出
-  let periodDays = 30 // デフォルト1ヶ月
+  let periodDays = 90 // デフォルト1ヶ月 お尻から取る日数
   if (selectedPeriod.value === 'week') {
     periodDays = 7
   } else if (selectedPeriod.value === 'quarter') {
     periodDays = 90
   }
 
-  // 期間に応じた日付の更新
-  const filteredDates = generateDates(periodDays)
-
   // 表示する系列を選択
   const barSeries = availableSeries.value
       .map((series, index) => {
-        if (!selectedSeries[index]) return null
-
         return {
           name: series.name,
           data: series.data.slice(-periodDays), // 指定期間のみ抽出
+          type: series.type,
           color: series.color
         }
       })
-      .filter(item => item !== null) // 非選択の項目を除外
 
   // 折れ線グラフのデータを計算
   const lineSeries = calculateLineSeries()
@@ -141,7 +153,7 @@ const chartOptions = reactive({
   stroke: {
     show: true,
     width: [2, 2, 2, 4], // 最後の値は折れ線グラフの線の太さ
-    curve: 'smooth', // 線をスムーズに
+    curve: 'straight', // 線をスムーズに
     colors: ['transparent', 'transparent', 'transparent', '#FF4560'] // 最後の値は折れ線グラフの色
   },
   xaxis: {
@@ -160,7 +172,7 @@ const chartOptions = reactive({
   // 追加: 折れ線グラフのマーカー設定
   markers: {
     size: 4,
-    colors: ['#FF4560'],
+    colors: ['#FF4560','#45FF60'],
     strokeWidth: 2,
     hover: {
       size: 7,
@@ -184,63 +196,147 @@ const chartOptions = reactive({
   },
   legend: {
     position: 'top'
+  },
+  events: {
+    legendClick: function (chartContext, seriesIndex) {
+      // ここではなく、@legendClickイベントで処理するため空にしておく
+    }
   }
 })
 
 // 更新時の処理
 const updateChart = () => {
   // フィルター変更時の処理（必要に応じて追加）
+  if (chartRef.value?.chart) {
+    // 表示するシリーズの配列を作成
+    // 棒グラフのシリーズをチェックボックスに応じて振り分け
+    availableSeries.value.forEach((v, index) => {
+      if (selectedSeries[index]) {
+        chartRef.value.chart.showSeries(v.name);
+      } else {
+        chartRef.value.chart.hideSeries(v.name);
+      }
+    });
+  }
 }
+
+// ApexCharts のイベントハンドラーのための型を定義
+type ChartContext = {
+  w: {
+    globals: {
+      collapsedSeriesIndices: number[];
+      // 他に必要な型情報
+    }
+  };
+  // その他の必要なプロパティ
+};
+
+// チャート側でレジェンドをクリックしたときのイベントハンドラ
+const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
+  console.log('レジェンドがクリックされました:', seriesIndex);
+
+  // クリック時の状態を取得（チャートの内部状態を確認） TODO: 横棒の線がクリックされるとエラーになる。シリーズは一つにまとめるべき。
+  selectedSeries[seriesIndex] = chartContext.w.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1;
+};
+
 </script>
+
 
 <style scoped>
 .graph-container {
   display: flex;
-  gap: 20px;
-  padding: 20px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.toggle-filter-btn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 20px;
+  height: 40px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .filter-panel {
   width: 250px;
   padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ddd;
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  height: 100%;
 }
 
-.chart-area {
-  flex: 1;
-  background-color: white;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.filter-panel.hidden {
+  transform: translateX(-100%);
+  position: absolute;
 }
 
 .filter-item {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 期間選択用の特別なスタイル */
+.period-item {
+  align-items: center; /* 中央揃え */
+}
+
+.filter-label {
+  margin-bottom: 8px;
+  font-weight: bold;
+  text-align: left;
+}
+
+/* 期間選択のラベル用 */
+.period-label {
+  text-align: center; /* 中央揃え */
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .checkbox-item {
   margin: 5px 0;
   display: flex;
   align-items: center;
-}
-
-h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-select {
+  text-align: left;
   width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.checkbox-item label {
+  margin: 0;
+}
+
+/* 期間選択のセレクトボックス */
+.period-select {
+  width: auto;
+  margin: 0 auto; /* 中央揃え */
+}
+
+.chart-area {
+  flex-grow: 1;
+  padding: 15px;
+  transition: width 0.3s ease;
+}
+
+.chart-area.full-width {
+  width: 100%;
 }
 </style>
