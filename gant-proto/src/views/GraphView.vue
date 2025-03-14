@@ -22,6 +22,26 @@
         </div>
       </div>
 
+      <!-- 表示期間ラジオボタン（チャートの上部に配置） -->
+      <div class="filter-item">
+        <label>集計軸：</label>
+        <div class="radio-group">
+          <label class="custom-radio">
+            <input type="radio" v-model="timeFilter" value="day" @change="updateChart" />
+            <span class="radio-label">日</span>
+          </label>
+          <label class="custom-radio">
+            <input type="radio" v-model="timeFilter" value="week" @change="updateChart" />
+            <span class="radio-label">週</span>
+          </label>
+          <label class="custom-radio">
+            <input type="radio" v-model="timeFilter" value="month" @change="updateChart" />
+            <span class="radio-label">月</span>
+          </label>
+        </div>
+      </div>
+
+
       <div class="filter-item">
         <label>期間選択：</label>
         <select v-model="selectedPeriod" @change="updateChart">
@@ -31,7 +51,6 @@
         </select>
       </div>
     </div>
-
     <!-- グラフ表示エリア - フィルター非表示時に全幅表示 -->
     <div class="chart-area" :class="{ 'full-width': !filterVisible }">
       <apex-charts
@@ -107,9 +126,7 @@ const chartOptions = reactive({
   },
   xaxis: {
     type: 'category', // datetime から category に変更
-    categories: computed(() => {
-      return xLabels.value // 横軸のラベル
-    }),
+    categories: xLabels.value,
     labels: {
       rotate: -90, // ラベルを縦に表示（90度回転）
       rotateAlways: true,
@@ -166,6 +183,11 @@ const updateChart = () => {
         chartRef.value.chart.hideSeries(v.name);
       }
     });
+    chartRef.value.chart.updateOptions({
+      xaxis: {
+        categories: xLabels.value,
+      }
+    })
   }
 }
 
@@ -287,4 +309,56 @@ const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
 .chart-area.full-width {
   width: 100%;
 }
+
+.filter-item {
+  margin-bottom: 16px;
+}
+
+.filter-item label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.radio-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.custom-radio {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.custom-radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.radio-label {
+  position: relative;
+  padding: 6px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.custom-radio input[type="radio"]:checked + .radio-label {
+  background-color: #4a86e8;
+  color: white;
+  border-color: #4a86e8;
+}
+
+.custom-radio input[type="radio"]:focus + .radio-label {
+  box-shadow: 0 0 0 2px rgba(74, 134, 232, 0.3);
+}
+
+.custom-radio:hover .radio-label {
+  border-color: #bbb;
+}
+
 </style>

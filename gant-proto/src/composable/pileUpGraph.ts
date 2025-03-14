@@ -31,8 +31,21 @@ export async function usePileUpGraph() {
 
     const globalStartDate = pileUps.globalStartDate
 
+    const labelLength = computed(() => {
+        return splitByTimeFilter(pileUps.defaultValidUserIndexes.map(v => v.ValidIndex), timeFilter.value, globalStartDate).length
+    })
+
     const color = ["#008FFB", "#FF4560", "#FFEA00"]
 
+    // 横軸のラベル作成
+    const xLabels = computed(() => {
+        return getXLabels(globalStartDate, timeFilter.value, labelLength.value)
+    })
+
+    // 部署のフィルタ
+    const selectedSeries = reactive(Array(labelLength.value).fill(true))
+
+    // seriesの作成
     const series = computed(() => {
         const barSeries = pileUps.defaultPileUps.map(v => {
             return <Series>{
@@ -44,8 +57,8 @@ export async function usePileUpGraph() {
         })
         // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
         const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
-        const averageLabels = sumArrays(averageLineByDepartment.map(v => v.labels))
-        // TODO: 部署のフィルタ
+        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => selectedSeries[i])
+        const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels))
         // TODO: 週次表示の時に最終週が日曜日までないとちょっと違和感のある表示になる。
         // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
         // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
@@ -61,14 +74,6 @@ export async function usePileUpGraph() {
             type: "line"
         }]
         return [...barSeries, ...lineSeries]
-    })
-
-    // 部署のフィルタ
-    const selectedSeries = reactive(series.value.map(v => true ))
-
-    // 横軸のラベル作成
-    const xLabels = computed(() =>{
-        return getXLabels(globalStartDate, timeFilter.value, series.value[0].data.length)
     })
 
     // TODO: barSeries, lineSeriesをまとめて computedにして返す
