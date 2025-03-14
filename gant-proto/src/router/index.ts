@@ -33,6 +33,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: {title: "工程管理ツール | パスワード初期化", requiresAuth: false},
         component: () => import('../views/ResetPasswordView.vue')
     },
+    {
+        path: '/graph-view',
+        name: 'graph-view',
+        meta: {title: "工程管理ツール | グラフビュー", requiresAuth: true},
+        component: () => import('../views/GraphView.vue')
+    },
 ]
 
 const router = createRouter({
