@@ -43,7 +43,7 @@ export async function usePileUpGraph() {
     })
 
     // 部署のフィルタ
-    const selectedSeries = reactive(Array(labelLength.value).fill(true))
+    const selectedSeries = reactive<boolean[]>(Array.from({length: pileUps.defaultPileUps.length + 2}, () => true))
 
     // seriesの作成
     const series = computed(() => {

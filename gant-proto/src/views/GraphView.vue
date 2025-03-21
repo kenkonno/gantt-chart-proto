@@ -205,8 +205,8 @@ type ChartContext = {
 // チャート側でレジェンドをクリックしたときのイベントハンドラ
 const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
   console.log('レジェンドがクリックされました:', seriesIndex);
-
-  selectedSeries[seriesIndex] = chartContext.w.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1;
+  // TODO: legendの同期はかなり怪しい ちゃんと調べる。最悪消す
+  // selectedSeries[seriesIndex] = chartContext.w.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1;
 };
 
 </script>
