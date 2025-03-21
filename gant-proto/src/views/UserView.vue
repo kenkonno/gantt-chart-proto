@@ -5,6 +5,7 @@
         :list="userList"
         :is-view-only="isViewOnly"
         :is-simulate="isSimulate"
+        :hide-csv-upload="isSimulate"
     />
     <template #fallback>
       Loading...
@@ -41,6 +42,5 @@ const closeModalProxy = async () => {
   emit("update")
 }
 
-const { isViewOnlyUser: isViewOnly, isSimulateUser: isSimulate } = await useIsSimulate()
-
+const { isViewOnly, isSimulate } = await useIsSimulate()
 </script>
