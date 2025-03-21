@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostLogoutResponse struct {
-
-	 string `json:",omitempty"`
+	string `json:",omitempty" form:",omitempty"`
 }

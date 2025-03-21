@@ -14,34 +14,33 @@ import (
 )
 
 type Ticket struct {
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Id *int32 `json:"id,omitempty"`
+	GanttGroupId int32 `json:"gantt_group_id" form:"gantt_group_id" binding:"min=1"`
 
-	GanttGroupId int32 `json:"gantt_group_id" binding:"min=1"`
+	ProcessId *int32 `json:"process_id,omitempty" form:"process_id,omitempty"`
 
-	ProcessId *int32 `json:"process_id,omitempty"`
+	DepartmentId *int32 `json:"department_id,omitempty" form:"department_id,omitempty"`
 
-	DepartmentId *int32 `json:"department_id,omitempty"`
+	LimitDate *time.Time `json:"limit_date,omitempty" form:"limit_date,omitempty"`
 
-	LimitDate *time.Time `json:"limit_date,omitempty"`
+	Estimate *int32 `json:"estimate,omitempty" form:"estimate,omitempty"`
 
-	Estimate *int32 `json:"estimate,omitempty"`
+	NumberOfWorker *int32 `json:"number_of_worker,omitempty" form:"number_of_worker,omitempty"`
 
-	NumberOfWorker *int32 `json:"number_of_worker,omitempty"`
+	DaysAfter *int32 `json:"days_after,omitempty" form:"days_after,omitempty"`
 
-	DaysAfter *int32 `json:"days_after,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty" form:"start_date,omitempty"`
 
-	StartDate *time.Time `json:"start_date,omitempty"`
+	EndDate *time.Time `json:"end_date,omitempty" form:"end_date,omitempty"`
 
-	EndDate *time.Time `json:"end_date,omitempty"`
+	ProgressPercent *int32 `json:"progress_percent,omitempty" form:"progress_percent,omitempty"`
 
-	ProgressPercent *int32 `json:"progress_percent,omitempty"`
+	Memo string `json:"memo,omitempty" form:"memo,omitempty"`
 
-	Memo string `json:"memo,omitempty"`
+	Order int32 `json:"order" form:"order"`
 
-	Order int32 `json:"order"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
-
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 }

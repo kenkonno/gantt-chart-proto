@@ -10,6 +10,5 @@
 package openapi_models
 
 type DeleteHolidaysIdResponse struct {
-
-	Msg string `json:"msg,omitempty"`
+	Msg string `json:"msg,omitempty" form:"msg,omitempty"`
 }

@@ -10,8 +10,7 @@
 package openapi_models
 
 type WorkHour struct {
+	ProcessId int32 `json:"process_id,omitempty" form:"process_id,omitempty"`
 
-	ProcessId int32 `json:"process_id,omitempty"`
-
-	WorkHour int32 `json:"work_hour,omitempty"`
+	WorkHour int32 `json:"work_hour,omitempty" form:"work_hour,omitempty"`
 }

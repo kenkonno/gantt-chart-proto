@@ -10,12 +10,11 @@
 package openapi_models
 
 type AssignedPileUp struct {
+	Users []PileUpByPerson `json:"users" form:"users"`
 
-	Users []PileUpByPerson `json:"users"`
+	Labels []float32 `json:"labels" form:"labels"`
 
-	Labels []float32 `json:"labels"`
+	Styles []map[string]interface{} `json:"styles" form:"styles"`
 
-	Styles []map[string]interface{} `json:"styles"`
-
-	Display bool `json:"display"`
+	Display bool `json:"display" form:"display"`
 }

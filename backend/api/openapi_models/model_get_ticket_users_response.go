@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetTicketUsersResponse struct {
-
-	List []TicketUser `json:"list"`
+	List []TicketUser `json:"list" form:"list"`
 }

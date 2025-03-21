@@ -10,6 +10,5 @@
 package openapi_models
 
 type DeleteGanttGroupsIdResponse struct {
-
-	Msg string `json:"msg,omitempty"`
+	Msg string `json:"msg,omitempty" form:"msg,omitempty"`
 }

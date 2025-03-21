@@ -10,6 +10,5 @@
 package openapi_models
 
 type DeleteOperationSettingsIdRequest struct {
-
-	Id int32 `json:"id,omitempty"`
+	Id int32 `json:"id,omitempty" form:"id,omitempty"`
 }

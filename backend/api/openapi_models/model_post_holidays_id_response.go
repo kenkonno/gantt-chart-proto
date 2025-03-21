@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostHolidaysIdResponse struct {
-
-	Holiday Holiday `json:"holiday,omitempty"`
+	Holiday Holiday `json:"holiday,omitempty" form:"holiday,omitempty"`
 }

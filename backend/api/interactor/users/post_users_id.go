@@ -17,6 +17,8 @@ import (
 func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, error) {
 
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
+	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
+	ticketUserRep := repository.NewTicketUserRepository(middleware.GetRepositoryMode(c)...)
 
 	var userReq openapi_models.PostUsersRequest
 	if err := c.ShouldBindJSON(&userReq); err != nil {
@@ -61,6 +63,26 @@ func PostUsersIdInvoke(c *gin.Context) (openapi_models.PostUsersIdResponse, erro
 			return openapi_models.PostUsersIdResponse{}, errors.New("")
 		}
 		passwordReset = true
+	}
+
+	// ユーザーが更新される場合は担当期間外は必ず除外するということとなる。
+	tickets := ticketRep.FindByUserIds([]int32{*userReq.User.Id}, constants.FacilityStatusEnabled)
+	outsideTickets := utils.DetectWorkOutsideEmploymentPeriods(tickets, userReq.User.EmploymentStartDate, userReq.User.EmploymentEndDate)
+	for _, v := range outsideTickets {
+		// 担当者から外す
+		ticketUsers := ticketUserRep.FindByTicketId(*v.Id)
+		for _, vv := range ticketUsers {
+			if vv.UserId == *userReq.User.Id {
+				ticketUserRep.Delete(*vv.Id)
+			}
+		}
+
+		// 人数を１減らす
+		if v.NumberOfWorker != nil && *v.NumberOfWorker > 1 {
+			*v.NumberOfWorker = *v.NumberOfWorker - int32(1)
+			ticketRep.Upsert(v)
+		}
+
 	}
 
 	userRep.Upsert(db.User{

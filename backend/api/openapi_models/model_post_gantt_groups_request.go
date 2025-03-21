@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostGanttGroupsRequest struct {
-
-	GanttGroup GanttGroup `json:"ganttGroup,omitempty"`
+	GanttGroup GanttGroup `json:"ganttGroup,omitempty" form:"ganttGroup,omitempty"`
 }

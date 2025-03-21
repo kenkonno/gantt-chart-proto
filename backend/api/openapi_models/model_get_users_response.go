@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetUsersResponse struct {
-
-	List []User `json:"list"`
+	List []User `json:"list" form:"list"`
 }

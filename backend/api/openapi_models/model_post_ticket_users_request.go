@@ -14,10 +14,9 @@ import (
 )
 
 type PostTicketUsersRequest struct {
+	TicketId int32 `json:"ticketId" form:"ticketId"`
 
-	TicketId int32 `json:"ticketId"`
+	UserIds []int32 `json:"userIds" form:"userIds"`
 
-	UserIds []int32 `json:"userIds"`
-
-	CreatedAt time.Time `json:"createdAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt,omitempty" form:"createdAt,omitempty"`
 }

@@ -14,12 +14,11 @@ import (
 )
 
 type SimulationLock struct {
+	SimulationName string `json:"simulationName" form:"simulationName"`
 
-	SimulationName string `json:"simulationName"`
+	Status string `json:"status" form:"status"`
 
-	Status string `json:"status"`
+	LockedAt time.Time `json:"lockedAt" form:"lockedAt"`
 
-	LockedAt time.Time `json:"lockedAt"`
-
-	LockedBy int32 `json:"lockedBy"`
+	LockedBy int32 `json:"lockedBy" form:"lockedBy"`
 }
