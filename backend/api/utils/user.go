@@ -5,6 +5,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"net/mail"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -41,12 +42,34 @@ func GetDisplayNameRole(value string) string {
 
 // GetTimeByYMDString YYYY-MM-DD の形式から time.Timeを返却する。パースできなければnilを返す。
 func GetTimeByYMDString(ymd string) *time.Time {
+	// スラッシュをハイフンに置き換え
+	normalizedYmd := strings.ReplaceAll(ymd, "/", "-")
+
+	// ハイフンで分割
+	parts := strings.Split(normalizedYmd, "-")
+	if len(parts) != 3 {
+		return nil
+	}
+
+	// 月と日を0埋めして2桁にする
+	if len(parts[1]) == 1 {
+		parts[1] = "0" + parts[1]
+	}
+	if len(parts[2]) == 1 {
+		parts[2] = "0" + parts[2]
+	}
+
+	// 正規化された日付文字列を作成
+	normalizedYmd = parts[0] + "-" + parts[1] + "-" + parts[2]
+
+	// パース
 	var result time.Time
 	var err error
-	if result, err = time.Parse("2006-01-02", ymd); err != nil {
+	if result, err = time.Parse("2006-01-02", normalizedYmd); err != nil {
 		return nil
 	}
 	return &result
+
 }
 
 func ValidateEmail(email string) error {
