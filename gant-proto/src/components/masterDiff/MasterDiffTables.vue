@@ -21,9 +21,9 @@
   <div
       v-if="masterDiffList.beforeUsers.length > 0 ||masterDiffList.diffUsers?.length > 0 || masterDiffList.afterUsers.length > 0">
     <h5>担当者</h5>
-    <AsyncUserTable :list="masterDiffList.beforeUsers" :is-view-only="true"/>
-    <AsyncUserTable :list="masterDiffList.diffUsers" :is-view-only="true" :is-no-header="true"/>
-    <AsyncUserTable :list="masterDiffList.afterUsers" :is-view-only="true" :is-no-header="true"/>
+    <AsyncUserTable :list="masterDiffList.beforeUsers" :is-view-only="true" :hide-csv-upload="true"/>
+    <AsyncUserTable :list="masterDiffList.diffUsers" :is-view-only="true" :is-no-header="true" :hide-csv-upload="true"/>
+    <AsyncUserTable :list="masterDiffList.afterUsers" :is-view-only="true" :is-no-header="true" :hide-csv-upload="true"/>
   </div>
 
   <div
