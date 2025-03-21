@@ -84,6 +84,7 @@
                   <gantt-td :visible="props.ganttFacilityHeader[4].visible">
                     <FormNumber class="small-numeric"
                                 :value="row.ticket.number_of_worker"
+                                :min="1"
                                 @change="mutation.setNumberOfWorker($event, row.ticket)"
                                 :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
                   </gantt-td>
