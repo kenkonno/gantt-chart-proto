@@ -52,13 +52,13 @@
       <ModalWithLink title="案件一覧" icon="precision_manufacturing">
         <facility-view @update="updateFacility"></facility-view>
       </ModalWithLink>
-      <ModalWithLink title="工程一覧" icon="account_tree">
+      <ModalWithLink title="工程一覧" icon="account_tree" v-if="allowed('UPDATE_MASTER')">
         <process-view @update="updateFacility"></process-view>
       </ModalWithLink>
-      <ModalWithLink title="部署一覧" icon="settings_accessibility">
+      <ModalWithLink title="部署一覧" icon="settings_accessibility" v-if="allowed('UPDATE_MASTER')">
         <department-view @update="updateFacility"></department-view>
       </ModalWithLink>
-      <ModalWithLink title="担当者一覧" icon="person">
+      <ModalWithLink title="担当者一覧" icon="person" v-if="allowed('UPDATE_MASTER')">
         <user-view @update="updateFacility"></user-view>
       </ModalWithLink>
       <ModalWithLink title="シミュレーション" icon="timeline">
