@@ -21,10 +21,6 @@ func GetDetectWorkOutsideEmploymentPeriodsInvoke(c *gin.Context) (openapi_models
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
-	fmt.Println(c.GetQuery("userId"))
-	fmt.Println(request.UserId)
-	fmt.Println(request.EmploymentStartDate)
-	fmt.Println(request.EmploymentEndDate)
 
 	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
 	tickets := ticketRep.FindByUserIds([]int32{request.UserId}, constants.FacilityStatusEnabled)
