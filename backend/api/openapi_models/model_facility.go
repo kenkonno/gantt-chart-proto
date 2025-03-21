@@ -14,24 +14,23 @@ import (
 )
 
 type Facility struct {
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Id *int32 `json:"id,omitempty"`
+	Name string `json:"name" form:"name" binding:"min=1"`
 
-	Name string `json:"name" binding:"min=1"`
+	TermFrom time.Time `json:"term_from" form:"term_from"`
 
-	TermFrom time.Time `json:"term_from"`
+	TermTo time.Time `json:"term_to" form:"term_to"`
 
-	TermTo time.Time `json:"term_to"`
+	Order int32 `json:"order,omitempty" form:"order,omitempty"`
 
-	Order int32 `json:"order,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	Status string `json:"status" form:"status"`
 
-	Status string `json:"status"`
+	Type string `json:"type" form:"type"`
 
-	Type string `json:"type"`
-
-	ShipmentDueDate time.Time `json:"shipment_due_date"`
+	ShipmentDueDate time.Time `json:"shipment_due_date" form:"shipment_due_date"`
 }

@@ -14,9 +14,9 @@ import (
 )
 
 type GetDefaultPileUpsResponse struct {
-	DefaultPileUps []DefaultPileUp `json:"defaultPileUps"`
+	DefaultPileUps []DefaultPileUp `json:"defaultPileUps" form:"defaultPileUps"`
 
-	GlobalStartDate time.Time `json:"globalStartDate"`
+	GlobalStartDate time.Time `json:"globalStartDate" form:"globalStartDate"`
 
-	DefaultValidUserIndexes []DefautValidIndexUsers `json:"defaultValidUserIndexes"`
+	DefaultValidUserIndexes []DefautValidIndexUsers `json:"defaultValidUserIndexes" form:"defaultValidUserIndexes"`
 }

@@ -10,10 +10,9 @@
 package openapi_models
 
 type PostLoginRequest struct {
+	Id string `json:"id" form:"id"`
 
-	Id string `json:"id"`
+	Password string `json:"password" form:"password"`
 
-	Password string `json:"password"`
-
-	Uuid string `json:"uuid,omitempty"`
+	Uuid string `json:"uuid,omitempty" form:"uuid,omitempty"`
 }

@@ -1120,6 +1120,38 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GetSimulationMasterDiffRequest'
+  /api/detectWorkOutsideEmploymentPeriods:
+    get:
+      summary: GetDetectWorkOutsideEmploymentPeriods
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDetectWorkOutsideEmploymentPeriodsResponse'
+              examples: {}
+      operationId: get-detectWorkOutsideEmploymentPeriods
+      description: ''
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: userId
+          required: true
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: employmentStartDate
+          required: true
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: employmentEndDate
+          allowEmptyValue: true
 components:
   schemas:
     User:
@@ -2878,3 +2910,38 @@ components:
         - afterHolidays
         - beforeMilestones
         - afterMilestones
+    DetectWorkOutsideEmploymentPeriod:
+      title: DetectWorkOutsideEmploymentPeriod
+      type: object
+      x-tags:
+        - DetectWorkOutsideEmploymentPeriod
+      properties:
+        tickets:
+          $ref: '#/components/schemas/Ticket'
+      required:
+        - tickets
+    GetDetectWorkOutsideEmploymentPeriodsRequest:
+      title: GetDetectWorkOutsideEmploymentPeriodsRequest
+      type: object
+      properties:
+        userId:
+          type: integer
+        employmentStartDate:
+          type: string
+          format: date-time
+        employmentEndDate:
+          type: string
+          format: date-time
+      required:
+        - userId
+        - employmentStartDate
+    GetDetectWorkOutsideEmploymentPeriodsResponse:
+      title: GetDetectWorkOutsideEmploymentPeriodsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+      required:
+        - list

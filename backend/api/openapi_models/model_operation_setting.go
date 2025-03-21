@@ -13,18 +13,17 @@ import (
 	"time"
 )
 
-// OperationSetting - 
+// OperationSetting -
 type OperationSetting struct {
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Id *int32 `json:"id,omitempty"`
+	FacilityId int32 `json:"facility_id,omitempty" form:"facility_id,omitempty"`
 
-	FacilityId int32 `json:"facility_id,omitempty"`
+	UnitId int32 `json:"unit_id,omitempty" form:"unit_id,omitempty"`
 
-	UnitId int32 `json:"unit_id,omitempty"`
+	WorkHours []WorkHour `json:"workHours" form:"workHours" binding:"min=1"`
 
-	WorkHours []WorkHour `json:"workHours" binding:"min=1"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
-
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 }

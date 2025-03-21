@@ -184,6 +184,13 @@ var routes = Routes{
 	},
 
 	{
+		"GetDetectWorkOutsideEmploymentPeriods",
+		http.MethodGet,
+		"/api/detectWorkOutsideEmploymentPeriods",
+		GetDetectWorkOutsideEmploymentPeriods,
+	},
+
+	{
 		"GetFacilities",
 		http.MethodGet,
 		"/api/facilities",

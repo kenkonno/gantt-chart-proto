@@ -14,16 +14,15 @@ import (
 )
 
 type TicketUser struct {
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Id *int32 `json:"id,omitempty"`
+	TicketId int32 `json:"ticket_id" form:"ticket_id" binding:"min=1"`
 
-	TicketId int32 `json:"ticket_id" binding:"min=1"`
+	UserId int32 `json:"user_id" form:"user_id" binding:"min=1"`
 
-	UserId int32 `json:"user_id" binding:"min=1"`
+	Order int32 `json:"order,omitempty" form:"order,omitempty"`
 
-	Order int32 `json:"order,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
-
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 }

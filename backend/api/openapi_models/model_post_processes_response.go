@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostProcessesResponse struct {
-
-	Process Process `json:"process,omitempty"`
+	Process Process `json:"process,omitempty" form:"process,omitempty"`
 }

@@ -10,18 +10,17 @@
 package openapi_models
 
 type DefaultPileUp struct {
+	DepartmentId int32 `json:"departmentId,omitempty" form:"departmentId,omitempty"`
 
-	DepartmentId int32 `json:"departmentId,omitempty"`
+	AssignedUser AssignedPileUp `json:"assignedUser,omitempty" form:"assignedUser,omitempty"`
 
-	AssignedUser AssignedPileUp `json:"assignedUser,omitempty"`
+	UnAssignedPileUp UnAssingedPileUp `json:"unAssignedPileUp,omitempty" form:"unAssignedPileUp,omitempty"`
 
-	UnAssignedPileUp UnAssingedPileUp `json:"unAssignedPileUp,omitempty"`
+	NoOrdersReceivedPileUp NoOrdersReceivedPileUp `json:"noOrdersReceivedPileUp,omitempty" form:"noOrdersReceivedPileUp,omitempty"`
 
-	NoOrdersReceivedPileUp NoOrdersReceivedPileUp `json:"noOrdersReceivedPileUp,omitempty"`
+	Labels []float32 `json:"labels" form:"labels"`
 
-	Labels []float32 `json:"labels"`
+	Styles []map[string]interface{} `json:"styles" form:"styles"`
 
-	Styles []map[string]interface{} `json:"styles"`
-
-	Display bool `json:"display"`
+	Display bool `json:"display" form:"display"`
 }

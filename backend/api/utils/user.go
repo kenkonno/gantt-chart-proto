@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
+	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"golang.org/x/crypto/bcrypt"
 	"net/mail"
 	"regexp"
@@ -52,4 +53,29 @@ func GetTimeByYMDString(ymd string) *time.Time {
 func ValidateEmail(email string) error {
 	_, err := mail.ParseAddress(email)
 	return err
+}
+
+func DetectWorkOutsideEmploymentPeriods(tickets []db.Ticket, EmploymentStartDate time.Time, EmploymentEndDate *time.Time) []db.Ticket {
+	var outsideTickets []db.Ticket
+	for _, ticket := range tickets {
+		// チケットの開始日または終了日がnilの場合はスキップ（対象外）
+		if ticket.StartDate == nil || ticket.EndDate == nil {
+			continue
+		}
+
+		// 雇用終了日がnilの場合（まだ退職していない場合）
+		if EmploymentEndDate == nil {
+			// チケットの終了日が雇用開始日より前なら被らない
+			if ticket.EndDate.Before(EmploymentStartDate) {
+				outsideTickets = append(outsideTickets, ticket)
+			}
+		} else {
+			// 雇用終了日が設定されている場合（退職した場合）
+			// チケットの終了日が雇用開始日より前 または チケットの開始日が雇用終了日より後なら被らない
+			if ticket.EndDate.Before(EmploymentStartDate) || ticket.StartDate.After(*EmploymentEndDate) {
+				outsideTickets = append(outsideTickets, ticket)
+			}
+		}
+	}
+	return outsideTickets
 }
