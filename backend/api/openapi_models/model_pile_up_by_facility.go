@@ -11,11 +11,11 @@ package openapi_models
 
 type PileUpByFacility struct {
 
-	FacilityId int32 `json:"facilityId"`
+	FacilityId int32 `json:"facilityId" form:"facilityId"`
 
-	Labels []float32 `json:"labels"`
+	Labels []float32 `json:"labels" form:"labels"`
 
-	Styles []map[string]interface{} `json:"styles"`
+	Styles []map[string]interface{} `json:"styles" form:"styles"`
 
-	HasError bool `json:"hasError"`
+	HasError bool `json:"hasError" form:"hasError"`
 }

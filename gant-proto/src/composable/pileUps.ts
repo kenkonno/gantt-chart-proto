@@ -1,4 +1,4 @@
-import {onBeforeUnmount, Ref, ref, UnwrapRef, watch} from "vue";
+import {onBeforeUnmount, Ref, ref, StyleValue, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
 import {Department, Facility, Holiday, Ticket, TicketUser, User} from "@/api";
 import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
@@ -67,6 +67,7 @@ export type PileUpFilter = {
 
 const PILEUP_DANGER_COLOR = "rgb(255 89 89)"
 const PILEUP_MERGE_COLOR = "rgb(68 141 255)"
+const PILEUP_HOLIDAY_COLOR = "rgb(243 238 226)"
 
 function initPileUps(
     endDate: string, startDate: string, isALlMode: boolean,
@@ -87,43 +88,43 @@ function initPileUps(
         pileUps.value.push({
             departmentId: v.id!,
             labels: Array(duration).fill(0),
-            styles: Array(duration).fill(0),
+            styles: Array(duration).fill(0).map(() => ({})),
             display: filter ? filter.display : false,
             assignedUser: {
                 labels: Array(duration).fill(0),
-                styles: Array(duration).fill(0),
+                styles: Array(duration).fill(0).map(() => ({})),
                 display: filter ? filter.assignedUser : false,
                 users: users.map(user => {
                     return {
                         user: user,
                         labels: Array(duration).fill(0),
-                        styles: Array(duration).fill(0),
+                        styles: Array(duration).fill(0).map(() => ({})),
                         hasError: false,
                     }
                 })
             },
             unAssignedPileUp: {
                 labels: Array(duration).fill(0),
-                styles: Array(duration).fill(0),
+                styles: Array(duration).fill(0).map(() => ({})),
                 display: filter ? filter.unAssignedPileUp : false,
                 facilities: orderedFacilities.map(facility => {
                     return {
                         facilityId: facility.id!,
                         labels: Array(duration).fill(0),
-                        styles: Array(duration).fill(0),
+                        styles: Array(duration).fill(0).map(() => ({})),
                         hasError: false,
                     }
                 })
             },
             noOrdersReceivedPileUp: {
                 labels: Array(duration).fill(0),
-                styles: Array(duration).fill(0),
+                styles: Array(duration).fill(0).map(() => ({})),
                 display: filter ? filter.noOrdersReceivedPileUp : false,
                 facilities: noOrderedFacilities.map(facility => {
                     return {
                         facilityId: facility.id!,
                         labels: Array(duration).fill(0),
-                        styles: Array(duration).fill(0),
+                        styles: Array(duration).fill(0).map(() => ({})),
                         hasError: false,
                     }
                 })
@@ -179,8 +180,13 @@ function initPileUps(
     function mergeAndUpdate(target: PileUpRow, row: PileUpRow, mergeStartIndex: number, isALlMode: boolean, mergedColor = true) {
         row.labels.forEach((v, index) => {
             const targetIndex = mergeStartIndex + index;
-            if (0 <= targetIndex && targetIndex < target.labels.length && target.labels[mergeStartIndex + index] != 0) {
-                row.labels[index] += target.labels[targetIndex];
+            if (0 <= targetIndex && targetIndex < target.labels.length) {
+                if (target.labels[targetIndex] != 0) {
+                    row.labels[index] += target.labels[targetIndex];
+                    if (mergedColor) {
+                        row.styles[index] = {color: PILEUP_MERGE_COLOR}
+                    }
+                }
                 // TODO: エラーをスタイルで管理しているので微妙なコード。
                 const hasError = target.styles[targetIndex].color == PILEUP_DANGER_COLOR
                 if (isALlMode) {
@@ -188,11 +194,11 @@ function initPileUps(
                 } else {
                     if (hasError) {
                         row.styles[index] = {color: PILEUP_DANGER_COLOR}
-                    } else {
-                        if (mergedColor) {
-                            row.styles[index] = {color: PILEUP_MERGE_COLOR}
-                        }
                     }
+                }
+                // 在籍期間のグレーアウトを設定する
+                if (target.styles[targetIndex]["background-color"] != undefined) {
+                    row.styles[index]["background-color"] = target.styles[targetIndex]["background-color"]
                 }
             }
         });
@@ -273,7 +279,7 @@ export const usePileUps = (
 
         // 在籍期間による非表示の処理を行う。
         const excludeUserIds: number[] = []
-        if (facility){
+        if (facility) {
             // 案件ビューの場合はその案件の期間内であれば表示
             excludeUserIds.push(...userList.filter(user => {
                 const userEmployStart = new Date(user.employment_start_date);
@@ -285,7 +291,7 @@ export const usePileUps = (
         } else {
             // 全体ビューであれば、在籍期間が過去であれば非表示
             const currentDate = new Date()
-            currentDate.setHours(0,0,0,0)
+            currentDate.setHours(0, 0, 0, 0)
             excludeUserIds.push(...userList.filter(user => {
                 const userEmployEnd = user.employment_end_date ? new Date(user.employment_end_date) : Infinity; // If null, set to Infinity
                 return userEmployEnd < currentDate;
@@ -717,7 +723,14 @@ export const usePileUps = (
             hasError = indexMap[key].some(vv => row.styles[vv].color == PILEUP_DANGER_COLOR)
             hasMerge = indexMap[key].some(vv => row.styles[vv].color == PILEUP_MERGE_COLOR)
             // エラー > マージ > デフォルト となるようにスタイルを決定する。
-            result.styles.push(hasError ? {color: PILEUP_DANGER_COLOR} : hasMerge ? {color: PILEUP_MERGE_COLOR} : {})
+            const style: StyleValue = hasError ? {color: PILEUP_DANGER_COLOR} : hasMerge ? {color: PILEUP_MERGE_COLOR} : {}
+
+            // 全ての日が在籍期間外の場合は休みとする。
+            if (indexMap[key].every(v => row.styles[v]["background-color"] != undefined)) {
+                style["background-color"] = PILEUP_HOLIDAY_COLOR
+            }
+
+            result.styles.push(style)
         }
         return {labels: result.labels, styles: result.styles}
     }

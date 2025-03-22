@@ -11,5 +11,5 @@ package openapi_models
 
 type GetOperationSettingsIdResponse struct {
 
-	OperationSettings []OperationSetting `json:"operationSettings"`
+	OperationSettings []OperationSetting `json:"operationSettings" form:"operationSettings"`
 }

@@ -11,5 +11,5 @@ package openapi_models
 
 type DeleteFacilitiesIdResponse struct {
 
-	Msg string `json:"msg,omitempty"`
+	Msg string `json:"msg,omitempty" form:"msg,omitempty"`
 }

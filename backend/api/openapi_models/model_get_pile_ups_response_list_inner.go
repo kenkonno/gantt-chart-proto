@@ -11,9 +11,9 @@ package openapi_models
 
 type GetPileUpsResponseListInner struct {
 
-	FacilityId int32 `json:"facilityId"`
+	FacilityId int32 `json:"facilityId" form:"facilityId"`
 
-	Holidays []Holiday `json:"holidays"`
+	Holidays []Holiday `json:"holidays" form:"holidays"`
 
-	GanttGroups []GanttGroup `json:"ganttGroups"`
+	GanttGroups []GanttGroup `json:"ganttGroups" form:"ganttGroups"`
 }

@@ -12,7 +12,7 @@ package openapi_models
 // PileUp - 
 type PileUp struct {
 
-	GanttGroups string `json:"gantt_groups" binding:"min=1"`
+	GanttGroups string `json:"gantt_groups" form:"gantt_groups" binding:"min=1"`
 
-	Holidays int32 `json:"holidays" binding:"min=1"`
+	Holidays int32 `json:"holidays" form:"holidays" binding:"min=1"`
 }

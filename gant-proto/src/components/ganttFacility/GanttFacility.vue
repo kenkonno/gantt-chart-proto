@@ -1,6 +1,6 @@
 <template>
   <div v-if="getOperationList.length > 0" id="gantt-proxy-wrapper">
-    <div class="gantt-wrapper">
+    <div class="gantt-wrapper d-flex flex-column">
       <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
            :class="{'hide-scroll': allowed('VIEW_PILEUPS') && globalState.showPileUp, 'full-max-height': !allowed('VIEW_PILEUPS') || !globalState.showPileUp}">
         <g-gantt-chart
@@ -84,6 +84,7 @@
                   <gantt-td :visible="props.ganttFacilityHeader[4].visible">
                     <FormNumber class="small-numeric"
                                 :value="row.ticket.number_of_worker"
+                                :min="1"
                                 @change="mutation.setNumberOfWorker($event, row.ticket)"
                                 :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
                   </gantt-td>
@@ -144,7 +145,7 @@
       </div>
       <!-- 山積み部分 -->
       <hr v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp"/>
-      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+      <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll flex-grow-1" ref="childGanttWrapperElement">
         <PileUps
             :chart-start="chartStart"
             :chart-end="chartEnd"

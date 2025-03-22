@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div v-if="isSimulate" class="mb-2 bg-warning text-center">シミュレーション中のため変更できません。</div>
-    <div class="d-flex justify-content-between" v-if="allowed('CSV_UPLOAD')">
+    <div class="d-flex justify-content-between" v-if="allowed('CSV_UPLOAD') && !hideCsvUpload">
       <button type="submit" class="btn btn-primary" @click="$emit('openEditModal',undefined)" v-if="!isViewOnly">
         新規追加
       </button>
@@ -63,6 +63,7 @@ interface AsyncUserTable {
   isViewOnly?: boolean
   isNoHeader?: boolean
   isSimulate?: boolean
+  hideCsvUpload?: boolean
 }
 
 defineProps<AsyncUserTable>()

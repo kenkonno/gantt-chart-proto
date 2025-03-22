@@ -11,39 +11,39 @@ package openapi_models
 
 type GetSimulationMasterDiffResponse struct {
 
-	BeforeProcesses []Process `json:"beforeProcesses"`
+	BeforeProcesses []Process `json:"beforeProcesses" form:"beforeProcesses"`
 
-	DiffProcesses []Process `json:"diffProcesses,omitempty"`
+	DiffProcesses []Process `json:"diffProcesses,omitempty" form:"diffProcesses,omitempty"`
 
-	AfterProcesses []Process `json:"afterProcesses"`
+	AfterProcesses []Process `json:"afterProcesses" form:"afterProcesses"`
 
-	BeforeDepartments []Department `json:"beforeDepartments"`
+	BeforeDepartments []Department `json:"beforeDepartments" form:"beforeDepartments"`
 
-	DiffDepartments []Department `json:"diffDepartments,omitempty"`
+	DiffDepartments []Department `json:"diffDepartments,omitempty" form:"diffDepartments,omitempty"`
 
-	AfterDepartments []Department `json:"afterDepartments"`
+	AfterDepartments []Department `json:"afterDepartments" form:"afterDepartments"`
 
-	BeforeUsers []User `json:"beforeUsers"`
+	BeforeUsers []User `json:"beforeUsers" form:"beforeUsers"`
 
-	DiffUsers []User `json:"diffUsers,omitempty"`
+	DiffUsers []User `json:"diffUsers,omitempty" form:"diffUsers,omitempty"`
 
-	AfterUsers []User `json:"afterUsers"`
+	AfterUsers []User `json:"afterUsers" form:"afterUsers"`
 
-	BeforeUnits []Unit `json:"beforeUnits"`
+	BeforeUnits []Unit `json:"beforeUnits" form:"beforeUnits"`
 
-	DiffUnits []Unit `json:"diffUnits,omitempty"`
+	DiffUnits []Unit `json:"diffUnits,omitempty" form:"diffUnits,omitempty"`
 
-	AfterUnits []Unit `json:"afterUnits"`
+	AfterUnits []Unit `json:"afterUnits" form:"afterUnits"`
 
-	BeforeHolidays []Holiday `json:"beforeHolidays"`
+	BeforeHolidays []Holiday `json:"beforeHolidays" form:"beforeHolidays"`
 
-	DiffHolidays []Holiday `json:"diffHolidays,omitempty"`
+	DiffHolidays []Holiday `json:"diffHolidays,omitempty" form:"diffHolidays,omitempty"`
 
-	AfterHolidays []Holiday `json:"afterHolidays"`
+	AfterHolidays []Holiday `json:"afterHolidays" form:"afterHolidays"`
 
-	BeforeMilestones []Milestone `json:"beforeMilestones"`
+	BeforeMilestones []Milestone `json:"beforeMilestones" form:"beforeMilestones"`
 
-	DiffMilestones []Milestone `json:"diffMilestones,omitempty"`
+	DiffMilestones []Milestone `json:"diffMilestones,omitempty" form:"diffMilestones,omitempty"`
 
-	AfterMilestones []Milestone `json:"afterMilestones"`
+	AfterMilestones []Milestone `json:"afterMilestones" form:"afterMilestones"`
 }

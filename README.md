@@ -74,7 +74,7 @@ API_PORT=8081
 
 色々やったけど、結局IAM周りとかでだるくなったのでteraform化したいですね。
 
-
+## 社内・デモ環境
 
 docker-compose -p env1 down
 docker-compose -p env1 up -d gantt_postgres
@@ -102,3 +102,64 @@ $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | dock
 Login Succeeded
 docker-compose build
 docker-compose push
+
+## トライアル環境データ削除作業手順
+1. 環境を01～06のどれかを確認する
+2. ssh_tunnel.shで対象の環境にアクセス
+3. datagripからデータを確認する
+4. pg_dumpでデータを出力、ファイル名の先頭にdemo0Xをつける（pg_dumpのバージョンは17を指定すること）
+5. s3にアップロード(https://ap-northeast-1.console.aws.amazon.com/s3/buckets/tasmap-trial-db-backup?region=ap-northeast-1&bucketType=general&tab=objects)
+5. adhookからデータ削除SQLを実行
+6. データが削除されたことを確認
+6. Web画面からadmin/itumonoでログインできることを確認。
+
+1. https://d2l5ymvdgzq1kr.cloudfront.net
+2. https://d1jcfwj1966idb.cloudfront.net
+3. https://d1y9r0167uolwh.cloudfront.net
+4. https://dggi1qvva9qqy.cloudfront.net
+5. https://dyjhvazbfc80z.cloudfront.net
+6. https://d1lqvglun25qns.cloudfront.net
+
+## トライアル環境
+docker-compose -p env1 -f docker-compose-demo.demo.yml down
+docker-compose -p env1 -f docker-compose-demo.demo.yml up -d gantt_postgres
+docker-compose -p env1 -f docker-compose-demo.demo.yml up -d gantt_session
+docker-compose -p env1 -f docker-compose-demo.demo.yml up -d gantt_api
+docker-compose -p env1 -f docker-compose-demo.demo.yml logs gantt_api
+docker-compose -p env1 -f docker-compose-demo.demo.yml up gantt_migration
+
+docker-compose -p env2 -f docker-compose-demo.demo.yml down
+docker-compose -p env2 -f docker-compose-demo.demo.yml up -d gantt_postgres
+docker-compose -p env2 -f docker-compose-demo.demo.yml up -d gantt_session
+docker-compose -p env2 -f docker-compose-demo.demo.yml up -d gantt_api
+docker-compose -p env2 -f docker-compose-demo.demo.yml logs gantt_api
+docker-compose -p env2 -f docker-compose-demo.demo.yml up gantt_migration
+
+docker-compose -p env3 -f docker-compose-demo.demo.yml down
+docker-compose -p env3 -f docker-compose-demo.demo.yml up -d gantt_postgres
+docker-compose -p env3 -f docker-compose-demo.demo.yml up -d gantt_session
+docker-compose -p env3 -f docker-compose-demo.demo.yml up -d gantt_api
+docker-compose -p env3 -f docker-compose-demo.demo.yml logs gantt_api
+docker-compose -p env3 -f docker-compose-demo.demo.yml up gantt_migration
+
+docker-compose -p env4 -f docker-compose-demo.demo.yml down
+docker-compose -p env4 -f docker-compose-demo.demo.yml up -d gantt_postgres
+docker-compose -p env4 -f docker-compose-demo.demo.yml up -d gantt_session
+docker-compose -p env4 -f docker-compose-demo.demo.yml up -d gantt_api
+docker-compose -p env4 -f docker-compose-demo.demo.yml logs gantt_api
+docker-compose -p env4 -f docker-compose-demo.demo.yml up gantt_migration
+
+docker-compose -p env5 -f docker-compose-demo.demo.yml down
+docker-compose -p env5 -f docker-compose-demo.demo.yml up -d gantt_postgres
+docker-compose -p env5 -f docker-compose-demo.demo.yml up -d gantt_session
+docker-compose -p env5 -f docker-compose-demo.demo.yml up -d gantt_api
+docker-compose -p env5 -f docker-compose-demo.demo.yml logs gantt_api
+docker-compose -p env5 -f docker-compose-demo.demo.yml up gantt_migration
+
+docker-compose -p env6 -f docker-compose-demo.demo.yml down
+docker-compose -p env6 -f docker-compose-demo.demo.yml up -d gantt_postgres
+docker-compose -p env6 -f docker-compose-demo.demo.yml up -d gantt_session
+docker-compose -p env6 -f docker-compose-demo.demo.yml up -d gantt_api
+docker-compose -p env6 -f docker-compose-demo.demo.yml logs gantt_api
+docker-compose -p env6 -f docker-compose-demo.demo.yml up gantt_migration
+

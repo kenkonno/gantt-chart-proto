@@ -11,5 +11,5 @@ package openapi_models
 
 type PutSimulationResponse struct {
 
-	 string `json:",omitempty"`
+	 string `json:",omitempty" form:",omitempty"`
 }

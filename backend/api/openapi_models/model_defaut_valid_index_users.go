@@ -10,7 +10,8 @@
 package openapi_models
 
 type DefautValidIndexUsers struct {
-	UserIds []int32 `json:"UserIds"`
 
-	ValidIndex int32 `json:"ValidIndex"`
+	UserIds []int32 `json:"UserIds" form:"UserIds"`
+
+	ValidIndex int32 `json:"ValidIndex" form:"ValidIndex"`
 }

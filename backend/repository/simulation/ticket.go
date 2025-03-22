@@ -110,3 +110,21 @@ func (r *ticketRepository) FindByGanttGroupIds(ganttGroupIds []int32) []db.Ticke
 	}
 	return tickets
 }
+
+func (r *ticketRepository) FindByUserIds(userIds []int32, facilityStatus string) []db.Ticket {
+	var tickets []db.Ticket
+
+	result := r.con.Table(r.table).Distinct().
+		Joins("JOIN simulation_ticket_users ON simulation_tickets.id = simulation_ticket_users.ticket_id").
+		Joins("JOIN simulation_gantt_groups ON simulation_tickets.gantt_group_id = simulation_gantt_groups.id").
+		Joins("JOIN simulation_facilities   ON simulation_facilities.id = simulation_gantt_groups.facility_id").
+		Where("simulation_ticket_users.user_id IN ?", userIds).
+		Where("simulation_facilities.status = ?", facilityStatus).
+		Order("simulation_tickets.order ASC").
+		Find(&tickets)
+
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return tickets
+}

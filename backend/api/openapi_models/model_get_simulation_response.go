@@ -11,5 +11,5 @@ package openapi_models
 
 type GetSimulationResponse struct {
 
-	SimulationLock SimulationLock `json:"simulationLock"`
+	SimulationLock SimulationLock `json:"simulationLock" form:"simulationLock"`
 }

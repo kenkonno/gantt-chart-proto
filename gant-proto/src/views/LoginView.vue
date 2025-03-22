@@ -1,6 +1,6 @@
 <template>
   <div class="text-center" style="padding:50px 0">
-    <div class="logo">工程管理ツール</div>
+    <ServiceLogo :use-image-logo="true"></ServiceLogo>
     <!-- Main Form -->
     <div class="login-form-1">
       <form id="login-form" class="text-left">
@@ -34,6 +34,7 @@
 import {ref} from "vue";
 import {Api} from "@/api/axios";
 import router from "@/router";
+import ServiceLogo from "@/components/logo/ServiceLogo.vue";
 
 const email = ref("")
 const password = ref("")

@@ -11,5 +11,5 @@ package openapi_models
 
 type PostFacilitiesIdRequest struct {
 
-	Facility Facility `json:"facility,omitempty"`
+	Facility Facility `json:"facility,omitempty" form:"facility,omitempty"`
 }

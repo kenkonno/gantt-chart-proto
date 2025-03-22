@@ -14,29 +14,30 @@ import (
 )
 
 type User struct {
-	Id *int32 `json:"id,omitempty"`
 
-	DepartmentId int32 `json:"department_id"`
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	LimitOfOperation float32 `json:"limit_of_operation"`
+	DepartmentId int32 `json:"department_id" form:"department_id"`
 
-	LastName string `json:"lastName" binding:"min=1"`
+	LimitOfOperation float32 `json:"limit_of_operation" form:"limit_of_operation"`
 
-	FirstName string `json:"firstName" binding:"min=1"`
+	LastName string `json:"lastName" form:"lastName" binding:"min=1"`
 
-	Password string `json:"password" binding:"min=0"`
+	FirstName string `json:"firstName" form:"firstName" binding:"min=1"`
 
-	Email string `json:"email" binding:"min=1"`
+	Password string `json:"password" form:"password" binding:"min=0"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	Email string `json:"email" form:"email" binding:"min=1"`
 
-	UpdatedAt int64 `json:"updated_at,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	Role string `json:"role"`
+	UpdatedAt int64 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 
-	PasswordReset bool `json:"password_reset"`
+	Role string `json:"role" form:"role"`
 
-	EmploymentStartDate time.Time `json:"employment_start_date"`
+	PasswordReset bool `json:"password_reset" form:"password_reset"`
 
-	EmploymentEndDate *time.Time `json:"employment_end_date,omitempty"`
+	EmploymentStartDate time.Time `json:"employment_start_date" form:"employment_start_date"`
+
+	EmploymentEndDate *time.Time `json:"employment_end_date,omitempty" form:"employment_end_date,omitempty"`
 }

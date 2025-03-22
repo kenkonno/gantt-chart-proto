@@ -598,13 +598,13 @@ export async function useGanttFacility() {
             await getScheduleAlert()
 
         }, setDepartmentId: async (departmentId: string, ticket?: Ticket) => {
-            console.log("########### setDepartmentId", departmentId)
             const clone = Object.assign({}, ticket)
             if (departmentId == "") {
                 clone.department_id = undefined
             } else {
                 clone.department_id = Number(departmentId)
             }
+            clone.number_of_worker = 1
             const newTicket = await updateTicket(clone)
 
             // 担当者をすべて外す。
@@ -672,7 +672,7 @@ export async function useGanttFacility() {
             await getScheduleAlert()
         }, setTicketUser: async (ticket: Ticket, value: number[]) => {
             const clone = Object.assign({}, ticket)
-            clone.number_of_worker = Number(value.length)
+            clone.number_of_worker = Number(value.length === 0 ? 1 : value.length)
             const newTicket = await updateTicket(clone)
 
             const newTicketUsers = await ticketUserUpdate(clone, value)

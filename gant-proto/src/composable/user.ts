@@ -3,6 +3,7 @@ import {PostUploadUsersCsvFileRequest, PostUsersRequest, User} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {Emit, RoleType} from "@/const/common";
+import Swal from "sweetalert2";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -84,6 +85,24 @@ export function validate(user: User, validatePassword = false) {
     return isValid
 }
 
+export async function confirm(user: User) {
+    const {data} = await Api.getDetectWorkOutsideEmploymentPeriods(user.id!, user.employment_start_date, user.employment_end_date || "")
+    if (data.list.length > 0) {
+        const result = await Swal.fire({
+            title: '在籍期間外になる工程が存在します。',
+            text: "在籍期間外になる工程からは担当者から除外されますが更新をしますか？",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '実行',
+            cancelButtonText: 'キャンセル'
+        });
+        return result.isConfirmed
+    }
+    return true
+}
+
 
 export async function postUser(user: User, emit: Emit) {
     user.employment_start_date = user.employment_start_date + "T00:00:00.00000+09:00"
@@ -95,6 +114,7 @@ export async function postUser(user: User, emit: Emit) {
     const req: PostUsersRequest = {
         user: user
     }
+
     await Api.postUsers(req).then(() => {
         toast("成功しました。")
     }).finally(() => {
@@ -103,17 +123,24 @@ export async function postUser(user: User, emit: Emit) {
 }
 
 export async function postUserById(user: User, emit: Emit) {
-    user.employment_start_date = user.employment_start_date + "T00:00:00.00000+09:00"
-    if (user.employment_end_date) {
-        user.employment_end_date = user.employment_end_date + "T00:00:00.00000+09:00"
+    const clone = {...user}
+    clone.employment_start_date = clone.employment_start_date + "T00:00:00.00000+09:00"
+    if (clone.employment_end_date) {
+        clone.employment_end_date = clone.employment_end_date + "T00:00:00.00000+09:00"
     } else {
-        user.employment_end_date = undefined
+        clone.employment_end_date = undefined
     }
     const req: PostUsersRequest = {
-        user: user
+        user: clone
     }
-    if (user.id != null) {
-        await Api.postUsersId(user.id, req).then(() => {
+
+    // 在籍期間外の確認
+    if (!await confirm(clone)) {
+        return
+    }
+
+    if (clone.id != null) {
+        await Api.postUsersId(clone.id, req).then(() => {
             toast("成功しました。")
             emit('closeEditModal')
         })

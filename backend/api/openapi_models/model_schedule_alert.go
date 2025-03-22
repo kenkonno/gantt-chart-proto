@@ -15,27 +15,27 @@ import (
 
 type ScheduleAlert struct {
 
-	FacilityId int32 `json:"facility_id"`
+	FacilityId int32 `json:"facility_id" form:"facility_id"`
 
-	FacilityName string `json:"facility_name"`
+	FacilityName string `json:"facility_name" form:"facility_name"`
 
-	UnitId int32 `json:"unit_id"`
+	UnitId int32 `json:"unit_id" form:"unit_id"`
 
-	UnitName string `json:"unit_name"`
+	UnitName string `json:"unit_name" form:"unit_name"`
 
-	ProcessId int32 `json:"process_id"`
+	ProcessId int32 `json:"process_id" form:"process_id"`
 
-	ProcessName string `json:"process_name"`
+	ProcessName string `json:"process_name" form:"process_name"`
 
-	EndDate time.Time `json:"end_date"`
+	EndDate time.Time `json:"end_date" form:"end_date"`
 
-	StartDate time.Time `json:"start_date"`
+	StartDate time.Time `json:"start_date" form:"start_date"`
 
-	ActualProgressDate time.Time `json:"actual_progress_date,omitempty"`
+	ActualProgressDate time.Time `json:"actual_progress_date,omitempty" form:"actual_progress_date,omitempty"`
 
-	ProgressPercent float32 `json:"progress_percent" binding:"min=1"`
+	ProgressPercent float32 `json:"progress_percent" form:"progress_percent" binding:"min=1"`
 
-	DelayDays float32 `json:"delay_days"`
+	DelayDays float32 `json:"delay_days" form:"delay_days"`
 
-	TicketId int32 `json:"ticket_id,omitempty"`
+	TicketId int32 `json:"ticket_id,omitempty" form:"ticket_id,omitempty"`
 }

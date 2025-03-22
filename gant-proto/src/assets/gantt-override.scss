@@ -27,12 +27,13 @@
 }
 
 .gantt-facility-wrapper {
+  min-height: 300px;
   max-height: 60%;
 }
 
 /* Hrの分だけ高さを減らす */
 .gantt-facility-pile-ups-wrapper {
-  height: calc(40% - 3rem)
+  min-height: 100px;
 }
 
 .full-max-height {

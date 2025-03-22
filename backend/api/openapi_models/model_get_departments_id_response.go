@@ -11,5 +11,5 @@ package openapi_models
 
 type GetDepartmentsIdResponse struct {
 
-	Department Department `json:"department,omitempty"`
+	Department Department `json:"department,omitempty" form:"department,omitempty"`
 }

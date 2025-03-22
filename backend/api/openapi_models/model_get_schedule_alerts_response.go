@@ -11,5 +11,5 @@ package openapi_models
 
 type GetScheduleAlertsResponse struct {
 
-	List []ScheduleAlert `json:"list"`
+	List []ScheduleAlert `json:"list" form:"list"`
 }

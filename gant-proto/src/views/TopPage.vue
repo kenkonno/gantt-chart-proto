@@ -52,13 +52,13 @@
       <ModalWithLink title="案件一覧" icon="precision_manufacturing">
         <facility-view @update="updateFacility"></facility-view>
       </ModalWithLink>
-      <ModalWithLink title="工程一覧" icon="account_tree">
+      <ModalWithLink title="工程一覧" icon="account_tree" v-if="allowed('UPDATE_MASTER')">
         <process-view @update="updateFacility"></process-view>
       </ModalWithLink>
-      <ModalWithLink title="部署一覧" icon="settings_accessibility">
+      <ModalWithLink title="部署一覧" icon="settings_accessibility" v-if="allowed('UPDATE_MASTER')">
         <department-view @update="updateFacility"></department-view>
       </ModalWithLink>
-      <ModalWithLink title="担当者一覧" icon="person">
+      <ModalWithLink title="担当者一覧" icon="person" v-if="allowed('UPDATE_MASTER')">
         <user-view @update="updateFacility"></user-view>
       </ModalWithLink>
       <ModalWithLink title="シミュレーション" icon="timeline">
@@ -80,6 +80,30 @@
 </template>
 
 <style lang="scss" scoped>
+.navbar-container {
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.company-logo-area {
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  background-color: #f8f9fa;
+}
+
+.company-logo {
+  max-width: 100%;
+  max-height: 50px;
+  object-fit: contain;
+}
+
+.navbars-wrapper {
+  flex-grow: 1;
+}
+
 .navbar {
   padding: 0;
   height: 30px;
@@ -103,7 +127,6 @@
         vertical-align: middle;
       }
     }
-
   }
 }
 </style>
@@ -135,6 +158,7 @@ import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
 import SimulationView from "@/views/SimulationView.vue";
+import ServiceLogo from "@/components/logo/ServiceLogo.vue";
 
 // ローカルストレージの初期化
 initStateValue()

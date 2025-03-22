@@ -11,5 +11,5 @@ package openapi_models
 
 type DeleteDepartmentsIdRequest struct {
 
-	Id int32 `json:"id,omitempty"`
+	Id int32 `json:"id,omitempty" form:"id,omitempty"`
 }

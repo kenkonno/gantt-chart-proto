@@ -15,15 +15,15 @@ import (
 
 type Unit struct {
 
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	FacilityId int32 `json:"facility_id"`
+	FacilityId int32 `json:"facility_id" form:"facility_id"`
 
-	Name string `json:"name" binding:"min=1"`
+	Name string `json:"name" form:"name" binding:"min=1"`
 
-	Order int32 `json:"order,omitempty"`
+	Order int32 `json:"order,omitempty" form:"order,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 }
