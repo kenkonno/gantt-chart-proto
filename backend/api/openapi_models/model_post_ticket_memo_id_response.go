@@ -10,6 +10,7 @@
 package openapi_models
 
 type PostTicketMemoIdResponse struct {
+
 	Msg string `json:"msg" form:"msg"`
 
 	UpdatedAt int32 `json:"updated_at" form:"updated_at"`

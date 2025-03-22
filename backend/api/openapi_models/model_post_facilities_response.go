@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostFacilitiesResponse struct {
+
 	Facility Facility `json:"facility,omitempty" form:"facility,omitempty"`
 }

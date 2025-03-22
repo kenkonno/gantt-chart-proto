@@ -10,6 +10,7 @@
 package openapi_models
 
 type AssignedPileUp struct {
+
 	Users []PileUpByPerson `json:"users" form:"users"`
 
 	Labels []float32 `json:"labels" form:"labels"`

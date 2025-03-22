@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetTicketsIdRequest struct {
+
 	Id int32 `json:"id,omitempty" form:"id,omitempty"`
 }

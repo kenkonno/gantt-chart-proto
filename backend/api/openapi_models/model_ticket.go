@@ -14,6 +14,7 @@ import (
 )
 
 type Ticket struct {
+
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	GanttGroupId int32 `json:"gantt_group_id" form:"gantt_group_id" binding:"min=1"`

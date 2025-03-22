@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostOperationSettingsRequest struct {
+
 	OperationSettings []OperationSetting `json:"operationSettings,omitempty" form:"operationSettings,omitempty"`
 }

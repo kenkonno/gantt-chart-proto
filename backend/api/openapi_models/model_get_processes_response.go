@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetProcessesResponse struct {
+
 	List []Process `json:"list" form:"list"`
 }

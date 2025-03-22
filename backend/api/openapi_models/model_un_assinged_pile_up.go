@@ -10,6 +10,7 @@
 package openapi_models
 
 type UnAssingedPileUp struct {
+
 	Facilities []PileUpByFacility `json:"facilities" form:"facilities"`
 
 	Labels []float32 `json:"labels" form:"labels"`

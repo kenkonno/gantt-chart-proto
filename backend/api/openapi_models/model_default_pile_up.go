@@ -10,6 +10,7 @@
 package openapi_models
 
 type DefaultPileUp struct {
+
 	DepartmentId int32 `json:"departmentId,omitempty" form:"departmentId,omitempty"`
 
 	AssignedUser AssignedPileUp `json:"assignedUser,omitempty" form:"assignedUser,omitempty"`

@@ -10,5 +10,6 @@
 package openapi_models
 
 type DeleteFacilitySharedLinksIdResponse struct {
+
 	Msg string `json:"msg,omitempty" form:"msg,omitempty"`
 }

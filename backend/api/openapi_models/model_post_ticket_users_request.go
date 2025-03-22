@@ -14,6 +14,7 @@ import (
 )
 
 type PostTicketUsersRequest struct {
+
 	TicketId int32 `json:"ticketId" form:"ticketId"`
 
 	UserIds []int32 `json:"userIds" form:"userIds"`

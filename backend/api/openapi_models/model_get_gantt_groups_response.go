@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetGanttGroupsResponse struct {
+
 	List []GanttGroup `json:"list" form:"list"`
 }

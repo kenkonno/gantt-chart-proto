@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostProcessesIdRequest struct {
+
 	Process Process `json:"process,omitempty" form:"process,omitempty"`
 }

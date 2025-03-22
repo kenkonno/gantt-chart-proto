@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetUnitsResponse struct {
+
 	List []Unit `json:"list" form:"list"`
 }

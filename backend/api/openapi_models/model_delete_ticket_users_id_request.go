@@ -10,5 +10,6 @@
 package openapi_models
 
 type DeleteTicketUsersIdRequest struct {
+
 	Id int32 `json:"id,omitempty" form:"id,omitempty"`
 }

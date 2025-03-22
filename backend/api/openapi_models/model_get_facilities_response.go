@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetFacilitiesResponse struct {
+
 	List []Facility `json:"list" form:"list"`
 }

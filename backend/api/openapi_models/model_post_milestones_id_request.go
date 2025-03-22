@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostMilestonesIdRequest struct {
+
 	Milestone Milestone `json:"milestone,omitempty" form:"milestone,omitempty"`
 }

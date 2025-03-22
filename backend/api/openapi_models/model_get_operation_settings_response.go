@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetOperationSettingsResponse struct {
+
 	List []OperationSetting `json:"list" form:"list"`
 }

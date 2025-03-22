@@ -14,6 +14,7 @@ import (
 )
 
 type ScheduleAlert struct {
+
 	FacilityId int32 `json:"facility_id" form:"facility_id"`
 
 	FacilityName string `json:"facility_name" form:"facility_name"`

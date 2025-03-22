@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostGanttGroupsIdResponse struct {
+
 	GanttGroup GanttGroup `json:"ganttGroup,omitempty" form:"ganttGroup,omitempty"`
 }

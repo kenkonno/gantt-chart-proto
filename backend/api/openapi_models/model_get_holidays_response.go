@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetHolidaysResponse struct {
+
 	List []Holiday `json:"list" form:"list"`
 }

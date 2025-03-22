@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostFacilitySharedLinksResponse struct {
+
 	FacilitySharedLink FacilitySharedLink `json:"facilitySharedLink,omitempty" form:"facilitySharedLink,omitempty"`
 }

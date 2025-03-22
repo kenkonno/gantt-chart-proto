@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostDepartmentsIdRequest struct {
+
 	Department Department `json:"department,omitempty" form:"department,omitempty"`
 }

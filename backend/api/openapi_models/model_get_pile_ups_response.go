@@ -10,5 +10,6 @@
 package openapi_models
 
 type GetPileUpsResponse struct {
+
 	List []GetPileUpsResponseListInner `json:"list" form:"list"`
 }

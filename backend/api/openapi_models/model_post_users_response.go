@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostUsersResponse struct {
+
 	User User `json:"user,omitempty" form:"user,omitempty"`
 }

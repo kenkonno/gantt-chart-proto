@@ -10,6 +10,7 @@
 package openapi_models
 
 type PileUpByPerson struct {
+
 	User User `json:"user" form:"user"`
 
 	Labels []float32 `json:"labels" form:"labels"`
