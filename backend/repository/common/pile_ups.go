@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/connection"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/interfaces"
 	"gorm.io/gorm"
+	"time"
 )
 
 // Auto generated start
@@ -101,7 +102,7 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 }
 
 // GetUserInfos validIndex毎にどのユーザーが稼動可能なのかを格納した情報
-func (r *pileUpsRepository) GetValidIndexUsers() []db.ValidIndexUser {
+func (r *pileUpsRepository) GetValidIndexUsers(globalStartDate time.Time) []db.ValidIndexUser {
 	var results []db.ValidIndexUser
 
 	r.con.Raw(fmt.Sprintf(`
@@ -116,9 +117,10 @@ func (r *pileUpsRepository) GetValidIndexUsers() []db.ValidIndexUser {
 	FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 			 LEFT JOIN holidays th ON date.date = th.date
 			 LEFT JOIN users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
+	WHERE date.date >= $1
 	GROUP BY
 		date.date
-	`)).Scan(&results)
+	`), globalStartDate).Scan(&results)
 
 	return results
 }

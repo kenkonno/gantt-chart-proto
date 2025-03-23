@@ -11,5 +11,5 @@ package openapi_models
 
 type PutSimulationRequest struct {
 
-	Mode string `json:"mode"`
+	Mode string `json:"mode" form:"mode"`
 }

@@ -11,5 +11,5 @@ package openapi_models
 
 type GetDepartmentsResponse struct {
 
-	List []Department `json:"list"`
+	List []Department `json:"list" form:"list"`
 }

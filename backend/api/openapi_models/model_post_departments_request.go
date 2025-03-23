@@ -11,5 +11,5 @@ package openapi_models
 
 type PostDepartmentsRequest struct {
 
-	Department Department `json:"department,omitempty"`
+	Department Department `json:"department,omitempty" form:"department,omitempty"`
 }

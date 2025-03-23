@@ -15,6 +15,7 @@ import (
 )
 
 const errorStyle = "rgb(255 89 89)"
+const grayOutStyle = "rgb(243 238 226)"
 
 func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsResponse, error) {
 	pileUpsRep := repository.NewPileUpsRepository(middleware.GetRepositoryMode(c)...)
@@ -62,10 +63,13 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	}
 	allFacilityPileUps := pileUpsRep.GetDefaultPileUps(int32(excludeFacilityId), facilityTypes)
 	// validIndexに対する稼動可能なユーザーの一覧
-	validUserIndexes := pileUpsRep.GetValidIndexUsers()
+	validUserIndexes := pileUpsRep.GetValidIndexUsers(globalStartDate)
 	validUserMap := lo.Associate(validUserIndexes, func(item db.ValidIndexUser) (int32, []int32) {
 		return item.ValidIndex, item.UserIds
 	})
+
+	// バックエンドのみの処理 在籍期間外をグレーアウトする
+	applyNonEnrollmentStyle(defaultPileUps, validUserMap)
 
 	// 積み上げ情報をマージして返却する
 	for _, ticket := range allFacilityPileUps {
@@ -300,6 +304,18 @@ func getDefaultPileUps(departments []db.Department, defaultPileUps []openapi_mod
 	return defaultPileUps, minFacility.TermFrom
 }
 
+func applyNonEnrollmentStyle(defaultPileUps []openapi_models.DefaultPileUp, validUserMap map[int32][]int32) {
+	for _, defaultPileUp := range defaultPileUps {
+		for _, userPileUp := range defaultPileUp.AssignedUser.Users {
+			for index, _ := range userPileUp.Styles {
+				if !lo.Contains(validUserMap[int32(index)], *userPileUp.User.Id) {
+					applyGrayOutStyle(&userPileUp.Styles[index])
+				}
+			}
+		}
+	}
+}
+
 func pileUpLabelFormat(v float32) float64 {
 	return math.Round(float64(v)*10/8) / 10
 }
@@ -313,6 +329,15 @@ func createDefaultStyles(days int) []map[string]interface{} {
 }
 
 func applyErrorStyle(v *map[string]interface{}) {
-	*v = make(map[string]interface{})
+	if *v == nil {
+		*v = make(map[string]interface{})
+	}
 	(*v)["color"] = errorStyle
+}
+
+func applyGrayOutStyle(v *map[string]interface{}) {
+	if *v == nil {
+		*v = make(map[string]interface{})
+	}
+	(*v)["background-color"] = grayOutStyle
 }

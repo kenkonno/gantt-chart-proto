@@ -11,5 +11,5 @@ package openapi_models
 
 type GetAllTicketsResponse struct {
 
-	List []Ticket `json:"list"`
+	List []Ticket `json:"list" form:"list"`
 }

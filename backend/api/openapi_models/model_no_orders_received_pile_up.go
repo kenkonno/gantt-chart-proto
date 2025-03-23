@@ -11,11 +11,11 @@ package openapi_models
 
 type NoOrdersReceivedPileUp struct {
 
-	Facilities []PileUpByFacility `json:"facilities"`
+	Facilities []PileUpByFacility `json:"facilities" form:"facilities"`
 
-	Labels []float32 `json:"labels"`
+	Labels []float32 `json:"labels" form:"labels"`
 
-	Styles []map[string]interface{} `json:"styles"`
+	Styles []map[string]interface{} `json:"styles" form:"styles"`
 
-	Display bool `json:"display"`
+	Display bool `json:"display" form:"display"`
 }

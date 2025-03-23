@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostUploadUsersCsvFileResponse struct {
-	string `json:",omitempty"`
+
+	 string `json:",omitempty" form:",omitempty"`
 }
