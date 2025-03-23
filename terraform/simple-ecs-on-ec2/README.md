@@ -57,6 +57,8 @@ docker-compose.yamlにECRの定義を追加すれば ログイン・build・push
 $ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=mds-prod | docker login --username AWS --password-stdin 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com
+$ aws ecr get-login-password --region ap-northeast-1 --profile=aplsalpine-nagaoka-prod | docker login --username AWS --password-stdin 428292434364.dkr.ecr.ap-northeast-1.amazonaws.com
+$ aws ecr get-login-password --region ap-northeast-1 --profile=alpsalpine-oketani-prod | docker login --username AWS --password-stdin 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com
 Login Succeeded
 docker-compose build
 docker-compose push

@@ -53,14 +53,16 @@ func createDefaultUser() {
 		}
 
 		userRep.Upsert(db.User{
-			DepartmentId:     0,
-			LimitOfOperation: 0,
-			LastName:         "管理者",
-			Password:         string(hashedPassword),
-			Email:            "admin",
-			Role:             "admin",
-			CreatedAt:        time.Time{},
-			UpdatedAt:        0,
+			DepartmentId:        0,
+			LimitOfOperation:    0,
+			LastName:            "システム",
+			FirstName:           "管理者",
+			Password:            string(hashedPassword),
+			Email:               "admin",
+			Role:                "admin",
+			EmploymentStartDate: time.Time{},
+			CreatedAt:           time.Time{},
+			UpdatedAt:           0,
 		})
 	}
 }
