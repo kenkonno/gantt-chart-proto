@@ -2,7 +2,7 @@
   <div class="company-logo">
     <img
         v-if="useImageLogo"
-        src="@/assets/+MaP_logo_color.png"
+        src="@/assets/TasMaP_logo_color.png"
         :alt="altText"
         class="logo-image"
         :style="{ width: width, height: height }"
