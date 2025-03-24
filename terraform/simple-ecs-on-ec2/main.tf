@@ -28,6 +28,7 @@ provider "aws" {
 ####################################################
 #                  Service discovery
 ####################################################
+# Service Connect 版に一応書き換えたこれで上手くいけばいいが・・・
 
 ####################################################
 #                  API Gateway
@@ -67,7 +68,8 @@ resource "aws_apigatewayv2_integration" "api_integration" {
   integration_method     = "ANY"
   integration_type       = "HTTP_PROXY"
 
-  # CloudMapサービスのARNを使用する
+  # CloudMapサービスのARNを使用する apiはECSのdiscovery name に合わせている
+#  integration_uri        = "http://api.${aws_service_discovery_http_namespace.service_connect_namespace.name}:80"
   integration_uri        = aws_service_discovery_http_namespace.service_connect_namespace.arn
 
   payload_format_version = "1.0"
