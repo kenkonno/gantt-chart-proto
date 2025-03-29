@@ -90,3 +90,10 @@
 .g-timeunit {
   font-size: 90% !important;
 }
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.6;
+  text-decoration: none;
+}

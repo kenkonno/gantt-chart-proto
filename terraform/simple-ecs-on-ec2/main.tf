@@ -54,27 +54,28 @@ resource "aws_apigatewayv2_route" "api_route" {
   authorization_type   = "NONE"
   request_models       = {}
   route_key            = "ANY /{proxy+}"
-  target               = "integrations/${aws_apigatewayv2_integration.api_integration.id}"
+  # target               = "integrations/${aws_apigatewayv2_integration.api_integration.id}" TODO: ECS Service の自動生成の件
 }
 resource "aws_apigatewayv2_vpc_link" "api_vpc_link" {
   name               = "${var.env}-${var.serviceName}-apigateway-for-ecs-vpc-link"
   security_group_ids = var.securityGroupIds
   subnet_ids         = var.privateSubnetIds
 }
-resource "aws_apigatewayv2_integration" "api_integration" {
-  api_id                 = aws_apigatewayv2_api.api_gateway.id
-  connection_id          = aws_apigatewayv2_vpc_link.api_vpc_link.id
-  connection_type        = "VPC_LINK"
-  integration_method     = "ANY"
-  integration_type       = "HTTP_PROXY"
-
-  # CloudMapサービスのARNを使用する apiはECSのdiscovery name に合わせている
-#  integration_uri        = "http://api.${aws_service_discovery_http_namespace.service_connect_namespace.name}:80"
-  integration_uri        = aws_service_discovery_http_namespace.service_connect_namespace.arn
-
-  payload_format_version = "1.0"
-  timeout_milliseconds   = 30000
-}
+# resource "aws_apigatewayv2_integration" "api_integration" {
+#   api_id                 = aws_apigatewayv2_api.api_gateway.id
+#   connection_id          = aws_apigatewayv2_vpc_link.api_vpc_link.id
+#   connection_type        = "VPC_LINK"
+#   integration_method     = "ANY"
+#   integration_type       = "HTTP_PROXY"
+#
+#   # CloudMapサービスのARNを使用する apiはECSのdiscovery name に合わせている
+# #  integration_uri        = "http://api.${aws_service_discovery_http_namespace.service_connect_namespace.name}:80"
+# #  integration_uri        = data.aws_service_discovery_service.auto_generate_by_ecs_service.arn
+#   # TODO: ECSから自動生成されたCloudMapのサービスのarnを指定する必要があるが、参照の仕方がわからない。１発で活かせる方法を探す。一旦は統合は手でやることにする。
+#
+#   payload_format_version = "1.0"
+#   timeout_milliseconds   = 30000
+# }
 
 
 
@@ -520,7 +521,7 @@ resource "aws_ecs_service" "api_ecs_service" {
       discovery_name = "api"
       client_alias {
         port     = 80
-        dns_name = "api"
+        dns_name = "api" # TODO: これは手でドメインつきにした。ドッチがあってるかは次のデプロイ時に確認する。
       }
     }
 
@@ -533,24 +534,17 @@ resource "aws_ecs_service" "api_ecs_service" {
       }
     }
   }
-
 }
-# キャパシティプロバイダーの定義
-resource "aws_ecs_capacity_provider" "api_capacity_provider" {
-  name = "${var.env}-${var.serviceName}-capacity-provider"
-
-  auto_scaling_group_provider {
-    auto_scaling_group_arn = aws_autoscaling_group.api_autoscaling_group.arn
-
-    managed_scaling {
-      maximum_scaling_step_size = 1000
-      minimum_scaling_step_size = 1
-      status                    = "ENABLED"
-      target_capacity           = 100
-    }
-    managed_termination_protection = "ENABLED"
+# ECS Service Connect 用のCloudWatchロググループ
+resource "aws_cloudwatch_log_group" "service_connect_log_group" {
+  name              = "/ecs/${var.env}-${var.serviceName}-service-connect"
+  tags = {
+    Environment = var.env
+    Service     = var.serviceName
+    Name        = "${var.env}-${var.serviceName}-service-connect-logs"
   }
 }
+
 # キャパシティプロバイダーとクラスターの関連付け
 resource "aws_ecs_cluster_capacity_providers" "api_cluster_capacity_providers" {
   cluster_name = aws_ecs_cluster.api_ecs_cluster.name
@@ -986,19 +980,20 @@ exports.handler = async (event, context) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
 
   const cloudfront = new AWS.CloudFront();
-  console.log(event);
-  const params = event;
 
-  const invalidationParams = {
-    DistributionId: params.distribution_id,
-    InvalidationBatch: {
-      CallerReference: new Date().getTime().toString(),
-      Paths: {
-        Quantity: params.paths.length,
-        Items: params.paths
-      }
-    }
-  };
+  // CodePipelineからのイベントを正しく処理する
+  let params;
+  if (event.CodePipeline && event.CodePipeline.job) {
+    // CodePipelineからの呼び出しの場合
+    const userParams = event.CodePipeline.job.data.actionConfiguration.configuration.UserParameters;
+    params = JSON.parse(userParams);
+  } else {
+    // 直接呼び出しの場合
+    params = event;
+  }
+
+  console.log('Parameters:', JSON.stringify(params, null, 2));
+
 
   try {
     const response = await cloudfront.createInvalidation(invalidationParams).promise();

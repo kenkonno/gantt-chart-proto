@@ -120,9 +120,9 @@
                                 :min=0 />
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
-                    <a href="#" @click.prevent="updateOrder(item.rows, index, -1)"><span
+                    <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index, -1)" :class="{disabled: isUpdateOrder}"><span
                         class="material-symbols-outlined">arrow_upward</span></a>
-                    <a href="#" @click.prevent="updateOrder(item.rows, index,1)"><span
+                    <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index,1)" :class="{disabled: isUpdateOrder}"><span
                         class="material-symbols-outlined">arrow_downward</span></a>
                     <a href="#" @click.prevent="deleteTicket(row.ticket)"><span
                         class="material-symbols-outlined">delete</span></a>
@@ -260,7 +260,8 @@ const {
   milestones,
   mutation,
   updateTicket,
-  getUnitIdByTicketId
+  getUnitIdByTicketId,
+  isUpdateOrder
 } = ret[1]
 
 const milestoneVerticalLines = computed(() => {

@@ -1700,6 +1700,32 @@ export interface PileUpByPerson {
 /**
  * 
  * @export
+ * @interface PostBulkUpdateTicketsRequest
+ */
+export interface PostBulkUpdateTicketsRequest {
+    /**
+     * 
+     * @type {Array<Ticket>}
+     * @memberof PostBulkUpdateTicketsRequest
+     */
+    'tickets': Array<Ticket>;
+}
+/**
+ * 
+ * @export
+ * @interface PostBulkUpdateTicketsResponse
+ */
+export interface PostBulkUpdateTicketsResponse {
+    /**
+     * 
+     * @type {Array<Ticket>}
+     * @memberof PostBulkUpdateTicketsResponse
+     */
+    'tickets': Array<Ticket>;
+}
+/**
+ * 
+ * @export
  * @interface PostCopyFacilitysRequest
  */
 export interface PostCopyFacilitysRequest {
@@ -4600,6 +4626,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostBulkUpdateTickets
+         * @param {PostBulkUpdateTicketsRequest} [postBulkUpdateTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postBulkUpdateTickets: async (postBulkUpdateTicketsRequest?: PostBulkUpdateTicketsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/bulkUpdateTickets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postBulkUpdateTicketsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostCopyFacilitys
          * @param {PostCopyFacilitysRequest} [postCopyFacilitysRequest] 
          * @param {*} [options] Override http request option.
@@ -6142,6 +6202,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary PostBulkUpdateTickets
+         * @param {PostBulkUpdateTicketsRequest} [postBulkUpdateTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postBulkUpdateTickets(postBulkUpdateTicketsRequest?: PostBulkUpdateTicketsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostBulkUpdateTicketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postBulkUpdateTickets(postBulkUpdateTicketsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary PostCopyFacilitys
          * @param {PostCopyFacilitysRequest} [postCopyFacilitysRequest] 
          * @param {*} [options] Override http request option.
@@ -6933,6 +7004,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getUsersId(id: number, options?: any): AxiosPromise<GetUsersIdResponse> {
             return localVarFp.getUsersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostBulkUpdateTickets
+         * @param {PostBulkUpdateTicketsRequest} [postBulkUpdateTicketsRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postBulkUpdateTickets(postBulkUpdateTicketsRequest?: PostBulkUpdateTicketsRequest, options?: any): AxiosPromise<PostBulkUpdateTicketsResponse> {
+            return localVarFp.postBulkUpdateTickets(postBulkUpdateTicketsRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7787,6 +7868,18 @@ export class DefaultApi extends BaseAPI {
      */
     public getUsersId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getUsersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostBulkUpdateTickets
+     * @param {PostBulkUpdateTicketsRequest} [postBulkUpdateTicketsRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postBulkUpdateTickets(postBulkUpdateTicketsRequest?: PostBulkUpdateTicketsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postBulkUpdateTickets(postBulkUpdateTicketsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -55,7 +55,7 @@ func (r *holidayRepository) Delete(id int32) {
 func (r *holidayRepository) FindByFacilityId(facilityId int32) []db.Holiday {
 	var holidays []db.Holiday
 
-	result := r.con.Where("facility_id = ?", facilityId).Order("id DESC").Find(&holidays)
+	result := r.con.Where("facility_id = ?", facilityId).Order("date DESC").Find(&holidays)
 	if result.Error != nil {
 		panic(result.Error)
 	}

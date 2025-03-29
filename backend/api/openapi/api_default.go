@@ -10,32 +10,33 @@
 package openapi
 
 import (
-
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/bulk_update_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/de
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
+oto/backend/api/interactor/holidays"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
+	"github.com/kenkonno/gantt-chart-proto/back
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation_master_diff"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation_master_diff"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/detect_work_outside_employment_periods"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/logout"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/upload_users_csv_file"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/logout"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -122,7 +123,7 @@ func DeleteProcessesId(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
+// DeleteSimulation -
 // DeleteSimulation - 
 func DeleteSimulation(c *gin.Context) {
 	var r openapi_models.DeleteSimulationResponse
@@ -372,7 +373,7 @@ func GetScheduleAlerts(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
+// GetSimulation -
 // GetSimulation - 
 func GetSimulation(c *gin.Context) {
 	var r openapi_models.GetSimulationResponse
@@ -382,7 +383,7 @@ func GetSimulation(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
+// GetSimulationMasterDiff -
 // GetSimulationMasterDiff - 
 func GetSimulationMasterDiff(c *gin.Context) {
 	var r openapi_models.GetSimulationMasterDiffResponse
@@ -487,6 +488,16 @@ func GetUsers(c *gin.Context) {
 func GetUsersId(c *gin.Context) {
 	var r openapi_models.GetUsersIdResponse
 	r, err := users.GetUsersIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostBulkUpdateTickets - PostBulkUpdateTickets
+func PostBulkUpdateTickets(c *gin.Context) {
+	var r openapi_models.PostBulkUpdateTicketsResponse
+	r, err := bulk_update_tickets.PostBulkUpdateTicketsInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -602,7 +613,7 @@ func PostHolidaysId(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
+// PostLogin -
 // PostLogin - 
 func PostLogin(c *gin.Context) {
 	var r openapi_models.PostLoginResponse
@@ -612,7 +623,7 @@ func PostLogin(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
+// PostLogout -
 // PostLogout - 
 func PostLogout(c *gin.Context) {
 	var r openapi_models.PostLogoutResponse
@@ -772,7 +783,7 @@ func PostUsersId(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
+// PutSimulation -
 // PutSimulation - 
 func PutSimulation(c *gin.Context) {
 	var r openapi_models.PutSimulationResponse
@@ -782,4 +793,3 @@ func PutSimulation(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
