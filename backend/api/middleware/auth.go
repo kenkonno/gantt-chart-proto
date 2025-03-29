@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"crypto/tls"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
@@ -15,10 +16,17 @@ import (
 var redisClient *redis.Client
 
 func init() {
+	var config *tls.Config = nil
+
+	if os.Getenv("REDIS_USE_TLS") == "true" {
+		config = &tls.Config{}
+	}
+
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("SESSION_ADDR"),
 		Password: os.Getenv("SESSION_PASS"), // no password set
 		DB:       0,                         // use default DB
+		TLSConfig: config,
 	})
 
 	_, err := redisClient.Ping().Result()

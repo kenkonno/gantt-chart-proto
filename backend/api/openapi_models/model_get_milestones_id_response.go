@@ -11,5 +11,5 @@ package openapi_models
 
 type GetMilestonesIdResponse struct {
 
-	Milestone Milestone `json:"milestone,omitempty"`
+	Milestone Milestone `json:"milestone,omitempty" form:"milestone,omitempty"`
 }

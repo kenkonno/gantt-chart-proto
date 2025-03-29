@@ -10,4 +10,5 @@ type TicketRepositoryIF interface {
 	UpdateMemo(m db.Ticket) (db.Ticket, error)
 	Delete(id int32)
 	FindByGanttGroupIds(ganttGroupIds []int32) []db.Ticket
+	FindByUserIds(userIds []int32, facilityStatus string) []db.Ticket
 }

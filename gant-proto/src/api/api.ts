@@ -500,6 +500,19 @@ export interface Department {
 /**
  * 
  * @export
+ * @interface DetectWorkOutsideEmploymentPeriod
+ */
+export interface DetectWorkOutsideEmploymentPeriod {
+    /**
+     * 
+     * @type {Ticket}
+     * @memberof DetectWorkOutsideEmploymentPeriod
+     */
+    'tickets': Ticket;
+}
+/**
+ * 
+ * @export
  * @interface Facility
  */
 export interface Facility {
@@ -739,6 +752,44 @@ export interface GetDepartmentsResponse {
      * @memberof GetDepartmentsResponse
      */
     'list': Array<Department>;
+}
+/**
+ * 
+ * @export
+ * @interface GetDetectWorkOutsideEmploymentPeriodsRequest
+ */
+export interface GetDetectWorkOutsideEmploymentPeriodsRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDetectWorkOutsideEmploymentPeriodsRequest
+     */
+    'userId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetDetectWorkOutsideEmploymentPeriodsRequest
+     */
+    'employmentStartDate': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetDetectWorkOutsideEmploymentPeriodsRequest
+     */
+    'employmentEndDate'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface GetDetectWorkOutsideEmploymentPeriodsResponse
+ */
+export interface GetDetectWorkOutsideEmploymentPeriodsResponse {
+    /**
+     * 
+     * @type {Array<Ticket>}
+     * @memberof GetDetectWorkOutsideEmploymentPeriodsResponse
+     */
+    'list': Array<Ticket>;
 }
 /**
  * 
@@ -3558,6 +3609,59 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary GetDetectWorkOutsideEmploymentPeriods
+         * @param {number} userId 
+         * @param {string} employmentStartDate 
+         * @param {string} [employmentEndDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDetectWorkOutsideEmploymentPeriods: async (userId: number, employmentStartDate: string, employmentEndDate?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userId' is not null or undefined
+            assertParamExists('getDetectWorkOutsideEmploymentPeriods', 'userId', userId)
+            // verify required parameter 'employmentStartDate' is not null or undefined
+            assertParamExists('getDetectWorkOutsideEmploymentPeriods', 'employmentStartDate', employmentStartDate)
+            const localVarPath = `/api/detectWorkOutsideEmploymentPeriods`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (userId !== undefined) {
+                localVarQueryParameter['userId'] = userId;
+            }
+
+            if (employmentStartDate !== undefined) {
+                localVarQueryParameter['employmentStartDate'] = (employmentStartDate as any instanceof Date) ?
+                    (employmentStartDate as any).toISOString() :
+                    employmentStartDate;
+            }
+
+            if (employmentEndDate !== undefined) {
+                localVarQueryParameter['employmentEndDate'] = (employmentEndDate as any instanceof Date) ?
+                    (employmentEndDate as any).toISOString() :
+                    employmentEndDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary GetFacilities
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5729,6 +5833,19 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary GetDetectWorkOutsideEmploymentPeriods
+         * @param {number} userId 
+         * @param {string} employmentStartDate 
+         * @param {string} [employmentEndDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDetectWorkOutsideEmploymentPeriods(userId: number, employmentStartDate: string, employmentEndDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDetectWorkOutsideEmploymentPeriodsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDetectWorkOutsideEmploymentPeriods(userId, employmentStartDate, employmentEndDate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary GetFacilities
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6538,6 +6655,18 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary GetDetectWorkOutsideEmploymentPeriods
+         * @param {number} userId 
+         * @param {string} employmentStartDate 
+         * @param {string} [employmentEndDate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDetectWorkOutsideEmploymentPeriods(userId: number, employmentStartDate: string, employmentEndDate?: string, options?: any): AxiosPromise<GetDetectWorkOutsideEmploymentPeriodsResponse> {
+            return localVarFp.getDetectWorkOutsideEmploymentPeriods(userId, employmentStartDate, employmentEndDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary GetFacilities
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7321,6 +7450,20 @@ export class DefaultApi extends BaseAPI {
      */
     public getDepartmentsId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getDepartmentsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetDetectWorkOutsideEmploymentPeriods
+     * @param {number} userId 
+     * @param {string} employmentStartDate 
+     * @param {string} [employmentEndDate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getDetectWorkOutsideEmploymentPeriods(userId: number, employmentStartDate: string, employmentEndDate?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getDetectWorkOutsideEmploymentPeriods(userId, employmentStartDate, employmentEndDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -11,11 +11,11 @@ package openapi_models
 
 type PileUpByPerson struct {
 
-	User User `json:"user"`
+	User User `json:"user" form:"user"`
 
-	Labels []float32 `json:"labels"`
+	Labels []float32 `json:"labels" form:"labels"`
 
-	Styles []map[string]interface{} `json:"styles"`
+	Styles []map[string]interface{} `json:"styles" form:"styles"`
 
-	HasError bool `json:"hasError"`
+	HasError bool `json:"hasError" form:"hasError"`
 }

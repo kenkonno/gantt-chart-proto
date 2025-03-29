@@ -6,7 +6,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/login',
         name: 'login',
-        meta: {title: "工程管理ツール | ログイン", requiresAuth: false},
+        meta: {title: "+MaP | ログイン", requiresAuth: false},
         component: () => import('../views/LoginView.vue'),
     },
     {
@@ -16,13 +16,13 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: '/',
                 name: 'gantt',
-                meta: {title: "工程管理ツール | 案件ビュー", requiresAuth: true},
+                meta: {title: "+MaP | 案件ビュー", requiresAuth: true},
                 component: () => import('../views/GanttFacilityView.vue')
             },
             {
                 path: '/all-view',
                 name: 'gantt-all-view',
-                meta: {title: "工程管理ツール | 全体ビュー", requiresAuth: true},
+                meta: {title: "+MaP | 全体ビュー", requiresAuth: true},
                 component: () => import('../views/GanttAllView.vue')
             },
         ]
@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/reset-password',
         name: 'reset-password',
-        meta: {title: "工程管理ツール | パスワード初期化", requiresAuth: false},
+        meta: {title: "+MaP | パスワード初期化", requiresAuth: false},
         component: () => import('../views/ResetPasswordView.vue')
     },
     {

@@ -1,5 +1,5 @@
 <template>
-  <div class="gantt-wrapper" id="gantt-all-view" :class="{withFilter:hasFilter(), byProcess:byProcess()}">
+  <div class="gantt-wrapper d-flex flex-column" id="gantt-all-view" :class="{withFilter:hasFilter(), byProcess:byProcess()}">
     <div class="gantt-facility-wrapper d-flex overflow-x-scroll" ref="ganttWrapperElement"
          :class="{'hide-scroll': allowed('VIEW_PILEUPS')&& globalState.showPileUp, 'full-max-height': !allowed('VIEW_PILEUPS')  || !globalState.showPileUp}"
     >
@@ -62,7 +62,7 @@
     </div>
     <!-- 山積み部分 -->
     <hr v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp" />
-    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll" ref="childGanttWrapperElement">
+    <div class="gantt-facility-pile-ups-wrapper d-flex overflow-x-scroll flex-grow-1" ref="childGanttWrapperElement">
       <PileUps
           :chart-start="chartStart"
           :chart-end="chartEnd"

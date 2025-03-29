@@ -133,7 +133,6 @@ func validateRow(departmentId string, lastName string, firstName string, role st
 		return db.User{}, errors.New(fmt.Sprintf("不正なメールアドレス形式です。%s", email))
 	}
 
-	fmt.Println(employmentStartDate)
 	esd := utils.GetTimeByYMDString(employmentStartDate)
 	if esd == nil {
 		return db.User{}, errors.New(fmt.Sprintf("在籍期間(開始)の形式が正しくありません。%s", employmentStartDate))

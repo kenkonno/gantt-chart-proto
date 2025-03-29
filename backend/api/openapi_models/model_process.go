@@ -15,15 +15,15 @@ import (
 
 type Process struct {
 
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Name string `json:"name" binding:"min=1"`
+	Name string `json:"name" form:"name" binding:"min=1"`
 
-	Order int32 `json:"order,omitempty"`
+	Order int32 `json:"order,omitempty" form:"order,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 
-	Color string `json:"color,omitempty"`
+	Color string `json:"color,omitempty" form:"color,omitempty"`
 }

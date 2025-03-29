@@ -16,15 +16,15 @@ import (
 // Holiday - 
 type Holiday struct {
 
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Name string `json:"name" binding:"min=1"`
+	Name string `json:"name" form:"name" binding:"min=1"`
 
-	Date time.Time `json:"date"`
+	Date time.Time `json:"date" form:"date"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 
-	FacilityId int32 `json:"facility_id"`
+	FacilityId int32 `json:"facility_id" form:"facility_id"`
 }
