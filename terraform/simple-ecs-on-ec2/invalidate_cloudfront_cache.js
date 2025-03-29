@@ -4,19 +4,20 @@ exports.handler = async (event, context) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
 
   const cloudfront = new AWS.CloudFront();
-  console.log(event);
-  const params = event;
 
-  const invalidationParams = {
-    DistributionId: params.distribution_id,
-    InvalidationBatch: {
-      CallerReference: new Date().getTime().toString(),
-      Paths: {
-        Quantity: params.paths.length,
-        Items: params.paths
-      }
-    }
-  };
+  // CodePipelineからのイベントを正しく処理する
+  let params;
+  if (event.CodePipeline && event.CodePipeline.job) {
+    // CodePipelineからの呼び出しの場合
+    const userParams = event.CodePipeline.job.data.actionConfiguration.configuration.UserParameters;
+    params = JSON.parse(userParams);
+  } else {
+    // 直接呼び出しの場合
+    params = event;
+  }
+
+  console.log('Parameters:', JSON.stringify(params, null, 2));
+
 
   try {
     const response = await cloudfront.createInvalidation(invalidationParams).promise();

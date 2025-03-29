@@ -59,6 +59,8 @@ $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | dock
 $ aws ecr get-login-password --region ap-northeast-1 --profile=mds-prod | docker login --username AWS --password-stdin 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=aplsalpine-nagaoka-prod | docker login --username AWS --password-stdin 428292434364.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=alpsalpine-oketani-prod | docker login --username AWS --password-stdin 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com
+$ aws ecr get-login-password --region ap-northeast-1 --profile=set-prod | docker login --username AWS --password-stdin 292207393783.dkr.ecr.ap-northeast-1.amazonaws.com
+
 Login Succeeded
 docker-compose build
 docker-compose push

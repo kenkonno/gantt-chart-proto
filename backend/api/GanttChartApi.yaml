@@ -1152,6 +1152,24 @@ paths:
           in: query
           name: employmentEndDate
           allowEmptyValue: true
+  /api/bulkUpdateTickets:
+    post:
+      summary: PostBulkUpdateTickets
+      operationId: post-bulkUpdateTickets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostBulkUpdateTicketsResponse'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostBulkUpdateTicketsRequest'
+    parameters: []
 components:
   schemas:
     User:
@@ -2945,3 +2963,23 @@ components:
             $ref: '#/components/schemas/Ticket'
       required:
         - list
+    PostBulkUpdateTicketsRequest:
+      title: PostBulkUpdateTicketsRequest
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+      required:
+        - tickets
+    PostBulkUpdateTicketsResponse:
+      title: PostBulkUpdateTicketsResponse
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+      required:
+        - tickets
