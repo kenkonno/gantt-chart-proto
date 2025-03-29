@@ -34,7 +34,8 @@ services:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_api
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
 #    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/api
-    image: 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com/alpsalpine-oketani-prod-tasmap/api
+#    image: 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com/alpsalpine-oketani-prod-tasmap/api
+    image: 292207393783.dkr.ecr.ap-northeast-1.amazonaws.com/set-prod-tasmap/api
     container_name: gantt_api
     ports:
       - "8080:8080"
@@ -61,7 +62,8 @@ services:
 #    image: 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com/dev-manual-test/gantt_migration
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
 #    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/migration
-    image: 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com/alpsalpine-oketani-prod-tasmap/migration
+#    image: 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com/alpsalpine-oketani-prod-tasmap/migration
+    image: 292207393783.dkr.ecr.ap-northeast-1.amazonaws.com/set-prod-tasmap/migration
     container_name: gantt_migration
     build:
       context: .
