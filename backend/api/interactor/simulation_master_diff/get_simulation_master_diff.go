@@ -162,6 +162,7 @@ func convertDepartments(list []db.Department) []openapi_models.Department {
 		return openapi_models.Department{
 			Id:        item.Id,
 			Name:      item.Name,
+			Color:     item.Color,
 			Order:     int32(item.Order),
 			CreatedAt: item.CreatedAt,
 			UpdatedAt: item.UpdatedAt,

@@ -480,6 +480,12 @@ export interface Department {
     'name': string;
     /**
      * 
+     * @type {string}
+     * @memberof Department
+     */
+    'color': string;
+    /**
+     * 
      * @type {number}
      * @memberof Department
      */

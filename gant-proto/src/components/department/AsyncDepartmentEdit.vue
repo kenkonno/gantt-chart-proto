@@ -11,6 +11,11 @@
     </div>
 
     <div class="mb-2">
+      <p class="form-label">色</p>
+      <div><color-picker :disableAlpha="true" v-model:pure-color="department.color"/></div>
+    </div>
+
+    <div class="mb-2">
       <label class="form-label" for="id">作成日</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="department.created_at" :disabled="true">
     </div>
@@ -39,6 +44,7 @@ import {
   validate
 } from "@/composable/department";
 import InputRequired from "@/components/form/InputRequired.vue";
+import {ColorPicker} from "vue3-colorpicker";
 
 interface AsyncDepartmentEdit {
   id: number | undefined,

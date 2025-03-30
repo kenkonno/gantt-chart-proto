@@ -1,6 +1,7 @@
 package departments
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
@@ -21,9 +22,13 @@ func PostDepartmentsIdInvoke(c *gin.Context) (openapi_models.PostDepartmentsIdRe
 		panic(err)
 	}
 
+	fmt.Println(departmentReq.Department)
+	fmt.Println(departmentReq.Department.Color)
+
 	departmentRep.Upsert(db.Department{
 		Id:        departmentReq.Department.Id,
 		Name:      strings.TrimSpace(departmentReq.Department.Name),
+		Color:     departmentReq.Department.Color,
 		Order:     int(departmentReq.Department.Order),
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,

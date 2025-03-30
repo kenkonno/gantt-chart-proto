@@ -19,6 +19,8 @@ type Department struct {
 
 	Name string `json:"name" form:"name" binding:"min=1"`
 
+	Color string `json:"color" form:"color"`
+
 	Order int32 `json:"order" form:"order"`
 
 	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
