@@ -1311,6 +1311,8 @@ components:
         name:
           type: string
           x-go-custom-tag: 'binding:"min=1"'
+        color:
+          type: string
         order:
           type: integer
         created_at:
@@ -1321,6 +1323,7 @@ components:
           format: int
       required:
         - name
+        - color
         - order
     GetDepartmentsRequest:
       title: GetDepartmentsRequest

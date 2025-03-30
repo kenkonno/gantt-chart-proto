@@ -3,7 +3,7 @@ import {PostDepartmentsRequest, Department} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 import {changeSort} from "@/utils/sort";
-import {Emit} from "@/const/common";
+import {DEFAULT_PROCESS_COLOR, Emit} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。
@@ -35,6 +35,7 @@ export async function useDepartment(departmentId?: number) {
     const department = ref<Department>({
         id: null,
         name: "",
+        color: DEFAULT_PROCESS_COLOR,
         order: 0,
         created_at: undefined,
         updated_at: undefined
@@ -44,6 +45,7 @@ export async function useDepartment(departmentId?: number) {
         if (data.department != undefined) {
             department.value.id = data.department.id
             department.value.name = data.department.name
+            department.value.color = data.department.color
             department.value.order = data.department.order
             department.value.created_at = data.department.created_at
             department.value.updated_at = data.department.updated_at

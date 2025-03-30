@@ -23,6 +23,7 @@ func PostDepartmentsInvoke(c *gin.Context) (openapi_models.PostDepartmentsRespon
 	departmentRep.Upsert(db.Department{
 		Name:      strings.TrimSpace(departmentReq.Department.Name),
 		Order:     int(departmentReq.Department.Order),
+		Color:     departmentReq.Department.Color,
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,
 	})

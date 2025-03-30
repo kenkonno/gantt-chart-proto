@@ -40,8 +40,8 @@ func (r *departmentRepository) Find(id int32) db.Department {
 func (r *departmentRepository) Upsert(m db.Department) {
 	r.con.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
-		UpdateAll: true,
-	}).Create(&m)
+		DoUpdates: clause.AssignmentColumns([]string{"name", "color", "order", "updated_at"}), // TODO: defaultを設定してるからかcolorが更新されなかった
+	}).Debug().Create(&m)
 }
 
 func (r *departmentRepository) Delete(id int32) {
