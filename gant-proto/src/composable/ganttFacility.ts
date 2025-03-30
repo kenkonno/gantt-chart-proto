@@ -234,23 +234,31 @@ export async function useGanttFacility() {
     refreshLocalGantt()
     await refreshBars()
 
+    const isUpdateOrder = ref(false)
+
     const updateOrder = async (ganttRows: GanttRow[], index: number, direction: number) => {
-        // ソート前にガントチャート上のIndexを検索しておく。 TODO: シミュレーション対応
-        const barIndex = bars.value.findIndex(v => v[0].ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
-        const sorted = changeSort(ganttRows, index, direction)
-        const newTickets: Ticket[] = []
-        // 変更がった場合はガントチャートのオブジェクトと同期をとる
-        if (sorted) {
-            // bars.valueは全体から見たIndexを指定する必要があった。
-            changeSort(bars.value, barIndex, direction)
-            for (const v of ganttRows) {
-                const clone = Object.assign({}, v.ticket)
-                clone.order = ganttRows.indexOf(v)
-                const newTicket = await updateTicket(clone)
-                newTickets.push(newTicket!)
+        isUpdateOrder.value = true
+        try {
+            // ソート前にガントチャート上のIndexを検索しておく。 TODO: シミュレーション対応
+            const barIndex = bars.value.findIndex(v => v[0].ganttBarConfig.id === ganttRows[index].bar.ganttBarConfig.id)
+            const sorted = changeSort(ganttRows, index, direction)
+            const newTickets: Ticket[] = []
+            // 変更がった場合はガントチャートのオブジェクトと同期をとる
+            if (sorted) {
+                // bars.valueは全体から見たIndexを指定する必要があった。
+                changeSort(bars.value, barIndex, direction)
+                for (const v of ganttRows) {
+                    const clone = Object.assign({}, v.ticket)
+                    clone.order = ganttRows.indexOf(v)
+                    newTickets.push(clone)
+                }
+                const tickets = newTickets.map(v => modifyTicketDateTimes(v))
+                const {data} = await Api.postBulkUpdateTickets({tickets: tickets})
+                await refreshTickets(data.tickets)
             }
+        } finally {
+            isUpdateOrder.value = false
         }
-        await refreshTickets(newTickets)
     }
 
     // 部署の変更。
@@ -270,8 +278,8 @@ export async function useGanttFacility() {
             const end = new Date(endDate).getTime();
 
             userList = userList.filter(user => {
-                const userStart = new Date(user.employment_start_date.substring(0,10)).getTime();
-                const userEnd = user.employment_end_date ? new Date(user.employment_end_date.substring(0,10)).getTime(): Infinity;
+                const userStart = new Date(user.employment_start_date.substring(0, 10)).getTime();
+                const userEnd = user.employment_end_date ? new Date(user.employment_end_date.substring(0, 10)).getTime() : Infinity;
                 // 指定された日付範囲が、利用者の雇用期間と被っている場合にのみ、その利用者を含めます。
                 return (userStart <= end && userEnd >= start);
             });
@@ -291,19 +299,7 @@ export async function useGanttFacility() {
     // DBへのストア及びローカルのガントに情報を反映する
     const updateTicket = async (ticket: Ticket) => {
         const reqTicket = Object.assign({}, ticket)
-        if (reqTicket.start_date) {
-            reqTicket.start_date = ticket.start_date + "T00:00:00.00000+09:00"
-        } else {
-            reqTicket.start_date = undefined
-        }
-        if (reqTicket.end_date) {
-            reqTicket.end_date = ticket.end_date + "T00:00:00.00000+09:00"
-        } else {
-            reqTicket.end_date = undefined
-        }
-        if (reqTicket.limit_date != undefined) {
-            reqTicket.limit_date = ticket.limit_date + "T00:00:00.00000+09:00"
-        }
+        modifyTicketDateTimes(reqTicket)
         try {
             console.log("########### UPDATE_TICKET START CALL API")
             const {data} = await Api.postTicketsId(ticket.id!, {ticket: reqTicket})
@@ -312,6 +308,23 @@ export async function useGanttFacility() {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    const modifyTicketDateTimes = (ticket: Ticket) => {
+        if (ticket.start_date) {
+            ticket.start_date = ticket.start_date + "T00:00:00.00000+09:00"
+        } else {
+            ticket.start_date = undefined
+        }
+        if (ticket.end_date) {
+            ticket.end_date = ticket.end_date + "T00:00:00.00000+09:00"
+        } else {
+            ticket.end_date = undefined
+        }
+        if (ticket.limit_date != undefined) {
+            ticket.limit_date = ticket.limit_date + "T00:00:00.00000+09:00"
+        }
+        return ticket
     }
 
     /**
@@ -719,6 +732,7 @@ export async function useGanttFacility() {
         milestones,
         mutation,
         getUnitIdByTicketId,
+        isUpdateOrder,
     }
 }
 
