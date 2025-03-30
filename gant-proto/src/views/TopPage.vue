@@ -18,15 +18,10 @@
       <schedule-alert v-if="allowed('VIEW_SCHEDULE_ALERT')"></schedule-alert>
       <div>
       </div>
-      <div>
-        <label>
-          案件状況：
-          <label v-for="(name, code) in FacilityTypeMap" :key="code" >
-            <input type="checkbox" name="facilityType" :value="code" v-model="globalState.facilityTypes" @change="changeFacilityType"/>
-            {{name}}
-          </label>
-        </label>
-      </div>
+      <FacilityTypeFilter
+          v-model="globalState.facilityTypes"
+          @change="changeFacilityType"
+      />
       <DepartmentUserFilter></DepartmentUserFilter>
       <div v-if="allowed('VIEW_PILEUPS')">
         <label>
@@ -159,6 +154,7 @@ import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
 import SimulationView from "@/views/SimulationView.vue";
 import ServiceLogo from "@/components/logo/ServiceLogo.vue";
+import FacilityTypeFilter from "@/components/form/FacilityTypeFilter.vue";
 
 // ローカルストレージの初期化
 initStateValue()

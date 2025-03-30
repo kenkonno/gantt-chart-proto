@@ -9,7 +9,7 @@
     <div class="filter-panel" :class="{ 'hidden': !filterVisible }">
       <h3>フィルター</h3>
 
-      <div class="filter-item">
+      <div class="filter-item" v-if="false">
         <label>データ選択：</label>
         <div v-for="(series, index) in series" :key="index" class="checkbox-item">
           <input
@@ -27,27 +27,50 @@
         <label>集計軸：</label>
         <div class="radio-group">
           <label class="custom-radio">
-            <input type="radio" v-model="timeFilter" value="day" @change="updateChart" />
+            <input type="radio" v-model="timeFilter" value="day" @change="updateDuration();updateChart()"/>
             <span class="radio-label">日</span>
           </label>
           <label class="custom-radio">
-            <input type="radio" v-model="timeFilter" value="week" @change="updateChart" />
+            <input type="radio" v-model="timeFilter" value="week" @change="updateDuration();updateChart()"/>
             <span class="radio-label">週</span>
           </label>
           <label class="custom-radio">
-            <input type="radio" v-model="timeFilter" value="month" @change="updateChart" />
+            <input type="radio" v-model="timeFilter" value="month" @change="updateDuration();updateChart()"/>
             <span class="radio-label">月</span>
           </label>
         </div>
       </div>
 
-
+      <!-- 案件種別のチェックボックス（ラジオボタンから変更） -->
+      <div class="filter-item">
+        <label>案件種別：</label>
+        <div class="radio-group">
+          <label class="custom-radio">
+            <input
+                type="checkbox"
+                :checked="facilityTypes.includes(FacilityType.Ordered)"
+                @change="toggleFacilityType(FacilityType.Ordered)"
+                class="hidden-checkbox"
+            />
+            <span class="radio-label">{{ FacilityTypeMap[FacilityType.Ordered] }}</span>
+          </label>
+          <label class="custom-radio">
+            <input
+                type="checkbox"
+                :checked="facilityTypes.includes(FacilityType.Prepared)"
+                @change="toggleFacilityType(FacilityType.Prepared)"
+                class="hidden-checkbox"
+            />
+            <span class="radio-label">{{ FacilityTypeMap[FacilityType.Prepared] }}</span>
+          </label>
+        </div>
+      </div>
       <div class="filter-item">
         <label>期間選択：</label>
-        <select v-model="selectedPeriod" @change="updateChart">
-          <option value="week">直近1週間</option>
-          <option value="month">直近1ヶ月</option>
-          <option value="quarter">直近3ヶ月</option>
+        <select v-model="durationFilter" @change="updateChart">
+          <template v-for="item in durationOptions" :key="item.key">
+            <option :value="item.value">{{ item.key }}</option>
+          </template>
         </select>
       </div>
     </div>
@@ -61,6 +84,9 @@
           @legendClick="handleLegendClick"
       />
     </div>
+    <pre>
+      {{xLabels}}
+    </pre>
   </div>
 </template>
 
@@ -68,6 +94,7 @@
 import {computed, reactive, ref, Ref} from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import {usePileUpGraph} from "@/composable/pileUpGraph";
+import {FacilityType, FacilityTypeMap} from "@/const/common";
 
 const {
   facilities,
@@ -77,8 +104,22 @@ const {
   timeFilter,
   series,
   xLabels,
-  selectedSeries
+  selectedSeries,
+  refreshData,
+  durationOptions,
+  durationFilter,
+  updateDuration,
 } = await usePileUpGraph()
+// 案件種別の切り替え関数
+const toggleFacilityType = (type: FacilityType) => {
+  const index = facilityTypes.indexOf(type);
+  if (index === -1) {
+    facilityTypes.push(type);
+  } else {
+    facilityTypes.splice(index, 1);
+  }
+  updateChart();
+};
 
 // チャートの参照を作成
 const chartRef = ref<null | any>(null) as Ref<typeof ApexCharts>;
@@ -92,20 +133,30 @@ const toggleFilterPanel = () => {
 };
 
 
-// 選択状態の管理
-const selectedPeriod = ref('month') // 初期値は1ヶ月
-
 // チャートのオプション
 const chartOptions = reactive({
   chart: {
-    type: 'bar',
-    height: 350,
+    type: 'line',
     stacked: true,
     toolbar: {
       show: true
     },
     zoom: {
-      enabled: true
+      enabled: true,
+      type: 'x',
+      autoScaleYaxis: false,
+      allowMouseWheelZoom: true,
+      zoomedArea: {
+        fill: {
+          color: '#90CAF9',
+          opacity: 0.4
+        },
+        stroke: {
+          color: '#0D47A1',
+          opacity: 0.4,
+          width: 1
+        }
+      }
     }
   },
   plotOptions: {
@@ -125,20 +176,37 @@ const chartOptions = reactive({
     colors: ['transparent', 'transparent', 'transparent', '#FF4560'] // 最後の値は折れ線グラフの色
   },
   xaxis: {
-    type: 'category', // datetime から category に変更
+    // type: 'datetime', // datetime
     categories: xLabels.value,
+    tickAmount: xLabels.value.length - 1, // または必要な数
+    tickPlacement: 'on',
     labels: {
       rotate: -90, // ラベルを縦に表示（90度回転）
       rotateAlways: true,
       style: {
         fontSize: '12px'
       },
+      formatter: function (val: number) {
+        const date = new Date(val);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        if (timeFilter.value === 'day') {
+          return `${year}-${month}-${day}日`;
+        } else if (timeFilter.value === 'week') {
+          return `${year}-${month}-${day}週`;
+        } else if (timeFilter.value === 'month') {
+          return `${year}年${month}月`;
+        }
+        return val; // デフォルト値を返す（エラー回避のため）
+      }
     }
   },
   // 追加: 折れ線グラフのマーカー設定
   markers: {
     size: 4,
-    colors: ['#FF4560','#45FF60'],
+    colors: ['#FF4560', '#45FF60'],
     strokeWidth: 2,
     hover: {
       size: 7,
@@ -148,7 +216,7 @@ const chartOptions = reactive({
   yaxis: {
     title: {
       text: '値'
-    }
+    },
   },
   fill: {
     opacity: 1
@@ -156,7 +224,7 @@ const chartOptions = reactive({
   tooltip: {
     y: {
       formatter: function (val) {
-        return val + " ユニット"
+        return val + "hour"
       }
     }
   },
@@ -171,7 +239,8 @@ const chartOptions = reactive({
 })
 
 // 更新時の処理
-const updateChart = () => {
+const updateChart = async () => {
+  await refreshData()
   // フィルター変更時の処理（必要に応じて追加）
   if (chartRef.value?.chart) {
     // 表示するシリーズの配列を作成
@@ -186,6 +255,28 @@ const updateChart = () => {
     chartRef.value.chart.updateOptions({
       xaxis: {
         categories: xLabels.value,
+        labels: {
+          rotate: -90, // ラベルを縦に表示（90度回転）
+          rotateAlways: true,
+          style: {
+            fontSize: '12px'
+          },
+          formatter: function (val: number) {
+            const date = new Date(val);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            if (timeFilter.value === 'day') {
+              return `${year}-${month}-${day}日`;
+            } else if (timeFilter.value === 'week') {
+              return `${year}-${month}-${day}週`;
+            } else if (timeFilter.value === 'month') {
+              return `${year}年${month}月`;
+            }
+            return val; // デフォルト値を返す（エラー回避のため）
+          }
+        }
       }
     })
   }
@@ -357,8 +448,26 @@ const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
   box-shadow: 0 0 0 2px rgba(74, 134, 232, 0.3);
 }
 
+.custom-radio input[type="checkbox"]:checked + .radio-label {
+  background-color: #4a86e8;
+  color: white;
+  border-color: #4a86e8;
+}
+
+.custom-radio input[type="checkbox"]:focus + .radio-label {
+  box-shadow: 0 0 0 2px rgba(74, 134, 232, 0.3);
+}
+
 .custom-radio:hover .radio-label {
   border-color: #bbb;
+}
+
+.hidden-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
 </style>

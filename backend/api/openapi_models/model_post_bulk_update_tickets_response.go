@@ -10,5 +10,6 @@
 package openapi_models
 
 type PostBulkUpdateTicketsResponse struct {
+
 	Tickets []Ticket `json:"tickets" form:"tickets"`
 }

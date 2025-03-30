@@ -1,6 +1,6 @@
 import {Api} from "@/api/axios";
 import {computed, reactive, ref} from "vue";
-import {Emit, FacilityStatus, FacilityType} from "@/const/common";
+import {FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import dayjs from "dayjs";
 import {DefautValidIndexUsers, Department, User} from "@/api";
@@ -12,9 +12,25 @@ export type Series = {
     color: string;
 }
 
+const dailyDurationOptions = [
+    {key: "2週間", value: 14},
+    {key: "1ヶ月", value: 30}
+]
+const weeklyDurationOptions = [
+    {key: "1四半期", value: 13},
+]
+const monthlyDurationOptions = [
+    {key: "年間", value: 12},
+]
+
 
 // ユーザー一覧。特別ref系は必要ない。
 export async function usePileUpGraph() {
+
+    // TODO: 積み上げのパーセント表示
+    // TODO: 100%を超えたら強調表示する
+    // TODO: 値に表示するものが謎？今の単位は時間になっているから人日にすればよさそう。
+
     // 設備一覧
     const {data: facilities} = reactive(await Api.getFacilities())
     // 部署一覧
@@ -25,11 +41,43 @@ export async function usePileUpGraph() {
     const facilityTypes = reactive<string[]>([FacilityType.Ordered, FacilityType.Prepared])
     // 日次・週次・月次の絞り込みの選択肢
     const timeFilter = ref<DisplayType>('week');
+    // 期間の選択
+    const durationFilter = ref<number>(13);
+    // 期間のオプション
+    const durationOptions = computed(() => {
+        switch (timeFilter.value) {
+            case 'day':
+                return dailyDurationOptions
+            case 'week':
+                return weeklyDurationOptions
+            case 'month':
+                return monthlyDurationOptions
+            default:
+                return []
+        }
+    })
+    const updateDuration = () => {
+        switch (timeFilter.value) {
+            case 'day':
+                return durationFilter.value = dailyDurationOptions[0].value
+            case 'week':
+                return durationFilter.value = weeklyDurationOptions[0].value
+            case 'month':
+                return durationFilter.value = monthlyDurationOptions[0].value
+        }
+    }
 
     // 積み上げ（getDefaultPileUps
-    const {data: pileUps} = await Api.getDefaultPileUps(-1, true, facilityTypes)
-
-    const globalStartDate = pileUps.globalStartDate
+    const {data: pileUps} = reactive(await Api.getDefaultPileUps(-1, true, facilityTypes))
+    let globalStartDate: string
+    const refreshData = async () => {
+        const {data} = await Api.getDefaultPileUps(-1, true, facilityTypes)
+        pileUps.defaultPileUps = data.defaultPileUps
+        pileUps.defaultValidUserIndexes = data.defaultValidUserIndexes
+        globalStartDate = data.globalStartDate
+        return data
+    }
+    await refreshData()
 
     const labelLength = computed(() => {
         return splitByTimeFilter(pileUps.defaultValidUserIndexes.map(v => v.ValidIndex), timeFilter.value, globalStartDate).length
@@ -39,7 +87,8 @@ export async function usePileUpGraph() {
 
     // 横軸のラベル作成
     const xLabels = computed(() => {
-        return getXLabels(globalStartDate, timeFilter.value, labelLength.value)
+        const allXLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
+        return filterXLabelsByDuration(allXLabels, durationFilter.value)
     })
 
     // 部署のフィルタ
@@ -56,6 +105,7 @@ export async function usePileUpGraph() {
             }
         })
         // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
+        // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
         const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
         const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => selectedSeries[i])
         const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels))
@@ -73,12 +123,27 @@ export async function usePileUpGraph() {
             name: "125%",
             type: "line"
         }]
-        return [...barSeries, ...lineSeries]
+
+        const xLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
+
+        return [...(filterSeriesByDuration(barSeries, xLabels, durationFilter.value)), ...(filterSeriesByDuration(lineSeries, xLabels, durationFilter.value))]
     })
 
-    // TODO: barSeries, lineSeriesをまとめて computedにして返す
-    // TODO: lineSeries を ocmputeにして返す
-    return {facilities, departments, pileUps, facilityTypes, timeFilter, xLabels, selectedSeries, series}
+
+    return {
+        facilities,
+        departments,
+        pileUps,
+        facilityTypes,
+        timeFilter,
+        xLabels,
+        selectedSeries,
+        series,
+        refreshData,
+        durationOptions,
+        durationFilter,
+        updateDuration
+    }
 }
 
 /**
@@ -163,7 +228,6 @@ const getXLabels = (globalStartDate: string, timeFilter: DisplayType, len: numbe
         [key in TimeFilterType]: {
             adjustStart: (date: dayjs.Dayjs) => dayjs.Dayjs;
             addUnit: key;
-            format: string;
         };
     };
 
@@ -173,7 +237,6 @@ const getXLabels = (globalStartDate: string, timeFilter: DisplayType, len: numbe
         day: {
             adjustStart: (date: dayjs.Dayjs) => date, // 日付の場合は調整なし
             addUnit: 'day',
-            format: 'YYYY-MM-DD'
         },
         week: {
             adjustStart: (date: dayjs.Dayjs) => {
@@ -184,12 +247,10 @@ const getXLabels = (globalStartDate: string, timeFilter: DisplayType, len: numbe
                 return date.subtract(daysToSubtract, 'day');
             },
             addUnit: 'week',
-            format: 'YYYY-MM-DD週'
         },
         month: {
             adjustStart: (date: dayjs.Dayjs) => date.date(1), // 月の場合、月初（1日）に調整
             addUnit: 'month',
-            format: 'YYYY-MM'
         }
     };
 
@@ -205,9 +266,7 @@ const getXLabels = (globalStartDate: string, timeFilter: DisplayType, len: numbe
         const currentDate = i === 0 ? startDate : startDate.add(i, config.addUnit);
 
         // フォーマットによって変換
-        return config.format.includes('週')
-            ? `${currentDate.format('YYYY-MM-DD')}週`
-            : currentDate.format(config.format);
+        return currentDate.unix() * 1000
     });
 
     return labels;
@@ -222,7 +281,7 @@ const getDepartmentName = (departmentId: number, list: Department[]) => {
 // 時間のフィルター（'day', 'week', または 'month'）に応じてラベルの値を変換または集計する関数
 const splitByTimeFilter = (labels: number[], timeFilter: DisplayType, globalStartDate: string): number[] => {
     // dayjs を使用して日付を操作
-    const startDate = dayjs(globalStartDate);
+    const startDate = dayjs(globalStartDate).startOf('day');
 
     // 日次の場合は集計なし（各値をそのままnumber型に変換して返す）
     if (timeFilter === 'day') {
@@ -285,4 +344,70 @@ const splitByTimeFilter = (labels: number[], timeFilter: DisplayType, globalStar
 
     // 未知のtimeFilterの場合は空の配列を返す
     return [];
+};
+/**
+ * 日時データの時分秒を0に統一する関数
+ * @param timestamp タイムスタンプ（ミリ秒）
+ * @returns 時分秒が0に統一されたタイムスタンプ（ミリ秒）
+ */
+const normalizeDate = (timestamp: number): number => {
+    return dayjs(timestamp).startOf('day').valueOf();
+};
+
+/**
+ * 現在日時から指定された期間分だけxLabelsデータをフィルタリングする
+ * @param xLabelsData 日付のUnixタイムスタンプ配列
+ * @param duration フィルタリングする期間の長さ
+ * @returns フィルタリングされたxLabels
+ */
+const filterXLabelsByDuration = (
+    xLabelsData: number[],
+    duration: number
+): number[] => {
+    // 現在の日時を取得し、時分秒を0に統一
+    const now = normalizeDate(Date.now());
+
+    // xLabelsから現在日時に最も近いインデックスを見つける
+    let currentIndex = xLabelsData.findIndex(timestamp => {
+        const normalizedTimestamp = normalizeDate(timestamp);
+        return normalizedTimestamp >= now;
+    });
+
+    // 現在日時が見つからない場合は、最初のインデックスを使用
+    if (currentIndex === -1) {
+        currentIndex = 0;
+    }
+
+    // フィルタリング範囲の終了インデックス
+    const endIndex = Math.min(currentIndex + duration, xLabelsData.length);
+
+    // フィルタリングされたxLabels
+    return xLabelsData.slice(currentIndex, endIndex);
+};
+
+/**
+ * シリーズデータとxLabelsを同じ期間でフィルタリングする
+ * @param seriesData フィルタリングするシリーズデータの配列
+ * @param xLabelsData 日付のUnixタイムスタンプ配列
+ * @param duration フィルタリングする期間の長さ
+ * @returns フィルタリングされたシリーズとxLabelsを含むオブジェクト
+ */
+const filterSeriesByDuration = (
+    seriesData: Series[],
+    xLabelsData: number[],
+    duration: number
+) => {
+    // xLabelsをフィルタリング
+    const filteredLabels = filterXLabelsByDuration(xLabelsData, duration);
+
+    // フィルタリングされた範囲のインデックスを取得
+    const startIndex = xLabelsData.indexOf(filteredLabels[0]);
+    const endIndex = startIndex + filteredLabels.length;
+
+    // 同じインデックス範囲でシリーズデータをフィルタリング
+
+    return seriesData.map(seriesItem => ({
+        ...seriesItem,
+        data: seriesItem.data.slice(startIndex, endIndex)
+    }))
 };
