@@ -57,6 +57,8 @@ docker-compose.yamlにECRの定義を追加すれば ログイン・build・push
 $ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=mds-prod | docker login --username AWS --password-stdin 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com
+
+$ aws ecr get-login-password --region ap-northeast-1 --profile=ftech-prod | docker login --username AWS --password-stdin 724772070484.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=aplsalpine-nagaoka-prod | docker login --username AWS --password-stdin 428292434364.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=alpsalpine-oketani-prod | docker login --username AWS --password-stdin 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=set-prod | docker login --username AWS --password-stdin 292207393783.dkr.ecr.ap-northeast-1.amazonaws.com
@@ -64,6 +66,7 @@ $ aws ecr get-login-password --region ap-northeast-1 --profile=set-prod | docker
 Login Succeeded
 docker-compose build
 docker-compose push
+docker logout
 
 # MDS構築時のメモ
 なんか色々上手くいかなくなっている。
