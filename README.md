@@ -121,45 +121,45 @@ docker-compose push
 6. https://d1lqvglun25qns.cloudfront.net
 
 ## トライアル環境
-docker-compose -p env1 -f docker-compose-demo.demo.yml down
-docker-compose -p env1 -f docker-compose-demo.demo.yml up -d gantt_postgres
-docker-compose -p env1 -f docker-compose-demo.demo.yml up -d gantt_session
-docker-compose -p env1 -f docker-compose-demo.demo.yml up -d gantt_api
-docker-compose -p env1 -f docker-compose-demo.demo.yml logs gantt_api
-docker-compose -p env1 -f docker-compose-demo.demo.yml up gantt_migration
+docker-compose -p env01 -f docker-compose-demo.yml down
+docker-compose -p env01 -f docker-compose-demo.yml up -d gantt_postgres
+docker-compose -p env01 -f docker-compose-demo.yml up -d gantt_session
+docker-compose -p env01 -f docker-compose-demo.yml up -d gantt_api
+docker-compose -p env01 -f docker-compose-demo.yml logs gantt_api
+docker-compose -p env01 -f docker-compose-demo.yml run gantt_migration
 
-docker-compose -p env2 -f docker-compose-demo.demo.yml down
-docker-compose -p env2 -f docker-compose-demo.demo.yml up -d gantt_postgres
-docker-compose -p env2 -f docker-compose-demo.demo.yml up -d gantt_session
-docker-compose -p env2 -f docker-compose-demo.demo.yml up -d gantt_api
-docker-compose -p env2 -f docker-compose-demo.demo.yml logs gantt_api
-docker-compose -p env2 -f docker-compose-demo.demo.yml up gantt_migration
+docker-compose -p env02 -f docker-compose-demo.yml down
+docker-compose -p env02 -f docker-compose-demo.yml up -d gantt_postgres
+docker-compose -p env02 -f docker-compose-demo.yml up -d gantt_session
+docker-compose -p env02 -f docker-compose-demo.yml up -d gantt_api
+docker-compose -p env02 -f docker-compose-demo.yml logs gantt_api
+docker-compose -p env02 -f docker-compose-demo.yml run gantt_migration
 
-docker-compose -p env3 -f docker-compose-demo.demo.yml down
-docker-compose -p env3 -f docker-compose-demo.demo.yml up -d gantt_postgres
-docker-compose -p env3 -f docker-compose-demo.demo.yml up -d gantt_session
-docker-compose -p env3 -f docker-compose-demo.demo.yml up -d gantt_api
-docker-compose -p env3 -f docker-compose-demo.demo.yml logs gantt_api
-docker-compose -p env3 -f docker-compose-demo.demo.yml up gantt_migration
+docker-compose -p env03 -f docker-compose-demo.yml down
+docker-compose -p env03 -f docker-compose-demo.yml up -d gantt_postgres
+docker-compose -p env03 -f docker-compose-demo.yml up -d gantt_session
+docker-compose -p env03 -f docker-compose-demo.yml up -d gantt_api
+docker-compose -p env03 -f docker-compose-demo.yml logs gantt_api
+docker-compose -p env03 -f docker-compose-demo.yml run gantt_migration
 
-docker-compose -p env4 -f docker-compose-demo.demo.yml down
-docker-compose -p env4 -f docker-compose-demo.demo.yml up -d gantt_postgres
-docker-compose -p env4 -f docker-compose-demo.demo.yml up -d gantt_session
-docker-compose -p env4 -f docker-compose-demo.demo.yml up -d gantt_api
-docker-compose -p env4 -f docker-compose-demo.demo.yml logs gantt_api
-docker-compose -p env4 -f docker-compose-demo.demo.yml up gantt_migration
+docker-compose -p env04 -f docker-compose-demo.yml down
+docker-compose -p env04 -f docker-compose-demo.yml up -d gantt_postgres
+docker-compose -p env04 -f docker-compose-demo.yml up -d gantt_session
+docker-compose -p env04 -f docker-compose-demo.yml up -d gantt_api
+docker-compose -p env04 -f docker-compose-demo.yml logs gantt_api
+docker-compose -p env04 -f docker-compose-demo.yml run gantt_migration
 
-docker-compose -p env5 -f docker-compose-demo.demo.yml down
-docker-compose -p env5 -f docker-compose-demo.demo.yml up -d gantt_postgres
-docker-compose -p env5 -f docker-compose-demo.demo.yml up -d gantt_session
-docker-compose -p env5 -f docker-compose-demo.demo.yml up -d gantt_api
-docker-compose -p env5 -f docker-compose-demo.demo.yml logs gantt_api
-docker-compose -p env5 -f docker-compose-demo.demo.yml up gantt_migration
+docker-compose -p env05 -f docker-compose-demo.yml down
+docker-compose -p env05 -f docker-compose-demo.yml up -d gantt_postgres
+docker-compose -p env05 -f docker-compose-demo.yml up -d gantt_session
+docker-compose -p env05 -f docker-compose-demo.yml up -d gantt_api
+docker-compose -p env05 -f docker-compose-demo.yml logs gantt_api
+docker-compose -p env05 -f docker-compose-demo.yml run gantt_migration
 
-docker-compose -p env6 -f docker-compose-demo.demo.yml down
-docker-compose -p env6 -f docker-compose-demo.demo.yml up -d gantt_postgres
-docker-compose -p env6 -f docker-compose-demo.demo.yml up -d gantt_session
-docker-compose -p env6 -f docker-compose-demo.demo.yml up -d gantt_api
-docker-compose -p env6 -f docker-compose-demo.demo.yml logs gantt_api
-docker-compose -p env6 -f docker-compose-demo.demo.yml up gantt_migration
+docker-compose -p env06 -f docker-compose-demo.yml down
+docker-compose -p env06 -f docker-compose-demo.yml up -d gantt_postgres
+docker-compose -p env06 -f docker-compose-demo.yml up -d gantt_session
+docker-compose -p env06 -f docker-compose-demo.yml up -d gantt_api
+docker-compose -p env06 -f docker-compose-demo.yml logs gantt_api
+docker-compose -p env06 -f docker-compose-demo.yml run gantt_migration
 

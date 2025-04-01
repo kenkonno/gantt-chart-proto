@@ -125,7 +125,8 @@ func validateRow(departmentId string, lastName string, firstName string, role st
 		return db.User{}, errors.New(fmt.Sprintf("パスワードの暗号化に失敗しました。"))
 	}
 
-	if utils.GetDisplayNameRole(role) == "" {
+	roleValue := utils.GetDisplayNameRole(role)
+	if roleValue == "" {
 		return db.User{}, errors.New(fmt.Sprintf("存在しないRoleです。%s", role))
 	}
 
@@ -154,7 +155,7 @@ func validateRow(departmentId string, lastName string, firstName string, role st
 		FirstName:           firstName,
 		Password:            hashedPassword,
 		Email:               strings.ToLower(email),
-		Role:                role,
+		Role:                roleValue,
 		PasswordReset:       false,
 		EmploymentStartDate: *esd,
 		EmploymentEndDate:   eed,

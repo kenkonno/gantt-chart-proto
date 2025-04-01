@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"golang.org/x/crypto/bcrypt"
@@ -35,6 +36,7 @@ func CryptPassword(password string) (string, error) {
 // GetDisplayNameRole Roleのから名称を返します。存在しない場合は空文字を返します。
 func GetDisplayNameRole(value string) string {
 	v, ok := constants.RoleDisplayNames[value]
+	fmt.Println(v, value)
 	if ok {
 		return v
 	}
