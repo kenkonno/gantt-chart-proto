@@ -54,6 +54,8 @@ RDSは対象外です。
 ログインする
 docker-compose.yamlにECRの定義を追加すれば ログイン・build・pushでいけるみたい
 
+$ aws ecr get-login-password --region ap-northeast-1 --profile=default | docker login --username AWS --password-stdin 420302062688.dkr.ecr.ap-northeast-1.amazonaws.com
+
 $ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=mds-prod | docker login --username AWS --password-stdin 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com
