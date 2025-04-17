@@ -41,7 +41,7 @@ export async function usePileUpGraph() {
     // フィルタ 設備の種類を定数から取得し、リアクティブに設定する
     const facilityTypes = reactive<string[]>([FacilityType.Ordered, FacilityType.Prepared])
     // 日次・週次・月次の絞り込みの選択肢
-    const timeFilter = ref<DisplayType>('day');
+    const timeFilter = ref<DisplayType>('week');
     // 期間の選択
     const durationFilter = ref<number>(13);
     // 開始日の選択（デフォルトは本日）
@@ -99,18 +99,42 @@ export async function usePileUpGraph() {
 
     // seriesの作成
     const series = computed(() => {
+        // 部署ごとの100%基準値（各時点での稼働可能な人数 * 8時間）を計算
+        const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
+
+        // 各部署のデータをパーセント表示に変換
         const barSeries = pileUps.defaultPileUps.map((v, index) => {
+            // 対応する部署の100%基準値を取得
+            const departmentId = v.departmentId!;
+            const departmentAverage = averageLineByDepartment.find(avg => avg.departmentId === departmentId)!;
+
+            // 部署の各時点のデータを取得
+            const rawData = splitByTimeFilter(v.labels, timeFilter.value, globalStartDate);
+            const averageData = splitByTimeFilter(departmentAverage.labels, timeFilter.value, globalStartDate);
+
+            // 対応する部署の100%基準値で割って、パーセント表示に変換
+            const percentData = rawData.map((value, i) => {
+                if (averageData && i < averageData.length && averageData[i] > 0) {
+                    // 100%基準値 = 稼働可能な人数 * 8時間
+                    const baseValue = averageData[i] * 8;
+                    // パーセント計算（小数点以下2桁まで）
+                    return value;
+                }
+                return 0; // 基準値がない場合は0%とする
+            });
+
             return <Series>{
                 color: color.pop(), // TODO: 色を部署に持たせる
-                data: splitByTimeFilter(v.labels, timeFilter.value, globalStartDate),
-                name: getDepartmentName(v.departmentId!, departments.list),
+                data: percentData,
+                name: getDepartmentName(departmentId, departments.list),
                 type: "bar",
                 hidden: hideSeries.value[index],
             }
-        })
+        });
+
+        console.log("#################", barSeries);
         // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
         console.log("#################",hideSeries.value)
-        const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
         const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => !hideSeries.value[i])
         const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels))
         // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？

@@ -134,6 +134,10 @@
       <div class="legend-buttons">
         <button class="legend-btn" @click="selectAllSeries">すべて選択</button>
         <button class="legend-btn" @click="unselectAllSeries">すべて解除</button>
+        <a href="#" @click.prevent="updateChart" class="reload-btn">
+          <span class="material-symbols-outlined">refresh</span>
+          <span class="text">リロード</span>
+        </a>
       </div>
 
       <apex-charts
@@ -233,11 +237,32 @@ const chartOptions = reactive({
     bar: {
       horizontal: false,
       columnWidth: '55%',
-      endingShape: 'rounded'
+      endingShape: 'rounded',
+      dataLabels: {
+        position: 'center',
+      }
     }
   },
   dataLabels: {
-    enabled: false
+    enabled: true,
+    enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s,i) => i),
+    formatter: function (val: number) {
+      return val.toFixed(1) +"h"
+    },
+    style: {
+      colors: ['#000'],
+      fontSize: '10px',
+    },
+    dropShadow: {
+      enabled: true,
+      left: 2,
+      top: 2,
+      opacity: 0.5
+    },
+    background: {
+      enabled: false,
+    },
+    textAnchor: 'middle',
   },
   stroke: {
     show: true,
@@ -276,7 +301,7 @@ const chartOptions = reactive({
   // 追加: 折れ線グラフのマーカー設定
   markers: {
     size: 4,
-    colors: ['#FF4560', '#45FF60'],
+    colors: ['#45FF60', '#FF4560'],
     strokeWidth: 2,
     hover: {
       size: 7,
@@ -294,7 +319,7 @@ const chartOptions = reactive({
   tooltip: {
     y: {
       formatter: function (val) {
-        return val + "hour"
+        return val + "h"
       }
     }
   },
@@ -639,6 +664,30 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 
 .legend-btn:active {
   background-color: #d0d0d0;
+}
+
+.reload-btn {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  color: inherit;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.reload-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.reload-btn .material-symbols-outlined {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.reload-btn .text {
+  font-size: 12px;
 }
 
 </style>
