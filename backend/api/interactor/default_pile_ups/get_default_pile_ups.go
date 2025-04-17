@@ -108,7 +108,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 						continue
 					}
 
-					// 部署人数合計
+					// 部署人数合計 validUserMapで既にRoleは絞り込まれているので特に対応無
 					numberOfDepartmentUsers := float64(len(
 						lo.Filter(departmentUserMap[targetPileUp.DepartmentId], func(item db.User, index int) bool {
 							return lo.Contains(validUserMap[validIndex], *item.Id)

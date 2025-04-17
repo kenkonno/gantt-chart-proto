@@ -1,5 +1,5 @@
 <template>
-  <div class="graph-container">
+  <div class="graph-container" :class="{ 'filter-open': filterVisible }">
     <!-- トグルボタンを追加 -->
     <button class="toggle-filter-btn" @click="toggleFilterPanel">
       {{ filterVisible ? '◀' : '▶' }}
@@ -11,8 +11,8 @@
 
       <!-- 表示期間ラジオボタン（チャートの上部に配置） -->
       <div class="filter-item">
-        <label>集計軸：</label>
-        <div class="radio-group">
+        <label>集計軸</label>
+        <div class="radio-group" v-if="filterVisible">
           <label class="custom-radio">
             <input type="radio" v-model="timeFilter" value="day" @change="updateDuration();updateChart()"/>
             <span class="radio-label">日</span>
@@ -26,12 +26,29 @@
             <span class="radio-label">月</span>
           </label>
         </div>
+        <!-- 最小化時のホバー表示用要素 -->
+        <div class="hover-content time-filter-hover">
+          <div class="radio-group">
+            <label class="custom-radio">
+              <input type="radio" v-model="timeFilter" value="day" @change="updateDuration();updateChart()"/>
+              <span class="radio-label">日</span>
+            </label>
+            <label class="custom-radio">
+              <input type="radio" v-model="timeFilter" value="week" @change="updateDuration();updateChart()"/>
+              <span class="radio-label">週</span>
+            </label>
+            <label class="custom-radio">
+              <input type="radio" v-model="timeFilter" value="month" @change="updateDuration();updateChart()"/>
+              <span class="radio-label">月</span>
+            </label>
+          </div>
+        </div>
       </div>
 
       <!-- 案件種別のチェックボックス（ラジオボタンから変更） -->
       <div class="filter-item">
-        <label>案件種別：</label>
-        <div class="radio-group">
+        <label>案件種別</label>
+        <div class="radio-group" v-if="filterVisible">
           <label class="custom-radio">
             <input
                 type="checkbox"
@@ -51,14 +68,66 @@
             <span class="radio-label">{{ FacilityTypeMap[FacilityType.Prepared] }}</span>
           </label>
         </div>
+        <!-- 最小化時のホバー表示用要素 -->
+        <div class="hover-content facility-type-hover">
+          <div class="radio-group">
+            <label class="custom-radio">
+              <input
+                  type="checkbox"
+                  :checked="facilityTypes.includes(FacilityType.Ordered)"
+                  @change="toggleFacilityType(FacilityType.Ordered)"
+                  class="hidden-checkbox"
+              />
+              <span class="radio-label">{{ FacilityTypeMap[FacilityType.Ordered] }}</span>
+            </label>
+            <label class="custom-radio">
+              <input
+                  type="checkbox"
+                  :checked="facilityTypes.includes(FacilityType.Prepared)"
+                  @change="toggleFacilityType(FacilityType.Prepared)"
+                  class="hidden-checkbox"
+              />
+              <span class="radio-label">{{ FacilityTypeMap[FacilityType.Prepared] }}</span>
+            </label>
+          </div>
+        </div>
       </div>
+
       <div class="filter-item">
-        <label>期間選択：</label>
-        <select v-model="durationFilter" @change="updateChart">
+        <label>期間選択</label>
+        <select v-model="durationFilter" @change="updateChart" v-if="filterVisible">
           <template v-for="item in durationOptions" :key="item.key">
             <option :value="item.value">{{ item.key }}</option>
           </template>
         </select>
+        <!-- 最小化時のホバー表示用要素 -->
+        <div class="hover-content duration-filter-hover">
+          <select v-model="durationFilter" @change="updateChart">
+            <template v-for="item in durationOptions" :key="item.key">
+              <option :value="item.value">{{ item.key }}</option>
+            </template>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-item">
+        <label>開始日</label>
+        <input 
+          type="date" 
+          :value="formatDateForInput(startDate)" 
+          @change="handleStartDateChange($event)"
+          :min="formatDateForInput(globalStartTimestamp)"
+          v-if="filterVisible"
+        />
+        <!-- 最小化時のホバー表示用要素 -->
+        <div class="hover-content start-date-hover">
+          <input 
+            type="date" 
+            :value="formatDateForInput(startDate)" 
+            @change="handleStartDateChange($event)"
+            :min="formatDateForInput(globalStartTimestamp)"
+          />
+        </div>
       </div>
     </div>
     <!-- グラフ表示エリア - フィルター非表示時に全幅表示 -->
@@ -80,6 +149,8 @@ import {computed, reactive, ref, Ref} from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import {usePileUpGraph} from "@/composable/pileUpGraph";
 import {FacilityType, FacilityTypeMap} from "@/const/common";
+import dayjs from 'dayjs';
+
 
 const {
   facilities,
@@ -94,6 +165,9 @@ const {
   durationOptions,
   durationFilter,
   updateDuration,
+  startDate,
+  updateStartDate,
+  globalStartTimestamp
 } = await usePileUpGraph()
 // 案件種別の切り替え関数
 const toggleFacilityType = (type: FacilityType) => {
@@ -214,7 +288,10 @@ const chartOptions = reactive({
     }
   },
   legend: {
-    position: 'top'
+    position: 'top',
+    markers: {
+      shape: series.value.map((v, index) => { return v.type === 'bar' ? 'square' : 'line' }),
+    }
   },
   events: {
     legendClick: function (chartContext, seriesIndex) {
@@ -223,6 +300,23 @@ const chartOptions = reactive({
   }
 })
 
+// 日付をHTML input[type=date]用にフォーマットする関数
+const formatDateForInput = (timestamp: number): string => {
+  return dayjs(timestamp).format('YYYY-MM-DD');
+};
+
+// 開始日変更時の処理
+const handleStartDateChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.value) {
+    // 選択された日付をタイムスタンプに変換
+    const newStartDate = dayjs(target.value).valueOf();
+    // 開始日を更新
+    updateStartDate(newStartDate);
+    updateChart();
+  }
+};
+
 // 更新時の処理
 const updateChart = async () => {
   await refreshData()
@@ -230,13 +324,13 @@ const updateChart = async () => {
   if (chartRef.value?.chart) {
     // 表示するシリーズの配列を作成
     // 棒グラフのシリーズをチェックボックスに応じて振り分け
-    series.value.forEach((v, index) => {
-      if (selectedSeries[index]) {
-        chartRef.value.chart.showSeries(v.name);
-      } else {
-        chartRef.value.chart.hideSeries(v.name);
-      }
-    });
+    // series.value.forEach((v, index) => {
+    //   if (selectedSeries[index]) {
+    //     chartRef.value.chart.showSeries(v.name);
+    //   } else {
+    //     chartRef.value.chart.hideSeries(v.name);
+    //   }
+    // });
     chartRef.value.chart.updateOptions({
       xaxis: {
         categories: xLabels.value,
@@ -295,7 +389,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 
 .toggle-filter-btn {
   position: absolute;
-  left: 0;
+  left: 60px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
@@ -306,6 +400,15 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   cursor: pointer;
   border-radius: 0 4px 4px 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease, right 0.3s ease, border-radius 0.3s ease;
+}
+
+/* When filter panel is visible (not hidden), position the button on the right side of the filter panel */
+.graph-container.filter-open .toggle-filter-btn {
+  position: absolute;
+  left: 250px;
+  right: auto;
+  border-radius: 0 4px 4px 0;
 }
 
 .filter-panel {
@@ -320,9 +423,89 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 }
 
 .filter-panel.hidden {
-  transform: translateX(-100%);
-  position: absolute;
+  flex: 0 0 60px;
+  width: 60px;
+  overflow: visible;
+  position: relative;
 }
+
+/* Styles for elements in the minimized filter panel */
+.filter-panel.hidden h3 {
+  writing-mode: vertical-rl;
+  text-align: center;
+  margin: 10px auto;
+  white-space: nowrap;
+}
+
+.filter-panel.hidden .filter-item {
+  position: relative;
+  margin: 30px 0;
+  cursor: pointer;
+}
+
+.filter-panel.hidden .filter-item > label {
+  writing-mode: vertical-rl;
+  text-align: center;
+  margin: 10px auto;
+  white-space: nowrap;
+  position: relative;
+}
+
+.filter-panel.hidden .filter-item > label::after {
+  content: "▶";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #666;
+}
+
+/* Styles for hover content in minimized mode */
+.hover-content {
+  display: none; /* Hide by default */
+}
+
+/* Show hover content when filter item is hovered in minimized mode */
+.filter-panel.hidden .filter-item:hover .hover-content {
+  display: block;
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 2px solid #4a86e8;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 110;
+  padding: 8px 8px 8px 20px;
+  min-width: 200px;
+}
+
+/* Create a bridge between filter item and hover content to prevent gap */
+.filter-panel.hidden .filter-item:hover .hover-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60px; /* Extend to the left to bridge the entire gap */
+  width: 60px; /* Width of the bridge to match the gap */
+  height: 100%;
+  background: transparent; /* Invisible bridge */
+  z-index: 100;
+}
+
+/* Specific styling for radio groups in hover content */
+.filter-panel.hidden .filter-item:hover .hover-content .radio-group {
+  display: flex;
+}
+
+/* Specific styling for date input to ensure calendar icon position */
+.filter-panel.hidden .hover-content input[type="date"] {
+  width: 200px; /* Fixed width to ensure consistent layout */
+  box-sizing: border-box; /* Include padding and border in the width */
+  padding-right: 30px; /* Space for the calendar icon */
+}
+
 
 .filter-item {
   margin-bottom: 20px;
@@ -384,7 +567,8 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 }
 
 .chart-area.full-width {
-  width: 100%;
+  width: calc(100% - 60px);
+  margin-left: 60px;
 }
 
 .filter-item {
