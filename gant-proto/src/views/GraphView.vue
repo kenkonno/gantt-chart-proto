@@ -4,7 +4,6 @@
     <button class="toggle-filter-btn" @click="toggleFilterPanel">
       {{ filterVisible ? '◀' : '▶' }}
     </button>
-
     <!-- フィルターパネル（左側） - v-showで表示・非表示を切り替え -->
     <div class="filter-panel" :class="{ 'hidden': !filterVisible }">
       <h3>フィルター</h3>
@@ -132,6 +131,11 @@
     </div>
     <!-- グラフ表示エリア - フィルター非表示時に全幅表示 -->
     <div class="chart-area" :class="{ 'full-width': !filterVisible }">
+      <div class="legend-buttons">
+        <button class="legend-btn" @click="selectAllSeries">すべて選択</button>
+        <button class="legend-btn" @click="unselectAllSeries">すべて解除</button>
+      </div>
+
       <apex-charts
           ref="chartRef"
           :options="chartOptions"
@@ -190,7 +194,28 @@ const filterVisible = ref(true);
 const toggleFilterPanel = () => {
   filterVisible.value = !filterVisible.value;
 };
+// すべてのシリーズの表示/非表示を切り替える関数
+const toggleAllSeries = (visible: boolean) => {
+  if (chartRef.value?.chart) {
+    series.value.forEach(seriesItem => {
+      if (visible) {
+        chartRef.value.chart.showSeries(seriesItem.name);
+      } else {
+        chartRef.value.chart.hideSeries(seriesItem.name);
+      }
 
+      // 内部状態も更新
+      const index = series.value.findIndex(s => s.name === seriesItem.name);
+      if (index >= 0) {
+        selectedSeries.value[index] = !visible;
+      }
+    });
+  }
+};
+
+// 元の関数は以下のように置き換え
+const selectAllSeries = () => toggleAllSeries(true);
+const unselectAllSeries = () => toggleAllSeries(false);
 
 // チャートのオプション
 const chartOptions = reactive({
@@ -201,21 +226,7 @@ const chartOptions = reactive({
       show: true
     },
     zoom: {
-      enabled: true,
-      type: 'x',
-      autoScaleYaxis: false,
-      allowMouseWheelZoom: true,
-      zoomedArea: {
-        fill: {
-          color: '#90CAF9',
-          opacity: 0.4
-        },
-        stroke: {
-          color: '#0D47A1',
-          opacity: 0.4,
-          width: 1
-        }
-      }
+      enabled: false,
     }
   },
   plotOptions: {
@@ -513,35 +524,6 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   flex-direction: column;
 }
 
-/* 期間選択用の特別なスタイル */
-.period-item {
-  align-items: center; /* 中央揃え */
-}
-
-.filter-label {
-  margin-bottom: 8px;
-  font-weight: bold;
-  text-align: left;
-}
-
-/* 期間選択のラベル用 */
-.period-label {
-  text-align: center; /* 中央揃え */
-}
-
-.checkbox-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.checkbox-item {
-  margin: 5px 0;
-  display: flex;
-  align-items: center;
-  text-align: left;
-  width: 100%;
-}
 
 .checkbox-item input[type="checkbox"] {
   margin-right: 8px;
@@ -550,13 +532,6 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 .checkbox-item label {
   margin: 0;
 }
-
-/* 期間選択のセレクトボックス */
-.period-select {
-  width: auto;
-  margin: 0 auto; /* 中央揃え */
-}
-
 .chart-area {
   flex-grow: 1;
   padding: 15px;
@@ -638,6 +613,32 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   cursor: pointer;
   height: 0;
   width: 0;
+}
+.legend-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  padding: 0 10px;
+}
+
+.legend-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px 10px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.legend-btn:hover {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+}
+
+.legend-btn:active {
+  background-color: #d0d0d0;
 }
 
 </style>

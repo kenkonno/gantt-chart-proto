@@ -41,7 +41,7 @@ export async function usePileUpGraph() {
     // フィルタ 設備の種類を定数から取得し、リアクティブに設定する
     const facilityTypes = reactive<string[]>([FacilityType.Ordered, FacilityType.Prepared])
     // 日次・週次・月次の絞り込みの選択肢
-    const timeFilter = ref<DisplayType>('week');
+    const timeFilter = ref<DisplayType>('day');
     // 期間の選択
     const durationFilter = ref<number>(13);
     // 開始日の選択（デフォルトは本日）
