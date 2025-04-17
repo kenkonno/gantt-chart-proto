@@ -9,19 +9,6 @@
     <div class="filter-panel" :class="{ 'hidden': !filterVisible }">
       <h3>フィルター</h3>
 
-      <div class="filter-item" v-if="false">
-        <label>データ選択：</label>
-        <div v-for="(series, index) in series" :key="index" class="checkbox-item">
-          <input
-              type="checkbox"
-              :id="`series-${index}`"
-              v-model="selectedSeries[index]"
-              @change="updateChart"
-          />
-          <label :for="`series-${index}`">{{ series.name }}</label>
-        </div>
-      </div>
-
       <!-- 表示期間ラジオボタン（チャートの上部に配置） -->
       <div class="filter-item">
         <label>集計軸：</label>
@@ -80,13 +67,11 @@
           ref="chartRef"
           :options="chartOptions"
           :series="series"
-          height="350"
+          height="100%"
           @legendClick="handleLegendClick"
+          style="flex-grow: 1;"
       />
     </div>
-    <pre>
-      {{xLabels}}
-    </pre>
   </div>
 </template>
 
@@ -279,36 +264,33 @@ const updateChart = async () => {
         }
       }
     })
+
   }
 }
 
-// ApexCharts のイベントハンドラーのための型を定義
-type ChartContext = {
-  w: {
-    globals: {
-      collapsedSeriesIndices: number[];
-      // 他に必要な型情報
-    }
-  };
-  // その他の必要なプロパティ
-};
-
 // チャート側でレジェンドをクリックしたときのイベントハンドラ
-const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
-  console.log('レジェンドがクリックされました:', seriesIndex);
-  // TODO: legendの同期はかなり怪しい ちゃんと調べる。最悪消す
-  // selectedSeries[seriesIndex] = chartContext.w.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1;
+const handleLegendClick = (chartContext: any, seriesIndex: number) => {
+  selectedSeries.value[seriesIndex] = !selectedSeries.value[seriesIndex];
 };
 
 </script>
 
 
 <style scoped>
+/* Ensure the component takes up the full height of its parent */
+:deep(.apexcharts-canvas) {
+  height: 100% !important;
+}
+
+:deep(.apexcharts-graphical) {
+  height: 100% !important;
+}
+
 .graph-container {
   display: flex;
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100vh; /* Use viewport height to ensure full browser height */
 }
 
 .toggle-filter-btn {
@@ -327,13 +309,14 @@ const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
 }
 
 .filter-panel {
+  flex: 0 0 250px; /* flex-grow: 0, flex-shrink: 0, flex-basis: 250px */
   width: 250px;
   padding: 15px;
   background-color: #f8f8f8;
   border-right: 1px solid #ddd;
-  transition: transform 0.3s ease;
   overflow-y: auto;
   height: 100%;
+  position: relative;
 }
 
 .filter-panel.hidden {
@@ -395,6 +378,9 @@ const handleLegendClick = (chartContext: ChartContext, seriesIndex: number) => {
   flex-grow: 1;
   padding: 15px;
   transition: width 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-area.full-width {

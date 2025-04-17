@@ -10,6 +10,7 @@ export type Series = {
     type: string;
     data: number[];
     color: string;
+    hidden: boolean;
 }
 
 const dailyDurationOptions = [
@@ -92,22 +93,23 @@ export async function usePileUpGraph() {
     })
 
     // 部署のフィルタ
-    const selectedSeries = reactive<boolean[]>(Array.from({length: pileUps.defaultPileUps.length + 2}, () => true))
+    const hideSeries = ref<boolean[]>(Array.from({length: pileUps.defaultPileUps.length + 2}, () => false))
 
     // seriesの作成
     const series = computed(() => {
-        const barSeries = pileUps.defaultPileUps.map(v => {
+        const barSeries = pileUps.defaultPileUps.map((v, index) => {
             return <Series>{
                 color: color.pop(), // TODO: 色を部署に持たせる
                 data: splitByTimeFilter(v.labels, timeFilter.value, globalStartDate),
                 name: getDepartmentName(v.departmentId!, departments.list),
-                type: "bar"
+                type: "bar",
+                hidden: hideSeries.value[index],
             }
         })
         // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
         // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
         const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
-        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => selectedSeries[i])
+        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => !hideSeries.value[i])
         const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels))
         // TODO: 週次表示の時に最終週が日曜日までないとちょっと違和感のある表示になる。
         // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
@@ -116,12 +118,14 @@ export async function usePileUpGraph() {
             color: "green",
             data: splitByTimeFilter(averageLabels.map(v => v * 8), timeFilter.value, globalStartDate),
             name: "100%",
-            type: "line"
+            type: "line",
+            hidden: false,
         }, {
             color: "red",
             data: splitByTimeFilter(averageLabels.map(v => v * 8 * 1.25), timeFilter.value, globalStartDate),
             name: "125%",
-            type: "line"
+            type: "line",
+            hidden: false,
         }]
 
         const xLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
@@ -137,7 +141,7 @@ export async function usePileUpGraph() {
         facilityTypes,
         timeFilter,
         xLabels,
-        selectedSeries,
+        selectedSeries: hideSeries,
         series,
         refreshData,
         durationOptions,
