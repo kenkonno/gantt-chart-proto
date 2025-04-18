@@ -157,8 +157,8 @@ export async function useGanttFacility() {
     const bars = ref<GanttBarObject[][]>([])
     // ガントチャート描画用のオブジェクトの生成
     const refreshBars = async () => {
-        bars.value.length = 0;
         const prodGanttBarObjects = await getProdTicketsIfSimulation()
+        bars.value.length = 0;
         ganttChartGroup.value.forEach(unit => {
             const emptyRow: GanttBarObject = {
                 beginDate: "",
