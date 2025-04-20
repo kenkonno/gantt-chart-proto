@@ -268,7 +268,6 @@ const chartOptions = reactive({
     show: true,
     width: [2, 2, 2, 4], // 最後の値は折れ線グラフの線の太さ
     curve: 'straight', // 線をスムーズに
-    colors: ['transparent', 'transparent', 'transparent', '#FF4560'] // 最後の値は折れ線グラフの色
   },
   xaxis: {
     // type: 'datetime', // datetime
@@ -318,8 +317,8 @@ const chartOptions = reactive({
   },
   tooltip: {
     y: {
-      formatter: function (val) {
-        return val + "h"
+      formatter: function (val: number) {
+        return val.toFixed(1) + "h"
       }
     }
   },

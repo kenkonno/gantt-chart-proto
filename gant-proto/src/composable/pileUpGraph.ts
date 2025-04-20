@@ -86,7 +86,6 @@ export async function usePileUpGraph() {
         return splitByTimeFilter(pileUps.defaultValidUserIndexes.map(v => v.ValidIndex), timeFilter.value, globalStartDate).length
     })
 
-    const color = ["#008FFB", "#FF4560", "#FFEA00"]
 
     // 横軸のラベル作成
     const xLabels = computed(() => {
@@ -124,7 +123,7 @@ export async function usePileUpGraph() {
             });
 
             return <Series>{
-                color: color.pop(), // TODO: 色を部署に持たせる
+                color: departments.list.find(dept => dept.id === departmentId)?.color || '#CCCCCC', // 部署マスタの色を使用、見つからない場合はデフォルト色
                 data: percentData,
                 name: getDepartmentName(departmentId, departments.list),
                 type: "bar",
