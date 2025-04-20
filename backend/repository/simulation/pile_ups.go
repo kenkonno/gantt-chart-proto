@@ -37,7 +37,7 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 			 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as index
 		FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 				 LEFT JOIN simulation_holidays th ON date.date = th.date
-				 LEFT JOIN simulation_users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
+				 LEFT JOIN simulation_users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) AND u.role IN ('worker','manager','viewer'))
 		GROUP BY
 			date.date
 	), target_tickets_by_user AS (
@@ -115,7 +115,7 @@ func (r *pileUpsRepository) GetValidIndexUsers(globalStartDate time.Time) []db.V
 		 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as valid_index
 	FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 			 LEFT JOIN simulation_holidays th ON date.date = th.date
-			 LEFT JOIN simulation_users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) )
+			 LEFT JOIN simulation_users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) AND u.role IN ('worker','manager','viewer'))
 	WHERE date.date >= $1
 	GROUP BY
 		date.date

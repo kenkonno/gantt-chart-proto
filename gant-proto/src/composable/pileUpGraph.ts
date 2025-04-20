@@ -10,6 +10,7 @@ export type Series = {
     type: string;
     data: number[];
     color: string;
+    hidden: boolean;
 }
 
 const dailyDurationOptions = [
@@ -43,6 +44,8 @@ export async function usePileUpGraph() {
     const timeFilter = ref<DisplayType>('week');
     // 期間の選択
     const durationFilter = ref<number>(13);
+    // 開始日の選択（デフォルトは本日）
+    const startDate = ref<number>(normalizeDate(Date.now()));
     // 期間のオプション
     const durationOptions = computed(() => {
         switch (timeFilter.value) {
@@ -69,7 +72,7 @@ export async function usePileUpGraph() {
 
     // 積み上げ（getDefaultPileUps
     const {data: pileUps} = reactive(await Api.getDefaultPileUps(-1, true, facilityTypes))
-    let globalStartDate: string
+    let globalStartDate = ''
     const refreshData = async () => {
         const {data} = await Api.getDefaultPileUps(-1, true, facilityTypes)
         pileUps.defaultPileUps = data.defaultPileUps
@@ -83,52 +86,85 @@ export async function usePileUpGraph() {
         return splitByTimeFilter(pileUps.defaultValidUserIndexes.map(v => v.ValidIndex), timeFilter.value, globalStartDate).length
     })
 
-    const color = ["#008FFB", "#FF4560", "#FFEA00"]
 
     // 横軸のラベル作成
     const xLabels = computed(() => {
         const allXLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
-        return filterXLabelsByDuration(allXLabels, durationFilter.value)
+        return filterXLabelsByDuration(allXLabels, durationFilter.value, startDate.value)
     })
 
     // 部署のフィルタ
-    const selectedSeries = reactive<boolean[]>(Array.from({length: pileUps.defaultPileUps.length + 2}, () => true))
+    const hideSeries = ref<boolean[]>(Array.from({length: pileUps.defaultPileUps.length + 2}, () => false))
 
     // seriesの作成
     const series = computed(() => {
-        const barSeries = pileUps.defaultPileUps.map(v => {
-            return <Series>{
-                color: color.pop(), // TODO: 色を部署に持たせる
-                data: splitByTimeFilter(v.labels, timeFilter.value, globalStartDate),
-                name: getDepartmentName(v.departmentId!, departments.list),
-                type: "bar"
-            }
-        })
-        // 部署ごとの稼動可能人数 TODO: 休みの考慮がわけわからん。たぶんいらないと思うけど相談する。
-        // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
+        // 部署ごとの100%基準値（各時点での稼働可能な人数 * 8時間）を計算
         const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
-        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => selectedSeries[i])
+
+        // 各部署のデータをパーセント表示に変換
+        const barSeries = pileUps.defaultPileUps.map((v, index) => {
+            // 対応する部署の100%基準値を取得
+            const departmentId = v.departmentId!;
+            const departmentAverage = averageLineByDepartment.find(avg => avg.departmentId === departmentId)!;
+
+            // 部署の各時点のデータを取得
+            const rawData = splitByTimeFilter(v.labels, timeFilter.value, globalStartDate);
+            const averageData = splitByTimeFilter(departmentAverage.labels, timeFilter.value, globalStartDate);
+
+            // 対応する部署の100%基準値で割って、パーセント表示に変換
+            const percentData = rawData.map((value, i) => {
+                if (averageData && i < averageData.length && averageData[i] > 0) {
+                    // 100%基準値 = 稼働可能な人数 * 8時間
+                    const baseValue = averageData[i] * 8;
+                    // パーセント計算（小数点以下2桁まで）
+                    return value;
+                }
+                return 0; // 基準値がない場合は0%とする
+            });
+
+            return <Series>{
+                color: departments.list.find(dept => dept.id === departmentId)?.color || '#CCCCCC', // 部署マスタの色を使用、見つからない場合はデフォルト色
+                data: percentData,
+                name: getDepartmentName(departmentId, departments.list),
+                type: "bar",
+                hidden: hideSeries.value[index],
+            }
+        });
+
+        console.log("#################", barSeries);
+        // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
+        console.log("#################",hideSeries.value)
+        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => !hideSeries.value[i])
         const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels))
-        // TODO: 週次表示の時に最終週が日曜日までないとちょっと違和感のある表示になる。
         // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
         // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
         const lineSeries: Series[] = [{
             color: "green",
             data: splitByTimeFilter(averageLabels.map(v => v * 8), timeFilter.value, globalStartDate),
             name: "100%",
-            type: "line"
+            type: "line",
+            hidden: false,
         }, {
             color: "red",
             data: splitByTimeFilter(averageLabels.map(v => v * 8 * 1.25), timeFilter.value, globalStartDate),
             name: "125%",
-            type: "line"
+            type: "line",
+            hidden: false,
         }]
 
         const xLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
 
-        return [...(filterSeriesByDuration(barSeries, xLabels, durationFilter.value)), ...(filterSeriesByDuration(lineSeries, xLabels, durationFilter.value))]
+        return [...(filterSeriesByDuration(barSeries, xLabels, durationFilter.value, startDate.value)), ...(filterSeriesByDuration(lineSeries, xLabels, durationFilter.value, startDate.value))]
     })
 
+
+    // 開始日を更新する関数
+    const updateStartDate = (newStartDate: number) => {
+        startDate.value = normalizeDate(newStartDate);
+    };
+
+    // globalStartDateのタイムスタンプ（ミリ秒）
+    const globalStartTimestamp = ref(dayjs(globalStartDate).valueOf());
 
     return {
         facilities,
@@ -137,12 +173,15 @@ export async function usePileUpGraph() {
         facilityTypes,
         timeFilter,
         xLabels,
-        selectedSeries,
+        selectedSeries: hideSeries,
         series,
         refreshData,
         durationOptions,
         durationFilter,
-        updateDuration
+        updateDuration,
+        startDate,
+        updateStartDate,
+        globalStartTimestamp
     }
 }
 
@@ -355,22 +394,24 @@ const normalizeDate = (timestamp: number): number => {
 };
 
 /**
- * 現在日時から指定された期間分だけxLabelsデータをフィルタリングする
+ * 指定された開始日時から指定された期間分だけxLabelsデータをフィルタリングする
  * @param xLabelsData 日付のUnixタイムスタンプ配列
  * @param duration フィルタリングする期間の長さ
+ * @param startDateValue 開始日時（ミリ秒）
  * @returns フィルタリングされたxLabels
  */
 const filterXLabelsByDuration = (
     xLabelsData: number[],
-    duration: number
+    duration: number,
+    startDateValue: number
 ): number[] => {
-    // 現在の日時を取得し、時分秒を0に統一
-    const now = normalizeDate(Date.now());
+    // 開始日時を時分秒を0に統一
+    const startTime = normalizeDate(startDateValue);
 
-    // xLabelsから現在日時に最も近いインデックスを見つける
+    // xLabelsから開始日時に最も近いインデックスを見つける
     let currentIndex = xLabelsData.findIndex(timestamp => {
         const normalizedTimestamp = normalizeDate(timestamp);
-        return normalizedTimestamp >= now;
+        return normalizedTimestamp >= startTime;
     });
 
     // 現在日時が見つからない場合は、最初のインデックスを使用
@@ -395,10 +436,11 @@ const filterXLabelsByDuration = (
 const filterSeriesByDuration = (
     seriesData: Series[],
     xLabelsData: number[],
-    duration: number
+    duration: number,
+    startDateValue: number
 ) => {
     // xLabelsをフィルタリング
-    const filteredLabels = filterXLabelsByDuration(xLabelsData, duration);
+    const filteredLabels = filterXLabelsByDuration(xLabelsData, duration, startDateValue);
 
     // フィルタリングされた範囲のインデックスを取得
     const startIndex = xLabelsData.indexOf(filteredLabels[0]);

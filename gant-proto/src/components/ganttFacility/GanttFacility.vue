@@ -300,7 +300,7 @@ const {
   syncWidth,
   resizeSyncWidth,
   forceScroll
-} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
+} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement, computed(() => globalState.showPileUp))
 
 useSyncScrollY(gGanttChartRef, gGanttChartRef)
 

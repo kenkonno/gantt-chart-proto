@@ -424,7 +424,7 @@ export const usePileUps = (
                         return
                     }
 
-                    // 部署人数合計
+                    // 部署人数合計 validUserMapで既にRoleは絞り込まれているので特に対応無
                     const numberOfDepartmentUsers = userList.filter(v => v.department_id === user.department_id).filter(v => defaultValidUserIndexMap.get(validIndex)?.includes(v.id!)).length
 
                     // 部署への積み上げ(共通)
