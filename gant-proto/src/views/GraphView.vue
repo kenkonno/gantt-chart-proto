@@ -266,7 +266,7 @@ const chartOptions = reactive({
   },
   stroke: {
     show: true,
-    width: [2, 2, 2, 4], // 最後の値は折れ線グラフの線の太さ
+    width: 1,
     curve: 'straight', // 線をスムーズに
   },
   xaxis: {
