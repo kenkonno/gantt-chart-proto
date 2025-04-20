@@ -309,8 +309,13 @@ const chartOptions = reactive({
   // 以下は既存のchartOptionsに追加する内容
   yaxis: {
     title: {
-      text: '値'
+      text: '値',
     },
+    labels: {
+      formatter: function(val: number) {
+        return val.toFixed(1) + "h"; // 小数点以下1桁で表示し、単位「h」を追加
+      }
+    }
   },
   fill: {
     opacity: 1
