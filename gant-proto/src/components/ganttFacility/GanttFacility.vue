@@ -300,7 +300,7 @@ const {
   syncWidth,
   resizeSyncWidth,
   forceScroll
-} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement, computed(() => globalState.showPileUp))
+} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement, computed(() => globalState.showPileUp))// NOTE: GanttAll.vue二も変更が必要
 
 useSyncScrollY(gGanttChartRef, gGanttChartRef)
 

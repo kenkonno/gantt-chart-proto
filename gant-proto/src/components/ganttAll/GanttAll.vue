@@ -160,7 +160,7 @@ import {useGanttAll} from "@/composable/ganttAll";
 import {useSyncScrollY, useSyncWidthAndScroll} from "@/composable/syncWidth";
 import SingleRune from "@/components/form/SingleRune.vue";
 import {initScroll} from "@/utils/initScroll";
-import {inject, nextTick, ref, watch} from "vue";
+import {computed, inject, nextTick, ref, watch} from "vue";
 import {Header} from "@/composable/ganttAllMenu";
 import {GLOBAL_SCHEDULE_ALERT_KEY} from "@/composable/scheduleAlert";
 import {GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
@@ -220,7 +220,7 @@ const {
   syncWidth,
   resizeSyncWidth,
   forceScroll
-} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement)
+} = useSyncWidthAndScroll(ganttSideMenuElement, ganttWrapperElement, childGanttWrapperElement, computed(() => globalState.showPileUp)) // NOTE: GanttFacility.vue二も変更が必要
 watch(props.ganttAllHeader, () => {
   nextTick(resizeSyncWidth)
 }, {deep: true})
