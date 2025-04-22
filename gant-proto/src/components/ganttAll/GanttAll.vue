@@ -91,19 +91,6 @@
   opacity: 0.8;
 }
 
-#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar {
-  height: 33% !important;
-}
-
-#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n) {
-  top: 33% !important;
-  height: 33% !important;
-}
-
-#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {
-  top: 66% !important;
-  height: 33% !important;
-}
 </style>
 <style lang="scss" scoped>
 @import '@/assets/gantt.scss';

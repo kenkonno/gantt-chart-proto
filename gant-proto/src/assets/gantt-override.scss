@@ -97,3 +97,20 @@ a.disabled {
   opacity: 0.6;
   text-decoration: none;
 }
+
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar,
+.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar {
+  height: 33% !important;
+}
+
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n),
+.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n) {
+  top: 33% !important;
+  height: 33% !important;
+}
+
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n),
+.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {
+  top: 66% !important;
+  height: 33% !important;
+}
