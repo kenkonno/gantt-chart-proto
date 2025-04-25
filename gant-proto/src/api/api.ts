@@ -2411,6 +2411,98 @@ export interface PostTicketsResponse {
 /**
  * 
  * @export
+ * @interface PostUnitsDuplicateRequest
+ */
+export interface PostUnitsDuplicateRequest {
+    /**
+     * ID of the unit to duplicate
+     * @type {number}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'unitId': number;
+    /**
+     * new unit name
+     * @type {string}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'unitName'?: string;
+    /**
+     * Flag to copy ProcessId field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyProcessId': boolean;
+    /**
+     * Flag to copy DepartmentId field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyDepartmentId': boolean;
+    /**
+     * Flag to copy Estimate field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyEstimate': boolean;
+    /**
+     * Flag to copy NumberOfWorker field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyNumberOfWorker': boolean;
+    /**
+     * Flag to copy DaysAfter field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyDaysAfter': boolean;
+    /**
+     * Flag to copy StartDate field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyStartDate': boolean;
+    /**
+     * Flag to copy EndDate field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyEndDate': boolean;
+    /**
+     * Flag to copy ProgressPercent field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyProgressPercent': boolean;
+    /**
+     * Flag to copy Memo field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyMemo': boolean;
+    /**
+     * Flag to copy copyTicketUser field from source ticket
+     * @type {boolean}
+     * @memberof PostUnitsDuplicateRequest
+     */
+    'copyTicketUser': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface PostUnitsDuplicateResponse
+ */
+export interface PostUnitsDuplicateResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostUnitsDuplicateResponse
+     */
+    ''?: string;
+}
+/**
+ * 
+ * @export
  * @interface PostUnitsIdRequest
  */
 export interface PostUnitsIdRequest {
@@ -5521,6 +5613,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Duplicates a unit based on the provided unit ID
+         * @summary DuplicateUnit
+         * @param {PostUnitsDuplicateRequest} [postUnitsDuplicateRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUnitsDuplicate: async (postUnitsDuplicateRequest?: PostUnitsDuplicateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/units/duplicate`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postUnitsDuplicateRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary PostUnitsId
          * @param {number} id 
@@ -6492,6 +6618,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Duplicates a unit based on the provided unit ID
+         * @summary DuplicateUnit
+         * @param {PostUnitsDuplicateRequest} [postUnitsDuplicateRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postUnitsDuplicate(postUnitsDuplicateRequest?: PostUnitsDuplicateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postUnitsDuplicate(postUnitsDuplicateRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * 
          * @summary PostUnitsId
          * @param {number} id 
@@ -7270,6 +7407,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postUnits(postUnitsRequest?: PostUnitsRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postUnits(postUnitsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Duplicates a unit based on the provided unit ID
+         * @summary DuplicateUnit
+         * @param {PostUnitsDuplicateRequest} [postUnitsDuplicateRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postUnitsDuplicate(postUnitsDuplicateRequest?: PostUnitsDuplicateRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postUnitsDuplicate(postUnitsDuplicateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -8184,6 +8331,18 @@ export class DefaultApi extends BaseAPI {
      */
     public postUnits(postUnitsRequest?: PostUnitsRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postUnits(postUnitsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Duplicates a unit based on the provided unit ID
+     * @summary DuplicateUnit
+     * @param {PostUnitsDuplicateRequest} [postUnitsDuplicateRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postUnitsDuplicate(postUnitsDuplicateRequest?: PostUnitsDuplicateRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postUnitsDuplicate(postUnitsDuplicateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

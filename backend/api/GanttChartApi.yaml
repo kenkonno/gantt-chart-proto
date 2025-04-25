@@ -9,7 +9,7 @@ paths:
   /api/users:
     get:
       summary: GetUsers
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -17,10 +17,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUsersResponse'
-              examples: {}
+              examples: { }
       operationId: get-users
       description: ''
-      parameters: []
+      parameters: [ ]
     post:
       summary: PostUsers
       operationId: post-users
@@ -33,7 +33,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostUsersRequest'
-    parameters: []
+    parameters: [ ]
   '/api/users/{id}':
     parameters:
       - schema:
@@ -43,7 +43,7 @@ paths:
         required: true
     get:
       summary: GetUsersId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -51,7 +51,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUsersIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-users-id
       description: ''
     delete:
@@ -89,7 +89,7 @@ paths:
   /api/departments:
     get:
       summary: GetDepartments
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -97,10 +97,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetDepartmentsResponse'
-              examples: {}
+              examples: { }
       operationId: get-departments
       description: ''
-      parameters: []
+      parameters: [ ]
     post:
       summary: PostDepartments
       operationId: post-departments
@@ -113,7 +113,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostDepartmentsRequest'
-    parameters: []
+    parameters: [ ]
   '/api/departments/{id}':
     parameters:
       - schema:
@@ -123,7 +123,7 @@ paths:
         required: true
     get:
       summary: GetDepartmentsId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -131,7 +131,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetDepartmentsIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-departments-id
       description: ''
     delete:
@@ -155,7 +155,7 @@ paths:
   /api/facilities:
     get:
       summary: GetFacilities
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -163,10 +163,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetFacilitiesResponse'
-              examples: {}
+              examples: { }
       operationId: get-facilities
       description: ''
-      parameters: []
+      parameters: [ ]
     post:
       summary: PostFacilities
       operationId: post-facilities
@@ -179,7 +179,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostFacilitiesRequest'
-    parameters: []
+    parameters: [ ]
   '/api/facilities/{id}':
     parameters:
       - schema:
@@ -189,7 +189,7 @@ paths:
         required: true
     get:
       summary: GetFacilitiesId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -197,7 +197,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetFacilitiesIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-facilities-id
       description: ''
       parameters:
@@ -226,7 +226,7 @@ paths:
   /api/holidays:
     get:
       summary: GetHolidays
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -234,7 +234,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetHolidaysResponse'
-              examples: {}
+              examples: { }
       operationId: get-holidays
       description: ''
       parameters:
@@ -255,7 +255,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostHolidaysRequest'
-    parameters: []
+    parameters: [ ]
   '/api/holidays/{id}':
     parameters:
       - schema:
@@ -265,7 +265,7 @@ paths:
         required: true
     get:
       summary: GetHolidaysId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -273,7 +273,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetHolidaysIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-holidays-id
       description: ''
     delete:
@@ -303,7 +303,7 @@ paths:
         required: true
     get:
       summary: GetOperationSettingsId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -311,7 +311,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOperationSettingsIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-operationSettings-id
       description: ''
     delete:
@@ -335,7 +335,7 @@ paths:
   /api/processes:
     get:
       summary: GetProcesses
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -343,10 +343,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetProcessesResponse'
-              examples: {}
+              examples: { }
       operationId: get-processes
       description: ''
-      parameters: []
+      parameters: [ ]
     post:
       summary: PostProcesses
       operationId: post-processes
@@ -359,7 +359,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostProcessesRequest'
-    parameters: []
+    parameters: [ ]
   '/api/processes/{id}':
     parameters:
       - schema:
@@ -369,7 +369,7 @@ paths:
         required: true
     get:
       summary: GetProcessesId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -377,7 +377,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetProcessesIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-processes-id
       description: ''
     delete:
@@ -401,7 +401,7 @@ paths:
   /api/units:
     get:
       summary: GetUnits
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -409,7 +409,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUnitsResponse'
-              examples: {}
+              examples: { }
       operationId: get-units
       description: ''
       parameters:
@@ -430,7 +430,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostUnitsRequest'
-    parameters: []
+    parameters: [ ]
   '/api/units/{id}':
     parameters:
       - schema:
@@ -440,7 +440,7 @@ paths:
         required: true
     get:
       summary: GetUnitsId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -448,7 +448,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUnitsIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-units-id
       description: ''
     delete:
@@ -469,10 +469,23 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostUnitsRequest'
+  /api/units/duplicate:
+    post:
+      summary: DuplicateUnit
+      operationId: post-units-duplicate
+      responses:
+        '200':
+          description: OK
+      description: 'Duplicates a unit based on the provided unit ID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUnitsDuplicateRequest'
   /api/ganttGroups:
     get:
       summary: GetGanttGroups
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -480,7 +493,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetGanttGroupsResponse'
-              examples: {}
+              examples: { }
       operationId: get-ganttGroups
       description: ''
       parameters:
@@ -505,7 +518,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostGanttGroupsRequest'
-    parameters: []
+    parameters: [ ]
   '/api/ganttGroups/{id}':
     parameters:
       - schema:
@@ -515,7 +528,7 @@ paths:
         required: true
     get:
       summary: GetGanttGroupsId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -523,7 +536,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetGanttGroupsIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-ganttGroups-id
       description: ''
     delete:
@@ -547,7 +560,7 @@ paths:
   /api/tickets:
     get:
       summary: GetTickets
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -555,7 +568,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTicketsResponse'
-              examples: {}
+              examples: { }
       operationId: get-tickets
       description: ''
       parameters:
@@ -588,7 +601,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PostTicketsRequest'
         description: ''
-    parameters: []
+    parameters: [ ]
   '/api/tickets/{id}':
     parameters:
       - schema:
@@ -598,7 +611,7 @@ paths:
         required: true
     get:
       summary: GetTicketsId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -606,7 +619,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTicketsIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-tickets-id
       description: ''
     delete:
@@ -640,7 +653,7 @@ paths:
         required: true
     get:
       summary: GetTicketMemoId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -648,7 +661,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTicketMemoIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-ticket-memo-id
       description: ''
     post:
@@ -669,7 +682,7 @@ paths:
   /api/ticketUsers:
     get:
       summary: GetTicketUsers
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -677,7 +690,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTicketUsersResponse'
-              examples: {}
+              examples: { }
       operationId: get-ticketUsers
       description: ''
       parameters:
@@ -704,7 +717,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostTicketUsersRequest'
-    parameters: []
+    parameters: [ ]
   '/api/ticketUsers/{id}':
     parameters:
       - schema:
@@ -714,7 +727,7 @@ paths:
         required: true
     get:
       summary: GetTicketUsersId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -722,7 +735,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTicketUsersIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-ticketUsers-id
       description: ''
     delete:
@@ -735,7 +748,7 @@ paths:
   /api/all-tickets:
     get:
       summary: GetAllTicket
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -743,7 +756,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAllTicketsResponse'
-              examples: {}
+              examples: { }
       operationId: get-all-tickets
       description: ''
       parameters:
@@ -757,11 +770,11 @@ paths:
             type: string
           in: query
           name: mode
-    parameters: []
+    parameters: [ ]
   /api/pileUps:
     get:
       summary: GetPileUps
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -769,7 +782,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetPileUpsResponse'
-              examples: {}
+              examples: { }
       operationId: get-pileUps
       description: ''
       parameters:
@@ -797,11 +810,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostCopyFacilitysRequest'
-    parameters: []
+    parameters: [ ]
   /api/scheduleAlerts:
     get:
       summary: GetScheduleAlerts
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -809,15 +822,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetScheduleAlertsResponse'
-              examples: {}
+              examples: { }
       operationId: get-scheduleAlerts
       description: ''
-      parameters: []
-    parameters: []
+      parameters: [ ]
+    parameters: [ ]
   /api/userInfo:
     get:
       summary: GetUserInfo
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -826,7 +839,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetUserInfoResponse'
       operationId: get-userInfo
-      parameters: []
+      parameters: [ ]
   /api/login:
     post:
       summary: ''
@@ -864,7 +877,7 @@ paths:
   /api/milestones:
     get:
       summary: GetMilestones
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -872,7 +885,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetMilestonesResponse'
-              examples: {}
+              examples: { }
       operationId: get-milestones
       description: ''
       parameters:
@@ -900,7 +913,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostMilestonesRequest'
-    parameters: []
+    parameters: [ ]
   '/api/milestones/{id}':
     parameters:
       - schema:
@@ -910,7 +923,7 @@ paths:
         required: true
     get:
       summary: GetMilestonesId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -918,7 +931,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetMilestonesIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-milestones-id
       description: ''
     delete:
@@ -942,7 +955,7 @@ paths:
   /api/defaultPileUps:
     get:
       summary: GetDefaultPileUps
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: OK
@@ -972,7 +985,7 @@ paths:
   /api/facilitySharedLinks:
     get:
       summary: GetFacilitySharedLinks
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -980,10 +993,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetFacilitySharedLinksResponse'
-              examples: {}
+              examples: { }
       operationId: get-facilitySharedLinks
       description: ''
-      parameters: []
+      parameters: [ ]
     post:
       summary: PostFacilitySharedLinks
       operationId: post-facilitySharedLinks
@@ -1000,7 +1013,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostFacilitySharedLinksRequest'
-    parameters: []
+    parameters: [ ]
   '/api/facilitySharedLinks/{id}':
     parameters:
       - schema:
@@ -1010,7 +1023,7 @@ paths:
         required: true
     get:
       summary: GetFacilitySharedLinksId
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -1018,7 +1031,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetFacilitySharedLinksIdResponse'
-              examples: {}
+              examples: { }
       operationId: get-facilitySharedLinks-id
       description: ''
     delete:
@@ -1058,7 +1071,7 @@ paths:
           application/xml:
             schema:
               type: object
-              properties: {}
+              properties: { }
     get:
       summary: ''
       operationId: get-simulation
@@ -1123,7 +1136,7 @@ paths:
   /api/detectWorkOutsideEmploymentPeriods:
     get:
       summary: GetDetectWorkOutsideEmploymentPeriods
-      tags: []
+      tags: [ ]
       responses:
         '200':
           description: ''
@@ -1131,7 +1144,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetDetectWorkOutsideEmploymentPeriodsResponse'
-              examples: {}
+              examples: { }
       operationId: get-detectWorkOutsideEmploymentPeriods
       description: ''
       parameters:
@@ -1169,7 +1182,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostBulkUpdateTicketsRequest'
-    parameters: []
+    parameters: [ ]
 components:
   schemas:
     User:
@@ -2986,3 +2999,61 @@ components:
             $ref: '#/components/schemas/Ticket'
       required:
         - tickets
+    PostUnitsDuplicateRequest:
+      type: object
+      properties:
+        unitId:
+          type: integer
+          description: 'ID of the unit to duplicate'
+        unitName:
+          type: string
+          description: 'new unit name'
+        copyProcessId:
+          type: boolean
+          description: 'Flag to copy ProcessId field from source ticket'
+        copyDepartmentId:
+          type: boolean
+          description: 'Flag to copy DepartmentId field from source ticket'
+        copyEstimate:
+          type: boolean
+          description: 'Flag to copy Estimate field from source ticket'
+        copyNumberOfWorker:
+          type: boolean
+          description: 'Flag to copy NumberOfWorker field from source ticket'
+        copyDaysAfter:
+          type: boolean
+          description: 'Flag to copy DaysAfter field from source ticket'
+        copyStartDate:
+          type: boolean
+          description: 'Flag to copy StartDate field from source ticket'
+        copyEndDate:
+          type: boolean
+          description: 'Flag to copy EndDate field from source ticket'
+        copyProgressPercent:
+          type: boolean
+          description: 'Flag to copy ProgressPercent field from source ticket'
+        copyMemo:
+          type: boolean
+          description: 'Flag to copy Memo field from source ticket'
+        copyTicketUser:
+          type: boolean
+          description: 'Flag to copy copyTicketUser field from source ticket'
+      required:
+        - unitId
+        - copyProcessId
+        - copyDepartmentId
+        - copyEstimate
+        - copyNumberOfWorker
+        - copyDaysAfter
+        - copyStartDate
+        - copyEndDate
+        - copyProgressPercent
+        - copyMemo
+        - copyTicketUser
+
+    PostUnitsDuplicateResponse:
+      title: PostDuplicateUnitResponse
+      type: object
+      properties:
+        '':
+          type: string
