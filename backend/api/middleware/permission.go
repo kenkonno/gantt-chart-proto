@@ -8,6 +8,13 @@ import (
 	"net/http"
 )
 
+// 認証が不要なパスのリスト
+var noAuthRequired = []string{
+	"GET /api/userInfo",
+	"POST /api/login",
+	"POST /api/logout",
+}
+
 // TODO: OpenApi定義から自動生成させる。
 var rolesNeeded = map[string][]string{
 	"DELETE /api/departments/:id":         {constants.RoleAdmin, constants.RoleManager},
@@ -78,6 +85,7 @@ var rolesNeeded = map[string][]string{
 	"POST /api/users":                 {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/users/:id":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker},
 	"POST /api/users/upload":          {constants.RoleAdmin, constants.RoleManager},
+	"POST /api/units/duplicate":       {constants.RoleAdmin, constants.RoleManager},
 }
 
 func getRolesFromToken(c *gin.Context) []string {
@@ -96,11 +104,18 @@ func RoleBasedAccessControl() gin.HandlerFunc {
 
 		fullPath := method + " " + path
 
+		// 認証不要なパスかチェック
+		for _, noAuthPath := range noAuthRequired {
+			if noAuthPath == fullPath {
+				c.Next()
+				return
+			}
+		}
+
 		requiredRoles, ok := rolesNeeded[fullPath]
 
 		if !ok {
-			//c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "no permission to this resource"})
-			// TODO: パスが見つからないときは認証をさせない。作りとしていまいちな気がするけど一旦速度優先。
+			// パスが見つからないときのログ出力をなくし、単純に次の処理へ進む
 			log.Default().Println("パスに対するロールが見つかりません。 " + fullPath)
 			c.Next()
 			return

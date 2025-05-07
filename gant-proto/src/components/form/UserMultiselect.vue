@@ -23,7 +23,7 @@
       >
         <div class="icon-wrapper">
           <SingleRune :name="getRuneName(option.lastName, option.firstName)" :id="option.value" class="hover-test"></SingleRune>
-          <div class="close" @mousedown.prevent="allowed('UPDATE_TICKET') && handleTagRemove(option, $event)" v-if="allowed('UPDATE_TICKET')"></div>
+          <div class="close" @mousedown.prevent="allowed('UPDATE_TICKET') && handleTagRemove(option, $event)" v-if="allowed('UPDATE_TICKET') && !disabled"></div>
         </div>
       </div>
     </template>

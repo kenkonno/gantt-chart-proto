@@ -9,8 +9,8 @@ import {PileUpFilter} from "@/composable/pileUps";
 import {FacilityType} from "@/const/common";
 import {allowed} from "@/composable/role";
 
-const LOCAL_STORAGE_KEY = "koteikanri"
-const VERSION = 1.2 // フィルタの項目が変わったときに変える
+const LOCAL_STORAGE_KEY = "tasmap"
+const VERSION = 1.3 // フィルタの項目が変わったときに変える
 
 /**
  * WebStorageを用いて各種フィルタ系の値を保持するようにする。
@@ -45,6 +45,7 @@ type GlobalFilterState = {
     aggregationAxis: AggregationAxis,
     version: number,
     showPileUp: boolean,
+    unitGroupInfo: { [key: number]: boolean }
 }
 
 
@@ -76,7 +77,8 @@ const state: GlobalFilterState = {
     viewType: "day",
     aggregationAxis: "facility",
     showPileUp: true,
-    version: VERSION
+    version: VERSION,
+    unitGroupInfo: {}
 
 }
 
@@ -85,7 +87,7 @@ export const initStateValue = async () => {
     const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     // メニュー非表示権限の対応（現状Guestのみ）
-    if (!allowed("MENU")){
+    if (!allowed("MENU")) {
         state.ganttFacilityMenu = getGuestMenu()
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
     } else if (savedState) {
@@ -103,6 +105,7 @@ export const initStateValue = async () => {
         state.aggregationAxis = parsedState.aggregationAxis;
         state.version = parsedState.version;
         state.showPileUp = parsedState.showPileUp;
+        state.unitGroupInfo = parsedState.unitGroupInfo;
     } else {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
     }
@@ -122,7 +125,7 @@ const getFacilityMenu = (savedFacilityMenu: any): GanttFacilityHeader[] => {
     })
 }
 
-const getGuestMenu = ():GanttFacilityHeader[] => {
+const getGuestMenu = (): GanttFacilityHeader[] => {
     return [
         {name: "ユニット", visible: true},
         {name: "工程", visible: true},
@@ -146,19 +149,28 @@ export const globalFilterGetter = {
     getViewType: () => state.viewType,
     getAggregationAxis: () => state.aggregationAxis,
     getShowPileUp: () => state.showPileUp,
+    getUnitGroupInfo: () => state.unitGroupInfo,
 }
 
-type StateKey = 'orderStatus' | 'ganttFacilityMenu' | 'ganttAllMenu' | 'pileUpsFilter' | 'viewType' | 'aggregationAxis' | 'showPileUp' ;
+type StateKey =
+    'orderStatus'
+    | 'ganttFacilityMenu'
+    | 'ganttAllMenu'
+    | 'pileUpsFilter'
+    | 'viewType'
+    | 'aggregationAxis'
+    | 'showPileUp'
+    | 'unitGroupInfo';
 
 function updateState(key: StateKey, value: any) {
     const storage = localStorage.getItem(LOCAL_STORAGE_KEY)
     if (storage == null) return
     const savedState = JSON.parse(storage) as GlobalFilterState;
     // NOTE: 型推論が完璧ではないためこのような分岐を利用しないと型エラーとなる。
-    if ( key == "aggregationAxis") {
+    if (key == "aggregationAxis") {
         savedState[key] = value;
         state[key] = value;
-    } else if (key == "showPileUp"){
+    } else if (key == "showPileUp") {
         savedState[key] = value;
         state[key] = value;
     } else {
@@ -189,6 +201,9 @@ export const globalFilterMutation = {
     },
     updateShowPileUp: (showPileUp: boolean) => {
         updateState('showPileUp', showPileUp);
+    },
+    updateUnitGroupInfo: (unitGroupInfo: { [key: number]: boolean }) => {
+        updateState('unitGroupInfo', unitGroupInfo);
     },
 
 }

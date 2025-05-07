@@ -55,11 +55,14 @@
               </thead>
               <tbody>
               <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
+                <template v-if="isOpenUnit(item.unitId)">
                 <tr v-for="(row, index) in item.rows" :key="row.ticket.id">
                   <td class="side-menu-cell"></td><!-- css hack min-height -->
-                  <gantt-td :visible="props.ganttFacilityHeader[0].visible">{{
-                      getUnitName(item.ganttGroup.unit_id)
-                    }}
+                  <gantt-td :visible="props.ganttFacilityHeader[0].visible">
+                    <template v-if="index === 0">
+                      <span class="align-middle">{{ getUnitName(item.ganttGroup.unit_id) }}</span>
+                      <unit-toggle-button :is-open="isOpenUnit(item.unitId)" @toggle="toggleUnitOpen(item.unitId)"/>
+                    </template>
                   </gantt-td>
                   <gantt-td :visible="props.ganttFacilityHeader[1].visible">
                     <select :value="row.ticket.process_id"
@@ -128,7 +131,18 @@
                         class="material-symbols-outlined">delete</span></a>
                   </gantt-td>
                 </tr>
-                <tr :style="addTicketRowStyle()" v-if="!hasFilter">
+                </template>
+                <template v-else>
+                  <GanttSideMenuByUnit
+                      :unit-name="getUnitName(item.ganttGroup.unit_id)"
+                      :user-list="globalState.userList"
+                      :gantt-chart-group="item"
+                      :gantt-facility-header="ganttFacilityHeader"
+                      :unit-id="item.unitId"
+                      @toggle-unit="toggleUnitOpen($event)"
+                  />
+                </template>
+                <tr :style="addTicketRowStyle()" v-if="!hasFilter && isOpenUnit(item.unitId)">
                   <td :colspan="props.ganttFacilityHeader.length + 1">
                     <button @click="addNewTicket(item.ganttGroup.id)" class="btn btn-outline-primary">{{
                         getUnitName(item.ganttGroup.unit_id)
@@ -140,7 +154,7 @@
               </tbody>
             </table>
           </template>
-          <g-gantt-row v-for="bar in bars" :key="bar[0].ganttBarConfig.id" :bars="bar"/>
+          <g-gantt-row v-for="bar in bars" :key="bar[0].ganttBarConfig.id" :bars="bar" :class="getUnitCollapseClass(bar[0].ganttGroupId)"/>
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->
@@ -212,6 +226,8 @@ import GreenCheck from "@/components/icon/GreenCheck.vue";
 import {FacilityType} from "@/const/common";
 import {getDefaultPileUps} from "@/composable/pileUps";
 import {postTicketMemoById} from "@/composable/ticket";
+import UnitToggleButton from "@/components/ganttFacility/UnitToggleButton.vue";
+import GanttSideMenuByUnit from "@/components/ganttFacility/GanttSideMenuByUnit.vue";
 
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
@@ -261,8 +277,12 @@ const {
   mutation,
   updateTicket,
   getUnitIdByTicketId,
-  isUpdateOrder
+  isUpdateOrder,
+  isOpenUnit,
+  toggleUnitOpen,
+  getUnitCollapseClass
 } = ret[1]
+
 
 const milestoneVerticalLines = computed(() => {
   return milestones.value.map(v => {

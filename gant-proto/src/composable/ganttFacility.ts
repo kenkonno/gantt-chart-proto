@@ -24,10 +24,12 @@ import {allowed} from "@/composable/role";
 import {useMilestoneTable} from "@/composable/milestone";
 import {getUserInfo} from "@/composable/auth";
 import Swal from "sweetalert2";
+import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
     rows: GanttRow[]
+    unitId: number
 }
 
 export type GanttRow = {
@@ -35,6 +37,10 @@ export type GanttRow = {
     ganttGroup?: GanttGroup
     ticket?: Ticket
     ticketUsers?: TicketUser[]
+}
+export type UnitGroupInfo = {
+    unitId: number
+    isOpen: boolean
 }
 const BAR_NORMAL_COLOR = "rgb(147 206 255)"
 const BAR_COMPLETE_COLOR = "rgb(200 200 200)"
@@ -98,6 +104,41 @@ export async function useGanttFacility() {
         return ticketList
     })
 
+    // ユニットのグルーピング化情報
+    const unitGroupInfo = ref<UnitGroupInfo[]>([])
+    unitMap[currentFacilityId].forEach(unit => {
+        const savedUnitGroupInfo = globalFilterGetter.getUnitGroupInfo()
+        unitGroupInfo.value.push({
+            unitId: unit.id!,
+            isOpen: savedUnitGroupInfo?.[unit.id!] ?? true,
+        })
+    })
+    const isOpenUnit = (unitId: number) => {
+        return unitGroupInfo.value.find(v => v.unitId == unitId)?.isOpen ?? false
+    }
+    const toggleUnitOpen = (unitId: number) => {
+        const target = unitGroupInfo.value.find(v => v.unitId == unitId)
+        if (target) {
+            target.isOpen = !target.isOpen
+
+            // 変更を保存する
+            const savedUnitGroupInfo = globalFilterGetter.getUnitGroupInfo() || {}
+            savedUnitGroupInfo[unitId] = target.isOpen
+
+            // updateUnitGroupInfo関数を使用して保存
+            globalFilterMutation.updateUnitGroupInfo(savedUnitGroupInfo)
+        }
+        refreshBars()
+    }
+    // ganttGroupIdに紐づくUnitの開閉状況によりクラスを返却する
+    const getUnitCollapseClass = (ganttGroupId: number) => {
+        const unitId = ganttGroupList.value.find(v => v.id === ganttGroupId)?.unit_id
+        if (unitId) {
+            return isOpenUnit(unitId) ? "" : "unit-closed"
+        }
+        return ""
+    }
+
     const refreshMilestones = async () => {
         const {list} = await useMilestoneTable(currentFacilityId)
         milestones.value.length = 0
@@ -143,7 +184,8 @@ export async function useGanttFacility() {
                 {
                     ganttGroup: ganttGroup,
                     rows: filteredTicketList
-                        .map(ticket => ticketToGanttRow(ticket, ticketUserList.value, ganttGroup))
+                        .map(ticket => ticketToGanttRow(ticket, ticketUserList.value, ganttGroup)),
+                    unitId: ganttGroup.unit_id,
                 }
             )
         })
@@ -168,33 +210,62 @@ export async function useGanttFacility() {
                     style: {backgroundColor: BAR_NORMAL_COLOR}
                 }
             }
-            bars.value.push(...unit.rows.map(task => {
+            // まとめて表示機能を実装する. まとめられている場合はユニットの情報をすべて１つの要素に詰め込める。
+            if (!isOpenUnit(unit.unitId)) {
                 const result: GanttBarObject[] = []
-                const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
-                if (prodBar != undefined) {
-                    prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
-                    result.push(prodBar)
-                }
-                result.push(<GanttBarObject>{
-                    beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
-                    endDate: endOfDay(task.ticket!.end_date!),
-                    ganttGroupId: unit.ganttGroup.id,
-                    ganttBarConfig: {
-                        dragLimitLeft: 0,
-                        dragLimitRight: 0,
-                        hasHandles: allowed('UPDATE_TICKET'),
-                        immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
-                        id: task.ticket?.id!.toString(),
-                        label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
-                        style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
-                        progress: task.ticket?.progress_percent,
-                        progressColor: BAR_COMPLETE_COLOR
+                unit.rows.forEach(task => {
+                    const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
+                    if (prodBar != undefined) {
+                        prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
+                        result.push(prodBar)
                     }
+                    result.push(<GanttBarObject>{
+                        beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
+                        endDate: endOfDay(task.ticket!.end_date!),
+                        ganttGroupId: unit.ganttGroup.id,
+                        ganttBarConfig: {
+                            dragLimitLeft: 0,
+                            dragLimitRight: 0,
+                            hasHandles: allowed('UPDATE_TICKET'),
+                            immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
+                            id: task.ticket?.id!.toString(),
+                            label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
+                            style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
+                            progress: task.ticket?.progress_percent,
+                            progressColor: BAR_COMPLETE_COLOR
+                        }
+                    })
                 })
-                return result
-            }))
+                bars.value.push(result)
+            } else {
+                bars.value.push(...unit.rows.map(task => {
+                    const result: GanttBarObject[] = []
+                    const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
+                    if (prodBar != undefined) {
+                        prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
+                        result.push(prodBar)
+                    }
+                    result.push(<GanttBarObject>{
+                        beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
+                        endDate: endOfDay(task.ticket!.end_date!),
+                        ganttGroupId: unit.ganttGroup.id,
+                        ganttBarConfig: {
+                            dragLimitLeft: 0,
+                            dragLimitRight: 0,
+                            hasHandles: allowed('UPDATE_TICKET'),
+                            immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
+                            id: task.ticket?.id!.toString(),
+                            label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
+                            style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
+                            progress: task.ticket?.progress_percent,
+                            progressColor: BAR_COMPLETE_COLOR
+                        }
+                    })
+                    return result
+                }))
+            }
             // ボタン用の空行を追加する
-            if (!hasFilter.value && allowed('UPDATE_TICKET')) {
+            if (!hasFilter.value && allowed('UPDATE_TICKET') && isOpenUnit(unit.ganttGroup.unit_id)) {
                 bars.value.push([emptyRow])
             }
         })
@@ -733,6 +804,9 @@ export async function useGanttFacility() {
         mutation,
         getUnitIdByTicketId,
         isUpdateOrder,
+        isOpenUnit,
+        toggleUnitOpen,
+        getUnitCollapseClass,
     }
 }
 
