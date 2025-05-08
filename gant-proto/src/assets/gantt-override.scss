@@ -98,17 +98,21 @@ a.disabled {
   text-decoration: none;
 }
 
-#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar,
-.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar {
+/* 1番目、4番目、7番目... の要素 */
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n+1),
+.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n+1) {
+  top: 0 !important;
   height: 33% !important;
 }
 
-#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n),
-.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(2n) {
+/* 2番目、5番目、8番目... の要素 */
+#gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n+2),
+.g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n+2) {
   top: 33% !important;
   height: 33% !important;
 }
 
+/* 3番目、6番目、9番目... の要素 */
 #gantt-all-view.withFilter .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n),
 .g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {
   top: 66% !important;
