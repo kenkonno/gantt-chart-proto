@@ -60,7 +60,7 @@ export async function useGanttFacility() {
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
     const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
     const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
-    const {userList, processList, departmentList, holidayMap, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
+    const {userList, processList, departmentList, holidayList, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
@@ -85,14 +85,16 @@ export async function useGanttFacility() {
         return operationSettingMap[currentFacilityId]
     })
     const getHolidaysForGantt = (displayType: DisplayType) => {
+        // TODO: 稼働日対応（祝日マスタと稼働日マスタを組み合わせる）
         if (displayType === "day") {
-            return holidayMap[currentFacilityId].map(v => new Date(v.date))
+            return holidayList.map(v => new Date(v.date))
         } else {
             return []
         }
     }
     const getHolidays = computed(() => {
-        return holidayMap[currentFacilityId]
+        // TODO: 稼働日対応（祝日マスタと稼働日マスタを組み合わせる）
+        return holidayList
     })
     const getGanttChartWidth = (displayType: DisplayType) => {
         // 1日30pxとして計算する
