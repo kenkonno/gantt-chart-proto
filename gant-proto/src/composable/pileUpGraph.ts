@@ -115,7 +115,7 @@ export async function usePileUpGraph() {
             const percentData = rawData.map((value, i) => {
                 if (averageData && i < averageData.length && averageData[i] > 0) {
                     // 100%基準値 = 稼働可能な人数 * 8時間
-                    const baseValue = averageData[i] * 8;
+                    // const baseValue = averageData[i] * 8;
                     // パーセント計算（小数点以下2桁まで）
                     return value;
                 }
@@ -239,7 +239,7 @@ const getAverageLine = (defaultValidUserIndexes: DefautValidIndexUsers[], depart
         // 各validIndexごとの稼働可能人数を格納する配列
         const labels: number[] = [];
 
-        defaultValidUserIndexes.forEach((validIndexData, i) => {
+        defaultValidUserIndexes.forEach((validIndexData) => {
             // この部署のユーザーで、現在のvalidIndexで稼働可能なユーザー数をカウント
             const count = departmentUserIds.filter(userId =>
                 validIndexData.UserIds.includes(userId)

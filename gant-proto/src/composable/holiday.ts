@@ -6,10 +6,10 @@ import {Emit} from "@/const/common";
 
 
 // ユーザー一覧。特別ref系は必要ない。
-export async function useHolidayTable(facilityId: number) {
+export async function useHolidayTable() {
     const list = ref<Holiday[]>([])
     const refresh = async () => {
-        const resp = await Api.getHolidays(facilityId)
+        const resp = await Api.getHolidays()
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }
@@ -22,7 +22,6 @@ export async function useHoliday(holidayId?: number) {
 
     const holiday = ref<Holiday>({
         id: null,
-        facility_id: 0,
         name: "dummy",
         date: "",
         created_at: undefined,
@@ -32,7 +31,6 @@ export async function useHoliday(holidayId?: number) {
         const {data} = await Api.getHolidaysId(holidayId)
         if (data.holiday != undefined) {
             holiday.value.id = data.holiday.id
-            holiday.value.facility_id = data.holiday.facility_id
             holiday.value.name = data.holiday.name
             holiday.value.date = data.holiday.date.substring(0,10)
             holiday.value.created_at = data.holiday.created_at
@@ -52,9 +50,8 @@ export function validate(holiday: Holiday) {
     return isValid
 }
 
-export async function postHoliday(holiday: Holiday, facilityId: number, emit: Emit) {
+export async function postHoliday(holiday: Holiday, emit: Emit) {
     holiday.date = holiday.date + "T00:00:00.00000+09:00"
-    holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
         holiday: holiday,
     }
@@ -65,9 +62,8 @@ export async function postHoliday(holiday: Holiday, facilityId: number, emit: Em
     })
 }
 
-export async function postHolidayById(holiday: Holiday, facilityId: number, emit: Emit) {
+export async function postHolidayById(holiday: Holiday, emit: Emit) {
     holiday.date = holiday.date + "T00:00:00.00000+09:00"
-    holiday.facility_id = facilityId
     const req: PostHolidaysRequest = {
         holiday: holiday,
     }
@@ -87,6 +83,3 @@ export async function deleteHolidayById(id: number, emit: Emit) {
         emit('closeEditModal')
     })
 }
-
-
-

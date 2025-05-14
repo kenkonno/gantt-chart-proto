@@ -37,9 +37,10 @@ func GetPileUpsInvoke(c *gin.Context) (openapi_models.GetPileUpsResponse, error)
 
 	return openapi_models.GetPileUpsResponse{
 		List: lo.Map(facilities, func(facility db.Facility, index int) openapi_models.GetPileUpsResponseListInner {
-			targetHolidays := lo.Filter(holidays, func(item db.Holiday, index int) bool {
-				return item.FacilityId == *facility.Id
-			})
+			//targetHolidays := lo.Filter(holidays, func(item db.Holiday, index int) bool {
+			//	return item.FacilityId == *facility.Id
+			//})
+			targetHolidays := holidays
 			targetGanttGroups := lo.Filter(ganttGroups, func(item db.GanttGroup, index int) bool {
 				return item.FacilityId == *facility.Id
 			})
@@ -47,12 +48,11 @@ func GetPileUpsInvoke(c *gin.Context) (openapi_models.GetPileUpsResponse, error)
 				FacilityId: *facility.Id,
 				Holidays: lo.Map(targetHolidays, func(item db.Holiday, index int) openapi_models.Holiday {
 					return openapi_models.Holiday{
-						Id:         item.Id,
-						Name:       item.Name,
-						Date:       item.Date,
-						CreatedAt:  item.CreatedAt,
-						UpdatedAt:  item.UpdatedAt,
-						FacilityId: item.FacilityId,
+						Id:        item.Id,
+						Name:      item.Name,
+						Date:      item.Date,
+						CreatedAt: item.CreatedAt,
+						UpdatedAt: item.UpdatedAt,
 					}
 				}),
 				GanttGroups: lo.Map(targetGanttGroups, func(item db.GanttGroup, index int) openapi_models.GanttGroup {

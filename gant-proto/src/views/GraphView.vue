@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, reactive, ref, Ref} from 'vue'
+import {reactive, ref, Ref} from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import {usePileUpGraph} from "@/composable/pileUpGraph";
 import {FacilityType, FacilityTypeMap} from "@/const/common";
@@ -161,9 +161,9 @@ import dayjs from 'dayjs';
 
 
 const {
-  facilities,
-  departments,
-  pileUps,
+  // facilities,
+  // departments,
+  // pileUps,
   facilityTypes,
   timeFilter,
   series,

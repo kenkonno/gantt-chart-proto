@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, defineEmits} from 'vue'
-import {User} from "@/api";
+import {ref, defineEmits} from 'vue';
 
 interface UploadFile {
   description: string,

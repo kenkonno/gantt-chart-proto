@@ -2,9 +2,9 @@
   <tr>
 
     <td class="side-menu-cell"></td><!-- css hack min-height -->
-    <gantt-td :visible="ganttFacilityHeader[0].visible">
-        <span class="align-middle">{{ unitName }}</span>
+    <gantt-td :visible="ganttFacilityHeader[0].visible" class="text-start">
         <unit-toggle-button :is-open="isOpen" @toggle="$emit('toggle-unit', unitId)"/>
+        <span class="align-middle">{{ unitName }}</span>
     </gantt-td>
     <gantt-td :visible="ganttFacilityHeader[1].visible">‐</gantt-td>
     <gantt-td :visible="ganttFacilityHeader[2].visible">‐</gantt-td>
@@ -102,7 +102,7 @@ const props = defineProps({
 });
 
 // イベント定義
-const emit = defineEmits(["toggle-unit"]);
+defineEmits(["toggle-unit"]);
 
 const ticketUserList = props.ganttChartGroup?.rows.reduce((prev: TicketUser[], current: GanttRow) => {
   return [...prev , ...(current.ticketUsers || [])]

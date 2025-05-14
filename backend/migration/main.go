@@ -25,6 +25,7 @@ func main() {
 	migrate(db.Milestone{})
 	migrate(db.FacilitySharedLink{})
 	migrate(db.SimulationLock{})
+	migrate(db.FacilityWorkSchedule{})
 
 	// simulation
 	migrate(db.SimulationDepartment{})

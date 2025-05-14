@@ -7,27 +7,21 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
-	"strconv"
 )
 
 func GetHolidaysInvoke(c *gin.Context) (openapi_models.GetHolidaysResponse, error) {
 	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
-	facilityId, err := strconv.Atoi(c.Query("facilityId"))
-	if err != nil {
-		panic(err)
-	}
 
-	holidayList := holidayRep.FindByFacilityId(int32(facilityId))
+	holidayList := holidayRep.FindAll()
 
 	return openapi_models.GetHolidaysResponse{
 		List: lo.Map(holidayList, func(item db.Holiday, index int) openapi_models.Holiday {
 			return openapi_models.Holiday{
-				Id:         item.Id,
-				FacilityId: item.FacilityId,
-				Name:       item.Name,
-				Date:       item.Date,
-				CreatedAt:  item.CreatedAt,
-				UpdatedAt:  item.UpdatedAt,
+				Id:        item.Id,
+				Name:      item.Name,
+				Date:      item.Date,
+				CreatedAt: item.CreatedAt,
+				UpdatedAt: item.UpdatedAt,
 			}
 		}),
 	}, nil
