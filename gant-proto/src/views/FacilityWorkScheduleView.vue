@@ -26,13 +26,15 @@ import {useFacilityWorkScheduleTable} from "@/composable/facilityWorkSchedule";
 import AsyncFacilityWorkScheduleTable from "@/components/facilityWorkSchedule/AsyncFacilityWorkScheduleTable.vue";
 import AsyncFacilityWorkScheduleEdit from "@/components/facilityWorkSchedule/AsyncFacilityWorkScheduleEdit.vue";
 import {inject} from "vue";
-import {GLOBAL_STATE_KEY} from "@/composable/globalState";
+import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 
 const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 
 const {list, refresh} = await useFacilityWorkScheduleTable(currentFacilityId)
+const {refreshFacilityWorkScheduleMap} = inject(GLOBAL_ACTION_KEY)!
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const closeModalProxy = async () => {
+  await refreshFacilityWorkScheduleMap(currentFacilityId)
   await refresh()
   closeEditModal()
 }

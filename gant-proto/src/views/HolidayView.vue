@@ -28,13 +28,13 @@ import {inject} from "vue";
 
 const {holidayList, currentFacilityId} = inject(GLOBAL_STATE_KEY)!
 const {refreshHolidayList} = inject(GLOBAL_ACTION_KEY)!
-await refreshHolidayList(currentFacilityId)
+await refreshHolidayList()
 
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 
 const closeModalProxy = async () => {
-  await refreshHolidayList(currentFacilityId)
+  await refreshHolidayList()
   closeEditModal()
   emit("update")
 }

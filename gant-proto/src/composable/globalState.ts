@@ -111,6 +111,7 @@ export const useGlobalState = async () => {
         await actions.refreshProcessList()
         await actions.refreshDepartmentList()
         await actions.refreshUserList()
+        await actions.refreshHolidayList()
     }
 
     const actions: Actions = {
@@ -199,6 +200,7 @@ export const useGlobalState = async () => {
             globalState.value.currentFacilityId = facilityId
             globalState.value.ganttFacilityRefresh = false
             // facility紐づくデータを初期化する
+            await actions.refreshFacilityWorkScheduleMap(facilityId)
             await actions.refreshUnitMap(facilityId)
             await actions.refreshOperationSettingMap(facilityId)
             nextTick(() => {

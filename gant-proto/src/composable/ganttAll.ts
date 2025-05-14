@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import {GanttBarObject} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref} from "vue";
-import {Facility, GanttGroup, Holiday, Ticket, User} from "@/api";
+import {Facility, GanttGroup, Ticket, User} from "@/api";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {endOfDay,} from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
@@ -28,14 +28,13 @@ type GanttAllRow = {
 
 export async function useGanttAll(aggregationAxis: AggregationAxis) {
     // injectはsetupと同期的に呼び出す必要あり
-    const {facilityList, userList, processList, facilityTypes} = inject(GLOBAL_STATE_KEY)!
-    const {refreshFacilityList, refreshUserList, refreshProcessList} = inject(GLOBAL_ACTION_KEY)!
+    const {facilityList, userList, processList, facilityTypes, holidayList} = inject(GLOBAL_STATE_KEY)!
+    const {refreshFacilityList, refreshUserList, refreshProcessList, refreshHolidayList} = inject(GLOBAL_ACTION_KEY)!
     const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
+    await refreshHolidayList()
     await refreshFacilityList()
     await refreshUserList()
     await refreshProcessList()
-
-    const holidays: Holiday[] = []
 
     const getGanttChartWidth = (displayType: DisplayType) => {
         // 1日30pxとして計算する
@@ -201,11 +200,9 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         return bars
     }
 
-    // 案件ごとに行を作成する
+    // 案件ごとに行を作成する TODO: ここで呼び出しているAPIは一括で取得できるようにする。パフォーマンス改善。全件取得にオプションのパラメータでID指定できるようにする。
     const ganttAllRowPromise = filteredFacilityList.map(async facility => {
         // 案件に紐づくチケット一覧
-        const {data} = await Api.getHolidays()
-        holidays.push(...data.list)
         const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
         const {tickets, estimate, progress_percent} = await getFacilityInfos(ganttGroups.list, filteredAllTickets.list)
 
@@ -307,7 +304,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         if (displayType === "week") {
             return Array.from([])
         } else {
-            const r = holidays.map(v => new Date(v.date))
+            const r = holidayList.map(v => new Date(v.date))
             return Array.from(new Set(r))
         }
     })
@@ -320,7 +317,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         getGanttChartWidth,
         tickets: filteredAllTickets.list,
         ticketUsers: filteredAllTicketUsers.list,
-        holidays,
+        holidayList,
         chartStart,
         chartEnd,
         hasFilter

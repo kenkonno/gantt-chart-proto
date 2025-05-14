@@ -1,7 +1,7 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
 import {computed, inject, ref, toValue} from "vue";
-import {GanttGroup, OperationSetting, Ticket, TicketUser, User} from "@/api";
+import {FacilityWorkSchedule, GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -17,7 +17,7 @@ import {
     getNumberOfBusinessDays, YMDDateToGanttEndDate, YMDDateToGanttStartDate
 } from "@/coreFunctions/manHourCalculation";
 import {DAYJS_FORMAT} from "@/utils/day";
-import {ApiMode, DEFAULT_PROCESS_COLOR} from "@/const/common";
+import {ApiMode, DEFAULT_PROCESS_COLOR, FacilityWorkScheduleType, FacilityWorkScheduleTypeMap} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
@@ -60,7 +60,15 @@ export async function useGanttFacility() {
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
     const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
     const {selectedDepartment, selectedUser} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
-    const {userList, processList, departmentList, holidayList, operationSettingMap, unitMap} = inject(GLOBAL_STATE_KEY)!
+    const {
+        userList,
+        processList,
+        departmentList,
+        holidayList,
+        operationSettingMap,
+        unitMap,
+        facilityWorkScheduleMap
+    } = inject(GLOBAL_STATE_KEY)!
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
@@ -84,18 +92,63 @@ export async function useGanttFacility() {
     const getOperationList = computed(() => {
         return operationSettingMap[currentFacilityId]
     })
+
+    const getCommonHolidayList = (workSchedule: FacilityWorkSchedule[]) => {
+        // 既存のholidayListのコピーを作成
+        let updatedHolidayList = [...holidayList];
+
+        if (workSchedule && workSchedule.length > 0) {
+            // 1. workScheduleから、typeがHolidayのものを holidayListに追加
+            // (dateが一致するものがない場合のみ)
+            const holidaysToAdd = workSchedule
+                .filter(ws => ws.type === 'Holiday')
+                .filter(ws => !updatedHolidayList.some(h => h.date === ws.date))
+                .map(ws => ({
+                    id: ws.id,
+                    name: '稼働日マスタからの休日',
+                    date: ws.date,
+                    created_at: ws.created_at,
+                    updated_at: ws.updated_at
+                } as Holiday));
+
+            // 追加するものがあれば連結
+            if (holidaysToAdd.length > 0) {
+                updatedHolidayList = [...updatedHolidayList, ...holidaysToAdd];
+            }
+        }
+
+        return updatedHolidayList;
+    }
+
+    // 稼働日マスタのうち、祝日のみを合わせたものと返却する
     const getHolidaysForGantt = (displayType: DisplayType) => {
-        // TODO: 稼働日対応（祝日マスタと稼働日マスタを組み合わせる）
+        const workSchedule = facilityWorkScheduleMap[currentFacilityId];
+        const updatedHolidayList = getCommonHolidayList(workSchedule);
+
         if (displayType === "day") {
-            return holidayList.map(v => new Date(v.date))
+            return updatedHolidayList.map(v => new Date(v.date))
         } else {
             return []
         }
     }
+
+    // 稼働日マスタ内、稼働日で打ち消し、祝日を追加したものを返却する（マージしたものといってもいい）
     const getHolidays = computed(() => {
-        // TODO: 稼働日対応（祝日マスタと稼働日マスタを組み合わせる）
-        return holidayList
-    })
+        const workSchedule = facilityWorkScheduleMap[currentFacilityId];
+        let updatedHolidayList = getCommonHolidayList(workSchedule);
+
+        if (workSchedule && workSchedule.length > 0) {
+            // workScheduleから、typeがWorkingDayのものを holidayListから削除
+            updatedHolidayList = updatedHolidayList.filter(
+                holiday => !workSchedule.some(ws =>
+                    ws.type === FacilityWorkScheduleType.WorkingDay && ws.date === holiday.date
+                )
+            );
+        }
+
+        return updatedHolidayList;
+    });
+
     const getGanttChartWidth = (displayType: DisplayType) => {
         // 1日30pxとして計算する
         return (dayjs(facility.value.term_to).diff(dayjs(facility.value.term_from), displayType) + 1) * 30 + "px"
