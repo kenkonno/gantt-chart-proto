@@ -13,9 +13,6 @@
         <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1" v-if="false">
           <operation-setting-view></operation-setting-view>
         </ModalWithLink>
-        <ModalWithLink title="休日設定" icon="holiday_village" :disabled="globalState.currentFacilityId===-1">
-          <holiday-view></holiday-view>
-        </ModalWithLink>
         <ModalWithLink title="マイルストーン" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
           <milestone-view></milestone-view>
         </ModalWithLink>

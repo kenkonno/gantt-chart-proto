@@ -56,6 +56,9 @@
       <ModalWithLink title="担当者一覧" icon="person" v-if="allowed('UPDATE_MASTER')">
         <user-view @update="updateFacility"></user-view>
       </ModalWithLink>
+      <ModalWithLink title="休日設定" icon="holiday_village">
+        <holiday-view></holiday-view>
+      </ModalWithLink>
       <ModalWithLink title="シミュレーション" icon="timeline">
         <simulation-view @update="updateSimulation"></simulation-view>
       </ModalWithLink>
@@ -155,6 +158,7 @@ import {initStateValue} from "@/utils/globalFilterState";
 import SimulationView from "@/views/SimulationView.vue";
 import ServiceLogo from "@/components/logo/ServiceLogo.vue";
 import FacilityTypeFilter from "@/components/form/FacilityTypeFilter.vue";
+import HolidayView from "@/views/HolidayView.vue";
 
 // ローカルストレージの初期化
 initStateValue()
