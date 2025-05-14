@@ -116,10 +116,13 @@ export async function useGanttFacility() {
     const isOpenUnit = (unitId: number) => {
         return unitGroupInfo.value.find(v => v.unitId == unitId)?.isOpen ?? false
     }
-    const toggleUnitOpen = (unitId: number) => {
+    const toggleUnitOpen = (unitId: number, forceStatus?: boolean) => {
         const target = unitGroupInfo.value.find(v => v.unitId == unitId)
         if (target) {
             target.isOpen = !target.isOpen
+            if (forceStatus != null) {
+                target.isOpen = forceStatus
+            }
 
             // 変更を保存する
             const savedUnitGroupInfo = globalFilterGetter.getUnitGroupInfo() || {}
@@ -130,8 +133,20 @@ export async function useGanttFacility() {
         }
         refreshBars()
     }
+    const isAllOpenUnit = computed(() => {
+        return unitGroupInfo.value.every(v => v.isOpen)
+    })
+    const toggleAllUnitOpen = () => {
+        const dst = !isAllOpenUnit.value
+        return unitGroupInfo.value.forEach(v => toggleUnitOpen(v.unitId, dst))
+    }
+
+
     // ganttGroupIdに紐づくUnitの開閉状況によりクラスを返却する
-    const getUnitCollapseClass = (ganttGroupId: number) => {
+    const getUnitCollapseClass = (bar: GanttBarObject[]) => {
+        if (bar.length == 0 ) return ""
+        if (bar[0].ganttGroupId == undefined) return "" // 追加行のためクラス不要
+        const ganttGroupId = bar[0].ganttGroupId
         const unitId = ganttGroupList.value.find(v => v.id === ganttGroupId)?.unit_id
         if (unitId) {
             return isOpenUnit(unitId) ? "" : "unit-closed"
@@ -180,14 +195,21 @@ export async function useGanttFacility() {
                     return targetTicketIds.includes(ticket.id!)
                 })
             }
-            ganttChartGroup.value.push(
-                {
-                    ganttGroup: ganttGroup,
-                    rows: filteredTicketList
-                        .map(ticket => ticketToGanttRow(ticket, ticketUserList.value, ganttGroup)),
-                    unitId: ganttGroup.unit_id,
-                }
-            )
+
+            // push処理を実行すべきかどうかを判断する条件
+            // 1件以上あればpushする。部署が選択されていなければ空でもプッシュする。
+            const shouldPush = (selectedDepartment.value === undefined && selectedUser.value === undefined) || filteredTicketList.length > 0;
+
+            if (shouldPush) {
+                ganttChartGroup.value.push(
+                    {
+                        ganttGroup: ganttGroup,
+                        rows: filteredTicketList
+                            .map(ticket => ticketToGanttRow(ticket, ticketUserList.value, ganttGroup)),
+                        unitId: ganttGroup.unit_id,
+                    }
+                );
+            }
         })
     }
     const hasFilter = computed(() => {
@@ -807,6 +829,8 @@ export async function useGanttFacility() {
         isOpenUnit,
         toggleUnitOpen,
         getUnitCollapseClass,
+        isAllOpenUnit,
+        toggleAllUnitOpen,
     }
 }
 
