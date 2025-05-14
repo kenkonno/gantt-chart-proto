@@ -49,88 +49,94 @@
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
                 <th v-for="item in props.ganttFacilityHeader" :key="item" class="side-menu-cell"
                     :class="{'d-none': !item.visible}">
-                  {{ item.name }}
+                  <unit-toggle-button :is-open="isAllOpenUnit" @toggle="toggleAllUnitOpen()"
+                                      v-if="item.name == 'ユニット'"
+                  />
+                  <span class="align-middle">{{ item.name }}</span>
                 </th>
               </tr>
               </thead>
               <tbody>
               <template v-for="item in ganttChartGroup" :key="item.ganttGroup.id">
                 <template v-if="isOpenUnit(item.unitId)">
-                <tr v-for="(row, index) in item.rows" :key="row.ticket.id">
-                  <td class="side-menu-cell"></td><!-- css hack min-height -->
-                  <gantt-td :visible="props.ganttFacilityHeader[0].visible">
-                    <template v-if="index === 0">
-                      <span class="align-middle">{{ getUnitName(item.ganttGroup.unit_id) }}</span>
-                      <unit-toggle-button :is-open="isOpenUnit(item.unitId)" @toggle="toggleUnitOpen(item.unitId)"/>
-                    </template>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[1].visible">
-                    <select :value="row.ticket.process_id"
-                            @change="mutation.setProcessId($event.target.value, row.ticket)"
-                            :disabled="!allowed('UPDATE_TICKET')">
-                      <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
-                    </select>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[2].visible">
-                    <select :value="row.ticket.department_id"
-                            @change="mutation.setDepartmentId($event.target.value, row.ticket)"
-                            :disabled="!allowed('UPDATE_TICKET')">
-                      <option v-for="item in cDepartmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
-                    </select>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
-                    <UserMultiselect :userList="getUserListByDepartmentId(row.ticket.department_id, row.ticket.start_date, row.ticket.end_date)"
-                                     :ticketUser="row.ticketUsers"
-                                     :disabled="!allowed('UPDATE_TICKET')"
-                                     @update:modelValue="mutation.setTicketUser(row.ticket ,$event)"></UserMultiselect>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[4].visible">
-                    <FormNumber class="small-numeric"
-                                :value="row.ticket.number_of_worker"
-                                :min="1"
-                                @change="mutation.setNumberOfWorker($event, row.ticket)"
-                                :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[5].visible">
-                    <FormNumber class="small-numeric"
-                                :value="row.ticket.estimate"
-                                @change="mutation.setEstimate($event, row.ticket)"
-                                :disabled="!allowed('UPDATE_TICKET')"/>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[6].visible">
-                    <FormNumber class="small-numeric"
-                                :value="row.ticket.days_after"
-                                @change="mutation.setDaysAfter($event, row.ticket)"
-                                :disabled="!allowed('UPDATE_TICKET')"/>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[7].visible">
-                    <input type="date"
-                           :value="row.ticket.start_date"
-                           @change="mutation.setStartDate($event.target.value, row.ticket)"
-                           :disabled="!allowed('UPDATE_TICKET')"/>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[8].visible">
-                    <input type="date"
-                           :value="row.ticket.end_date"
-                           @change="mutation.setEndDate($event.target.value, row.ticket)"
-                           :disabled="!allowed('UPDATE_TICKET')"/>
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[9].visible">
+                  <tr v-for="(row, index) in item.rows" :key="row.ticket.id">
+                    <td class="side-menu-cell"></td><!-- css hack min-height -->
+                    <gantt-td :visible="props.ganttFacilityHeader[0].visible" class="text-start">
+                      <template v-if="index === 0">
+                        <unit-toggle-button :is-open="isOpenUnit(item.unitId)" @toggle="toggleUnitOpen(item.unitId)"/>
+                        <span class="align-middle">{{ getUnitName(item.ganttGroup.unit_id) }}</span>
+                      </template>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[1].visible">
+                      <select :value="row.ticket.process_id"
+                              @change="mutation.setProcessId($event.target.value, row.ticket)"
+                              :disabled="!allowed('UPDATE_TICKET')">
+                        <option v-for="item in processList" :key="item.id" :value="item.id">{{ item.name }}</option>
+                      </select>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[2].visible">
+                      <select :value="row.ticket.department_id"
+                              @change="mutation.setDepartmentId($event.target.value, row.ticket)"
+                              :disabled="!allowed('UPDATE_TICKET')">
+                        <option v-for="item in cDepartmentList" :key="item.id" :value="item.id">{{ item.name }}</option>
+                      </select>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[3].visible" style="min-width: 8rem;">
+                      <UserMultiselect
+                          :userList="getUserListByDepartmentId(row.ticket.department_id, row.ticket.start_date, row.ticket.end_date)"
+                          :ticketUser="row.ticketUsers"
+                          :disabled="!allowed('UPDATE_TICKET')"
+                          @update:modelValue="mutation.setTicketUser(row.ticket ,$event)"></UserMultiselect>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[4].visible">
+                      <FormNumber class="small-numeric"
+                                  :value="row.ticket.number_of_worker"
+                                  :min="1"
+                                  @change="mutation.setNumberOfWorker($event, row.ticket)"
+                                  :disabled="row.ticketUsers?.length > 0 || !allowed('UPDATE_TICKET')"/>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[5].visible">
+                      <FormNumber class="small-numeric"
+                                  :value="row.ticket.estimate"
+                                  @change="mutation.setEstimate($event, row.ticket)"
+                                  :disabled="!allowed('UPDATE_TICKET')"/>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[6].visible">
+                      <FormNumber class="small-numeric"
+                                  :value="row.ticket.days_after"
+                                  @change="mutation.setDaysAfter($event, row.ticket)"
+                                  :disabled="!allowed('UPDATE_TICKET')"/>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[7].visible">
+                      <input type="date"
+                             :value="row.ticket.start_date"
+                             @change="mutation.setStartDate($event.target.value, row.ticket)"
+                             :disabled="!allowed('UPDATE_TICKET')"/>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[8].visible">
+                      <input type="date"
+                             :value="row.ticket.end_date"
+                             @change="mutation.setEndDate($event.target.value, row.ticket)"
+                             :disabled="!allowed('UPDATE_TICKET')"/>
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[9].visible">
                     <FormNumber class="middle-numeric"
-                                :value="row.ticket.progress_percent"
-                                @change="mutation.setProgressPercent($event, row.ticket)"
-                                :disabled="!allowed('UPDATE_PROGRESS')"
-                                :min=0 />
-                  </gantt-td>
-                  <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
-                    <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index, -1)" :class="{disabled: isUpdateOrder}"><span
-                        class="material-symbols-outlined">arrow_upward</span></a>
-                    <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index,1)" :class="{disabled: isUpdateOrder}"><span
-                        class="material-symbols-outlined">arrow_downward</span></a>
-                    <a href="#" @click.prevent="deleteTicket(row.ticket)"><span
-                        class="material-symbols-outlined">delete</span></a>
-                  </gantt-td>
-                </tr>
+                                  :value="row.ticket.progress_percent"
+                                  @change="mutation.setProgressPercent($event, row.ticket)"
+                                  :disabled="!allowed('UPDATE_PROGRESS')"
+                                  :min=0 />
+                    </gantt-td>
+                    <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
+                      <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index, -1)"
+                         :class="{disabled: isUpdateOrder}"><span
+                          class="material-symbols-outlined">arrow_upward</span></a>
+                      <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index,1)"
+                         :class="{disabled: isUpdateOrder}"><span
+                          class="material-symbols-outlined">arrow_downward</span></a>
+                      <a href="#" @click.prevent="deleteTicket(row.ticket)"><span
+                          class="material-symbols-outlined">delete</span></a>
+                    </gantt-td>
+                  </tr>
                 </template>
                 <template v-else>
                   <GanttSideMenuByUnit
@@ -154,7 +160,8 @@
               </tbody>
             </table>
           </template>
-          <g-gantt-row v-for="bar in bars" :key="bar[0].ganttBarConfig.id" :bars="bar" :class="getUnitCollapseClass(bar[0].ganttGroupId)"/>
+          <g-gantt-row v-for="(bar, index) in bars" :key="index" :bars="bar"
+                       :class="getUnitCollapseClass(bar)"/>
         </g-gantt-chart>
       </div>
       <!-- 山積み部分 -->
@@ -279,7 +286,9 @@ const {
   getUnitIdByTicketId,
   isUpdateOrder,
   isOpenUnit,
+  isAllOpenUnit,
   toggleUnitOpen,
+  toggleAllUnitOpen,
   getUnitCollapseClass
 } = ret[1]
 
