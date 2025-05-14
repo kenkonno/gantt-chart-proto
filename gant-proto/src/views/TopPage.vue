@@ -139,7 +139,6 @@ import {
 } from "@/composable/globalState";
 import {provide, ref} from "vue";
 import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
-import {FacilityTypeMap} from "@/const/common";
 import router from "@/router";
 import {GLOBAL_SCHEDULE_ALERT_KEY, useScheduleAlert} from "@/composable/scheduleAlert";
 import UserView from "@/views/UserView.vue";
@@ -156,7 +155,6 @@ import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
 import SimulationView from "@/views/SimulationView.vue";
-import ServiceLogo from "@/components/logo/ServiceLogo.vue";
 import FacilityTypeFilter from "@/components/form/FacilityTypeFilter.vue";
 import HolidayView from "@/views/HolidayView.vue";
 

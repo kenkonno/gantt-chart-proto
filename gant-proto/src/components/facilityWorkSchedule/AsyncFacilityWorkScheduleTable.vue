@@ -34,7 +34,7 @@ interface AsyncFacilityWorkScheduleTable {
   list: FacilityWorkSchedule[]
 }
 
-const props = defineProps<AsyncFacilityWorkScheduleTable>()
+defineProps<AsyncFacilityWorkScheduleTable>()
 
 </script>
 
@@ -45,7 +45,3 @@ tr > td:nth-child(1) {
   cursor: pointer;
 }
 </style>
-
-
-
-

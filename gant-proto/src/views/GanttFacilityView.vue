@@ -122,7 +122,6 @@ import {DisplayType, useGanttFacilityMenu} from "@/composable/ganttFacilityMenu"
 import OperationSettingView from "@/views/OperationSettingView.vue";
 import ModalWithLink from "@/components/modal/ModalWithLink.vue";
 import UnitView from "@/views/UnitView.vue";
-import HolidayView from "@/views/HolidayView.vue";
 import {computed} from "vue";
 import {FacilityStatus, FacilityType} from "@/const/common";
 import DefaultSpinner from "@/components/spinner/DefaultSpinner.vue";
