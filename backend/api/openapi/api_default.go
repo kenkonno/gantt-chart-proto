@@ -18,6 +18,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/detect_work_outside_employment_periods"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_work_schedules"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
@@ -68,6 +69,16 @@ func DeleteFacilitiesId(c *gin.Context) {
 func DeleteFacilitySharedLinksId(c *gin.Context) {
 	var r openapi_models.DeleteFacilitySharedLinksIdResponse
 	r, err := facility_shared_links.DeleteFacilitySharedLinksIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// DeleteFacilityWorkSchedulesId - DeleteFacilityWorkSchedulesId
+func DeleteFacilityWorkSchedulesId(c *gin.Context) {
+	var r openapi_models.DeleteFacilityWorkSchedulesIdResponse
+	r, err := facility_work_schedules.DeleteFacilityWorkSchedulesIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -258,6 +269,26 @@ func GetFacilitySharedLinks(c *gin.Context) {
 func GetFacilitySharedLinksId(c *gin.Context) {
 	var r openapi_models.GetFacilitySharedLinksIdResponse
 	r, err := facility_shared_links.GetFacilitySharedLinksIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// GetFacilityWorkSchedules - GetFacilityWorkSchedules
+func GetFacilityWorkSchedules(c *gin.Context) {
+	var r openapi_models.GetFacilityWorkSchedulesResponse
+	r, err := facility_work_schedules.GetFacilityWorkSchedulesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// GetFacilityWorkSchedulesId - GetFacilityWorkSchedulesId
+func GetFacilityWorkSchedulesId(c *gin.Context) {
+	var r openapi_models.GetFacilityWorkSchedulesIdResponse
+	r, err := facility_work_schedules.GetFacilityWorkSchedulesIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -568,6 +599,26 @@ func PostFacilitySharedLinks(c *gin.Context) {
 func PostFacilitySharedLinksId(c *gin.Context) {
 	var r openapi_models.PostFacilitySharedLinksIdResponse
 	r, err := facility_shared_links.PostFacilitySharedLinksIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostFacilityWorkSchedules - PostFacilityWorkSchedules
+func PostFacilityWorkSchedules(c *gin.Context) {
+	var r openapi_models.PostFacilityWorkSchedulesResponse
+	r, err := facility_work_schedules.PostFacilityWorkSchedulesInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostFacilityWorkSchedulesId - PostFacilityWorkSchedulesId
+func PostFacilityWorkSchedulesId(c *gin.Context) {
+	var r openapi_models.PostFacilityWorkSchedulesIdResponse
+	r, err := facility_work_schedules.PostFacilityWorkSchedulesIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)

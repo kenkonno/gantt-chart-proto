@@ -86,6 +86,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteFacilityWorkSchedulesId",
+		http.MethodDelete,
+		"/api/facilityWorkSchedules/:id",
+		DeleteFacilityWorkSchedulesId,
+	},
+
+	{
 		"DeleteGanttGroupsId",
 		http.MethodDelete,
 		"/api/ganttGroups/:id",
@@ -216,6 +223,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/facilitySharedLinks/:id",
 		GetFacilitySharedLinksId,
+	},
+
+	{
+		"GetFacilityWorkSchedules",
+		http.MethodGet,
+		"/api/facilityWorkSchedules",
+		GetFacilityWorkSchedules,
+	},
+
+	{
+		"GetFacilityWorkSchedulesId",
+		http.MethodGet,
+		"/api/facilityWorkSchedules/:id",
+		GetFacilityWorkSchedulesId,
 	},
 
 	{
@@ -433,6 +454,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/facilitySharedLinks/:id",
 		PostFacilitySharedLinksId,
+	},
+
+	{
+		"PostFacilityWorkSchedules",
+		http.MethodPost,
+		"/api/facilityWorkSchedules",
+		PostFacilityWorkSchedules,
+	},
+
+	{
+		"PostFacilityWorkSchedulesId",
+		http.MethodPost,
+		"/api/facilityWorkSchedules/:id",
+		PostFacilityWorkSchedulesId,
 	},
 
 	{

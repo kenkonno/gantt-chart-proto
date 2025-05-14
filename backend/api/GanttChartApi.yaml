@@ -1178,6 +1178,76 @@ paths:
             schema:
               $ref: '#/components/schemas/PostBulkUpdateTicketsRequest'
     parameters: [ ]
+  /api/facilityWorkSchedules:
+    get:
+      summary: GetFacilityWorkSchedules
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilityWorkSchedulesResponse'
+              examples: {}
+      operationId: get-facilityWorkSchedules
+      description: ''
+      parameters: []
+    post:
+      summary: PostFacilityWorkSchedules
+      operationId: post-facilityWorkSchedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostFacilityWorkSchedulesResponse'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilityWorkSchedulesRequest'
+    parameters: []
+  /api/facilityWorkSchedules/{id}:
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetFacilityWorkSchedulesId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilityWorkSchedulesIdResponse'
+              examples: {}
+      operationId: get-facilityWorkSchedules-id
+      description: ''
+    delete:
+      summary: DeleteFacilityWorkSchedulesId
+      operationId: delete-facilityWorkSchedules-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostFacilityWorkSchedulesId
+      operationId: post-facilityWorkSchedules-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilityWorkSchedulesRequest'
 components:
   schemas:
     User:
@@ -3049,3 +3119,93 @@ components:
       properties:
         '':
           type: string
+    FacilityWorkSchedule:
+      title: FacilityWorkSchedule
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: binding:"min=1"
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+          x-go-custom-tag: binding:"min=1"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+        - type
+      description: ''
+      x-tags:
+        - FacilityWorkSchedule
+    GetFacilityWorkSchedulesRequest:
+      title: GetFacilityWorkSchedulesRequest
+      type: object
+    GetFacilityWorkSchedulesResponse:
+      title: GetFacilityWorkSchedulesResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacilityWorkSchedule'
+      required:
+        - list
+    GetFacilityWorkSchedulesIdRequest:
+      title: GetFacilityWorkSchedulesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetFacilityWorkSchedulesIdResponse:
+      title: GetFacilityWorkSchedulesResponse
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    DeleteFacilityWorkSchedulesIdRequest:
+      title: DeleteFacilityWorkSchedulesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteFacilityWorkSchedulesIdResponse:
+      title: DeleteFacilityWorkSchedulesIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostFacilityWorkSchedulesRequest:
+      title: PostFacilityWorkSchedulesRequest
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    PostFacilityWorkSchedulesResponse:
+      title: PostFacilityWorkSchedulesResponse
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    PostFacilityWorkSchedulesIdRequest:
+      title: PostFacilityWorkSchedulesIdRequest
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    PostFacilityWorkSchedulesIdResponse:
+      title: PostFacilityWorkSchedulesIdResponse
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
