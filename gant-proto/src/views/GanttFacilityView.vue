@@ -13,6 +13,9 @@
         <ModalWithLink title="稼働設定" icon="timer" :disabled="globalState.currentFacilityId===-1" v-if="false">
           <operation-setting-view></operation-setting-view>
         </ModalWithLink>
+        <ModalWithLink title="稼働日設定" icon="timer" :disabled="globalState.currentFacilityId===-1">
+          <facility-work-schedule-view></facility-work-schedule-view>
+        </ModalWithLink>
         <ModalWithLink title="マイルストーン" icon="folder_supervised" :disabled="globalState.currentFacilityId===-1">
           <milestone-view></milestone-view>
         </ModalWithLink>
@@ -128,6 +131,7 @@ import MilestoneView from "@/views/MilestoneView.vue";
 import Swal from "sweetalert2"
 import {useRoute} from 'vue-router'
 import FacilitySharedLinkView from "@/views/FacilitySharedLinkView.vue";
+import FacilityWorkScheduleView from "@/views/FacilityWorkScheduleView.vue";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!

@@ -17,6 +17,16 @@ type facilityWorkScheduleRepository struct {
 	con *gorm.DB
 }
 
+func (r *facilityWorkScheduleRepository) FindByFacilityId(facilityId int32) []db.FacilityWorkSchedule {
+	var facilityWorkSchedules []db.FacilityWorkSchedule
+
+	result := r.con.Where("facility_id = ?", facilityId).Order("date DESC").Find(&facilityWorkSchedules)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return facilityWorkSchedules
+}
+
 func (r *facilityWorkScheduleRepository) FindAll() []db.FacilityWorkSchedule {
 	var facilityWorkSchedules []db.FacilityWorkSchedule
 

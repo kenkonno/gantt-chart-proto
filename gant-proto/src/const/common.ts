@@ -39,3 +39,11 @@ export const ApiMode = {
     prod: "prod",
 }
 
+export const FacilityWorkScheduleType = {
+    Holiday: "Holiday",
+    WorkingDay: "WorkingDay",
+}
+export const FacilityWorkScheduleTypeMap = {
+    Holiday: "休日",
+    WorkingDay: "稼働日",
+}

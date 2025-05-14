@@ -669,7 +669,7 @@ export interface FacilityWorkSchedule {
      * @type {string}
      * @memberof FacilityWorkSchedule
      */
-    'date'?: string;
+    'date': string;
     /**
      * 
      * @type {string}
@@ -4108,10 +4108,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary GetFacilityWorkSchedules
+         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFacilityWorkSchedules: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFacilityWorkSchedules: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'facilityId' is not null or undefined
+            assertParamExists('getFacilityWorkSchedules', 'facilityId', facilityId)
             const localVarPath = `/api/facilityWorkSchedules`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4123,6 +4126,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (facilityId !== undefined) {
+                localVarQueryParameter['facilityId'] = facilityId;
+            }
 
 
     
@@ -6410,11 +6417,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary GetFacilityWorkSchedules
+         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFacilityWorkSchedules(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilityWorkSchedulesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilityWorkSchedules(options);
+        async getFacilityWorkSchedules(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilityWorkSchedulesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilityWorkSchedules(facilityId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7302,11 +7310,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary GetFacilityWorkSchedules
+         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFacilityWorkSchedules(options?: any): AxiosPromise<GetFacilityWorkSchedulesResponse> {
-            return localVarFp.getFacilityWorkSchedules(options).then((request) => request(axios, basePath));
+        getFacilityWorkSchedules(facilityId: number, options?: any): AxiosPromise<GetFacilityWorkSchedulesResponse> {
+            return localVarFp.getFacilityWorkSchedules(facilityId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -8182,12 +8191,13 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary GetFacilityWorkSchedules
+     * @param {number} facilityId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getFacilityWorkSchedules(options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getFacilityWorkSchedules(options).then((request) => request(this.axios, this.basePath));
+    public getFacilityWorkSchedules(facilityId: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilityWorkSchedules(facilityId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

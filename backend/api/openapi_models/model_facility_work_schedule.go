@@ -13,15 +13,17 @@ import (
 	"time"
 )
 
-// Holiday - 
-type Holiday struct {
+type FacilityWorkSchedule struct {
+
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
-	Name string `json:"name" form:"name" binding:"min=1"`
+	FacilityId int32 `json:"facility_id" form:"facility_id" binding:"min=1"`
 
 	Date time.Time `json:"date" form:"date"`
 
+	Type string `json:"type" form:"type" binding:"min=1"`
+
 	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
+	UpdatedAt int `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 }
