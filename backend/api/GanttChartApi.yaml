@@ -237,12 +237,7 @@ paths:
               examples: { }
       operationId: get-holidays
       description: ''
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: facilityId
-          required: true
+      parameters: []
     post:
       summary: PostHolidays
       operationId: post-holidays
@@ -1526,12 +1521,9 @@ components:
         updated_at:
           type: integer
           format: int
-        facility_id:
-          type: integer
       required:
         - name
         - date
-        - facility_id
     GetHolidaysRequest:
       title: GetHolidaysRequest
       type: object

@@ -125,7 +125,7 @@ export const useGlobalState = async () => {
             globalState.value.unitMap[facilityId].push(...resp.data.list)
 
         }, refreshHolidayMap: async (facilityId: number) => {
-            const resp = await Api.getHolidays(facilityId)
+            const resp = await Api.getHolidays()
             if (globalState.value.holidayMap[facilityId] == null) globalState.value.holidayMap[facilityId] = []
             globalState.value.holidayMap[facilityId].splice(0, globalState.value.holidayMap[facilityId].length)
             globalState.value.holidayMap[facilityId].push(...resp.data.list)

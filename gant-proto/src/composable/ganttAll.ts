@@ -204,7 +204,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     // 案件ごとに行を作成する
     const ganttAllRowPromise = filteredFacilityList.map(async facility => {
         // 案件に紐づくチケット一覧
-        const {data} = await Api.getHolidays(facility.id!)
+        const {data} = await Api.getHolidays()
         holidays.push(...data.list)
         const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
         const {tickets, estimate, progress_percent} = await getFacilityInfos(ganttGroups.list, filteredAllTickets.list)
@@ -326,5 +326,3 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         hasFilter
     }
 }
-
-

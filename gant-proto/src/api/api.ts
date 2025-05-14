@@ -1492,12 +1492,6 @@ export interface Holiday {
      * @memberof Holiday
      */
     'updated_at'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Holiday
-     */
-    'facility_id': number;
 }
 /**
  * 
@@ -3996,13 +3990,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary GetHolidays
-         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getHolidays: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'facilityId' is not null or undefined
-            assertParamExists('getHolidays', 'facilityId', facilityId)
+        getHolidays: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/holidays`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4014,10 +4005,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-
-            if (facilityId !== undefined) {
-                localVarQueryParameter['facilityId'] = facilityId;
-            }
 
 
     
@@ -6105,12 +6092,11 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary GetHolidays
-         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getHolidays(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetHolidaysResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getHolidays(facilityId, options);
+        async getHolidays(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetHolidaysResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getHolidays(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6942,12 +6928,11 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary GetHolidays
-         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getHolidays(facilityId: number, options?: any): AxiosPromise<GetHolidaysResponse> {
-            return localVarFp.getHolidays(facilityId, options).then((request) => request(axios, basePath));
+        getHolidays(options?: any): AxiosPromise<GetHolidaysResponse> {
+            return localVarFp.getHolidays(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7775,13 +7760,12 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary GetHolidays
-     * @param {number} facilityId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getHolidays(facilityId: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getHolidays(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getHolidays(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getHolidays(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

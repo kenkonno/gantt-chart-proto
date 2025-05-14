@@ -14,7 +14,6 @@ import (
 func PostFacilitiesInvoke(c *gin.Context) (openapi_models.PostFacilitiesResponse, error) {
 
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
-	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
 	ganttGroupsRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
 	processRep := repository.NewProcessRepository(middleware.GetRepositoryMode(c)...)
@@ -36,7 +35,7 @@ func PostFacilitiesInvoke(c *gin.Context) (openapi_models.PostFacilitiesResponse
 		CreatedAt:       time.Time{},
 		UpdatedAt:       0,
 	})
-	holidayRep.InsertByFacilityId(*newFacility.Id, nil, nil)
+	// Holiday creation is now facility-independent
 	// TODO: post_units.goと重複コード 本体ユニットをデフォルトで登録する
 	r := unitRep.Upsert(db.Unit{
 		Name:       "本体",
@@ -65,7 +64,7 @@ func PostFacilitiesInvoke(c *gin.Context) (openapi_models.PostFacilitiesResponse
 		if newFacility.TermFrom.After(startDate) {
 			startDate = newFacility.TermFrom
 		}
-		nOfW := int32(1) // 人数はデフォルト1
+		nOfW := int32(1)                   // 人数はデフォルト1
 		_, _ = ticketRep.Upsert(db.Ticket{ // 新規なのでエラーハンドリング無
 			GanttGroupId:    *newGanttGroup.Id,
 			ProcessId:       v.Id,

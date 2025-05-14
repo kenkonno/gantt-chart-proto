@@ -124,7 +124,7 @@ func DeleteProcessesId(c *gin.Context) {
 	}
 }
 
-// DeleteSimulation - 
+// DeleteSimulation -
 func DeleteSimulation(c *gin.Context) {
 	var r openapi_models.DeleteSimulationResponse
 	r, err := simulation.DeleteSimulationInvoke(c)
@@ -374,7 +374,7 @@ func GetScheduleAlerts(c *gin.Context) {
 	}
 }
 
-// GetSimulation - 
+// GetSimulation -
 func GetSimulation(c *gin.Context) {
 	var r openapi_models.GetSimulationResponse
 	r, err := simulation.GetSimulationInvoke(c)
@@ -384,7 +384,7 @@ func GetSimulation(c *gin.Context) {
 	}
 }
 
-// GetSimulationMasterDiff - 
+// GetSimulationMasterDiff -
 func GetSimulationMasterDiff(c *gin.Context) {
 	var r openapi_models.GetSimulationMasterDiffResponse
 	r, err := simulation_master_diff.GetSimulationMasterDiffInvoke(c)
@@ -614,7 +614,7 @@ func PostHolidaysId(c *gin.Context) {
 	}
 }
 
-// PostLogin - 
+// PostLogin -
 func PostLogin(c *gin.Context) {
 	var r openapi_models.PostLoginResponse
 	r, err := login.PostLoginInvoke(c)
@@ -624,7 +624,7 @@ func PostLogin(c *gin.Context) {
 	}
 }
 
-// PostLogout - 
+// PostLogout -
 func PostLogout(c *gin.Context) {
 	var r openapi_models.PostLogoutResponse
 	r, err := logout.PostLogoutInvoke(c)
@@ -794,7 +794,7 @@ func PostUsersId(c *gin.Context) {
 	}
 }
 
-// PutSimulation - 
+// PutSimulation -
 func PutSimulation(c *gin.Context) {
 	var r openapi_models.PutSimulationResponse
 	r, err := simulation.PutSimulationInvoke(c)
@@ -803,4 +803,3 @@ func PutSimulation(c *gin.Context) {
 		c.JSON(http.StatusOK, r)
 	}
 }
-
