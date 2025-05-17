@@ -51,13 +51,13 @@ func (r *ganttGroupRepository) Delete(id int32) {
 }
 
 // Auto generated end
-func (r *ganttGroupRepository) FindByFacilityId(facilityId int32) []db.GanttGroup {
+func (r *ganttGroupRepository) FindByFacilityId(facilityId []int32) []db.GanttGroup {
 	var results []db.GanttGroup
 
 	r.con.Raw(fmt.Sprintf(`
 	SELECT
 		gg.id
-	,   %d as facility_id
+	,   gg.facility_id
 	,   gg.unit_id
 	FROM
 		gantt_groups gg
@@ -66,9 +66,9 @@ func (r *ganttGroupRepository) FindByFacilityId(facilityId int32) []db.GanttGrou
 	ON
 		gg.unit_id = u.id
 	WHERE
-		gg.facility_id = %d
+		gg.facility_id IN %s
 	ORDER BY u.order
-	`, facilityId, facilityId)).Scan(&results)
+	`, connection.CreateInParamInt32(facilityId))).Scan(&results)
 
 	return results
 }

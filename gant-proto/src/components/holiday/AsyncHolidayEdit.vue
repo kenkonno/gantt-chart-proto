@@ -26,10 +26,10 @@
     </div>
 
     <template v-if="id == null">
-      <button type="submit" class="btn btn-primary" @click="validate(holiday) && postHoliday(holiday, facilityId, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(holiday) && postHoliday(holiday, $emit)">更新</button>
     </template>
     <template v-else>
-      <button type="submit" class="btn btn-primary" @click="validate(holiday) && postHolidayById(holiday, facilityId, $emit)">更新</button>
+      <button type="submit" class="btn btn-primary" @click="validate(holiday) && postHolidayById(holiday, $emit)">更新</button>
       <button type="submit" class="btn btn-warning" @click="deleteHolidayById(id, $emit)">削除</button>
     </template>
   </div>
@@ -40,8 +40,7 @@ import {useHoliday, postHolidayById, postHoliday, deleteHolidayById, validate} f
 import InputRequired from "@/components/form/InputRequired.vue";
 
 interface AsyncHolidayEdit {
-  id: number | undefined,
-  facilityId: number
+  id: number | undefined
 }
 
 const props = defineProps<AsyncHolidayEdit>()
@@ -56,5 +55,3 @@ label {
   float: left;
 }
 </style>
-
-

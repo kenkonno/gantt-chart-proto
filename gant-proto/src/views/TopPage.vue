@@ -56,6 +56,9 @@
       <ModalWithLink title="担当者一覧" icon="person" v-if="allowed('UPDATE_MASTER')">
         <user-view @update="updateFacility"></user-view>
       </ModalWithLink>
+      <ModalWithLink title="休日設定" icon="holiday_village">
+        <holiday-view></holiday-view>
+      </ModalWithLink>
       <ModalWithLink title="シミュレーション" icon="timeline">
         <simulation-view @update="updateSimulation"></simulation-view>
       </ModalWithLink>
@@ -136,7 +139,6 @@ import {
 } from "@/composable/globalState";
 import {provide, ref} from "vue";
 import ScheduleAlert from "@/components/scheduleAlert/ScheduleAlert.vue";
-import {FacilityTypeMap} from "@/const/common";
 import router from "@/router";
 import {GLOBAL_SCHEDULE_ALERT_KEY, useScheduleAlert} from "@/composable/scheduleAlert";
 import UserView from "@/views/UserView.vue";
@@ -153,8 +155,8 @@ import AsyncUserEdit from "@/components/user/AsyncUserEdit.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {initStateValue} from "@/utils/globalFilterState";
 import SimulationView from "@/views/SimulationView.vue";
-import ServiceLogo from "@/components/logo/ServiceLogo.vue";
 import FacilityTypeFilter from "@/components/form/FacilityTypeFilter.vue";
+import HolidayView from "@/views/HolidayView.vue";
 
 // ローカルストレージの初期化
 initStateValue()

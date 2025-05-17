@@ -18,11 +18,11 @@ import (
 // Route is the information for every URI.
 type Route struct {
 	// Name is the name of this Route.
-	Name        string
+	Name string
 	// Method is the string for the HTTP method. ex) GET, POST etc..
-	Method      string
+	Method string
 	// Pattern is the pattern of the URI.
-	Pattern     string
+	Pattern string
 	// HandlerFunc is the handler function of this route.
 	HandlerFunc gin.HandlerFunc
 }
@@ -32,7 +32,7 @@ type Routes []Route
 
 // NewRouter returns a new router.
 func NewRouter(router *gin.Engine) *gin.Engine {
-	
+
 	for _, route := range routes {
 		switch route.Method {
 		case http.MethodGet:
@@ -83,6 +83,13 @@ var routes = Routes{
 		http.MethodDelete,
 		"/api/facilitySharedLinks/:id",
 		DeleteFacilitySharedLinksId,
+	},
+
+	{
+		"DeleteFacilityWorkSchedulesId",
+		http.MethodDelete,
+		"/api/facilityWorkSchedules/:id",
+		DeleteFacilityWorkSchedulesId,
 	},
 
 	{
@@ -216,6 +223,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/facilitySharedLinks/:id",
 		GetFacilitySharedLinksId,
+	},
+
+	{
+		"GetFacilityWorkSchedules",
+		http.MethodGet,
+		"/api/facilityWorkSchedules",
+		GetFacilityWorkSchedules,
+	},
+
+	{
+		"GetFacilityWorkSchedulesId",
+		http.MethodGet,
+		"/api/facilityWorkSchedules/:id",
+		GetFacilityWorkSchedulesId,
 	},
 
 	{
@@ -433,6 +454,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/facilitySharedLinks/:id",
 		PostFacilitySharedLinksId,
+	},
+
+	{
+		"PostFacilityWorkSchedules",
+		http.MethodPost,
+		"/api/facilityWorkSchedules",
+		PostFacilityWorkSchedules,
+	},
+
+	{
+		"PostFacilityWorkSchedulesId",
+		http.MethodPost,
+		"/api/facilityWorkSchedules/:id",
+		PostFacilityWorkSchedulesId,
 	},
 
 	{

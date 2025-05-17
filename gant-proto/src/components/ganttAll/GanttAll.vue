@@ -67,7 +67,7 @@
           :chart-start="chartStart"
           :chart-end="chartEnd"
           :display-type="displayType"
-          :holidays="holidays"
+          :holidays="holidayList"
           :tickets="tickets"
           :ticket-users="ticketUsers"
           :width="getGanttChartWidth(displayType)"
@@ -183,7 +183,7 @@ const {
   ganttAllRow,
   holidaysAsDate,
   getGanttChartWidth,
-  holidays,
+  holidayList,
   chartStart,
   chartEnd,
   hasFilter

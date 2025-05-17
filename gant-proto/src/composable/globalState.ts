@@ -3,7 +3,17 @@
  * facilityに紐づかないものは直接
  * facilityに紐づくものは連想はれいつとして持つ。
  */
-import {Department, Facility, Holiday, OperationSetting, Process, ScheduleAlert, Unit, User} from "@/api";
+import {
+    Department,
+    Facility,
+    FacilityWorkSchedule,
+    Holiday,
+    OperationSetting,
+    Process,
+    ScheduleAlert,
+    Unit,
+    User
+} from "@/api";
 import {InjectionKey, ref, nextTick, onBeforeUnmount} from "vue";
 import {Api} from "@/api/axios";
 import {changeSort} from "@/utils/sort";
@@ -18,7 +28,8 @@ type GlobalState = {
     userList: User[]
     unitMap: { [key: number]: Unit[] }
     operationSettingMap: { [key: number]: OperationSetting[] }
-    holidayMap: { [key: number]: Holiday[] }
+    holidayList: Holiday[]
+    facilityWorkScheduleMap: { [key: number]: FacilityWorkSchedule[] }
     scheduleAlert: ScheduleAlert[]
     facilityTypes: string[]
     ganttFacilityRefresh: boolean
@@ -38,7 +49,8 @@ interface Actions {
     refreshDepartmentList: () => Promise<void>;
     refreshUserList: () => Promise<void>;
     refreshUnitMap: (facilityId: number) => Promise<void>;
-    refreshHolidayMap: (facilityId: number) => Promise<void>;
+    refreshHolidayList: () => Promise<void>;
+    refreshFacilityWorkScheduleMap: (facilityId: number) => Promise<void>;
     refreshOperationSettingMap: (facilityId: number) => Promise<void>;
     updateFacilityOrder: (index: number, direction: number) => Promise<void>;
     updateProcessOrder: (index: number, direction: number) => Promise<void>;
@@ -82,7 +94,8 @@ export const useGlobalState = async () => {
         departmentList: [],
         facilityList: [],
         processList: [],
-        holidayMap: {},
+        holidayList: [],
+        facilityWorkScheduleMap: {},
         operationSettingMap: {},
         unitMap: {},
         userList: [],
@@ -98,6 +111,7 @@ export const useGlobalState = async () => {
         await actions.refreshProcessList()
         await actions.refreshDepartmentList()
         await actions.refreshUserList()
+        await actions.refreshHolidayList()
     }
 
     const actions: Actions = {
@@ -124,11 +138,16 @@ export const useGlobalState = async () => {
             globalState.value.unitMap[facilityId].splice(0, globalState.value.unitMap[facilityId].length)
             globalState.value.unitMap[facilityId].push(...resp.data.list)
 
-        }, refreshHolidayMap: async (facilityId: number) => {
-            const resp = await Api.getHolidays(facilityId)
-            if (globalState.value.holidayMap[facilityId] == null) globalState.value.holidayMap[facilityId] = []
-            globalState.value.holidayMap[facilityId].splice(0, globalState.value.holidayMap[facilityId].length)
-            globalState.value.holidayMap[facilityId].push(...resp.data.list)
+        }, refreshHolidayList: async () => {
+            const resp = await Api.getHolidays()
+            globalState.value.holidayList.splice(0, globalState.value.holidayList.length)
+            globalState.value.holidayList.push(...resp.data.list)
+
+        }, refreshFacilityWorkScheduleMap: async (facilityId: number) => {
+            const resp = await Api.getFacilityWorkSchedules(facilityId)
+            if (globalState.value.facilityWorkScheduleMap[facilityId] == null) globalState.value.facilityWorkScheduleMap[facilityId] = []
+            globalState.value.facilityWorkScheduleMap[facilityId].splice(0, globalState.value.facilityWorkScheduleMap[facilityId].length)
+            globalState.value.facilityWorkScheduleMap[facilityId].push(...resp.data.list)
 
         }, refreshOperationSettingMap: async (facilityId: number) => {
             const resp = await Api.getOperationSettingsId(facilityId)
@@ -181,7 +200,7 @@ export const useGlobalState = async () => {
             globalState.value.currentFacilityId = facilityId
             globalState.value.ganttFacilityRefresh = false
             // facility紐づくデータを初期化する
-            await actions.refreshHolidayMap(facilityId)
+            await actions.refreshFacilityWorkScheduleMap(facilityId)
             await actions.refreshUnitMap(facilityId)
             await actions.refreshOperationSettingMap(facilityId)
             nextTick(() => {

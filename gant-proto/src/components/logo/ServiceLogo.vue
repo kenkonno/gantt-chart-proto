@@ -12,9 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import {defineProps} from 'vue';
 
-const props = defineProps({
+defineProps({
   // 画像ロゴを使用するかテキストロゴを使用するか
   useImageLogo: {
     type: Boolean,

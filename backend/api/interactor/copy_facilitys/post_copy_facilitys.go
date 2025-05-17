@@ -18,7 +18,6 @@ func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysRe
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)
 	unitRep := repository.NewUnitRepository(middleware.GetRepositoryMode(c)...)
 	ticketRep := repository.NewTicketRepository(middleware.GetRepositoryMode(c)...)
-	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 	operationSettingRep := repository.NewOperationSettingRepository(middleware.GetRepositoryMode(c)...)
 
 	var copyFacilityReq openapi_models.PostCopyFacilitysRequest
@@ -30,7 +29,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysRe
 	// コピー元のFacility
 	orgFacility := facilityRep.Find(copyFacilityReq.FacilityId)
 	// コピー元のGanttGroups
-	orgGanttGroups := ganttGroupRep.FindByFacilityId(*orgFacility.Id)
+	orgGanttGroups := ganttGroupRep.FindByFacilityId([]int32{*orgFacility.Id})
 	// コピー元の稼働設定
 	orgOperationSettings := operationSettingRep.FindByFacilityId(*orgFacility.Id)
 
@@ -43,7 +42,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysRe
 
 	// コピーを実施する、順番は Facility -> Unit | GanttGroups -> (Ticket)
 	allFacility := facilityRep.FindAll([]string{}, []string{})
-	order := lo.MaxBy(allFacility,func(a db.Facility, b db.Facility) bool {
+	order := lo.MaxBy(allFacility, func(a db.Facility, b db.Facility) bool {
 		return a.Order > b.Order
 	}).Order + 1
 	newFacility := facilityRep.Upsert(db.Facility{
@@ -121,13 +120,11 @@ func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysRe
 			Order:           ticket.Order,
 			CreatedAt:       time.Time{},
 			UpdatedAt:       0,
-			
 		})
 		currentFrom = from.Add(time.Hour * 24)
 	}
 
-	// 祝日の投入
-	holidayRep.InsertByFacilityId(*newFacility.Id, nil, nil)
+	// Holiday creation is now facility-independent
 
 	return openapi_models.PostCopyFacilitysResponse{}, nil
 

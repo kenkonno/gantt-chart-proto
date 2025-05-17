@@ -1,14 +1,13 @@
 import {onBeforeUnmount, Ref, ref, StyleValue, UnwrapRef, watch} from "vue";
 import dayjs, {Dayjs} from "dayjs";
 import {Department, Facility, Holiday, Ticket, TicketUser, User} from "@/api";
-import {dayBetween, ganttDateToYMDDate, getNumberOfBusinessDays} from "@/coreFunctions/manHourCalculation";
+import {dayBetween, ganttDateToYMDDate} from "@/coreFunctions/manHourCalculation";
 import {Api} from "@/api/axios";
 import {FacilityStatus, FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 import {pileUpLabelFormat} from "@/utils/filters";
 import {allowed} from "@/composable/role";
-import {DAYJS_FORMAT_YMD} from "@/utils/day";
 
 
 export type PileUps = {
@@ -370,8 +369,6 @@ export const usePileUps = (
                 validIndexes.splice(i, 1)
             }
         })
-        // 対象の取得
-        const summaryLimit: number[] = []
 
         // NOTE: APIのget_default_pile_ups.go と必ず合わせること
         const ticketUserIds = ticketUsers.map(v => v.user_id)
@@ -540,44 +537,44 @@ export const usePileUps = (
         // }
         // allocateWorkingHours(rows, summaryRows, rowErrorFunc, summaryLimit, validIndexes, estimate, workHour)
     }
-    /**
-     * 作業時間の割り当てを実施する。
-     * summaryRowsはrowsのi番目の結果と同じ作業時間を割り当てる
-     * @param rows
-     * @param summaryRows
-     * @param rowErrorFunc
-     * @param summaryLimit
-     * @param validIndexes
-     * @param estimate
-     * @param workHour
-     */
-    const allocateWorkingHours = (rows: PileUpRow[], summaryRows: PileUpRow[][], rowErrorFunc: (v: number) => boolean, summaryLimit: number[], validIndexes: number[], estimate: number, workHour: number) => {
-        validIndexes.forEach((validIndex) => {
-            rows.forEach((v, i) => {
-                if (estimate < 0) {
-                    return
-                }
-                let workHourResult = 0
-                if (estimate - workHour < 0) {
-                    workHourResult = estimate
-                } else {
-                    workHourResult = workHour
-                }
-                v.labels[validIndex] += workHourResult
-                if (rowErrorFunc(v.labels[validIndex])) {
-                    v.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
-                }
-                // ユーザーごとに割当先が異なることに注意
-                summaryRows[i].forEach(pileUpRow => {
-                    pileUpRow.labels[validIndex] += workHourResult
-                    if (pileUpLabelFormat(pileUpRow.labels[validIndex]) > summaryLimit[i]) {
-                        pileUpRow.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
-                    }
-                })
-                estimate -= workHour
-            })
-        })
-    }
+    // /**
+    //  * 作業時間の割り当てを実施する。
+    //  * summaryRowsはrowsのi番目の結果と同じ作業時間を割り当てる
+    //  * @param rows
+    //  * @param summaryRows
+    //  * @param rowErrorFunc
+    //  * @param summaryLimit
+    //  * @param validIndexes
+    //  * @param estimate
+    //  * @param workHour
+    //  */
+    // const allocateWorkingHours = (rows: PileUpRow[], summaryRows: PileUpRow[][], rowErrorFunc: (v: number) => boolean, summaryLimit: number[], validIndexes: number[], estimate: number, workHour: number) => {
+    //     validIndexes.forEach((validIndex) => {
+    //         rows.forEach((v, i) => {
+    //             if (estimate < 0) {
+    //                 return
+    //             }
+    //             let workHourResult = 0
+    //             if (estimate - workHour < 0) {
+    //                 workHourResult = estimate
+    //             } else {
+    //                 workHourResult = workHour
+    //             }
+    //             v.labels[validIndex] += workHourResult
+    //             if (rowErrorFunc(v.labels[validIndex])) {
+    //                 v.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+    //             }
+    //             // ユーザーごとに割当先が異なることに注意
+    //             summaryRows[i].forEach(pileUpRow => {
+    //                 pileUpRow.labels[validIndex] += workHourResult
+    //                 if (pileUpLabelFormat(pileUpRow.labels[validIndex]) > summaryLimit[i]) {
+    //                     pileUpRow.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
+    //                 }
+    //             })
+    //             estimate -= workHour
+    //         })
+    //     })
+    // }
 
     // 日付からどのindexに該当するか取得する
     const getIndexByDate = (facilityStartDate: Dayjs, date: Dayjs) => {

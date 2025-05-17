@@ -22,12 +22,11 @@ func PostHolidaysIdInvoke(c *gin.Context) (openapi_models.PostHolidaysIdResponse
 	}
 
 	holidayRep.Upsert(db.Holiday{
-		Id:         holidayReq.Holiday.Id,
-		FacilityId: holidayReq.Holiday.FacilityId,
-		Name:       strings.TrimSpace(holidayReq.Holiday.Name),
-		Date:       holidayReq.Holiday.Date,
-		CreatedAt:  time.Time{},
-		UpdatedAt:  0,
+		Id:        holidayReq.Holiday.Id,
+		Name:      strings.TrimSpace(holidayReq.Holiday.Name),
+		Date:      holidayReq.Holiday.Date,
+		CreatedAt: time.Time{},
+		UpdatedAt: 0,
 	})
 
 	return openapi_models.PostHolidaysIdResponse{}, nil

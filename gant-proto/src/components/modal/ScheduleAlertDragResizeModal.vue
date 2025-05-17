@@ -83,7 +83,14 @@ const height = ref(0)
 const top = ref(0)
 const left = ref(0)
 
-function dragResize(newRect: any) {
+interface DragResizeRect {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+}
+
+function dragResize(newRect: DragResizeRect) {
   width.value = newRect.width
   height.value = newRect.height
   top.value = newRect.top
@@ -105,8 +112,8 @@ const {
   cScheduleAlert,
 } = inject(GLOBAL_SCHEDULE_ALERT_KEY)!
 
-const onSelectElement = function (event: any) {
-  const tagName = event.target.tagName
+const onSelectElement = function (event: MouseEvent | TouchEvent) {
+  const tagName = (event.target as HTMLElement).tagName
 
   if (tagName === 'INPUT' || tagName === 'SELECT') {
     event.stopPropagation()

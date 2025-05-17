@@ -9,7 +9,7 @@ import {Emit} from "@/const/common";
 export async function useGanttGroupTable() {
     const list = ref<GanttGroup[]>([])
     const refresh = async (facilityId: number) => {
-        const resp = await Api.getGanttGroups(facilityId)
+        const resp = await Api.getGanttGroups([facilityId])
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }

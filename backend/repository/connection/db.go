@@ -26,8 +26,8 @@ func openConnection() *gorm.DB {
 	password := os.Getenv("POSTGRES_PASSWORD")
 	dbname := os.Getenv("POSTGRES_DB")
 	port := os.Getenv("POSTGRES_PORT")
-	fmt.Println(fmt.Sprintf("host=%s user=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo", host, user, dbname, port))
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo", host, user, password, dbname, port)
+	fmt.Println(fmt.Sprintf("host=%s user=%s dbname=%s port=%s sslmode=prefer TimeZone=Asia/Tokyo", host, user, dbname, port))
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=prefer TimeZone=Asia/Tokyo", host, user, password, dbname, port)
 	d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -54,6 +54,11 @@ func Commit() {
 func CreateInParam(arrStr []string) string {
 	return "(" + strings.Join(lo.Map(arrStr, func(item string, index int) string {
 		return fmt.Sprintf("'%s'", item)
+	}), ",") + ")"
+}
+func CreateInParamInt32(arrStr []int32) string {
+	return "(" + strings.Join(lo.Map(arrStr, func(item int32, index int) string {
+		return fmt.Sprintf("'%d'", item)
 	}), ",") + ")"
 }
 
