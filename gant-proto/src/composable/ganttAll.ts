@@ -96,7 +96,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     async function getMilestones(facility: Facility, mode?: string) {
         return await (async () => {
             const result: GanttBarObject[] = []
-            const {list} = await useMilestoneTable(facility.id!, mode)
+            const list = (mode == ApiMode.prod ? milestonesProdByFacilityId[facility.id!] : milestonesByFacilityId[facility.id!]) || []
             result.push(<GanttBarObject>{
                 beginDate: dayjs(facility.shipment_due_date).format(DAYJS_FORMAT),
                 endDate: endOfDay(facility.shipment_due_date),
@@ -121,7 +121,7 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
                 }
             })
             result.push(
-                ...list.value.map(v => {
+                ...list.map(v => {
                     return <GanttBarObject>{
                         beginDate: dayjs(v.date).format(DAYJS_FORMAT),
                         endDate: endOfDay(v.date),
@@ -179,13 +179,13 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     }
 
     const getProdBarsIfSimulation = async (facility: Facility) => {
-        const {data} = await Api.getFacilitiesId(facility.id!, ApiMode.prod)
-        const prodFacility = data.facility!
-
         const isSimulateUser = getUserInfo().isSimulateUser
         const bars: GanttBarObject[] = []
         if (isSimulateUser == true) {
-            const {data: ganttGroups} = await Api.getGanttGroups(prodFacility.id!, ApiMode.prod)
+            const {data} = await Api.getFacilitiesId(facility.id!, ApiMode.prod)
+            const prodFacility = data.facility!
+
+            const {data: ganttGroups} = await Api.getGanttGroups([prodFacility.id!], ApiMode.prod)
             const milestones = await getMilestones(prodFacility, ApiMode.prod);
             const {
                 tickets,
@@ -200,11 +200,17 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         return bars
     }
 
-    // 案件ごとに行を作成する TODO: ここで呼び出しているAPIは一括で取得できるようにする。パフォーマンス改善。全件取得にオプションのパラメータでID指定できるようにする。
+    // 案件ごとに行を作成する
+    const facilityIds = filteredFacilityList.map(v => v.id!)
+    const ganttGroupByFacilityId = groupBy((await Api.getGanttGroups(facilityIds)).data.list, item => item.facility_id);
+    const milestonesByFacilityId = groupBy((await Api.getMilestones(facilityIds)).data.list, item => item.facility_id);
+    const milestonesProdByFacilityId = groupBy((await Api.getMilestones(facilityIds, ApiMode.prod)).data.list, item => item.facility_id);
+
+
     const ganttAllRowPromise = filteredFacilityList.map(async facility => {
         // 案件に紐づくチケット一覧
-        const {data: ganttGroups} = await Api.getGanttGroups(facility.id!)
-        const {tickets, estimate, progress_percent} = await getFacilityInfos(ganttGroups.list, filteredAllTickets.list)
+        const ganttGroups = ganttGroupByFacilityId[facility.id!] || []
+        const {tickets, estimate, progress_percent} = await getFacilityInfos(ganttGroups, filteredAllTickets.list)
 
         const ticketUsers = filteredAllTicketUsers.list.filter(v => tickets.map(vv => vv.id!).includes(v.ticket_id))
         // 全てのチケットの予定工数を計上する
@@ -322,4 +328,16 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
         chartEnd,
         hasFilter
     }
+}
+
+// リストをキーでグループ化する汎用関数
+function groupBy<T, K extends keyof any>(list: T[], getKey: (item: T) => K): Record<K, T[]> {
+    return list.reduce((map, item) => {
+        const key = getKey(item);
+        if (!map[key]) {
+            map[key] = [];
+        }
+        map[key].push(item);
+        return map;
+    }, {} as Record<K, T[]>);
 }

@@ -24,10 +24,10 @@ func (r *milestoneRepository) FindAll() []db.Milestone {
 	return milestones
 }
 
-func (r *milestoneRepository) FindByFacilityId(facilityId int32) []db.Milestone {
+func (r *milestoneRepository) FindByFacilityId(facilityIds []int32) []db.Milestone {
 	var milestones []db.Milestone
 
-	result := r.con.Order(`"order" DESC`).Where("facility_id = ?", facilityId).Find(&milestones)
+	result := r.con.Order(`"order" DESC`).Where("facility_id IN ?", facilityIds).Find(&milestones)
 	if result.Error != nil {
 		panic(result.Error)
 	}

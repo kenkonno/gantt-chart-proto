@@ -56,6 +56,11 @@ func CreateInParam(arrStr []string) string {
 		return fmt.Sprintf("'%s'", item)
 	}), ",") + ")"
 }
+func CreateInParamInt32(arrStr []int32) string {
+	return "(" + strings.Join(lo.Map(arrStr, func(item int32, index int) string {
+		return fmt.Sprintf("'%d'", item)
+	}), ",") + ")"
+}
 
 type ConflictError struct {
 	Type    string

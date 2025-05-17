@@ -493,14 +493,16 @@ paths:
       description: ''
       parameters:
         - schema:
-            type: integer
-          in: query
-          name: facilityId
-          required: true
-        - schema:
             type: string
           in: query
           name: mode
+        - schema:
+            type: array
+            items:
+              type: integer
+          in: query
+          name: facilityIds
+          required: true
     post:
       summary: PostGanttGroups
       operationId: post-ganttGroups
@@ -885,9 +887,11 @@ paths:
       description: ''
       parameters:
         - schema:
-            type: integer
+            type: array
+            items:
+              type: integer
           in: query
-          name: facilityId
+          name: facilityIds
         - schema:
             type: string
           in: query

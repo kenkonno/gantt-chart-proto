@@ -29,7 +29,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysRe
 	// コピー元のFacility
 	orgFacility := facilityRep.Find(copyFacilityReq.FacilityId)
 	// コピー元のGanttGroups
-	orgGanttGroups := ganttGroupRep.FindByFacilityId(*orgFacility.Id)
+	orgGanttGroups := ganttGroupRep.FindByFacilityId([]int32{*orgFacility.Id})
 	// コピー元の稼働設定
 	orgOperationSettings := operationSettingRep.FindByFacilityId(*orgFacility.Id)
 

@@ -30,7 +30,7 @@ func PostUnitsDuplicateInvoke(c *gin.Context) (openapi_models.PostUnitsDuplicate
 	unit.Id = nil
 	unit.Name = unitReq.UnitName
 
-	ganttGroups := ganttGroupsRep.FindByFacilityId(unit.FacilityId)
+	ganttGroups := ganttGroupsRep.FindByFacilityId([]int32{unit.FacilityId})
 	targetGanttGroup, exists := lo.Find(ganttGroups, func(item db.GanttGroup) bool {
 		return item.UnitId == unitReq.UnitId
 	})
