@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi"
@@ -27,6 +28,7 @@ func main() {
 	r.Use(middleware.RoleBasedAccessControl())
 	r.Use(middleware.AuthMiddleware())
 	r.Use(middleware.GuestAccessControl())
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	r = openapi.NewRouter(r)
 	//r.LoadHTMLGlob("templates/*") TODO: たぶん現状では不要。
