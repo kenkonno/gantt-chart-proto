@@ -291,7 +291,6 @@ export async function useGanttFacility() {
                 bars.value.push([emptyRow])
             }
         })
-        console.log(bars.value)
     }
 
     // シミュレーション中の場合本番のチケットを習得する
@@ -696,7 +695,6 @@ export async function useGanttFacility() {
 
     const mutation = {
         setProcessId: async (processId: string, ticket?: Ticket) => {
-            console.log("############# processId", processId)
             const clone = Object.assign({}, ticket)
             clone.process_id = Number(processId)
             const newTicket = await updateTicket(clone)

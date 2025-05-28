@@ -10,7 +10,6 @@ export function useSyncWidthAndScroll(
     const syncWidth = ref<StyleValue>()!
 
     const resizeSyncWidth = () => {
-        console.log("################## RESIZE")
         const parentWidth = widthElement.value?.clientWidth
         syncWidth.value = {width: parentWidth + "px", overflow: 'scroll'}
     }
