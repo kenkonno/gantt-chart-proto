@@ -49,7 +49,7 @@
                 <th class="side-menu-cell"></th><!-- css hack min-height -->
                 <th v-for="item in props.ganttFacilityHeader" :key="item" class="side-menu-cell"
                     :class="{'d-none': !item.visible}">
-                  <unit-toggle-button :is-open="isAllOpenUnit" @toggle="toggleAllUnitOpen()"
+                  <unit-toggle-button :is-open="isAllOpenUnit" @toggle="toggleAllUnitOpenProxy()"
                                       v-if="item.name == 'ユニット'"
                   />
                   <span class="align-middle">{{ item.name }}</span>
@@ -63,7 +63,8 @@
                     <td class="side-menu-cell"></td><!-- css hack min-height -->
                     <gantt-td :visible="props.ganttFacilityHeader[0].visible" class="text-start">
                       <template v-if="index === 0">
-                        <unit-toggle-button :is-open="isOpenUnit(item.unitId)" @toggle="toggleUnitOpen(item.unitId)"/>
+                        <unit-toggle-button :is-open="isOpenUnit(item.unitId)"
+                                            @toggle="toggleUnitOpenProxy(item.unitId)"/>
                         <span class="align-middle">{{ getUnitName(item.ganttGroup.unit_id) }}</span>
                       </template>
                     </gantt-td>
@@ -145,7 +146,7 @@
                       :gantt-chart-group="item"
                       :gantt-facility-header="ganttFacilityHeader"
                       :unit-id="item.unitId"
-                      @toggle-unit="toggleUnitOpen($event)"
+                      @toggle-unit="toggleUnitOpenProxy($event)"
                   />
                 </template>
                 <tr :style="addTicketRowStyle()" v-if="!hasFilter && isOpenUnit(item.unitId)">
@@ -380,6 +381,16 @@ const addTicketRowStyle = () => {
   }
 }
 
+const toggleAllUnitOpenProxy = () => {
+  toggleAllUnitOpen()
+  nextTick(resizeSyncWidth)
+}
+
+const toggleUnitOpenProxy = async (unitId: number) => {
+  console.log("toggle-unit", unitId)
+  await toggleUnitOpen(unitId)
+  await nextTick(resizeSyncWidth)
+}
 
 let isDragged = false;
 

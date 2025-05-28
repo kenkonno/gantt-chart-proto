@@ -116,7 +116,7 @@ export async function useGanttFacility() {
     const isOpenUnit = (unitId: number) => {
         return unitGroupInfo.value.find(v => v.unitId == unitId)?.isOpen ?? false
     }
-    const toggleUnitOpen = (unitId: number, forceStatus?: boolean) => {
+    const toggleUnitOpen = async (unitId: number, forceStatus?: boolean) => {
         const target = unitGroupInfo.value.find(v => v.unitId == unitId)
         if (target) {
             target.isOpen = !target.isOpen
@@ -131,7 +131,7 @@ export async function useGanttFacility() {
             // updateUnitGroupInfo関数を使用して保存
             globalFilterMutation.updateUnitGroupInfo(savedUnitGroupInfo)
         }
-        refreshBars()
+        await refreshBars()
     }
     const isAllOpenUnit = computed(() => {
         return unitGroupInfo.value.every(v => v.isOpen)
