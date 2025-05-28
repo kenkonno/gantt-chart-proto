@@ -116,7 +116,7 @@ export async function useGanttFacility() {
     const isOpenUnit = (unitId: number) => {
         return unitGroupInfo.value.find(v => v.unitId == unitId)?.isOpen ?? false
     }
-    const toggleUnitOpen = (unitId: number, forceStatus?: boolean) => {
+    const toggleUnitOpen = async (unitId: number, forceStatus?: boolean) => {
         const target = unitGroupInfo.value.find(v => v.unitId == unitId)
         if (target) {
             target.isOpen = !target.isOpen
@@ -131,7 +131,7 @@ export async function useGanttFacility() {
             // updateUnitGroupInfo関数を使用して保存
             globalFilterMutation.updateUnitGroupInfo(savedUnitGroupInfo)
         }
-        refreshBars()
+        await refreshBars()
     }
     const isAllOpenUnit = computed(() => {
         return unitGroupInfo.value.every(v => v.isOpen)
@@ -291,7 +291,6 @@ export async function useGanttFacility() {
                 bars.value.push([emptyRow])
             }
         })
-        console.log(bars.value)
     }
 
     // シミュレーション中の場合本番のチケットを習得する
@@ -696,7 +695,6 @@ export async function useGanttFacility() {
 
     const mutation = {
         setProcessId: async (processId: string, ticket?: Ticket) => {
-            console.log("############# processId", processId)
             const clone = Object.assign({}, ticket)
             clone.process_id = Number(processId)
             const newTicket = await updateTicket(clone)

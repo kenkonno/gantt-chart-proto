@@ -109,9 +109,10 @@ docker-compose push
 3. datagripからデータを確認する
 4. pg_dumpでデータを出力、ファイル名の先頭にdemo0Xをつける（pg_dumpのバージョンは17を指定すること）
 5. s3にアップロード(https://ap-northeast-1.console.aws.amazon.com/s3/buckets/tasmap-trial-db-backup?region=ap-northeast-1&bucketType=general&tab=objects)
-5. adhookからデータ削除SQLを実行
-6. データが削除されたことを確認
-6. Web画面からadmin/itumonoでログインできることを確認。
+6. adhookからデータ削除SQLを実行
+7. データが削除されたことを確認
+8. Web画面からadmin/itumonoでログインできることを確認。
+
 
 1. https://d2l5ymvdgzq1kr.cloudfront.net
 2. https://d1jcfwj1966idb.cloudfront.net
