@@ -24,7 +24,7 @@ func DeleteFacilitiesIdInvoke(c *gin.Context) (openapi_models.DeleteFacilitiesId
 	facilityRep.Delete(int32(id))
 
 	// 関連レコードの削除
-	ganttGroups := ganttGroupRep.FindByFacilityId(int32(id))
+	ganttGroups := ganttGroupRep.FindByFacilityId([]int32{int32(id)})
 	allTickets := ticketRep.FindByGanttGroupIds(
 		lo.Map(ganttGroups, func(item db.GanttGroup, index int) int32 {
 			return *item.Id

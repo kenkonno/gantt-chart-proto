@@ -27,20 +27,23 @@ type pileUpsRepository struct {
 func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityTypes []string) []db.DefaultPileUp {
 	var results []db.DefaultPileUp
 
-	r.con.Raw(fmt.Sprintf(`
+	r.con.Debug().Raw(fmt.Sprintf(`
 	WITH w_facilities AS (
 		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM facilities WHERE type IN %s AND status IN ('Enabled')
 	), date_master AS (
 		SELECT
 			date.date
-			 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
+			 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT CASE WHEN tws.type = 'Holiday' THEN tws.facility_id END ), NULL) as holiday_facility_ids -- 祝日の設備一覧
+			 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT CASE WHEN tws.type = 'WorkingDay' THEN tws.facility_id END ), NULL) as working_day_facility_ids -- 稼働日の設備一覧
+	         , th.date IS NOT NULL as is_holiday_by_master
 			 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
 			 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as index
 		FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date
 				 LEFT JOIN holidays th ON date.date = th.date
+	             LEFT JOIN facility_work_schedules tws ON date.date = tws.date
 				 LEFT JOIN users u ON (u.employment_start_date <= date.date AND (date.date <= u.employment_end_date OR u.employment_end_date IS NULL) AND u.role IN ('worker','manager','viewer'))
 		GROUP BY
-			date.date
+	        date.date, th.date
 	), target_tickets_by_user AS (
 		SELECT
 			t.id
@@ -51,7 +54,16 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 			 ,   t.start_date
 			 ,   t.end_date
 			 ,   tu.user_id
-			 ,   (SELECT ARRAY_AGG(index) FROM date_master dm WHERE dm.date BETWEEN t.start_date AND t.end_date AND NOT(f.id = ANY (dm.facility_ids))) as valid_indexes
+			 ,   (SELECT ARRAY_AGG(index) FROM date_master dm WHERE dm.date BETWEEN t.start_date AND t.end_date AND (
+                -- 稼働日として明示されている場合
+                f.id = ANY(dm.working_day_facility_ids)
+                OR
+                -- または祝日でない場合
+                NOT(
+                    f.id = ANY(dm.holiday_facility_ids) -- 設備ごとの祝日
+                        OR dm.is_holiday_by_master      -- マスター上の祝日
+                    )
+                )) as valid_indexes
 		FROM tickets t
 				 INNER JOIN gantt_groups gg ON gg.id = t.gantt_group_id
 				 INNER JOIN facilities f ON f.id = gg.facility_id AND f.id != %d AND type IN %s AND status IN ('Enabled')
@@ -59,7 +71,16 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 		WHERE
 			gantt_group_id IN (SELECT id FROM gantt_groups WHERE facility_id = f.id)
 		  AND t.number_of_worker > 0
-		  AND (SELECT COUNT(*) FROM date_master dm WHERE dm.date BETWEEN t.start_date AND t.end_date AND NOT(f.id = ANY (dm.facility_ids))) > 0
+		  AND (SELECT COUNT(*) FROM date_master dm WHERE dm.date BETWEEN t.start_date AND t.end_date AND (
+                -- 稼働日として明示されている場合
+                f.id = ANY(dm.working_day_facility_ids)
+                OR
+                -- または祝日でない場合
+                NOT(
+                    f.id = ANY(dm.holiday_facility_ids) -- 設備ごとの祝日
+                        OR dm.is_holiday_by_master      -- マスター上の祝日
+                    )
+                )) > 0
 		  AND estimate > 0
 		GROUP BY
 			t.id
@@ -82,7 +103,16 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 		 ,   ARRAY_REMOVE(ARRAY_AGG(DISTINCT ttbu.user_id), null) as user_ids
          ,   ttbu.valid_indexes
          ,   COUNT(*) as number_of_worker_by_day
-	     ,   (SELECT COUNT(*) FROM date_master dm WHERE dm.date BETWEEN ttbu.start_date AND ttbu.end_date AND NOT( ttbu.facility_id = ANY (dm.facility_ids))) as number_of_work_day
+	     ,   (SELECT COUNT(*) FROM date_master dm WHERE dm.date BETWEEN ttbu.start_date AND ttbu.end_date AND (
+        -- 稼働日として明示されている場合
+            ttbu.facility_id = ANY(dm.working_day_facility_ids)
+        OR
+        -- または祝日でない場合
+        NOT(
+            ttbu.facility_id = ANY(dm.holiday_facility_ids) -- 設備ごとの祝日
+                OR dm.is_holiday_by_master      -- マスター上の祝日
+            )
+    )) as number_of_work_day
     FROM
         target_tickets_by_user ttbu
     LEFT JOIN
@@ -101,7 +131,7 @@ func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityT
 	return results
 }
 
-// GetUserInfos validIndex毎にどのユーザーが稼動可能なのかを格納した情報
+// GetUserInfos validIndex毎にどのユーザーが稼動可能なのかを格納した情報 祝日に関する処理はないので祝日の変更で修正なし。
 func (r *pileUpsRepository) GetValidIndexUsers(globalStartDate time.Time) []db.ValidIndexUser {
 	var results []db.ValidIndexUser
 
@@ -111,7 +141,7 @@ func (r *pileUpsRepository) GetValidIndexUsers(globalStartDate time.Time) []db.V
 	)
 	SELECT
 		date.date
-		 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT th.facility_id), NULL) as facility_ids -- 祝日の設備一覧
+		 , MAX(th.id) IS NOT NULL as is_holiday -- 全体の祝日かのフラグ
 		 , ARRAY_REMOVE(ARRAY_AGG(DISTINCT u.id), NULL) as user_ids -- 稼動可能なユーザー一覧
 		 , ROW_NUMBER() OVER(ORDER BY date.date) - 1 as valid_index
 	FROM generate_series((SELECT min_date FROM w_facilities), (SELECT max_date FROM w_facilities), interval '1days') as date

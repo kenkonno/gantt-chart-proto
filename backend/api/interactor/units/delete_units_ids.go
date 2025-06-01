@@ -23,7 +23,7 @@ func DeleteUnitsIdInvoke(c *gin.Context) (openapi_models.DeleteUnitsIdResponse, 
 	}
 
 	unit := unitRep.Find(int32(id))
-	ganttGroups := lo.Filter(ganttGroupsRep.FindByFacilityId(unit.FacilityId), func(item db.GanttGroup, index int) bool {
+	ganttGroups := lo.Filter(ganttGroupsRep.FindByFacilityId([]int32{unit.FacilityId}), func(item db.GanttGroup, index int) bool {
 		return item.UnitId == int32(id)
 	})
 	operationSettings := operationSettingRep.FindByFacilityId(unit.FacilityId)

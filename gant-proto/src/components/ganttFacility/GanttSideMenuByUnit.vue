@@ -102,7 +102,7 @@ const props = defineProps({
 });
 
 // イベント定義
-const emit = defineEmits(["toggle-unit"]);
+defineEmits(["toggle-unit"]);
 
 const ticketUserList = props.ganttChartGroup?.rows.reduce((prev: TicketUser[], current: GanttRow) => {
   return [...prev , ...(current.ticketUsers || [])]

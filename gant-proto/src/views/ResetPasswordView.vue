@@ -26,7 +26,7 @@ provide(GLOBAL_ACTION_KEY, actions)
 provide(GLOBAL_MUTATION_KEY, mutations)
 provide(GLOBAL_GETTER_KEY, getters)
 
-const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
+const {id, closeEditModal} = useModalWithId()
 
 const {userInfo} = getUserInfo()
 if (userInfo !== undefined && isNumber(userInfo?.id)) {

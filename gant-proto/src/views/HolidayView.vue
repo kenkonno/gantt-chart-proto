@@ -2,7 +2,7 @@
   <Suspense>
     <async-holiday-table
         @open-edit-modal="openEditModal($event)"
-        :list="holidayMap[currentFacilityId]"
+        :list="holidayList"
     />
     <template #fallback>
       Loading...
@@ -10,7 +10,7 @@
   </Suspense>
   <Suspense v-if="modalIsOpen">
     <default-modal title="祝日" @close-edit-modal="closeModalProxy" :size="'half'">
-      <async-holiday-edit :id="id" :facility-id="currentFacilityId" @close-edit-modal="closeModalProxy"></async-holiday-edit>
+      <async-holiday-edit :id="id" @close-edit-modal="closeModalProxy"></async-holiday-edit>
     </default-modal>
     <template #fallback>
       Loading...
@@ -26,15 +26,15 @@ import {useModalWithId} from "@/composable/modalWIthId";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {inject} from "vue";
 
-const {holidayMap,  currentFacilityId} = inject(GLOBAL_STATE_KEY)!
-const {refreshHolidayMap} = inject(GLOBAL_ACTION_KEY)!
-await refreshHolidayMap(currentFacilityId)
+const {holidayList} = inject(GLOBAL_STATE_KEY)!
+const {refreshHolidayList} = inject(GLOBAL_ACTION_KEY)!
+await refreshHolidayList()
 
 const {modalIsOpen, id, openEditModal, closeEditModal} = useModalWithId()
 const emit = defineEmits(["update"])
 
 const closeModalProxy = async () => {
-  await refreshHolidayMap(currentFacilityId)
+  await refreshHolidayList()
   closeEditModal()
   emit("update")
 }

@@ -19,5 +19,5 @@ type GetDefaultPileUpsResponse struct {
 
 	GlobalStartDate time.Time `json:"globalStartDate" form:"globalStartDate"`
 
-	DefaultValidUserIndexes []DefautValidIndexUsers `json:"defaultValidUserIndexes" form:"defaultValidUserIndexes"`
+	DefaultValidUserIndexes []DefaultValidIndexUsers `json:"defaultValidUserIndexes" form:"defaultValidUserIndexes"`
 }

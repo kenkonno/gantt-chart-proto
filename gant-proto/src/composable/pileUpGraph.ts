@@ -3,7 +3,7 @@ import {computed, reactive, ref} from "vue";
 import {FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import dayjs from "dayjs";
-import {DefautValidIndexUsers, Department, User} from "@/api";
+import {DefaultValidIndexUsers, Department, GetDefaultPileUpsResponse, User} from "@/api";
 
 export type Series = {
     name: string;
@@ -11,6 +11,7 @@ export type Series = {
     data: number[];
     color: string;
     hidden: boolean;
+    highUtilizationPoints: boolean[]; // 各時点の稼働率が125%を超えているかどうかのフラグ
 }
 
 const dailyDurationOptions = [
@@ -28,9 +29,7 @@ const monthlyDurationOptions = [
 // ユーザー一覧。特別ref系は必要ない。
 export async function usePileUpGraph() {
 
-    // TODO: 積み上げのパーセント表示
-    // TODO: 100%を超えたら強調表示する
-    // TODO: 値に表示するものが謎？今の単位は時間になっているから人日にすればよさそう。
+    // TODO: 日付の初期値がおかしい？基本データは詰まってくるはずなのであまり気にしない？
 
     // 設備一覧
     const {data: facilities} = reactive(await Api.getFacilities())
@@ -70,16 +69,26 @@ export async function usePileUpGraph() {
         }
     }
 
-    // 積み上げ（getDefaultPileUps
-    const {data: pileUps} = reactive(await Api.getDefaultPileUps(-1, true, facilityTypes))
+    // 積み上げ（getDefaultPileUps）
+    const pileUps = reactive<GetDefaultPileUpsResponse>({
+        defaultPileUps: [],
+        defaultValidUserIndexes: [],
+        globalStartDate: ''
+    })
     let globalStartDate = ''
+
     const refreshData = async () => {
         const {data} = await Api.getDefaultPileUps(-1, true, facilityTypes)
         pileUps.defaultPileUps = data.defaultPileUps
-        pileUps.defaultValidUserIndexes = data.defaultValidUserIndexes
+        pileUps.defaultValidUserIndexes = data.defaultValidUserIndexes.map(v => {
+            if (v.isHoliday) v.UserIds.length = 0
+            return v
+        })
         globalStartDate = data.globalStartDate
         return data
     }
+
+    // 初回データ取得
     await refreshData()
 
     const labelLength = computed(() => {
@@ -101,6 +110,15 @@ export async function usePileUpGraph() {
         // 部署ごとの100%基準値（各時点での稼働可能な人数 * 8時間）を計算
         const averageLineByDepartment = getAverageLine(pileUps.defaultValidUserIndexes, departments.list.map(v => v.id!), userList.list);
 
+        // 表示する部署のIDを取得
+        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => !hideSeries.value[i]);
+
+        // 表示する部署の稼働可能時間の合計を計算
+        const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels));
+
+        // 合計稼働可能時間を時間フィルタに応じて分割
+        const totalAverageData = splitByTimeFilter(averageLabels, timeFilter.value, globalStartDate);
+
         // 各部署のデータをパーセント表示に変換
         const barSeries = pileUps.defaultPileUps.map((v, index) => {
             // 対応する部署の100%基準値を取得
@@ -109,17 +127,30 @@ export async function usePileUpGraph() {
 
             // 部署の各時点のデータを取得
             const rawData = splitByTimeFilter(v.labels, timeFilter.value, globalStartDate);
-            const averageData = splitByTimeFilter(departmentAverage.labels, timeFilter.value, globalStartDate);
+            const departmentAverageData = splitByTimeFilter(departmentAverage.labels, timeFilter.value, globalStartDate);
 
-            // 対応する部署の100%基準値で割って、パーセント表示に変換
+            // 全部署の合計稼働可能時間を基準として、パーセント表示に変換
             const percentData = rawData.map((value, i) => {
-                if (averageData && i < averageData.length && averageData[i] > 0) {
-                    // 100%基準値 = 稼働可能な人数 * 8時間
-                    const baseValue = averageData[i] * 8;
+                if (totalAverageData && i < totalAverageData.length && totalAverageData[i] > 0) {
+                    // 100%基準値 = 全部署の稼働可能な人数の合計 * 8時間
+                    const baseValue = totalAverageData[i] * 8;
                     // パーセント計算（小数点以下2桁まで）
-                    return value;
+                    return Number(((value / baseValue) * 100).toFixed(2));
                 }
                 return 0; // 基準値がない場合は0%とする
+            });
+
+            // 部署単体での稼働率を計算し、125%を超えているかどうかをチェック
+            const highUtilizationPoints = rawData.map((value, i) => {
+                if (departmentAverageData && i < departmentAverageData.length && departmentAverageData[i] > 0) {
+                    // 100%基準値 = その部署の稼働可能な人数 * 8時間
+                    const baseValue = departmentAverageData[i] * 8;
+                    // パーセント計算
+                    const percent = (value / baseValue) * 100;
+                    // 125%を超えているかどうかをチェック
+                    return percent > 125;
+                }
+                return false; // 基準値がない場合はfalse
             });
 
             return <Series>{
@@ -128,28 +159,25 @@ export async function usePileUpGraph() {
                 name: getDepartmentName(departmentId, departments.list),
                 type: "bar",
                 hidden: hideSeries.value[index],
+                highUtilizationPoints: highUtilizationPoints // 高稼働率ポイントの情報を追加
             }
         });
 
-        console.log("#################", barSeries);
-        // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
-        console.log("#################",hideSeries.value)
-        const displayDepartmentIds = pileUps.defaultPileUps.map(v => v.departmentId!).filter((v, i) => !hideSeries.value[i])
-        const averageLabels = sumArrays(averageLineByDepartment.filter(v => displayDepartmentIds.includes(v.departmentId)).map(v => v.labels))
-        // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
         // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
         const lineSeries: Series[] = [{
             color: "green",
-            data: splitByTimeFilter(averageLabels.map(v => v * 8), timeFilter.value, globalStartDate),
+            data: Array(splitByTimeFilter(averageLabels, timeFilter.value, globalStartDate).length).fill(100),
             name: "100%",
             type: "line",
             hidden: false,
+            highUtilizationPoints: [],
         }, {
             color: "red",
-            data: splitByTimeFilter(averageLabels.map(v => v * 8 * 1.25), timeFilter.value, globalStartDate),
+            data: Array(splitByTimeFilter(averageLabels, timeFilter.value, globalStartDate).length).fill(125),
             name: "125%",
             type: "line",
             hidden: false,
+            highUtilizationPoints: [],
         }]
 
         const xLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
@@ -224,7 +252,7 @@ const sumArrays = (arrays: number[][]): number[] => {
  * @param userList ユーザーリスト
  * @return {Array<{departmentId: number, labels: number[]}>} 部署IDと各validIndexごとの稼働可能人数の配列
  */
-const getAverageLine = (defaultValidUserIndexes: DefautValidIndexUsers[], departmentIds: number[], userList: User[]) => {
+const getAverageLine = (defaultValidUserIndexes: DefaultValidIndexUsers[], departmentIds: number[], userList: User[]) => {
     // 結果を格納する配列
     const result: Array<{ departmentId: number, labels: number[] }> = [];
 
@@ -239,7 +267,7 @@ const getAverageLine = (defaultValidUserIndexes: DefautValidIndexUsers[], depart
         // 各validIndexごとの稼働可能人数を格納する配列
         const labels: number[] = [];
 
-        defaultValidUserIndexes.forEach((validIndexData, i) => {
+        defaultValidUserIndexes.forEach((validIndexData) => {
             // この部署のユーザーで、現在のvalidIndexで稼働可能なユーザー数をカウント
             const count = departmentUserIds.filter(userId =>
                 validIndexData.UserIds.includes(userId)
@@ -447,9 +475,12 @@ const filterSeriesByDuration = (
     const endIndex = startIndex + filteredLabels.length;
 
     // 同じインデックス範囲でシリーズデータをフィルタリング
-
-    return seriesData.map(seriesItem => ({
-        ...seriesItem,
-        data: seriesItem.data.slice(startIndex, endIndex)
-    }))
+    return seriesData.map(seriesItem => {
+        const filteredItem = {
+            ...seriesItem,
+            data: seriesItem.data.slice(startIndex, endIndex)
+        };
+        filteredItem.highUtilizationPoints = seriesItem.highUtilizationPoints.slice(startIndex, endIndex);
+        return filteredItem;
+    });
 };

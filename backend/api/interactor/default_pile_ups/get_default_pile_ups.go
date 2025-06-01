@@ -220,10 +220,11 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	return openapi_models.GetDefaultPileUpsResponse{
 		DefaultPileUps:  defaultPileUps,
 		GlobalStartDate: globalStartDate,
-		DefaultValidUserIndexes: lo.Map(validUserIndexes, func(item db.ValidIndexUser, index int) openapi_models.DefautValidIndexUsers {
-			return openapi_models.DefautValidIndexUsers{
+		DefaultValidUserIndexes: lo.Map(validUserIndexes, func(item db.ValidIndexUser, index int) openapi_models.DefaultValidIndexUsers {
+			return openapi_models.DefaultValidIndexUsers{
 				UserIds:    item.UserIds,
 				ValidIndex: item.ValidIndex,
+				IsHoliday: item.IsHoliday,
 			}
 		}),
 	}, nil

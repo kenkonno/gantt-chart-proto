@@ -18,12 +18,13 @@ func GetGanttGroupsInvoke(c *gin.Context) (openapi_models.GetGanttGroupsResponse
 		ganttGroupRep = repository.NewGanttGroupRepository()
 	}
 
-	facilityId, err := strconv.Atoi(c.Query("facilityId"))
-	if err != nil {
-		panic(err)
-	}
+	facilityIds := c.QueryArray("facilityIds")
+	int32FacilityIds := lo.Map(facilityIds, func(item string, index int) int32 {
+		v, _ := strconv.Atoi(item)
+		return int32(v)
+	})
 
-	ganttGroupList := ganttGroupRep.FindByFacilityId(int32(facilityId))
+	ganttGroupList := ganttGroupRep.FindByFacilityId(int32FacilityIds)
 
 	return openapi_models.GetGanttGroupsResponse{
 		List: lo.Map(ganttGroupList, func(item db.GanttGroup, index int) openapi_models.GanttGroup {

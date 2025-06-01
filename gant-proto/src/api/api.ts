@@ -106,21 +106,27 @@ export interface DefaultPileUp {
 /**
  * 
  * @export
- * @interface DefautValidIndexUsers
+ * @interface DefaultValidIndexUsers
  */
-export interface DefautValidIndexUsers {
+export interface DefaultValidIndexUsers {
     /**
      * 
      * @type {Array<number>}
-     * @memberof DefautValidIndexUsers
+     * @memberof DefaultValidIndexUsers
      */
     'UserIds': Array<number>;
     /**
      * 
      * @type {number}
-     * @memberof DefautValidIndexUsers
+     * @memberof DefaultValidIndexUsers
      */
     'ValidIndex': number;
+    /**
+     *
+     * @type {boolean}
+     * @memberof DefaultValidIndexUsers
+     */
+    'isHoliday': boolean;
 }
 /**
  * 
@@ -197,6 +203,32 @@ export interface DeleteFacilitySharedLinksIdResponse {
      * 
      * @type {string}
      * @memberof DeleteFacilitySharedLinksIdResponse
+     */
+    'msg'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteFacilityWorkSchedulesIdRequest
+ */
+export interface DeleteFacilityWorkSchedulesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteFacilityWorkSchedulesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteFacilityWorkSchedulesIdResponse
+ */
+export interface DeleteFacilityWorkSchedulesIdResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof DeleteFacilityWorkSchedulesIdResponse
      */
     'msg'?: string;
 }
@@ -623,6 +655,49 @@ export interface FacilitySharedLink {
 /**
  * 
  * @export
+ * @interface FacilityWorkSchedule
+ */
+export interface FacilityWorkSchedule {
+    /**
+     * 
+     * @type {number}
+     * @memberof FacilityWorkSchedule
+     */
+    'id'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof FacilityWorkSchedule
+     */
+    'facility_id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof FacilityWorkSchedule
+     */
+    'date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FacilityWorkSchedule
+     */
+    'type': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FacilityWorkSchedule
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof FacilityWorkSchedule
+     */
+    'updated_at'?: number;
+}
+/**
+ * 
+ * @export
  * @interface GanttGroup
  */
 export interface GanttGroup {
@@ -714,11 +789,11 @@ export interface GetDefaultPileUpsResponse {
      */
     'globalStartDate': string;
     /**
-     * 
-     * @type {Array<DefautValidIndexUsers>}
+     *
+     * @type {Array<DefaultValidIndexUsers>}
      * @memberof GetDefaultPileUpsResponse
      */
-    'defaultValidUserIndexes': Array<DefautValidIndexUsers>;
+    'defaultValidUserIndexes': Array<DefaultValidIndexUsers>;
 }
 /**
  * 
@@ -874,6 +949,45 @@ export interface GetFacilitySharedLinksResponse {
      * @memberof GetFacilitySharedLinksResponse
      */
     'list': Array<FacilitySharedLink>;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilityWorkSchedulesIdRequest
+ */
+export interface GetFacilityWorkSchedulesIdRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetFacilityWorkSchedulesIdRequest
+     */
+    'id'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilityWorkSchedulesIdResponse
+ */
+export interface GetFacilityWorkSchedulesIdResponse {
+    /**
+     * 
+     * @type {FacilityWorkSchedule}
+     * @memberof GetFacilityWorkSchedulesIdResponse
+     */
+    'facilityWorkSchedule'?: FacilityWorkSchedule;
+}
+/**
+ * 
+ * @export
+ * @interface GetFacilityWorkSchedulesResponse
+ */
+export interface GetFacilityWorkSchedulesResponse {
+    /**
+     * 
+     * @type {Array<FacilityWorkSchedule>}
+     * @memberof GetFacilityWorkSchedulesResponse
+     */
+    'list': Array<FacilityWorkSchedule>;
 }
 /**
  * 
@@ -1492,12 +1606,6 @@ export interface Holiday {
      * @memberof Holiday
      */
     'updated_at'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Holiday
-     */
-    'facility_id': number;
 }
 /**
  * 
@@ -1916,6 +2024,58 @@ export interface PostFacilitySharedLinksResponse {
      * @memberof PostFacilitySharedLinksResponse
      */
     'facilitySharedLink'?: FacilitySharedLink;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilityWorkSchedulesIdRequest
+ */
+export interface PostFacilityWorkSchedulesIdRequest {
+    /**
+     * 
+     * @type {FacilityWorkSchedule}
+     * @memberof PostFacilityWorkSchedulesIdRequest
+     */
+    'facilityWorkSchedule'?: FacilityWorkSchedule;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilityWorkSchedulesIdResponse
+ */
+export interface PostFacilityWorkSchedulesIdResponse {
+    /**
+     * 
+     * @type {FacilityWorkSchedule}
+     * @memberof PostFacilityWorkSchedulesIdResponse
+     */
+    'facilityWorkSchedule'?: FacilityWorkSchedule;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilityWorkSchedulesRequest
+ */
+export interface PostFacilityWorkSchedulesRequest {
+    /**
+     * 
+     * @type {FacilityWorkSchedule}
+     * @memberof PostFacilityWorkSchedulesRequest
+     */
+    'facilityWorkSchedule'?: FacilityWorkSchedule;
+}
+/**
+ * 
+ * @export
+ * @interface PostFacilityWorkSchedulesResponse
+ */
+export interface PostFacilityWorkSchedulesResponse {
+    /**
+     * 
+     * @type {FacilityWorkSchedule}
+     * @memberof PostFacilityWorkSchedulesResponse
+     */
+    'facilityWorkSchedule'?: FacilityWorkSchedule;
 }
 /**
  * 
@@ -3238,6 +3398,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary DeleteFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFacilityWorkSchedulesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteFacilityWorkSchedulesId', 'id', id)
+            const localVarPath = `/api/facilityWorkSchedules/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -3919,16 +4113,15 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @summary GetGanttGroups
+         * @summary GetFacilityWorkSchedules
          * @param {number} facilityId 
-         * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGanttGroups: async (facilityId: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFacilityWorkSchedules: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'facilityId' is not null or undefined
-            assertParamExists('getGanttGroups', 'facilityId', facilityId)
-            const localVarPath = `/api/ganttGroups`;
+            assertParamExists('getFacilityWorkSchedules', 'facilityId', facilityId)
+            const localVarPath = `/api/facilityWorkSchedules`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3944,8 +4137,80 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['facilityId'] = facilityId;
             }
 
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilityWorkSchedulesId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getFacilityWorkSchedulesId', 'id', id)
+            const localVarPath = `/api/facilityWorkSchedules/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary GetGanttGroups
+         * @param {Array<number>} facilityIds 
+         * @param {string} [mode] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGanttGroups: async (facilityIds: Array<number>, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'facilityIds' is not null or undefined
+            assertParamExists('getGanttGroups', 'facilityIds', facilityIds)
+            const localVarPath = `/api/ganttGroups`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
             if (mode !== undefined) {
                 localVarQueryParameter['mode'] = mode;
+            }
+
+            if (facilityIds) {
+                localVarQueryParameter['facilityIds'] = facilityIds;
             }
 
 
@@ -3996,13 +4261,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary GetHolidays
-         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getHolidays: async (facilityId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'facilityId' is not null or undefined
-            assertParamExists('getHolidays', 'facilityId', facilityId)
+        getHolidays: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/holidays`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4014,10 +4276,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-
-            if (facilityId !== undefined) {
-                localVarQueryParameter['facilityId'] = facilityId;
-            }
 
 
     
@@ -4067,12 +4325,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary GetMilestones
-         * @param {number} [facilityId] 
+         * @param {Array<number>} [facilityIds] 
          * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMilestones: async (facilityId?: number, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMilestones: async (facilityIds?: Array<number>, mode?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/milestones`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4085,8 +4343,8 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (facilityId !== undefined) {
-                localVarQueryParameter['facilityId'] = facilityId;
+            if (facilityIds) {
+                localVarQueryParameter['facilityIds'] = facilityIds;
             }
 
             if (mode !== undefined) {
@@ -5008,6 +5266,78 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary PostFacilityWorkSchedules
+         * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilityWorkSchedules: async (postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/facilityWorkSchedules`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFacilityWorkSchedulesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary PostFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilityWorkSchedulesId: async (id: number, postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postFacilityWorkSchedulesId', 'id', id)
+            const localVarPath = `/api/facilityWorkSchedules/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFacilityWorkSchedulesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
          * @param {*} [options] Override http request option.
@@ -5869,6 +6199,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary DeleteFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteFacilityWorkSchedulesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFacilityWorkSchedulesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -6081,14 +6422,36 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary GetGanttGroups
+         * @summary GetFacilityWorkSchedules
          * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFacilityWorkSchedules(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilityWorkSchedulesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilityWorkSchedules(facilityId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFacilityWorkSchedulesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilityWorkSchedulesIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilityWorkSchedulesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary GetGanttGroups
+         * @param {Array<number>} facilityIds 
          * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getGanttGroups(facilityId: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityId, mode, options);
+        async getGanttGroups(facilityIds: Array<number>, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGanttGroupsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGanttGroups(facilityIds, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6105,12 +6468,11 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary GetHolidays
-         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getHolidays(facilityId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetHolidaysResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getHolidays(facilityId, options);
+        async getHolidays(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetHolidaysResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getHolidays(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6127,13 +6489,13 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary GetMilestones
-         * @param {number} [facilityId] 
+         * @param {Array<number>} [facilityIds] 
          * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMilestones(facilityId?: number, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityId, mode, options);
+        async getMilestones(facilityIds?: Array<number>, mode?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMilestonesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMilestones(facilityIds, mode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6421,6 +6783,29 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postFacilitySharedLinksId(id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilitySharedLinksId(id, postFacilitySharedLinksRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostFacilityWorkSchedules
+         * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFacilityWorkSchedules(postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostFacilityWorkSchedulesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilityWorkSchedules(postFacilityWorkSchedulesRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary PostFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFacilityWorkSchedulesId(id: number, postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFacilityWorkSchedulesId(id, postFacilityWorkSchedulesRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6727,6 +7112,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary DeleteFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFacilityWorkSchedulesId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFacilityWorkSchedulesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -6920,14 +7315,34 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @summary GetGanttGroups
+         * @summary GetFacilityWorkSchedules
          * @param {number} facilityId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilityWorkSchedules(facilityId: number, options?: any): AxiosPromise<GetFacilityWorkSchedulesResponse> {
+            return localVarFp.getFacilityWorkSchedules(facilityId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFacilityWorkSchedulesId(id: number, options?: any): AxiosPromise<GetFacilityWorkSchedulesIdResponse> {
+            return localVarFp.getFacilityWorkSchedulesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary GetGanttGroups
+         * @param {Array<number>} facilityIds 
          * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGanttGroups(facilityId: number, mode?: string, options?: any): AxiosPromise<GetGanttGroupsResponse> {
-            return localVarFp.getGanttGroups(facilityId, mode, options).then((request) => request(axios, basePath));
+        getGanttGroups(facilityIds: Array<number>, mode?: string, options?: any): AxiosPromise<GetGanttGroupsResponse> {
+            return localVarFp.getGanttGroups(facilityIds, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6942,12 +7357,11 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary GetHolidays
-         * @param {number} facilityId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getHolidays(facilityId: number, options?: any): AxiosPromise<GetHolidaysResponse> {
-            return localVarFp.getHolidays(facilityId, options).then((request) => request(axios, basePath));
+        getHolidays(options?: any): AxiosPromise<GetHolidaysResponse> {
+            return localVarFp.getHolidays(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -6962,13 +7376,13 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary GetMilestones
-         * @param {number} [facilityId] 
+         * @param {Array<number>} [facilityIds] 
          * @param {string} [mode] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMilestones(facilityId?: number, mode?: string, options?: any): AxiosPromise<GetMilestonesResponse> {
-            return localVarFp.getMilestones(facilityId, mode, options).then((request) => request(axios, basePath));
+        getMilestones(facilityIds?: Array<number>, mode?: string, options?: any): AxiosPromise<GetMilestonesResponse> {
+            return localVarFp.getMilestones(facilityIds, mode, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7230,6 +7644,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postFacilitySharedLinksId(id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: any): AxiosPromise<void> {
             return localVarFp.postFacilitySharedLinksId(id, postFacilitySharedLinksRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostFacilityWorkSchedules
+         * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilityWorkSchedules(postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: any): AxiosPromise<PostFacilityWorkSchedulesResponse> {
+            return localVarFp.postFacilityWorkSchedules(postFacilityWorkSchedulesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary PostFacilityWorkSchedulesId
+         * @param {number} id 
+         * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFacilityWorkSchedulesId(id: number, postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postFacilityWorkSchedulesId(id, postFacilityWorkSchedulesRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7518,6 +7953,18 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @summary DeleteFacilityWorkSchedulesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteFacilityWorkSchedulesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteFacilityWorkSchedulesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary DeleteGanttGroupsId
      * @param {number} id 
      * @param {*} [options] Override http request option.
@@ -7749,15 +8196,39 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
-     * @summary GetGanttGroups
+     * @summary GetFacilityWorkSchedules
      * @param {number} facilityId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFacilityWorkSchedules(facilityId: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilityWorkSchedules(facilityId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetFacilityWorkSchedulesId
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFacilityWorkSchedulesId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFacilityWorkSchedulesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary GetGanttGroups
+     * @param {Array<number>} facilityIds 
      * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getGanttGroups(facilityId: number, mode?: string, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getGanttGroups(facilityId, mode, options).then((request) => request(this.axios, this.basePath));
+    public getGanttGroups(facilityIds: Array<number>, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getGanttGroups(facilityIds, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7775,13 +8246,12 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary GetHolidays
-     * @param {number} facilityId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getHolidays(facilityId: number, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getHolidays(facilityId, options).then((request) => request(this.axios, this.basePath));
+    public getHolidays(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getHolidays(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7799,14 +8269,14 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary GetMilestones
-     * @param {number} [facilityId] 
+     * @param {Array<number>} [facilityIds] 
      * @param {string} [mode] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getMilestones(facilityId?: number, mode?: string, options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getMilestones(facilityId, mode, options).then((request) => request(this.axios, this.basePath));
+    public getMilestones(facilityIds?: Array<number>, mode?: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getMilestones(facilityIds, mode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -8120,6 +8590,31 @@ export class DefaultApi extends BaseAPI {
      */
     public postFacilitySharedLinksId(id: number, postFacilitySharedLinksRequest?: PostFacilitySharedLinksRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postFacilitySharedLinksId(id, postFacilitySharedLinksRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostFacilityWorkSchedules
+     * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFacilityWorkSchedules(postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFacilityWorkSchedules(postFacilityWorkSchedulesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary PostFacilityWorkSchedulesId
+     * @param {number} id 
+     * @param {PostFacilityWorkSchedulesRequest} [postFacilityWorkSchedulesRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFacilityWorkSchedulesId(id: number, postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFacilityWorkSchedulesId(id, postFacilityWorkSchedulesRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

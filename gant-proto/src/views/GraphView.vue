@@ -111,20 +111,20 @@
 
       <div class="filter-item">
         <label>開始日</label>
-        <input 
-          type="date" 
-          :value="formatDateForInput(startDate)" 
-          @change="handleStartDateChange($event)"
-          :min="formatDateForInput(globalStartTimestamp)"
-          v-if="filterVisible"
+        <input
+            type="date"
+            :value="formatDateForInput(startDate)"
+            @change="handleStartDateChange($event)"
+            :min="formatDateForInput(globalStartTimestamp)"
+            v-if="filterVisible"
         />
         <!-- 最小化時のホバー表示用要素 -->
         <div class="hover-content start-date-hover">
-          <input 
-            type="date" 
-            :value="formatDateForInput(startDate)" 
-            @change="handleStartDateChange($event)"
-            :min="formatDateForInput(globalStartTimestamp)"
+          <input
+              type="date"
+              :value="formatDateForInput(startDate)"
+              @change="handleStartDateChange($event)"
+              :min="formatDateForInput(globalStartTimestamp)"
           />
         </div>
       </div>
@@ -139,31 +139,41 @@
           <span class="text">リロード</span>
         </a>
       </div>
-
-      <apex-charts
-          ref="chartRef"
-          :options="chartOptions"
-          :series="series"
-          height="100%"
-          @legendClick="handleLegendClick"
-          style="flex-grow: 1;"
-      />
+      <div class="h-100">
+        <apex-charts
+            ref="chartRef"
+            :options="chartOptions"
+            :series="series"
+            height="100%"
+            @legendClick="handleLegendClick"
+            style="flex-grow: 1;"
+            v-if="showCharts"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed, reactive, ref, Ref} from 'vue'
+import {nextTick, reactive, ref, Ref} from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import {usePileUpGraph} from "@/composable/pileUpGraph";
 import {FacilityType, FacilityTypeMap} from "@/const/common";
 import dayjs from 'dayjs';
 
+// NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
+const showCharts = ref(true)
+const refreshCharts = async () => {
+  showCharts.value = false
+  await refreshData()
+  refreshChartOption()
+  nextTick(() => showCharts.value = true)
+}
 
 const {
-  facilities,
-  departments,
-  pileUps,
+  // facilities,
+  // departments,
+  // pileUps,
   facilityTypes,
   timeFilter,
   series,
@@ -197,16 +207,19 @@ const filterVisible = ref(true);
 // フィルターパネルの表示/非表示を切り替える関数
 const toggleFilterPanel = () => {
   filterVisible.value = !filterVisible.value;
+  nextTick(() => {
+    window.dispatchEvent(new Event('resize'))
+  })
 };
 // すべてのシリーズの表示/非表示を切り替える関数
 const toggleAllSeries = (visible: boolean) => {
   if (chartRef.value?.chart) {
     series.value.forEach(seriesItem => {
-      if (visible) {
-        chartRef.value.chart.showSeries(seriesItem.name);
-      } else {
-        chartRef.value.chart.hideSeries(seriesItem.name);
-      }
+      // if (visible) {
+      //   chartRef.value.chart.showSeries(seriesItem.name);
+      // } else {
+      //   chartRef.value.chart.hideSeries(seriesItem.name);
+      // }
 
       // 内部状態も更新
       const index = series.value.findIndex(s => s.name === seriesItem.name);
@@ -214,6 +227,8 @@ const toggleAllSeries = (visible: boolean) => {
         selectedSeries.value[index] = !visible;
       }
     });
+// NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
+    updateChart()
   }
 };
 
@@ -222,123 +237,159 @@ const selectAllSeries = () => toggleAllSeries(true);
 const unselectAllSeries = () => toggleAllSeries(false);
 
 // チャートのオプション
-const chartOptions = reactive({
-  chart: {
-    type: 'line',
-    stacked: true,
-    toolbar: {
-      show: true
-    },
-    zoom: {
-      enabled: false,
-    }
-  },
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      columnWidth: '55%',
-      endingShape: 'rounded',
-      dataLabels: {
-        position: 'center',
-      }
-    }
-  },
-  dataLabels: {
-    enabled: true,
-    enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s,i) => i),
-    formatter: function (val: number) {
-      return val.toFixed(1) +"h"
-    },
-    style: {
-      colors: ['#000'],
-      fontSize: '10px',
-    },
-    dropShadow: {
-      enabled: true,
-      left: 2,
-      top: 2,
-      opacity: 0.5
-    },
-    background: {
-      enabled: false,
-    },
-    textAnchor: 'middle',
-  },
-  stroke: {
-    show: true,
-    width: 1,
-    curve: 'straight', // 線をスムーズに
-  },
-  xaxis: {
-    // type: 'datetime', // datetime
-    categories: xLabels.value,
-    tickAmount: xLabels.value.length - 1, // または必要な数
-    tickPlacement: 'on',
-    labels: {
-      rotate: -90, // ラベルを縦に表示（90度回転）
-      rotateAlways: true,
-      style: {
-        fontSize: '12px'
+let chartOptions = {}
+const refreshChartOption = () => {
+  chartOptions = {
+    chart: {
+      type: 'line',
+      stacked: true,
+      toolbar: {
+        show: true
       },
-      formatter: function (val: number) {
-        const date = new Date(val);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-
-        if (timeFilter.value === 'day') {
-          return `${year}-${month}-${day}日`;
-        } else if (timeFilter.value === 'week') {
-          return `${year}-${month}-${day}週`;
-        } else if (timeFilter.value === 'month') {
-          return `${year}年${month}月`;
-        }
-        return val; // デフォルト値を返す（エラー回避のため）
+      zoom: {
+        enabled: false,
       }
-    }
-  },
-  // 追加: 折れ線グラフのマーカー設定
-  markers: {
-    size: 4,
-    colors: ['#45FF60', '#FF4560'],
-    strokeWidth: 2,
-    hover: {
-      size: 7,
-    }
-  },
-  // 以下は既存のchartOptionsに追加する内容
-  yaxis: {
-    title: {
-      text: '値',
     },
-    labels: {
-      formatter: function(val: number) {
-        return val.toFixed(1) + "h"; // 小数点以下1桁で表示し、単位「h」を追加
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded',
+        dataLabels: {
+          position: 'center',
+        }
       }
-    }
-  },
-  fill: {
-    opacity: 1
-  },
-  tooltip: {
-    y: {
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s, i) => i),
       formatter: function (val: number) {
-        return val.toFixed(1) + "h"
+        try {
+          return val.toFixed(1) + "%";
+        } catch (e) {
+          return ""
+        }
+      },
+      style: {
+        colors: [function (opts) {
+          // 現在のシリーズと時点のインデックスを取得
+          const seriesIndex = opts.seriesIndex;
+          const dataPointIndex = opts.dataPointIndex;
+
+          // 現在のシリーズが棒グラフで、highUtilizationPointsが存在し、
+          // 現在の時点が高稼働率ポイントである場合は赤色で表示
+          const currentSeries = series.value[seriesIndex];
+          if (
+              currentSeries &&
+              currentSeries.type === 'bar' &&
+              currentSeries.highUtilizationPoints &&
+              currentSeries.highUtilizationPoints[dataPointIndex]
+          ) {
+            return '#FF0000'; // 赤色
+          }
+
+          return '#000000'; // デフォルトの黒色
+        }],
+        fontSize: '10px',
+      },
+      dropShadow: {
+        enabled: true,
+        left: 2,
+        top: 2,
+        opacity: 0.5
+      },
+      background: {
+        enabled: false,
+      },
+      textAnchor: 'middle',
+    },
+    stroke: {
+      show: true,
+      width: 1,
+      curve: 'straight', // 線をスムーズに
+    },
+    xaxis: {
+      // type: 'datetime', // datetime
+      categories: xLabels.value,
+      tickAmount: xLabels.value.length - 1, // または必要な数
+      tickPlacement: 'on',
+      labels: {
+        rotate: -90, // ラベルを縦に表示（90度回転）
+        rotateAlways: true,
+        style: {
+          fontSize: '12px'
+        },
+        formatter: function (val: number) {
+          const date = new Date(val);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+
+          if (timeFilter.value === 'day') {
+            return `${year}-${month}-${day}日`;
+          } else if (timeFilter.value === 'week') {
+            return `${year}-${month}-${day}週`;
+          } else if (timeFilter.value === 'month') {
+            return `${year}年${month}月`;
+          }
+          return val; // デフォルト値を返す（エラー回避のため）
+        }
       }
-    }
-  },
-  legend: {
-    position: 'top',
+    },
+    // 追加: 折れ線グラフのマーカー設定
     markers: {
-      shape: series.value.map((v, index) => { return v.type === 'bar' ? 'square' : 'line' }),
-    }
-  },
-  events: {
-    legendClick: function (chartContext, seriesIndex) {
-      // ここではなく、@legendClickイベントで処理するため空にしておく
+      size: 4,
+      colors: ['#45FF60', '#FF4560'],
+      strokeWidth: 2,
+      hover: {
+        size: 7,
+      }
+    },
+    // 以下は既存のchartOptionsに追加する内容
+    yaxis: {
+      title: {
+        text: '値',
+      },
+      labels: {
+        formatter: function (val: number) {
+          try {
+            return val.toFixed(1) + "%";
+          } catch (e) {
+            return ""
+          }
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: function (val: number) {
+          try {
+            return val.toFixed(1) + "%";
+          } catch (e) {
+            return ""
+          }
+        }
+      }
+    },
+    legend: {
+      position: 'top',
+      markers: {
+        shape: series.value.map((v, index) => {
+          return v.type === 'bar' ? 'square' : 'line'
+        }),
+      }
+    },
+    events: {
+      legendClick: function (chartContext, seriesIndex) {
+        // ここではなく、@legendClickイベントで処理するため空にしておく
+      }
     }
   }
-})
+}
+refreshChartOption()
 
 // 日付をHTML input[type=date]用にフォーマットする関数
 const formatDateForInput = (timestamp: number): string => {
@@ -359,47 +410,51 @@ const handleStartDateChange = (event: Event) => {
 
 // 更新時の処理
 const updateChart = async () => {
-  await refreshData()
-  // フィルター変更時の処理（必要に応じて追加）
-  if (chartRef.value?.chart) {
-    // 表示するシリーズの配列を作成
-    // 棒グラフのシリーズをチェックボックスに応じて振り分け
-    // series.value.forEach((v, index) => {
-    //   if (selectedSeries[index]) {
-    //     chartRef.value.chart.showSeries(v.name);
-    //   } else {
-    //     chartRef.value.chart.hideSeries(v.name);
-    //   }
-    // });
-    chartRef.value.chart.updateOptions({
-      xaxis: {
-        categories: xLabels.value,
-        labels: {
-          rotate: -90, // ラベルを縦に表示（90度回転）
-          rotateAlways: true,
-          style: {
-            fontSize: '12px'
-          },
-          formatter: function (val: number) {
-            const date = new Date(val);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
 
-            if (timeFilter.value === 'day') {
-              return `${year}-${month}-${day}日`;
-            } else if (timeFilter.value === 'week') {
-              return `${year}-${month}-${day}週`;
-            } else if (timeFilter.value === 'month') {
-              return `${year}年${month}月`;
-            }
-            return val; // デフォルト値を返す（エラー回避のため）
-          }
-        }
-      }
-    })
-
-  }
+// NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
+  refreshCharts()
+  return
+  // await refreshData()
+  // // フィルター変更時の処理（必要に応じて追加）
+  // if (chartRef.value?.chart) {
+  //   // 表示するシリーズの配列を作成
+  //   // 棒グラフのシリーズをチェックボックスに応じて振り分け
+  //   // series.value.forEach((v, index) => {
+  //   //   if (selectedSeries[index]) {
+  //   //     chartRef.value.chart.showSeries(v.name);
+  //   //   } else {
+  //   //     chartRef.value.chart.hideSeries(v.name);
+  //   //   }
+  //   // });
+  //   chartRef.value.chart.updateOptions({
+  //     xaxis: {
+  //       categories: xLabels.value,
+  //       labels: {
+  //         rotate: -90, // ラベルを縦に表示（90度回転）
+  //         rotateAlways: true,
+  //         style: {
+  //           fontSize: '12px'
+  //         },
+  //         formatter: function (val: number) {
+  //           const date = new Date(val);
+  //           const year = date.getFullYear();
+  //           const month = String(date.getMonth() + 1).padStart(2, '0');
+  //           const day = String(date.getDate()).padStart(2, '0');
+  //
+  //           if (timeFilter.value === 'day') {
+  //             return `${year}-${month}-${day}日`;
+  //           } else if (timeFilter.value === 'week') {
+  //             return `${year}-${month}-${day}週`;
+  //           } else if (timeFilter.value === 'month') {
+  //             return `${year}年${month}月`;
+  //           }
+  //           return val; // デフォルト値を返す（エラー回避のため）
+  //         }
+  //       }
+  //     }
+  //   })
+  //
+  // }
 }
 
 // チャート側でレジェンドをクリックしたときのイベントハンドラ
@@ -424,7 +479,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   display: flex;
   position: relative;
   width: 100%;
-  height: 100vh; /* Use viewport height to ensure full browser height */
+  height: 100%; /* Use viewport height to ensure full browser height */
 }
 
 .toggle-filter-btn {
@@ -440,7 +495,6 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   cursor: pointer;
   border-radius: 0 4px 4px 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: left 0.3s ease, right 0.3s ease, border-radius 0.3s ease;
 }
 
 /* When filter panel is visible (not hidden), position the button on the right side of the filter panel */
@@ -516,7 +570,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   background: white;
   border: 2px solid #4a86e8;
   border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   z-index: 110;
   padding: 8px 8px 8px 20px;
   min-width: 200px;
@@ -561,6 +615,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 .checkbox-item label {
   margin: 0;
 }
+
 .chart-area {
   flex-grow: 1;
   padding: 15px;
@@ -643,6 +698,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   height: 0;
   width: 0;
 }
+
 .legend-buttons {
   display: flex;
   justify-content: flex-end;

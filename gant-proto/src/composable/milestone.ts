@@ -8,7 +8,7 @@ import {toast} from "vue3-toastify";
 export async function useMilestoneTable(facilityId: number, mode?: string) {
     const list = ref<Milestone[]>([])
     const refresh = async () => {
-        const resp = await Api.getMilestones(facilityId, mode)
+        const resp = await Api.getMilestones([facilityId], mode)
         list.value.splice(0, list.value.length)
         list.value.push(...resp.data.list)
     }

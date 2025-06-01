@@ -14,7 +14,6 @@ import (
 func PostFacilitiesIdInvoke(c *gin.Context) (openapi_models.PostFacilitiesIdResponse, error) {
 
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
-	holidayRep := repository.NewHolidayRepository(middleware.GetRepositoryMode(c)...)
 
 	var facilityReq openapi_models.PostFacilitiesRequest
 	if err := c.ShouldBindJSON(&facilityReq); err != nil {
@@ -22,7 +21,7 @@ func PostFacilitiesIdInvoke(c *gin.Context) (openapi_models.PostFacilitiesIdResp
 		panic(err)
 	}
 
-	oldFacility := facilityRep.Find(*facilityReq.Facility.Id)
+	// No need to get old facility since we're not using it for holidays anymore
 
 	facilityRep.Upsert(db.Facility{
 		Id:              facilityReq.Facility.Id,
@@ -37,8 +36,7 @@ func PostFacilitiesIdInvoke(c *gin.Context) (openapi_models.PostFacilitiesIdResp
 		UpdatedAt:       0,
 	})
 
-	holidayRep.InsertByFacilityId(*facilityReq.Facility.Id, &oldFacility.TermFrom, &oldFacility.TermTo)
-
+	// Holiday creation is now facility-independent
 
 	return openapi_models.PostFacilitiesIdResponse{}, nil
 

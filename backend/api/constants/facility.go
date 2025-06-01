@@ -10,3 +10,8 @@ const (
 	FacilityTypeOrdered  = "Ordered"
 	FacilityTypePrepared = "Prepared"
 )
+
+const (
+	FacilityWorkScheduleTypeHoliday    = "Holiday"
+	FacilityWorkScheduleTypeWorkingDay = "WorkingDay"
+)

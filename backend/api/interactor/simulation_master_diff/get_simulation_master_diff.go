@@ -200,12 +200,11 @@ func convertUnits(list []db.Unit) []openapi_models.Unit {
 func convertHolidays(list []db.Holiday) []openapi_models.Holiday {
 	return lo.Map(list, func(item db.Holiday, index int) openapi_models.Holiday {
 		return openapi_models.Holiday{
-			Id:         item.Id,
-			Name:       item.Name,
-			Date:       item.Date,
-			CreatedAt:  item.CreatedAt,
-			UpdatedAt:  item.UpdatedAt,
-			FacilityId: item.FacilityId,
+			Id:        item.Id,
+			Name:      item.Name,
+			Date:      item.Date,
+			CreatedAt: item.CreatedAt,
+			UpdatedAt: item.UpdatedAt,
 		}
 	})
 }

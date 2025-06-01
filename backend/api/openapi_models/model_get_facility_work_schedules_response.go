@@ -9,9 +9,7 @@
 
 package openapi_models
 
-type DefautValidIndexUsers struct {
+type GetFacilityWorkSchedulesResponse struct {
 
-	UserIds []int32 `json:"UserIds" form:"UserIds"`
-
-	ValidIndex int32 `json:"ValidIndex" form:"ValidIndex"`
+	List []FacilityWorkSchedule `json:"list" form:"list"`
 }

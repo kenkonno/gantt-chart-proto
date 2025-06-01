@@ -237,12 +237,7 @@ paths:
               examples: { }
       operationId: get-holidays
       description: ''
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: facilityId
-          required: true
+      parameters: []
     post:
       summary: PostHolidays
       operationId: post-holidays
@@ -476,7 +471,7 @@ paths:
       responses:
         '200':
           description: OK
-      description: 'Duplicates a unit based on the provided unit ID'
+      description: Duplicates a unit based on the provided unit ID
       requestBody:
         content:
           application/json:
@@ -498,14 +493,16 @@ paths:
       description: ''
       parameters:
         - schema:
-            type: integer
-          in: query
-          name: facilityId
-          required: true
-        - schema:
             type: string
           in: query
           name: mode
+        - schema:
+            type: array
+            items:
+              type: integer
+          in: query
+          name: facilityIds
+          required: true
     post:
       summary: PostGanttGroups
       operationId: post-ganttGroups
@@ -890,9 +887,11 @@ paths:
       description: ''
       parameters:
         - schema:
-            type: integer
+            type: array
+            items:
+              type: integer
           in: query
-          name: facilityId
+          name: facilityIds
         - schema:
             type: string
           in: query
@@ -1183,6 +1182,81 @@ paths:
             schema:
               $ref: '#/components/schemas/PostBulkUpdateTicketsRequest'
     parameters: [ ]
+  /api/facilityWorkSchedules:
+    get:
+      summary: GetFacilityWorkSchedules
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilityWorkSchedulesResponse'
+              examples: {}
+      operationId: get-facilityWorkSchedules
+      description: ''
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: facilityId
+          required: true
+    post:
+      summary: PostFacilityWorkSchedules
+      operationId: post-facilityWorkSchedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostFacilityWorkSchedulesResponse'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilityWorkSchedulesRequest'
+    parameters: []
+  '/api/facilityWorkSchedules/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetFacilityWorkSchedulesId
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacilityWorkSchedulesIdResponse'
+              examples: {}
+      operationId: get-facilityWorkSchedules-id
+      description: ''
+    delete:
+      summary: DeleteFacilityWorkSchedulesId
+      operationId: delete-facilityWorkSchedules-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostFacilityWorkSchedulesId
+      operationId: post-facilityWorkSchedules-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFacilityWorkSchedulesRequest'
 components:
   schemas:
     User:
@@ -1526,12 +1600,9 @@ components:
         updated_at:
           type: integer
           format: int
-        facility_id:
-          type: integer
       required:
         - name
         - date
-        - facility_id
     GetHolidaysRequest:
       title: GetHolidaysRequest
       type: object
@@ -2648,7 +2719,7 @@ components:
         - labels
         - styles
         - display
-    DefautValidIndexUsers:
+    DefaultValidIndexUsers:
       title: DefaultPileUp
       x-stoplight:
         id: f6aa84233e81b
@@ -2660,9 +2731,12 @@ components:
             type: integer
         ValidIndex:
           type: integer
+        isHoliday:
+          type: boolean
       required:
         - UserIds
         - ValidIndex
+        - isHoliday
     GetDefaultPileUpsRequest:
       title: GetDefaultPileUpsRequest
       type: object
@@ -2692,7 +2766,7 @@ components:
         defaultValidUserIndexes:
           type: array
           items:
-            $ref: '#/components/schemas/DefautValidIndexUsers'
+            $ref: '#/components/schemas/DefaultValidIndexUsers'
       required:
         - defaultPileUps
         - globalStartDate
@@ -3004,40 +3078,40 @@ components:
       properties:
         unitId:
           type: integer
-          description: 'ID of the unit to duplicate'
+          description: ID of the unit to duplicate
         unitName:
           type: string
-          description: 'new unit name'
+          description: new unit name
         copyProcessId:
           type: boolean
-          description: 'Flag to copy ProcessId field from source ticket'
+          description: Flag to copy ProcessId field from source ticket
         copyDepartmentId:
           type: boolean
-          description: 'Flag to copy DepartmentId field from source ticket'
+          description: Flag to copy DepartmentId field from source ticket
         copyEstimate:
           type: boolean
-          description: 'Flag to copy Estimate field from source ticket'
+          description: Flag to copy Estimate field from source ticket
         copyNumberOfWorker:
           type: boolean
-          description: 'Flag to copy NumberOfWorker field from source ticket'
+          description: Flag to copy NumberOfWorker field from source ticket
         copyDaysAfter:
           type: boolean
-          description: 'Flag to copy DaysAfter field from source ticket'
+          description: Flag to copy DaysAfter field from source ticket
         copyStartDate:
           type: boolean
-          description: 'Flag to copy StartDate field from source ticket'
+          description: Flag to copy StartDate field from source ticket
         copyEndDate:
           type: boolean
-          description: 'Flag to copy EndDate field from source ticket'
+          description: Flag to copy EndDate field from source ticket
         copyProgressPercent:
           type: boolean
-          description: 'Flag to copy ProgressPercent field from source ticket'
+          description: Flag to copy ProgressPercent field from source ticket
         copyMemo:
           type: boolean
-          description: 'Flag to copy Memo field from source ticket'
+          description: Flag to copy Memo field from source ticket
         copyTicketUser:
           type: boolean
-          description: 'Flag to copy copyTicketUser field from source ticket'
+          description: Flag to copy copyTicketUser field from source ticket
       required:
         - unitId
         - copyProcessId
@@ -3050,10 +3124,99 @@ components:
         - copyProgressPercent
         - copyMemo
         - copyTicketUser
-
     PostUnitsDuplicateResponse:
       title: PostDuplicateUnitResponse
       type: object
       properties:
         '':
           type: string
+    FacilityWorkSchedule:
+      title: FacilityWorkSchedule
+      type: object
+      x-tags:
+        - FacilityWorkSchedule
+      properties:
+        id:
+          type: integer
+          nullable: true
+        facility_id:
+          type: integer
+          x-go-custom-tag: 'binding:"min=1"'
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: int
+      required:
+        - facility_id
+        - date
+        - type
+    GetFacilityWorkSchedulesRequest:
+      title: GetFacilityWorkSchedulesRequest
+      type: object
+    GetFacilityWorkSchedulesResponse:
+      title: GetFacilityWorkSchedulesResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacilityWorkSchedule'
+      required:
+        - list
+    GetFacilityWorkSchedulesIdRequest:
+      title: GetFacilityWorkSchedulesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetFacilityWorkSchedulesIdResponse:
+      title: GetFacilityWorkSchedulesResponse
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    DeleteFacilityWorkSchedulesIdRequest:
+      title: DeleteFacilityWorkSchedulesIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteFacilityWorkSchedulesIdResponse:
+      title: DeleteFacilityWorkSchedulesIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostFacilityWorkSchedulesRequest:
+      title: PostFacilityWorkSchedulesRequest
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    PostFacilityWorkSchedulesResponse:
+      title: PostFacilityWorkSchedulesResponse
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    PostFacilityWorkSchedulesIdRequest:
+      title: PostFacilityWorkSchedulesIdRequest
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
+    PostFacilityWorkSchedulesIdResponse:
+      title: PostFacilityWorkSchedulesIdResponse
+      type: object
+      properties:
+        facilityWorkSchedule:
+          $ref: '#/components/schemas/FacilityWorkSchedule'
