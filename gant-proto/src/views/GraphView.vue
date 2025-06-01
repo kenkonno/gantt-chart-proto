@@ -111,18 +111,18 @@
 
       <div class="filter-item">
         <label>開始日</label>
-        <input 
-          type="date" 
-          :value="formatDateForInput(startDate)" 
+        <input
+            type="date"
+            :value="formatDateForInput(startDate)"
           @change="handleStartDateChange($event)"
           :min="formatDateForInput(globalStartTimestamp)"
           v-if="filterVisible"
         />
         <!-- 最小化時のホバー表示用要素 -->
         <div class="hover-content start-date-hover">
-          <input 
-            type="date" 
-            :value="formatDateForInput(startDate)" 
+          <input
+              type="date"
+              :value="formatDateForInput(startDate)"
             @change="handleStartDateChange($event)"
             :min="formatDateForInput(globalStartTimestamp)"
           />

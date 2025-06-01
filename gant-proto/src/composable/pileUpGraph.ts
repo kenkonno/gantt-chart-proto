@@ -11,7 +11,7 @@ export type Series = {
     data: number[];
     color: string;
     hidden: boolean;
-    highUtilizationPoints?: boolean[]; // 各時点の稼働率が125%を超えているかどうかのフラグ
+    highUtilizationPoints: boolean[]; // 各時点の稼働率が125%を超えているかどうかのフラグ
 }
 
 const dailyDurationOptions = [
@@ -29,9 +29,7 @@ const monthlyDurationOptions = [
 // ユーザー一覧。特別ref系は必要ない。
 export async function usePileUpGraph() {
 
-    // TODO: 積み上げのパーセント表示
-    // TODO: 100%を超えたら強調表示する
-    // TODO: 値に表示するものが謎？今の単位は時間になっているから人日にすればよさそう。
+    // TODO: 日付の初期値がおかしい？基本データは詰まってくるはずなのであまり気にしない？
 
     // 設備一覧
     const {data: facilities} = reactive(await Api.getFacilities())
@@ -158,10 +156,6 @@ export async function usePileUpGraph() {
             }
         });
 
-        console.log("#################", barSeries);
-        // TODO: getAverageLineで各部署のそのxAxisでの上限を取得すれば100%超過の計算が可能
-        console.log("#################",hideSeries.value)
-        // TODO: ふと思ったけど山積みは作業者だけで考えたほうが良い？
         // ダミーデータ,100%線, 125%線。部署ごとにその日に稼動可能な人数を足し上げて計算する
         const lineSeries: Series[] = [{
             color: "green",
@@ -169,12 +163,14 @@ export async function usePileUpGraph() {
             name: "100%",
             type: "line",
             hidden: false,
+            highUtilizationPoints: [],
         }, {
             color: "red",
             data: Array(splitByTimeFilter(averageLabels, timeFilter.value, globalStartDate).length).fill(125),
             name: "125%",
             type: "line",
             hidden: false,
+            highUtilizationPoints: [],
         }]
 
         const xLabels = getXLabels(globalStartDate, timeFilter.value, labelLength.value)
@@ -472,9 +468,12 @@ const filterSeriesByDuration = (
     const endIndex = startIndex + filteredLabels.length;
 
     // 同じインデックス範囲でシリーズデータをフィルタリング
-
-    return seriesData.map(seriesItem => ({
-        ...seriesItem,
-        data: seriesItem.data.slice(startIndex, endIndex)
-    }))
+    return seriesData.map(seriesItem => {
+        const filteredItem = {
+            ...seriesItem,
+            data: seriesItem.data.slice(startIndex, endIndex)
+        };
+        filteredItem.highUtilizationPoints = seriesItem.highUtilizationPoints.slice(startIndex, endIndex);
+        return filteredItem;
+    });
 };
