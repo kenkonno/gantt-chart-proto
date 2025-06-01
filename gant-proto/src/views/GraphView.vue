@@ -147,6 +147,7 @@
             height="100%"
             @legendClick="handleLegendClick"
             style="flex-grow: 1;"
+            v-if="showCharts"
         />
       </div>
     </div>
@@ -154,12 +155,20 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, Ref} from 'vue'
+import {nextTick, reactive, ref, Ref} from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import {usePileUpGraph} from "@/composable/pileUpGraph";
 import {FacilityType, FacilityTypeMap} from "@/const/common";
 import dayjs from 'dayjs';
 
+// NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
+const showCharts = ref(true)
+const refreshCharts = () => {
+  showCharts.value = false
+  nextTick(() => {
+    showCharts.value = true
+  })
+}
 
 const {
   // facilities,
@@ -203,11 +212,11 @@ const toggleFilterPanel = () => {
 const toggleAllSeries = (visible: boolean) => {
   if (chartRef.value?.chart) {
     series.value.forEach(seriesItem => {
-      if (visible) {
-        chartRef.value.chart.showSeries(seriesItem.name);
-      } else {
-        chartRef.value.chart.hideSeries(seriesItem.name);
-      }
+      // if (visible) {
+      //   chartRef.value.chart.showSeries(seriesItem.name);
+      // } else {
+      //   chartRef.value.chart.hideSeries(seriesItem.name);
+      // }
 
       // 内部状態も更新
       const index = series.value.findIndex(s => s.name === seriesItem.name);
@@ -215,6 +224,8 @@ const toggleAllSeries = (visible: boolean) => {
         selectedSeries.value[index] = !visible;
       }
     });
+// NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
+    updateChart()
   }
 };
 
@@ -380,47 +391,51 @@ const handleStartDateChange = (event: Event) => {
 
 // 更新時の処理
 const updateChart = async () => {
-  await refreshData()
-  // フィルター変更時の処理（必要に応じて追加）
-  if (chartRef.value?.chart) {
-    // 表示するシリーズの配列を作成
-    // 棒グラフのシリーズをチェックボックスに応じて振り分け
-    // series.value.forEach((v, index) => {
-    //   if (selectedSeries[index]) {
-    //     chartRef.value.chart.showSeries(v.name);
-    //   } else {
-    //     chartRef.value.chart.hideSeries(v.name);
-    //   }
-    // });
-    chartRef.value.chart.updateOptions({
-      xaxis: {
-        categories: xLabels.value,
-        labels: {
-          rotate: -90, // ラベルを縦に表示（90度回転）
-          rotateAlways: true,
-          style: {
-            fontSize: '12px'
-          },
-          formatter: function (val: number) {
-            const date = new Date(val);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
 
-            if (timeFilter.value === 'day') {
-              return `${year}-${month}-${day}日`;
-            } else if (timeFilter.value === 'week') {
-              return `${year}-${month}-${day}週`;
-            } else if (timeFilter.value === 'month') {
-              return `${year}年${month}月`;
-            }
-            return val; // デフォルト値を返す（エラー回避のため）
-          }
-        }
-      }
-    })
-
-  }
+// NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
+  refreshCharts()
+  return
+  // await refreshData()
+  // // フィルター変更時の処理（必要に応じて追加）
+  // if (chartRef.value?.chart) {
+  //   // 表示するシリーズの配列を作成
+  //   // 棒グラフのシリーズをチェックボックスに応じて振り分け
+  //   // series.value.forEach((v, index) => {
+  //   //   if (selectedSeries[index]) {
+  //   //     chartRef.value.chart.showSeries(v.name);
+  //   //   } else {
+  //   //     chartRef.value.chart.hideSeries(v.name);
+  //   //   }
+  //   // });
+  //   chartRef.value.chart.updateOptions({
+  //     xaxis: {
+  //       categories: xLabels.value,
+  //       labels: {
+  //         rotate: -90, // ラベルを縦に表示（90度回転）
+  //         rotateAlways: true,
+  //         style: {
+  //           fontSize: '12px'
+  //         },
+  //         formatter: function (val: number) {
+  //           const date = new Date(val);
+  //           const year = date.getFullYear();
+  //           const month = String(date.getMonth() + 1).padStart(2, '0');
+  //           const day = String(date.getDate()).padStart(2, '0');
+  //
+  //           if (timeFilter.value === 'day') {
+  //             return `${year}-${month}-${day}日`;
+  //           } else if (timeFilter.value === 'week') {
+  //             return `${year}-${month}-${day}週`;
+  //           } else if (timeFilter.value === 'month') {
+  //             return `${year}年${month}月`;
+  //           }
+  //           return val; // デフォルト値を返す（エラー回避のため）
+  //         }
+  //       }
+  //     }
+  //   })
+  //
+  // }
 }
 
 // チャート側でレジェンドをクリックしたときのイベントハンドラ
