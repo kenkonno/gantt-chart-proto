@@ -163,11 +163,11 @@ import dayjs from 'dayjs';
 
 // NOTE: componentを作り直した方が描画が早そうなのでいったんそうする。
 const showCharts = ref(true)
-const refreshCharts = () => {
+const refreshCharts = async () => {
   showCharts.value = false
-  nextTick(() => {
-    showCharts.value = true
-  })
+  await refreshData()
+  refreshChartOption()
+  nextTick(() => showCharts.value = true)
 }
 
 const {
@@ -234,143 +234,159 @@ const selectAllSeries = () => toggleAllSeries(true);
 const unselectAllSeries = () => toggleAllSeries(false);
 
 // チャートのオプション
-const chartOptions = reactive({
-  chart: {
-    type: 'line',
-    stacked: true,
-    toolbar: {
-      show: true
-    },
-    zoom: {
-      enabled: false,
-    }
-  },
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      columnWidth: '55%',
-      endingShape: 'rounded',
-      dataLabels: {
-        position: 'center',
-      }
-    }
-  },
-  dataLabels: {
-    enabled: true,
-    enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s, i) => i),
-    formatter: function (val: number) {
-      return val.toFixed(1) + "%";
-    },
-    style: {
-      colors: [function (opts) {
-        // 現在のシリーズと時点のインデックスを取得
-        const seriesIndex = opts.seriesIndex;
-        const dataPointIndex = opts.dataPointIndex;
-
-        // 現在のシリーズが棒グラフで、highUtilizationPointsが存在し、
-        // 現在の時点が高稼働率ポイントである場合は赤色で表示
-        const currentSeries = series.value[seriesIndex];
-        if (
-            currentSeries &&
-            currentSeries.type === 'bar' &&
-            currentSeries.highUtilizationPoints &&
-            currentSeries.highUtilizationPoints[dataPointIndex]
-        ) {
-          return '#FF0000'; // 赤色
-        }
-
-        return '#000000'; // デフォルトの黒色
-      }],
-      fontSize: '10px',
-    },
-    dropShadow: {
-      enabled: true,
-      left: 2,
-      top: 2,
-      opacity: 0.5
-    },
-    background: {
-      enabled: false,
-    },
-    textAnchor: 'middle',
-  },
-  stroke: {
-    show: true,
-    width: 1,
-    curve: 'straight', // 線をスムーズに
-  },
-  xaxis: {
-    // type: 'datetime', // datetime
-    categories: xLabels.value,
-    tickAmount: xLabels.value.length - 1, // または必要な数
-    tickPlacement: 'on',
-    labels: {
-      rotate: -90, // ラベルを縦に表示（90度回転）
-      rotateAlways: true,
-      style: {
-        fontSize: '12px'
+let chartOptions = {}
+const refreshChartOption = () => {
+  chartOptions = {
+    chart: {
+      type: 'line',
+      stacked: true,
+      toolbar: {
+        show: true
       },
-      formatter: function (val: number) {
-        const date = new Date(val);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-
-        if (timeFilter.value === 'day') {
-          return `${year}-${month}-${day}日`;
-        } else if (timeFilter.value === 'week') {
-          return `${year}-${month}-${day}週`;
-        } else if (timeFilter.value === 'month') {
-          return `${year}年${month}月`;
-        }
-        return val; // デフォルト値を返す（エラー回避のため）
+      zoom: {
+        enabled: false,
       }
-    }
-  },
-  // 追加: 折れ線グラフのマーカー設定
-  markers: {
-    size: 4,
-    colors: ['#45FF60', '#FF4560'],
-    strokeWidth: 2,
-    hover: {
-      size: 7,
-    }
-  },
-  // 以下は既存のchartOptionsに追加する内容
-  yaxis: {
-    title: {
-      text: '値',
     },
-    labels: {
-      formatter: function (val: number) {
-        return val.toFixed(1) + "%"; // 小数点以下1桁で表示し、単位「%」を追加
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded',
+        dataLabels: {
+          position: 'center',
+        }
       }
-    }
-  },
-  fill: {
-    opacity: 1
-  },
-  tooltip: {
-    y: {
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s, i) => i),
       formatter: function (val: number) {
-        return val.toFixed(1) + "%"
+        try {
+          return val.toFixed(1) + "%";
+        } catch (e) {
+          return ""
+        }
+      },
+      style: {
+        colors: [function (opts) {
+          // 現在のシリーズと時点のインデックスを取得
+          const seriesIndex = opts.seriesIndex;
+          const dataPointIndex = opts.dataPointIndex;
+
+          // 現在のシリーズが棒グラフで、highUtilizationPointsが存在し、
+          // 現在の時点が高稼働率ポイントである場合は赤色で表示
+          const currentSeries = series.value[seriesIndex];
+          if (
+              currentSeries &&
+              currentSeries.type === 'bar' &&
+              currentSeries.highUtilizationPoints &&
+              currentSeries.highUtilizationPoints[dataPointIndex]
+          ) {
+            return '#FF0000'; // 赤色
+          }
+
+          return '#000000'; // デフォルトの黒色
+        }],
+        fontSize: '10px',
+      },
+      dropShadow: {
+        enabled: true,
+        left: 2,
+        top: 2,
+        opacity: 0.5
+      },
+      background: {
+        enabled: false,
+      },
+      textAnchor: 'middle',
+    },
+    stroke: {
+      show: true,
+      width: 1,
+      curve: 'straight', // 線をスムーズに
+    },
+    xaxis: {
+      // type: 'datetime', // datetime
+      categories: xLabels.value,
+      tickAmount: xLabels.value.length - 1, // または必要な数
+      tickPlacement: 'on',
+      labels: {
+        rotate: -90, // ラベルを縦に表示（90度回転）
+        rotateAlways: true,
+        style: {
+          fontSize: '12px'
+        },
+        formatter: function (val: number) {
+          const date = new Date(val);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+
+          if (timeFilter.value === 'day') {
+            return `${year}-${month}-${day}日`;
+          } else if (timeFilter.value === 'week') {
+            return `${year}-${month}-${day}週`;
+          } else if (timeFilter.value === 'month') {
+            return `${year}年${month}月`;
+          }
+          return val; // デフォルト値を返す（エラー回避のため）
+        }
       }
-    }
-  },
-  legend: {
-    position: 'top',
+    },
+    // 追加: 折れ線グラフのマーカー設定
     markers: {
-      shape: series.value.map((v, index) => {
-        return v.type === 'bar' ? 'square' : 'line'
-      }),
-    }
-  },
-  events: {
-    legendClick: function (chartContext, seriesIndex) {
-      // ここではなく、@legendClickイベントで処理するため空にしておく
+      size: 4,
+      colors: ['#45FF60', '#FF4560'],
+      strokeWidth: 2,
+      hover: {
+        size: 7,
+      }
+    },
+    // 以下は既存のchartOptionsに追加する内容
+    yaxis: {
+      title: {
+        text: '値',
+      },
+      labels: {
+        formatter: function (val: number) {
+          try {
+            return val.toFixed(1) + "%";
+          } catch (e) {
+            return ""
+          }
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: function (val: number) {
+          try {
+            return val.toFixed(1) + "%";
+          } catch (e) {
+            return ""
+          }
+        }
+      }
+    },
+    legend: {
+      position: 'top',
+      markers: {
+        shape: series.value.map((v, index) => {
+          return v.type === 'bar' ? 'square' : 'line'
+        }),
+      }
+    },
+    events: {
+      legendClick: function (chartContext, seriesIndex) {
+        // ここではなく、@legendClickイベントで処理するため空にしておく
+      }
     }
   }
-})
+}
+refreshChartOption()
 
 // 日付をHTML input[type=date]用にフォーマットする関数
 const formatDateForInput = (timestamp: number): string => {
