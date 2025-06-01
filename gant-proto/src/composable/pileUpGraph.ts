@@ -3,7 +3,7 @@ import {computed, reactive, ref} from "vue";
 import {FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import dayjs from "dayjs";
-import {DefaultValidIndexUsers, Department, User} from "@/api";
+import {DefaultValidIndexUsers, Department, GetDefaultPileUpsResponse, User} from "@/api";
 
 export type Series = {
     name: string;
@@ -69,9 +69,14 @@ export async function usePileUpGraph() {
         }
     }
 
-    // 積み上げ（getDefaultPileUps
-    const {data: pileUps} = reactive(await Api.getDefaultPileUps(-1, true, facilityTypes))
+    // 積み上げ（getDefaultPileUps）
+    const pileUps = reactive<GetDefaultPileUpsResponse>({
+        defaultPileUps: [],
+        defaultValidUserIndexes: [],
+        globalStartDate: ''
+    })
     let globalStartDate = ''
+
     const refreshData = async () => {
         const {data} = await Api.getDefaultPileUps(-1, true, facilityTypes)
         pileUps.defaultPileUps = data.defaultPileUps
@@ -82,6 +87,8 @@ export async function usePileUpGraph() {
         globalStartDate = data.globalStartDate
         return data
     }
+
+    // 初回データ取得
     await refreshData()
 
     const labelLength = computed(() => {

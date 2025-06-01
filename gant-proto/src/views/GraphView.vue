@@ -114,17 +114,17 @@
         <input
             type="date"
             :value="formatDateForInput(startDate)"
-          @change="handleStartDateChange($event)"
-          :min="formatDateForInput(globalStartTimestamp)"
-          v-if="filterVisible"
+            @change="handleStartDateChange($event)"
+            :min="formatDateForInput(globalStartTimestamp)"
+            v-if="filterVisible"
         />
         <!-- 最小化時のホバー表示用要素 -->
         <div class="hover-content start-date-hover">
           <input
               type="date"
               :value="formatDateForInput(startDate)"
-            @change="handleStartDateChange($event)"
-            :min="formatDateForInput(globalStartTimestamp)"
+              @change="handleStartDateChange($event)"
+              :min="formatDateForInput(globalStartTimestamp)"
           />
         </div>
       </div>
@@ -139,15 +139,16 @@
           <span class="text">リロード</span>
         </a>
       </div>
-
-      <apex-charts
-          ref="chartRef"
-          :options="chartOptions"
-          :series="series"
-          height="100%"
-          @legendClick="handleLegendClick"
-          style="flex-grow: 1;"
-      />
+      <div class="h-100">
+        <apex-charts
+            ref="chartRef"
+            :options="chartOptions"
+            :series="series"
+            height="100%"
+            @legendClick="handleLegendClick"
+            style="flex-grow: 1;"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -245,7 +246,7 @@ const chartOptions = reactive({
   },
   dataLabels: {
     enabled: true,
-    enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s,i) => i),
+    enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s, i) => i),
     formatter: function (val: number) {
       return val.toFixed(1) + "%";
     },
@@ -330,7 +331,7 @@ const chartOptions = reactive({
       text: '値',
     },
     labels: {
-      formatter: function(val: number) {
+      formatter: function (val: number) {
         return val.toFixed(1) + "%"; // 小数点以下1桁で表示し、単位「%」を追加
       }
     }
@@ -348,7 +349,9 @@ const chartOptions = reactive({
   legend: {
     position: 'top',
     markers: {
-      shape: series.value.map((v, index) => { return v.type === 'bar' ? 'square' : 'line' }),
+      shape: series.value.map((v, index) => {
+        return v.type === 'bar' ? 'square' : 'line'
+      }),
     }
   },
   events: {
@@ -442,7 +445,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   display: flex;
   position: relative;
   width: 100%;
-  height: 100vh; /* Use viewport height to ensure full browser height */
+  height: 100%; /* Use viewport height to ensure full browser height */
 }
 
 .toggle-filter-btn {
@@ -534,7 +537,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   background: white;
   border: 2px solid #4a86e8;
   border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   z-index: 110;
   padding: 8px 8px 8px 20px;
   min-width: 200px;
@@ -579,6 +582,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
 .checkbox-item label {
   margin: 0;
 }
+
 .chart-area {
   flex-grow: 1;
   padding: 15px;
@@ -661,6 +665,7 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   height: 0;
   width: 0;
 }
+
 .legend-buttons {
   display: flex;
   justify-content: flex-end;
