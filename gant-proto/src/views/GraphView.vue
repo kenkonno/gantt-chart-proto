@@ -247,7 +247,7 @@ const chartOptions = reactive({
     enabled: true,
     enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s,i) => i),
     formatter: function (val: number) {
-      return val.toFixed(1) +"h"
+      return val.toFixed(1) + "%"
     },
     style: {
       colors: ['#000'],
@@ -313,7 +313,7 @@ const chartOptions = reactive({
     },
     labels: {
       formatter: function(val: number) {
-        return val.toFixed(1) + "h"; // 小数点以下1桁で表示し、単位「h」を追加
+        return val.toFixed(1) + "%"; // 小数点以下1桁で表示し、単位「%」を追加
       }
     }
   },
@@ -323,7 +323,7 @@ const chartOptions = reactive({
   tooltip: {
     y: {
       formatter: function (val: number) {
-        return val.toFixed(1) + "h"
+        return val.toFixed(1) + "%"
       }
     }
   },
