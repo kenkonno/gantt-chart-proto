@@ -247,10 +247,28 @@ const chartOptions = reactive({
     enabled: true,
     enabledOnSeries: series.value.filter(s => s.type === 'bar').map((s,i) => i),
     formatter: function (val: number) {
-      return val.toFixed(1) + "%"
+      return val.toFixed(1) + "%";
     },
     style: {
-      colors: ['#000'],
+      colors: [function (opts) {
+        // 現在のシリーズと時点のインデックスを取得
+        const seriesIndex = opts.seriesIndex;
+        const dataPointIndex = opts.dataPointIndex;
+
+        // 現在のシリーズが棒グラフで、highUtilizationPointsが存在し、
+        // 現在の時点が高稼働率ポイントである場合は赤色で表示
+        const currentSeries = series.value[seriesIndex];
+        if (
+            currentSeries &&
+            currentSeries.type === 'bar' &&
+            currentSeries.highUtilizationPoints &&
+            currentSeries.highUtilizationPoints[dataPointIndex]
+        ) {
+          return '#FF0000'; // 赤色
+        }
+
+        return '#000000'; // デフォルトの黒色
+      }],
       fontSize: '10px',
     },
     dropShadow: {

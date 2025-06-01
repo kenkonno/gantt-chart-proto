@@ -11,6 +11,7 @@ export type Series = {
     data: number[];
     color: string;
     hidden: boolean;
+    highUtilizationPoints?: boolean[]; // 各時点の稼働率が125%を超えているかどうかのフラグ
 }
 
 const dailyDurationOptions = [
@@ -121,6 +122,7 @@ export async function usePileUpGraph() {
 
             // 部署の各時点のデータを取得
             const rawData = splitByTimeFilter(v.labels, timeFilter.value, globalStartDate);
+            const departmentAverageData = splitByTimeFilter(departmentAverage.labels, timeFilter.value, globalStartDate);
 
             // 全部署の合計稼働可能時間を基準として、パーセント表示に変換
             const percentData = rawData.map((value, i) => {
@@ -133,12 +135,26 @@ export async function usePileUpGraph() {
                 return 0; // 基準値がない場合は0%とする
             });
 
+            // 部署単体での稼働率を計算し、125%を超えているかどうかをチェック
+            const highUtilizationPoints = rawData.map((value, i) => {
+                if (departmentAverageData && i < departmentAverageData.length && departmentAverageData[i] > 0) {
+                    // 100%基準値 = その部署の稼働可能な人数 * 8時間
+                    const baseValue = departmentAverageData[i] * 8;
+                    // パーセント計算
+                    const percent = (value / baseValue) * 100;
+                    // 125%を超えているかどうかをチェック
+                    return percent > 125;
+                }
+                return false; // 基準値がない場合はfalse
+            });
+
             return <Series>{
                 color: departments.list.find(dept => dept.id === departmentId)?.color || '#CCCCCC', // 部署マスタの色を使用、見つからない場合はデフォルト色
                 data: percentData,
                 name: getDepartmentName(departmentId, departments.list),
                 type: "bar",
                 hidden: hideSeries.value[index],
+                highUtilizationPoints: highUtilizationPoints // 高稼働率ポイントの情報を追加
             }
         });
 
