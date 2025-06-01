@@ -106,21 +106,27 @@ export interface DefaultPileUp {
 /**
  * 
  * @export
- * @interface DefautValidIndexUsers
+ * @interface DefaultValidIndexUsers
  */
-export interface DefautValidIndexUsers {
+export interface DefaultValidIndexUsers {
     /**
      * 
      * @type {Array<number>}
-     * @memberof DefautValidIndexUsers
+     * @memberof DefaultValidIndexUsers
      */
     'UserIds': Array<number>;
     /**
      * 
      * @type {number}
-     * @memberof DefautValidIndexUsers
+     * @memberof DefaultValidIndexUsers
      */
     'ValidIndex': number;
+    /**
+     *
+     * @type {boolean}
+     * @memberof DefaultValidIndexUsers
+     */
+    'isHoliday': boolean;
 }
 /**
  * 
@@ -783,11 +789,11 @@ export interface GetDefaultPileUpsResponse {
      */
     'globalStartDate': string;
     /**
-     * 
-     * @type {Array<DefautValidIndexUsers>}
+     *
+     * @type {Array<DefaultValidIndexUsers>}
      * @memberof GetDefaultPileUpsResponse
      */
-    'defaultValidUserIndexes': Array<DefautValidIndexUsers>;
+    'defaultValidUserIndexes': Array<DefaultValidIndexUsers>;
 }
 /**
  * 

@@ -3,7 +3,7 @@ import {computed, reactive, ref} from "vue";
 import {FacilityType} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import dayjs from "dayjs";
-import {DefautValidIndexUsers, Department, User} from "@/api";
+import {DefaultValidIndexUsers, Department, User} from "@/api";
 
 export type Series = {
     name: string;
@@ -224,7 +224,7 @@ const sumArrays = (arrays: number[][]): number[] => {
  * @param userList ユーザーリスト
  * @return {Array<{departmentId: number, labels: number[]}>} 部署IDと各validIndexごとの稼働可能人数の配列
  */
-const getAverageLine = (defaultValidUserIndexes: DefautValidIndexUsers[], departmentIds: number[], userList: User[]) => {
+const getAverageLine = (defaultValidUserIndexes: DefaultValidIndexUsers[], departmentIds: number[], userList: User[]) => {
     // 結果を格納する配列
     const result: Array<{ departmentId: number, labels: number[] }> = [];
 

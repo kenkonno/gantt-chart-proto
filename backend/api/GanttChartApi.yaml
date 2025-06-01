@@ -2719,7 +2719,7 @@ components:
         - labels
         - styles
         - display
-    DefautValidIndexUsers:
+    DefaultValidIndexUsers:
       title: DefaultPileUp
       x-stoplight:
         id: f6aa84233e81b
@@ -2731,9 +2731,12 @@ components:
             type: integer
         ValidIndex:
           type: integer
+        isHoliday:
+          type: boolean
       required:
         - UserIds
         - ValidIndex
+        - isHoliday
     GetDefaultPileUpsRequest:
       title: GetDefaultPileUpsRequest
       type: object
@@ -2763,7 +2766,7 @@ components:
         defaultValidUserIndexes:
           type: array
           items:
-            $ref: '#/components/schemas/DefautValidIndexUsers'
+            $ref: '#/components/schemas/DefaultValidIndexUsers'
       required:
         - defaultPileUps
         - globalStartDate
