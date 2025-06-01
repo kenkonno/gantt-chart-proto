@@ -20,7 +20,7 @@ type holidayRepository struct {
 func (r *holidayRepository) FindAll() []db.Holiday {
 	var holidays []db.Holiday
 
-	result := r.con.Order("id DESC").Find(&holidays)
+	result := r.con.Order("date DESC").Find(&holidays)
 	if result.Error != nil {
 		panic(result.Error)
 	}
