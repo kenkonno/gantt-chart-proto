@@ -76,7 +76,10 @@ export async function usePileUpGraph() {
     const refreshData = async () => {
         const {data} = await Api.getDefaultPileUps(-1, true, facilityTypes)
         pileUps.defaultPileUps = data.defaultPileUps
-        pileUps.defaultValidUserIndexes = data.defaultValidUserIndexes
+        pileUps.defaultValidUserIndexes = data.defaultValidUserIndexes.map(v => {
+            if (v.isHoliday) v.UserIds.length = 0
+            return v
+        })
         globalStartDate = data.globalStartDate
         return data
     }
