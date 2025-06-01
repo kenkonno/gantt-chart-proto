@@ -35,6 +35,23 @@
         <span class="material-symbols-outlined">refresh</span>
         <span class="text">リロード</span>
       </a>
+      <div v-if="allowed('ALL_SETTINGS')">
+        <div class="d-flex border-0 position-absolute z-3">
+          <div class=" border-0">
+            <b class="d-flex align-items-center border-0">アプリケーション</b>
+          </div>
+          <div class="flex-shrink-1 d-flex flex-column border-0 text-start">
+            <div class="h-50 border-0">
+              <ModalWithLink title="シミュレーション" icon="timeline">
+                <simulation-view @update="updateSimulation"></simulation-view>
+              </ModalWithLink>
+            </div>
+            <div class="h-50 border-0" style="margin-top: 10px;">
+              <PopoutLink url="./graph-view" title="グラフ表示モード" icon="monitoring"></PopoutLink>
+            </div>
+          </div>
+        </div>
+      </div>
       <a href="#" @click.prevent="modalIsOpen = true" style="margin-left: auto;">
         <span class="material-symbols-outlined">person</span>
         <span class="text">{{ `${userInfo.lastName} ${userInfo.firstName}` }}</span>
@@ -58,9 +75,6 @@
       </ModalWithLink>
       <ModalWithLink title="休日設定" icon="holiday_village">
         <holiday-view></holiday-view>
-      </ModalWithLink>
-      <ModalWithLink title="シミュレーション" icon="timeline">
-        <simulation-view @update="updateSimulation"></simulation-view>
       </ModalWithLink>
     </div>
   </nav>
@@ -157,6 +171,7 @@ import {initStateValue} from "@/utils/globalFilterState";
 import SimulationView from "@/views/SimulationView.vue";
 import FacilityTypeFilter from "@/components/form/FacilityTypeFilter.vue";
 import HolidayView from "@/views/HolidayView.vue";
+import PopoutLink from "@/components/modal/PopoutLink.vue";
 
 // ローカルストレージの初期化
 initStateValue()
