@@ -207,6 +207,9 @@ const filterVisible = ref(true);
 // フィルターパネルの表示/非表示を切り替える関数
 const toggleFilterPanel = () => {
   filterVisible.value = !filterVisible.value;
+  nextTick(() => {
+    window.dispatchEvent(new Event('resize'))
+  })
 };
 // すべてのシリーズの表示/非表示を切り替える関数
 const toggleAllSeries = (visible: boolean) => {
@@ -492,7 +495,6 @@ const handleLegendClick = (chartContext: any, seriesIndex: number) => {
   cursor: pointer;
   border-radius: 0 4px 4px 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: left 0.3s ease, right 0.3s ease, border-radius 0.3s ease;
 }
 
 /* When filter panel is visible (not hidden), position the button on the right side of the filter panel */
