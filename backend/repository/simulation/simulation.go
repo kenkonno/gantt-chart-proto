@@ -25,6 +25,7 @@ func (r *simulationRepository) InitAllData() {
 	tableNames := []string{
 		"departments",
 		"facilities",
+		"facility_work_schedules",
 		"gantt_groups",
 		"holidays",
 		"milestones",
@@ -40,6 +41,7 @@ func (r *simulationRepository) InitAllData() {
 	columns := [][]string{
 		{"id", "name", "order", "created_at", "updated_at"},
 		{"id", "name", "term_from", "term_to", "order", "created_at", "updated_at", "status", "type", "shipment_due_date"},
+		{"id", "facility_id", "date", "type", "created_at", "updated_at"},
 		{"id", "facility_id", "unit_id", "created_at", "updated_at"},
 		{"id", "facility_id", "name", "date", "created_at", "updated_at"},
 		{"id", "facility_id", "date", "description", "order", "created_at", "updated_at"},
@@ -66,6 +68,7 @@ func (r *simulationRepository) ResetSequence() {
 	tableNames := []string{
 		"departments",
 		"facilities",
+		"facility_work_schedules",
 		"gantt_groups",
 		"holidays",
 		"milestones",
@@ -90,6 +93,7 @@ func (r *simulationRepository) SwitchTable() {
 	tableNames := []string{
 		"departments",
 		"facilities",
+		"facility_work_schedules",
 		"gantt_groups",
 		"holidays",
 		"milestones",

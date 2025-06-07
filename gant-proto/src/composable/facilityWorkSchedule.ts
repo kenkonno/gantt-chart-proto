@@ -1,5 +1,5 @@
 import {Api} from "@/api/axios";
-import {PostFacilityWorkSchedulesRequest, FacilityWorkSchedule} from "@/api";
+import {PostFacilityWorkSchedulesRequest, FacilityWorkSchedule, Holiday} from "@/api";
 import {ref} from "vue";
 import {toast} from "vue3-toastify";
 
@@ -43,7 +43,25 @@ export async function useFacilityWorkSchedule(facilityWorkScheduleId?: number) {
 
 }
 
+export function validate(facilityWorkSchedule: FacilityWorkSchedule) {
+    let isValid = true
+    if (!facilityWorkSchedule.date) {
+        toast.warning("年月日は必須です")
+        isValid = false
+    }
+    if (!facilityWorkSchedule.type) {
+        toast.warning("稼動種別は必須です。")
+        isValid = false
+    }
+    return isValid
+}
+
 export async function postFacilityWorkSchedule(facilityWorkSchedule: FacilityWorkSchedule, facilityId: number, emit: any) {
+
+    if (!validate(facilityWorkSchedule)) {
+        return
+    }
+
     facilityWorkSchedule.date = facilityWorkSchedule.date + "T00:00:00.00000+09:00"
     facilityWorkSchedule.facility_id = facilityId
     const req: PostFacilityWorkSchedulesRequest = {
@@ -57,6 +75,11 @@ export async function postFacilityWorkSchedule(facilityWorkSchedule: FacilityWor
 }
 
 export async function postFacilityWorkScheduleById(facilityWorkSchedule: FacilityWorkSchedule, facilityId: number, emit: any) {
+
+    if (!validate(facilityWorkSchedule)) {
+        return
+    }
+
     facilityWorkSchedule.date = facilityWorkSchedule.date + "T00:00:00.00000+09:00"
     facilityWorkSchedule.facility_id = facilityId
     const req: PostFacilityWorkSchedulesRequest = {
