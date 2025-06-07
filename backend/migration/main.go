@@ -26,6 +26,7 @@ func main() {
 	migrate(db.FacilitySharedLink{})
 	migrate(db.SimulationLock{})
 	migrate(db.FacilityWorkSchedule{})
+	migrate(db.FeatureOption{})
 
 	// simulation
 	migrate(db.SimulationDepartment{})
@@ -40,6 +41,7 @@ func main() {
 	migrate(db.SimulationTicket{})
 	migrate(db.SimulationMilestone{})
 	migrate(db.SimulationFacilitySharedLink{})
+	migrate(db.SimulationFeatureOption{})
 
 	createDefaultUser()
 }

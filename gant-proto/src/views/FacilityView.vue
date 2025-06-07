@@ -1,12 +1,20 @@
 <template>
   <Suspense>
-    <async-facility-table
-        @open-edit-modal="openEditModal"
-        @move-up="innerUpdateFacilityOrder($event, -1)"
-        @move-down="innerUpdateFacilityOrder($event, 1)"
-        :list="sortedFacilityList"
-        :is-view-only="isViewOnly"
-        :is-simulate="isSimulate"
+    <async-project-list-name-sort-table v-if="available( 'ProjectListNameSort')"
+                                        @open-edit-modal="openEditModal"
+                                        @move-up="innerUpdateFacilityOrder($event, -1)"
+                                        @move-down="innerUpdateFacilityOrder($event, 1)"
+                                        :list="sortedFacilityList"
+                                        :is-view-only="isViewOnly"
+                                        :is-simulate="isSimulate"
+    />
+    <async-facility-table v-else
+                          @open-edit-modal="openEditModal"
+                          @move-up="innerUpdateFacilityOrder($event, -1)"
+                          @move-down="innerUpdateFacilityOrder($event, 1)"
+                          :list="sortedFacilityList"
+                          :is-view-only="isViewOnly"
+                          :is-simulate="isSimulate"
     />
     <template #fallback>
       Loading...
@@ -34,6 +42,8 @@ import {useModalWithId} from "@/composable/modalWIthId";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {computed, inject} from "vue";
 import {useIsSimulate} from "@/composable/isSimulate";
+import AsyncProjectListNameSortTable from "@/components/facility/featureOption/AsyncProjectListNameSortTable.vue";
+import {available} from "@/composable/featureOption";
 
 const {facilityList} = inject(GLOBAL_STATE_KEY)!
 const {updateFacilityOrder} = inject(GLOBAL_ACTION_KEY)!
