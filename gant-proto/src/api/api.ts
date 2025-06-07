@@ -122,7 +122,7 @@ export interface DefaultValidIndexUsers {
      */
     'ValidIndex': number;
     /**
-     *
+     * 
      * @type {boolean}
      * @memberof DefaultValidIndexUsers
      */
@@ -232,6 +232,34 @@ export interface DeleteFacilityWorkSchedulesIdResponse {
      */
     'msg'?: string;
 }
+/**
+ *
+ * @export
+ * @interface DeleteFeatureOptionsIdRequest
+ */
+export interface DeleteFeatureOptionsIdRequest {
+    /**
+     *
+     * @type {number}
+     * @memberof DeleteFeatureOptionsIdRequest
+     */
+    'id'?: number;
+}
+
+/**
+ *
+ * @export
+ * @interface DeleteFeatureOptionsIdResponse
+ */
+export interface DeleteFeatureOptionsIdResponse {
+    /**
+     *
+     * @type {string}
+     * @memberof DeleteFeatureOptionsIdResponse
+     */
+    'msg'?: string;
+}
+
 /**
  * 
  * @export
@@ -696,6 +724,44 @@ export interface FacilityWorkSchedule {
     'updated_at'?: number;
 }
 /**
+ *
+ * @export
+ * @interface FeatureOption
+ */
+export interface FeatureOption {
+    /**
+     *
+     * @type {number}
+     * @memberof FeatureOption
+     */
+    'id'?: number | null;
+    /**
+     *
+     * @type {string}
+     * @memberof FeatureOption
+     */
+    'name': string;
+    /**
+     *
+     * @type {boolean}
+     * @memberof FeatureOption
+     */
+    'enabled': boolean;
+    /**
+     *
+     * @type {string}
+     * @memberof FeatureOption
+     */
+    'created_at'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof FeatureOption
+     */
+    'updated_at'?: number;
+}
+
+/**
  * 
  * @export
  * @interface GanttGroup
@@ -789,7 +855,7 @@ export interface GetDefaultPileUpsResponse {
      */
     'globalStartDate': string;
     /**
-     *
+     * 
      * @type {Array<DefaultValidIndexUsers>}
      * @memberof GetDefaultPileUpsResponse
      */
@@ -989,6 +1055,48 @@ export interface GetFacilityWorkSchedulesResponse {
      */
     'list': Array<FacilityWorkSchedule>;
 }
+/**
+ *
+ * @export
+ * @interface GetFeatureOptionsIdRequest
+ */
+export interface GetFeatureOptionsIdRequest {
+    /**
+     *
+     * @type {number}
+     * @memberof GetFeatureOptionsIdRequest
+     */
+    'id'?: number;
+}
+
+/**
+ *
+ * @export
+ * @interface GetFeatureOptionsIdResponse
+ */
+export interface GetFeatureOptionsIdResponse {
+    /**
+     *
+     * @type {FeatureOption}
+     * @memberof GetFeatureOptionsIdResponse
+     */
+    'featureOption'?: FeatureOption;
+}
+
+/**
+ *
+ * @export
+ * @interface GetFeatureOptionsResponse
+ */
+export interface GetFeatureOptionsResponse {
+    /**
+     *
+     * @type {Array<FeatureOption>}
+     * @memberof GetFeatureOptionsResponse
+     */
+    'list': Array<FeatureOption>;
+}
+
 /**
  * 
  * @export
@@ -2077,6 +2185,62 @@ export interface PostFacilityWorkSchedulesResponse {
      */
     'facilityWorkSchedule'?: FacilityWorkSchedule;
 }
+/**
+ *
+ * @export
+ * @interface PostFeatureOptionsIdRequest
+ */
+export interface PostFeatureOptionsIdRequest {
+    /**
+     *
+     * @type {FeatureOption}
+     * @memberof PostFeatureOptionsIdRequest
+     */
+    'featureOption'?: FeatureOption;
+}
+
+/**
+ *
+ * @export
+ * @interface PostFeatureOptionsIdResponse
+ */
+export interface PostFeatureOptionsIdResponse {
+    /**
+     *
+     * @type {FeatureOption}
+     * @memberof PostFeatureOptionsIdResponse
+     */
+    'featureOption'?: FeatureOption;
+}
+
+/**
+ *
+ * @export
+ * @interface PostFeatureOptionsRequest
+ */
+export interface PostFeatureOptionsRequest {
+    /**
+     *
+     * @type {FeatureOption}
+     * @memberof PostFeatureOptionsRequest
+     */
+    'featureOption': FeatureOption;
+}
+
+/**
+ *
+ * @export
+ * @interface PostFeatureOptionsResponse
+ */
+export interface PostFeatureOptionsResponse {
+    /**
+     *
+     * @type {FeatureOption}
+     * @memberof PostFeatureOptionsResponse
+     */
+    'featureOption'?: FeatureOption;
+}
+
 /**
  * 
  * @export
@@ -3431,6 +3595,39 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         *
+         * @summary DeleteFeatureOptionsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFeatureOptionsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteFeatureOptionsId', 'id', id)
+            const localVarPath = `/api/featureOptions/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
@@ -4173,6 +4370,68 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary GetFeatureOptions
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFeatureOptions: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/featureOptions`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary GetFeatureOptionsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFeatureOptionsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getFeatureOptionsId', 'id', id)
+            const localVarPath = `/api/featureOptions/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -5337,6 +5596,76 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         *
+         * @summary PostFeatureOptions
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFeatureOptions: async (postFeatureOptionsRequest?: PostFeatureOptionsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/featureOptions`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFeatureOptionsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary PostFeatureOptionsId
+         * @param {number} id
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFeatureOptionsId: async (id: number, postFeatureOptionsRequest?: PostFeatureOptionsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postFeatureOptionsId', 'id', id)
+            const localVarPath = `/api/featureOptions/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postFeatureOptionsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
@@ -6209,6 +6538,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         *
+         * @summary DeleteFeatureOptionsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteFeatureOptionsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFeatureOptionsId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
@@ -6440,6 +6780,27 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getFacilityWorkSchedulesId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFacilityWorkSchedulesIdResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFacilityWorkSchedulesId(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary GetFeatureOptions
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFeatureOptions(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFeatureOptionsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFeatureOptions(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary GetFeatureOptionsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFeatureOptionsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetFeatureOptionsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFeatureOptionsId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6809,6 +7170,29 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         *
+         * @summary PostFeatureOptions
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFeatureOptions(postFeatureOptionsRequest?: PostFeatureOptionsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFeatureOptions(postFeatureOptionsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary PostFeatureOptionsId
+         * @param {number} id
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFeatureOptionsId(id: number, postFeatureOptionsRequest?: PostFeatureOptionsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFeatureOptionsId(id, postFeatureOptionsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
@@ -7121,6 +7505,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteFacilityWorkSchedulesId(id, options).then((request) => request(axios, basePath));
         },
         /**
+         *
+         * @summary DeleteFeatureOptionsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFeatureOptionsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFeatureOptionsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary DeleteGanttGroupsId
          * @param {number} id 
@@ -7332,6 +7726,25 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getFacilityWorkSchedulesId(id: number, options?: any): AxiosPromise<GetFacilityWorkSchedulesIdResponse> {
             return localVarFp.getFacilityWorkSchedulesId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary GetFeatureOptions
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFeatureOptions(options?: any): AxiosPromise<GetFeatureOptionsResponse> {
+            return localVarFp.getFeatureOptions(options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary GetFeatureOptionsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFeatureOptionsId(id: number, options?: any): AxiosPromise<GetFeatureOptionsIdResponse> {
+            return localVarFp.getFeatureOptionsId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7667,6 +8080,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.postFacilityWorkSchedulesId(id, postFacilityWorkSchedulesRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         *
+         * @summary PostFeatureOptions
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFeatureOptions(postFeatureOptionsRequest?: PostFeatureOptionsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postFeatureOptions(postFeatureOptionsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary PostFeatureOptionsId
+         * @param {number} id
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFeatureOptionsId(id: number, postFeatureOptionsRequest?: PostFeatureOptionsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postFeatureOptionsId(id, postFeatureOptionsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary PostGanttGroups
          * @param {PostGanttGroupsRequest} [postGanttGroupsRequest] 
@@ -7964,6 +8398,18 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
+     *
+     * @summary DeleteFeatureOptionsId
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteFeatureOptionsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteFeatureOptionsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 
      * @summary DeleteGanttGroupsId
      * @param {number} id 
@@ -8216,6 +8662,29 @@ export class DefaultApi extends BaseAPI {
      */
     public getFacilityWorkSchedulesId(id: number, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getFacilityWorkSchedulesId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary GetFeatureOptions
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFeatureOptions(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFeatureOptions(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary GetFeatureOptionsId
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFeatureOptionsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getFeatureOptionsId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -8615,6 +9084,31 @@ export class DefaultApi extends BaseAPI {
      */
     public postFacilityWorkSchedulesId(id: number, postFacilityWorkSchedulesRequest?: PostFacilityWorkSchedulesRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postFacilityWorkSchedulesId(id, postFacilityWorkSchedulesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary PostFeatureOptions
+     * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFeatureOptions(postFeatureOptionsRequest?: PostFeatureOptionsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFeatureOptions(postFeatureOptionsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary PostFeatureOptionsId
+     * @param {number} id
+     * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFeatureOptionsId(id: number, postFeatureOptionsRequest?: PostFeatureOptionsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postFeatureOptionsId(id, postFeatureOptionsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

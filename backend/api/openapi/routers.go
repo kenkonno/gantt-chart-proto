@@ -93,6 +93,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteFeatureOptionsId",
+		http.MethodDelete,
+		"/api/featureOptions/:id",
+		DeleteFeatureOptionsId,
+	},
+
+	{
 		"DeleteGanttGroupsId",
 		http.MethodDelete,
 		"/api/ganttGroups/:id",
@@ -237,6 +244,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/facilityWorkSchedules/:id",
 		GetFacilityWorkSchedulesId,
+	},
+
+	{
+		"GetFeatureOptions",
+		http.MethodGet,
+		"/api/featureOptions",
+		GetFeatureOptions,
+	},
+
+	{
+		"GetFeatureOptionsId",
+		http.MethodGet,
+		"/api/featureOptions/:id",
+		GetFeatureOptionsId,
 	},
 
 	{
@@ -468,6 +489,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/facilityWorkSchedules/:id",
 		PostFacilityWorkSchedulesId,
+	},
+
+	{
+		"PostFeatureOptions",
+		http.MethodPost,
+		"/api/featureOptions",
+		PostFeatureOptions,
+	},
+
+	{
+		"PostFeatureOptionsId",
+		http.MethodPost,
+		"/api/featureOptions/:id",
+		PostFeatureOptionsId,
 	},
 
 	{
