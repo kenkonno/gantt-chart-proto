@@ -24,7 +24,7 @@ type facilityWorkScheduleRepository struct {
 func (r *facilityWorkScheduleRepository) FindByFacilityId(facilityId int32) []db.FacilityWorkSchedule {
 	var facilityWorkSchedules []db.FacilityWorkSchedule
 
-	result := r.con.Where("facility_id = ?", facilityId).Order("date DESC").Find(&facilityWorkSchedules)
+	result := r.con.Table(r.table).Where("facility_id = ?", facilityId).Order("date DESC").Find(&facilityWorkSchedules)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -34,7 +34,7 @@ func (r *facilityWorkScheduleRepository) FindByFacilityId(facilityId int32) []db
 func (r *facilityWorkScheduleRepository) FindAll() []db.FacilityWorkSchedule {
 	var facilityWorkSchedules []db.FacilityWorkSchedule
 
-	result := r.con.Order("date DESC").Find(&facilityWorkSchedules)
+	result := r.con.Table(r.table).Order("date DESC").Find(&facilityWorkSchedules)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -44,7 +44,7 @@ func (r *facilityWorkScheduleRepository) FindAll() []db.FacilityWorkSchedule {
 func (r *facilityWorkScheduleRepository) Find(id int32) db.FacilityWorkSchedule {
 	var facilityWorkSchedule db.FacilityWorkSchedule
 
-	result := r.con.First(&facilityWorkSchedule, id)
+	result := r.con.Table(r.table).First(&facilityWorkSchedule, id)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -52,7 +52,7 @@ func (r *facilityWorkScheduleRepository) Find(id int32) db.FacilityWorkSchedule 
 }
 
 func (r *facilityWorkScheduleRepository) Upsert(m db.FacilityWorkSchedule) db.FacilityWorkSchedule {
-	r.con.Clauses(clause.OnConflict{
+	r.con.Table(r.table).Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&m)
@@ -60,7 +60,7 @@ func (r *facilityWorkScheduleRepository) Upsert(m db.FacilityWorkSchedule) db.Fa
 }
 
 func (r *facilityWorkScheduleRepository) Delete(id int32) {
-	r.con.Where("id = ?", id).Delete(db.FacilityWorkSchedule{})
+	r.con.Table(r.table).Where("id = ?", id).Delete(db.FacilityWorkSchedule{})
 }
 
 // Auto generated end
