@@ -20,6 +20,7 @@ var rolesNeeded = map[string][]string{
 	"DELETE /api/departments/:id":         {constants.RoleAdmin, constants.RoleManager},
 	"DELETE /api/facilities/:id":          {constants.RoleAdmin, constants.RoleManager},
 	"DELETE /api/facilitySharedLinks/:id": {constants.RoleAdmin, constants.RoleManager},
+	"DELETE /api/featureOptions/:id": {}, // TODO: APIとして公開しちゃだめかも.管理画面作ったら特別なロールとして追加する
 	"DELETE /api/ganttGroups/:id":         {constants.RoleAdmin, constants.RoleManager},
 	"DELETE /api/holidays/:id":            {constants.RoleAdmin, constants.RoleManager},
 	"DELETE /api/milestones/:id":          {constants.RoleAdmin, constants.RoleManager},
@@ -37,6 +38,8 @@ var rolesNeeded = map[string][]string{
 	"GET /api/facilities/:id":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/facilitySharedLinks":        {constants.RoleAdmin, constants.RoleManager},
 	"GET /api/facilitySharedLinks/:id":    {constants.RoleAdmin, constants.RoleManager},
+	"GET /api/featureOptions":        {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
+	"GET /api/featureOptions/:id":    {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/ganttGroups":                {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/ganttGroups/:id":            {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/holidays":                   {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
@@ -65,6 +68,8 @@ var rolesNeeded = map[string][]string{
 	"POST /api/facilities/:id":          {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/facilitySharedLinks":     {constants.RoleAdmin, constants.RoleManager},
 	"POST /api/facilitySharedLinks/:id": {constants.RoleAdmin, constants.RoleManager},
+	"POST /api/featureOptions":     {}, // TODO: APIとして公開しちゃだめかも.管理画面作ったら特別なロールとして追加する
+	"POST /api/featureOptions/:id": {}, // TODO: APIとして公開しちゃだめかも.管理画面作ったら特別なロールとして追加する
 	"POST /api/ganttGroups":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker},
 	"POST /api/ganttGroups/:id":         {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker},
 	"POST /api/holidays":                {constants.RoleAdmin, constants.RoleManager},
