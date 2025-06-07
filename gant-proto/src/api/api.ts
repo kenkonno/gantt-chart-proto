@@ -233,33 +233,31 @@ export interface DeleteFacilityWorkSchedulesIdResponse {
     'msg'?: string;
 }
 /**
- *
+ * 
  * @export
  * @interface DeleteFeatureOptionsIdRequest
  */
 export interface DeleteFeatureOptionsIdRequest {
     /**
-     *
+     * 
      * @type {number}
      * @memberof DeleteFeatureOptionsIdRequest
      */
     'id'?: number;
 }
-
 /**
- *
+ * 
  * @export
  * @interface DeleteFeatureOptionsIdResponse
  */
 export interface DeleteFeatureOptionsIdResponse {
     /**
-     *
+     * 
      * @type {string}
      * @memberof DeleteFeatureOptionsIdResponse
      */
     'msg'?: string;
 }
-
 /**
  * 
  * @export
@@ -416,6 +414,34 @@ export interface DeleteSimulationResponse {
      */
     ''?: string;
 }
+/**
+ *
+ * @export
+ * @interface DeleteTicketDailyWeightsIdRequest
+ */
+export interface DeleteTicketDailyWeightsIdRequest {
+    /**
+     *
+     * @type {number}
+     * @memberof DeleteTicketDailyWeightsIdRequest
+     */
+    'id'?: number;
+}
+
+/**
+ *
+ * @export
+ * @interface DeleteTicketDailyWeightsIdResponse
+ */
+export interface DeleteTicketDailyWeightsIdResponse {
+    /**
+     *
+     * @type {string}
+     * @memberof DeleteTicketDailyWeightsIdResponse
+     */
+    'msg'?: string;
+}
+
 /**
  * 
  * @export
@@ -724,43 +750,42 @@ export interface FacilityWorkSchedule {
     'updated_at'?: number;
 }
 /**
- *
+ * 
  * @export
  * @interface FeatureOption
  */
 export interface FeatureOption {
     /**
-     *
+     * 
      * @type {number}
      * @memberof FeatureOption
      */
     'id'?: number | null;
     /**
-     *
+     * 
      * @type {string}
      * @memberof FeatureOption
      */
     'name': string;
     /**
-     *
+     * 
      * @type {boolean}
      * @memberof FeatureOption
      */
     'enabled': boolean;
     /**
-     *
+     * 
      * @type {string}
      * @memberof FeatureOption
      */
     'created_at'?: string;
     /**
-     *
+     * 
      * @type {number}
      * @memberof FeatureOption
      */
     'updated_at'?: number;
 }
-
 /**
  * 
  * @export
@@ -1056,47 +1081,44 @@ export interface GetFacilityWorkSchedulesResponse {
     'list': Array<FacilityWorkSchedule>;
 }
 /**
- *
+ * 
  * @export
  * @interface GetFeatureOptionsIdRequest
  */
 export interface GetFeatureOptionsIdRequest {
     /**
-     *
+     * 
      * @type {number}
      * @memberof GetFeatureOptionsIdRequest
      */
     'id'?: number;
 }
-
 /**
- *
+ * 
  * @export
  * @interface GetFeatureOptionsIdResponse
  */
 export interface GetFeatureOptionsIdResponse {
     /**
-     *
+     * 
      * @type {FeatureOption}
      * @memberof GetFeatureOptionsIdResponse
      */
     'featureOption'?: FeatureOption;
 }
-
 /**
- *
+ * 
  * @export
  * @interface GetFeatureOptionsResponse
  */
 export interface GetFeatureOptionsResponse {
     /**
-     *
+     * 
      * @type {Array<FeatureOption>}
      * @memberof GetFeatureOptionsResponse
      */
     'list': Array<FeatureOption>;
 }
-
 /**
  * 
  * @export
@@ -1471,6 +1493,48 @@ export interface GetSimulationResponse {
      */
     'simulationLock': SimulationLock;
 }
+/**
+ *
+ * @export
+ * @interface GetTicketDailyWeightsIdRequest
+ */
+export interface GetTicketDailyWeightsIdRequest {
+    /**
+     *
+     * @type {number}
+     * @memberof GetTicketDailyWeightsIdRequest
+     */
+    'id'?: number;
+}
+
+/**
+ *
+ * @export
+ * @interface GetTicketDailyWeightsIdResponse
+ */
+export interface GetTicketDailyWeightsIdResponse {
+    /**
+     *
+     * @type {TicketDailyWeight}
+     * @memberof GetTicketDailyWeightsIdResponse
+     */
+    'ticketDailyWeight'?: TicketDailyWeight;
+}
+
+/**
+ *
+ * @export
+ * @interface GetTicketDailyWeightsResponse
+ */
+export interface GetTicketDailyWeightsResponse {
+    /**
+     *
+     * @type {Array<TicketDailyWeight>}
+     * @memberof GetTicketDailyWeightsResponse
+     */
+    'list': Array<TicketDailyWeight>;
+}
+
 /**
  * 
  * @export
@@ -2186,61 +2250,57 @@ export interface PostFacilityWorkSchedulesResponse {
     'facilityWorkSchedule'?: FacilityWorkSchedule;
 }
 /**
- *
+ * 
  * @export
  * @interface PostFeatureOptionsIdRequest
  */
 export interface PostFeatureOptionsIdRequest {
     /**
-     *
+     * 
      * @type {FeatureOption}
      * @memberof PostFeatureOptionsIdRequest
      */
     'featureOption'?: FeatureOption;
 }
-
 /**
- *
+ * 
  * @export
  * @interface PostFeatureOptionsIdResponse
  */
 export interface PostFeatureOptionsIdResponse {
     /**
-     *
+     * 
      * @type {FeatureOption}
      * @memberof PostFeatureOptionsIdResponse
      */
     'featureOption'?: FeatureOption;
 }
-
 /**
- *
+ * 
  * @export
  * @interface PostFeatureOptionsRequest
  */
 export interface PostFeatureOptionsRequest {
     /**
-     *
+     * 
      * @type {FeatureOption}
      * @memberof PostFeatureOptionsRequest
      */
     'featureOption': FeatureOption;
 }
-
 /**
- *
+ * 
  * @export
  * @interface PostFeatureOptionsResponse
  */
 export interface PostFeatureOptionsResponse {
     /**
-     *
+     * 
      * @type {FeatureOption}
      * @memberof PostFeatureOptionsResponse
      */
     'featureOption'?: FeatureOption;
 }
-
 /**
  * 
  * @export
@@ -2578,6 +2638,48 @@ export interface PostSimulationResponse {
      */
     ''?: string;
 }
+/**
+ *
+ * @export
+ * @interface PostTicketDailyWeightsIdResponse
+ */
+export interface PostTicketDailyWeightsIdResponse {
+    /**
+     *
+     * @type {TicketDailyWeight}
+     * @memberof PostTicketDailyWeightsIdResponse
+     */
+    'ticketDailyWeight'?: TicketDailyWeight;
+}
+
+/**
+ *
+ * @export
+ * @interface PostTicketDailyWeightsRequest
+ */
+export interface PostTicketDailyWeightsRequest {
+    /**
+     *
+     * @type {TicketDailyWeight}
+     * @memberof PostTicketDailyWeightsRequest
+     */
+    'ticketDailyWeight': TicketDailyWeight;
+}
+
+/**
+ *
+ * @export
+ * @interface PostTicketDailyWeightsResponse
+ */
+export interface PostTicketDailyWeightsResponse {
+    /**
+     *
+     * @type {TicketDailyWeight}
+     * @memberof PostTicketDailyWeightsResponse
+     */
+    'ticketDailyWeight'?: TicketDailyWeight;
+}
+
 /**
  * 
  * @export
@@ -3230,6 +3332,50 @@ export interface Ticket {
      */
     'updated_at'?: number;
 }
+
+/**
+ *
+ * @export
+ * @interface TicketDailyWeight
+ */
+export interface TicketDailyWeight {
+    /**
+     *
+     * @type {number}
+     * @memberof TicketDailyWeight
+     */
+    'id'?: number | null;
+    /**
+     *
+     * @type {number}
+     * @memberof TicketDailyWeight
+     */
+    'ticketId': number;
+    /**
+     *
+     * @type {number}
+     * @memberof TicketDailyWeight
+     */
+    'workHour': number;
+    /**
+     *
+     * @type {number}
+     * @memberof TicketDailyWeight
+     */
+    'date': number;
+    /**
+     *
+     * @type {string}
+     * @memberof TicketDailyWeight
+     */
+    'created_at'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof TicketDailyWeight
+     */
+    'updated_at'?: number;
+}
 /**
  * 
  * @export
@@ -3595,9 +3741,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary DeleteFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3825,6 +3971,39 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(deleteSimulationRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary DeleteTicketDailyWeightsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTicketDailyWeightsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteTicketDailyWeightsId', 'id', id)
+            const localVarPath = `/api/ticketDailyWeights/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -4380,7 +4559,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary GetFeatureOptions
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4409,9 +4588,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary GetFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -4887,6 +5066,68 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary GetTicketDailyWeights
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketDailyWeights: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/ticketDailyWeights`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary GetTicketDailyWeightsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketDailyWeightsId: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTicketDailyWeightsId', 'id', id)
+            const localVarPath = `/api/ticketDailyWeights/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5596,9 +5837,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary PostFeatureOptions
-         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -5629,10 +5870,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary PostFeatureOptionsId
          * @param {number} id
-         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6094,6 +6335,76 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         *
+         * @summary PostTicketDailyWeights
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketDailyWeights: async (postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/ticketDailyWeights`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketDailyWeightsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *
+         * @summary PostTicketDailyWeightsId
+         * @param {number} id
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketDailyWeightsId: async (id: number, postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('postTicketDailyWeightsId', 'id', id)
+            const localVarPath = `/api/ticketDailyWeights/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = {method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTicketDailyWeightsRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary PostTicketMemoId
          * @param {number} id 
@@ -6538,9 +6849,9 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary DeleteFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6612,6 +6923,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async deleteSimulation(deleteSimulationRequest?: DeleteSimulationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteSimulationResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSimulation(deleteSimulationRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary DeleteTicketDailyWeightsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteTicketDailyWeightsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTicketDailyWeightsId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6783,7 +7105,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary GetFeatureOptions
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6793,9 +7115,9 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary GetFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6944,6 +7266,27 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getSimulationMasterDiff(body?: object, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSimulationMasterDiffResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getSimulationMasterDiff(body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary GetTicketDailyWeights
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketDailyWeights(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketDailyWeightsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketDailyWeights(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary GetTicketDailyWeightsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTicketDailyWeightsId(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTicketDailyWeightsIdResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTicketDailyWeightsId(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7170,9 +7513,9 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary PostFeatureOptions
-         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7181,10 +7524,10 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary PostFeatureOptionsId
          * @param {number} id
-         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7327,6 +7670,29 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async postSimulation(postSimulationRequest?: PostSimulationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostSimulationResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postSimulation(postSimulationRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary PostTicketDailyWeights
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketDailyWeights(postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketDailyWeights(postTicketDailyWeightsRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         *
+         * @summary PostTicketDailyWeightsId
+         * @param {number} id
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTicketDailyWeightsId(id: number, postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTicketDailyWeightsId(id, postTicketDailyWeightsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7505,9 +7871,9 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteFacilityWorkSchedulesId(id, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary DeleteFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7573,6 +7939,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         deleteSimulation(deleteSimulationRequest?: DeleteSimulationRequest, options?: any): AxiosPromise<DeleteSimulationResponse> {
             return localVarFp.deleteSimulation(deleteSimulationRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary DeleteTicketDailyWeightsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTicketDailyWeightsId(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteTicketDailyWeightsId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -7728,7 +8104,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getFacilityWorkSchedulesId(id, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary GetFeatureOptions
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7737,9 +8113,9 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getFeatureOptions(options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary GetFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7875,6 +8251,25 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getSimulationMasterDiff(body?: object, options?: any): AxiosPromise<GetSimulationMasterDiffResponse> {
             return localVarFp.getSimulationMasterDiff(body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary GetTicketDailyWeights
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketDailyWeights(options?: any): AxiosPromise<GetTicketDailyWeightsResponse> {
+            return localVarFp.getTicketDailyWeights(options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary GetTicketDailyWeightsId
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTicketDailyWeightsId(id: number, options?: any): AxiosPromise<GetTicketDailyWeightsIdResponse> {
+            return localVarFp.getTicketDailyWeightsId(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -8080,9 +8475,9 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.postFacilityWorkSchedulesId(id, postFacilityWorkSchedulesRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary PostFeatureOptions
-         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8090,10 +8485,10 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.postFeatureOptions(postFeatureOptionsRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary PostFeatureOptionsId
          * @param {number} id
-         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+         * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8224,6 +8619,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postSimulation(postSimulationRequest?: PostSimulationRequest, options?: any): AxiosPromise<PostSimulationResponse> {
             return localVarFp.postSimulation(postSimulationRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary PostTicketDailyWeights
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketDailyWeights(postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketDailyWeights(postTicketDailyWeightsRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *
+         * @summary PostTicketDailyWeightsId
+         * @param {number} id
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTicketDailyWeightsId(id: number, postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.postTicketDailyWeightsId(id, postTicketDailyWeightsRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -8398,9 +8814,9 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary DeleteFeatureOptionsId
-     * @param {number} id
+     * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -8479,6 +8895,18 @@ export class DefaultApi extends BaseAPI {
      */
     public deleteSimulation(deleteSimulationRequest?: DeleteSimulationRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).deleteSimulation(deleteSimulationRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary DeleteTicketDailyWeightsId
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteTicketDailyWeightsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteTicketDailyWeightsId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -8665,7 +9093,7 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary GetFeatureOptions
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8676,9 +9104,9 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary GetFeatureOptionsId
-     * @param {number} id
+     * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -8841,6 +9269,29 @@ export class DefaultApi extends BaseAPI {
      */
     public getSimulationMasterDiff(body?: object, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getSimulationMasterDiff(body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary GetTicketDailyWeights
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketDailyWeights(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketDailyWeights(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary GetTicketDailyWeightsId
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getTicketDailyWeightsId(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getTicketDailyWeightsId(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -9087,9 +9538,9 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary PostFeatureOptions
-     * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+     * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -9099,10 +9550,10 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary PostFeatureOptionsId
      * @param {number} id
-     * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest]
+     * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -9258,6 +9709,31 @@ export class DefaultApi extends BaseAPI {
      */
     public postSimulation(postSimulationRequest?: PostSimulationRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postSimulation(postSimulationRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary PostTicketDailyWeights
+     * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketDailyWeights(postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketDailyWeights(postTicketDailyWeightsRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary PostTicketDailyWeightsId
+     * @param {number} id
+     * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postTicketDailyWeightsId(id: number, postTicketDailyWeightsRequest?: PostTicketDailyWeightsRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postTicketDailyWeightsId(id, postTicketDailyWeightsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

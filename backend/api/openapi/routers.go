@@ -142,6 +142,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteTicketDailyWeightsId",
+		http.MethodDelete,
+		"/api/ticketDailyWeights/:id",
+		DeleteTicketDailyWeightsId,
+	},
+
+	{
 		"DeleteTicketUsersId",
 		http.MethodDelete,
 		"/api/ticketUsers/:id",
@@ -349,6 +356,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/simulationMasterDiff",
 		GetSimulationMasterDiff,
+	},
+
+	{
+		"GetTicketDailyWeights",
+		http.MethodGet,
+		"/api/ticketDailyWeights",
+		GetTicketDailyWeights,
+	},
+
+	{
+		"GetTicketDailyWeightsId",
+		http.MethodGet,
+		"/api/ticketDailyWeights/:id",
+		GetTicketDailyWeightsId,
 	},
 
 	{
@@ -587,6 +608,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/simulation",
 		PostSimulation,
+	},
+
+	{
+		"PostTicketDailyWeights",
+		http.MethodPost,
+		"/api/ticketDailyWeights",
+		PostTicketDailyWeights,
+	},
+
+	{
+		"PostTicketDailyWeightsId",
+		http.MethodPost,
+		"/api/ticketDailyWeights/:id",
+		PostTicketDailyWeightsId,
 	},
 
 	{

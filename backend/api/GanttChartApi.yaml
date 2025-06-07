@@ -1323,6 +1323,72 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostFeatureOptionsRequest'
+  /api/ticketDailyWeights:
+    get:
+      summary: GetTicketDailyWeights
+      tags: [ ]
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketDailyWeightsResponse'
+              examples: { }
+      operationId: get-ticketDailyWeights
+      description: ''
+      parameters: [ ]
+    post:
+      summary: PostTicketDailyWeights
+      operationId: post-ticketDailyWeights
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketDailyWeightsRequest'
+    parameters: [ ]
+  '/api/ticketDailyWeights/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketDailyWeightsId
+      tags: [ ]
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketDailyWeightsIdResponse'
+              examples: { }
+      operationId: get-ticketDailyWeights-id
+      description: ''
+    delete:
+      summary: DeleteTicketDailyWeightsId
+      operationId: delete-ticketDailyWeights-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostTicketDailyWeightsId
+      operationId: post-ticketDailyWeights-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketDailyWeightsRequest'
 components:
   schemas:
     User:
@@ -3373,3 +3439,86 @@ components:
       properties:
         featureOption:
           $ref: '#/components/schemas/FeatureOption'
+    TicketDailyWeight:
+      title: TicketDailyWeight
+      type: object
+      x-tags:
+        - TicketDailyWeight
+      properties:
+        id:
+          type: integer
+          nullable: true
+        ticketId:
+          type: integer
+        workHour:
+          type: integer
+        date:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: integer
+      required:
+        - ticketId
+        - workHour
+        - date
+    GetTicketDailyWeightsRequest:
+      title: GetTicketDailyWeightsRequest
+      type: object
+    GetTicketDailyWeightsResponse:
+      title: GetTicketDailyWeightsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketDailyWeight'
+      required:
+        - list
+    GetTicketDailyWeightsIdRequest:
+      title: GetTicketDailyWeightsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetTicketDailyWeightsIdResponse:
+      title: GetTicketDailyWeightsIdResponse
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
+    DeleteTicketDailyWeightsIdRequest:
+      title: DeleteTicketDailyWeightsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteTicketDailyWeightsIdResponse:
+      title: DeleteTicketDailyWeightsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostTicketDailyWeightsRequest:
+      title: PostTicketDailyWeightsRequest
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
+      required:
+        - ticketDailyWeight
+    PostTicketDailyWeightsResponse:
+      title: PostTicketDailyWeightsResponse
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
+    PostTicketDailyWeightsIdResponse:
+      title: PostTicketDailyWeightsIdResponse
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
