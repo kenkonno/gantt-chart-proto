@@ -13,6 +13,8 @@ var noAuthRequired = []string{
 	"GET /api/userInfo",
 	"POST /api/login",
 	"POST /api/logout",
+	"GET /api/featureOptions",
+	"GET /api/featureOptions/:id",
 }
 
 // TODO: OpenApi定義から自動生成させる。
@@ -38,8 +40,8 @@ var rolesNeeded = map[string][]string{
 	"GET /api/facilities/:id":             {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/facilitySharedLinks":        {constants.RoleAdmin, constants.RoleManager},
 	"GET /api/facilitySharedLinks/:id":    {constants.RoleAdmin, constants.RoleManager},
-	"GET /api/featureOptions":        {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
-	"GET /api/featureOptions/:id":    {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
+	//"GET /api/featureOptions":        {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
+	//"GET /api/featureOptions/:id":    {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/ganttGroups":                {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/ganttGroups/:id":            {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
 	"GET /api/holidays":                   {constants.RoleAdmin, constants.RoleManager, constants.RoleWorker, constants.RoleViewer, constants.RoleGuest},
