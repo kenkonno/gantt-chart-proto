@@ -14,13 +14,12 @@ import (
 )
 
 type TicketDailyWeight struct {
-	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	TicketId int32 `json:"ticketId" form:"ticketId"`
 
-	WorkHour int32 `json:"workHour" form:"workHour"`
+	WorkHour *int32 `json:"workHour,omitempty" form:"workHour,omitempty"`
 
-	Date int32 `json:"date" form:"date"`
+	Date time.Time `json:"date" form:"date"`
 
 	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 

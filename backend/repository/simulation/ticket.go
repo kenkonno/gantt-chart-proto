@@ -42,7 +42,7 @@ func (r *ticketRepository) FindByFacilityType(facilityTypes []string, facilitySt
 	if len(facilityStatus) > 0 {
 		builder.Where("simulation_facilities.status IN ?", facilityStatus)
 	}
-	builder.Debug().Find(&tickets)
+	builder.Find(&tickets)
 	if builder.Error != nil {
 		panic(builder.Error)
 	}

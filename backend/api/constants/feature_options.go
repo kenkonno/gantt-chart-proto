@@ -3,6 +3,11 @@ package constants
 // Feature は、アプリケーションの各機能を示す識別子です。
 type Feature string
 
+// Equals は文字列との比較を行います
+func (f Feature) Equals(s string) bool {
+	return string(f) == s
+}
+
 // アプリケーションで利用可能な機能フラグの定数
 const (
 	// --- スケジュール管理 ---

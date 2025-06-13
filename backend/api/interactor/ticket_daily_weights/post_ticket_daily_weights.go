@@ -19,13 +19,19 @@ func PostTicketDailyWeightsInvoke(c *gin.Context) (openapi_models.PostTicketDail
 		c.JSON(http.StatusBadRequest, err.Error())
 		panic(err)
 	}
-	ticketDailyWeightRep.Upsert(db.TicketDailyWeight{
-		TicketId:  ticketDailyWeightReq.TicketDailyWeight.TicketId,
-		WorkHour:  ticketDailyWeightReq.TicketDailyWeight.WorkHour,
-		Date:      ticketDailyWeightReq.TicketDailyWeight.Date,
-		CreatedAt: time.Time{},
-		UpdatedAt: 0,
-	})
+
+	// WorkHourがnilの時はそもそもレコードが不要なので削除する
+	if ticketDailyWeightReq.TicketDailyWeight.WorkHour != nil {
+		ticketDailyWeightRep.Upsert(db.TicketDailyWeight{
+			TicketId:  ticketDailyWeightReq.TicketDailyWeight.TicketId,
+			WorkHour:  *ticketDailyWeightReq.TicketDailyWeight.WorkHour,
+			Date:      ticketDailyWeightReq.TicketDailyWeight.Date,
+			CreatedAt: time.Time{},
+			UpdatedAt: 0,
+		})
+	} else {
+		ticketDailyWeightRep.Delete(ticketDailyWeightReq.TicketDailyWeight.TicketId, ticketDailyWeightReq.TicketDailyWeight.Date)
+	}
 
 	return openapi_models.PostTicketDailyWeightsResponse{}, nil
 }

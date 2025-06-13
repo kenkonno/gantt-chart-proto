@@ -200,7 +200,7 @@ const {
   // pileUpsByPerson,
   // displayPileUps,
     pileUps,
-} = usePileUps(
+} = await usePileUps(
     props.chartStart,
     props.chartEnd,
     isAllMode,

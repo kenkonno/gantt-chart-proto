@@ -10,7 +10,8 @@
         <span class="material-symbols-outlined">menu_open</span>
       </template>
       <template v-slot:body>
-        <tippy content="工数と日後から日付を変更します。対象は（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
+        <tippy
+            content="工数と日後から日付を変更します。対象は（開始日 又は 日後）・工数・工程・人数 が入力されている行が対象です。">
           <input type="button" class="btn btn-sm btn-outline-dark" value="リスケ（工数h）重視"
                  @click="emits('setScheduleByPersonDay')">
         </tippy>
@@ -36,15 +37,28 @@
     </AccordionHorizontal>
     <div class="d-flex justify-middle">
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="displayType" id="byDay" value="day" v-model="displayType" @change="emits('updateDisplayType', $event.target.value)">
+        <input class="form-check-input" type="radio" name="displayType" id="byDay" value="day" v-model="displayType"
+               @change="emits('updateDisplayType', $event.target.value)">
         <label class="form-check-label" for="byDay">
           日毎
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="displayType" id="byWeek" value="week" v-model="displayType" @change="emits('updateDisplayType', $event.target.value)">
+        <input class="form-check-input" type="radio" name="displayType" id="byWeek" value="week" v-model="displayType"
+               @change="emits('updateDisplayType', $event.target.value)">
         <label class="form-check-label" for="byWeek">
           週次
+        </label>
+      </div>
+    </div>
+    <div class="d-flex justify-middle mx-1"
+         v-if="available(FeatureOption.WorkloadWeighting) && allowed('VIEW_PILEUPS')">
+      <div class="form-check">
+        <label class="form-check-label" for="ticketDailyWeightMode">
+          <input class="form-check-input" type="checkbox" name="ticketDailyWeightMode" id="ticketDailyWeightMode"
+                 v-model="ticketDailyWeightMode"
+                 @change="emits('updateTicketDailyWeightMode', $event.target.checked)">
+          重みづけ
         </label>
       </div>
     </div>
@@ -57,15 +71,20 @@ import {Tippy} from "vue-tippy";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {ref} from "vue";
 import {allowed} from "@/composable/role";
+import {available} from "@/composable/featureOption";
+import {FeatureOption} from "@/const/common";
 
 type GanttFacilityMenuProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
   displayType: DisplayType,
+  ticketDailyWeightMode: boolean,
 }
 
-const emits = defineEmits(["setScheduleByPersonDay", "setScheduleByFromTo", "updateDisplayType"])
+
+const emits = defineEmits(["setScheduleByPersonDay", "setScheduleByFromTo", "updateDisplayType", "updateTicketDailyWeightMode"])
 const props = defineProps<GanttFacilityMenuProps>()
 
 const ganttFacilityHeader = ref(props.ganttFacilityHeader)
 const displayType = ref(props.displayType)
+const ticketDailyWeightMode = ref(props.displayType)
 </script>

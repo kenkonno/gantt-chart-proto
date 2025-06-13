@@ -37,9 +37,11 @@
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
+        :ticket-daily-weight-mode="ticketDailyWeightMode"
         @set-schedule-by-from-to="confirm(gantFacility.setScheduleByFromToProxy)"
         @set-schedule-by-person-day="confirm(gantFacility.setScheduleByPersonDayProxy)"
         @updateDisplayType="updateDisplayType"
+        @updateTicketDailyWeightMode="updateTicketDailyWeightMode"
     ></gantt-facility-menu>
   </div>
   <div v-if="globalState.currentFacilityId <= 0">
@@ -55,6 +57,7 @@
         ref="gantFacility"
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
+        :ticket-daily-weight-mode="ticketDailyWeightMode"
     >
     </gantt-facility>
     <template #fallback>
@@ -145,7 +148,7 @@ import ProjectListNameSortFacilitySelector
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
-const {GanttHeader, displayType} = useGanttFacilityMenu()
+const {GanttHeader, displayType, ticketDailyWeightMode} = useGanttFacilityMenu()
 const gantFacility = ref(null)
 
 // パラメーターが存在していれば表示する設備を変更する
@@ -158,6 +161,11 @@ if (!isNaN(defaultFacilityId)) {
 
 const updateDisplayType = (v: DisplayType) => {
   displayType.value = v
+}
+
+const updateTicketDailyWeightMode = (v: boolean) => {
+  console.log("watch updateTicketDailyWeightMode", v)
+  ticketDailyWeightMode.value = v
 }
 
 const facilityList = computed(() => {

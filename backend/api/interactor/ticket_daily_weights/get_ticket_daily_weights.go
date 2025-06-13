@@ -17,9 +17,8 @@ func GetTicketDailyWeightsInvoke(c *gin.Context) (openapi_models.GetTicketDailyW
 	return openapi_models.GetTicketDailyWeightsResponse{
 		List: lo.Map(ticketDailyWeightList, func(item db.TicketDailyWeight, index int) openapi_models.TicketDailyWeight {
 			return openapi_models.TicketDailyWeight{
-				Id:        item.Id,
 				TicketId:  item.TicketId,
-				WorkHour:  item.WorkHour,
+				WorkHour: &item.WorkHour,
 				Date:      item.Date,
 				CreatedAt: item.CreatedAt,
 				UpdatedAt: item.UpdatedAt,

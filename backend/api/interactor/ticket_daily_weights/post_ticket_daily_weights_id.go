@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// 未使用
 func PostTicketDailyWeightsIdInvoke(c *gin.Context) (openapi_models.PostTicketDailyWeightsIdResponse, error) {
 
 	ticketDailyWeightRep := repository.NewTicketDailyWeightRepository(middleware.GetRepositoryMode(c)...)
@@ -21,9 +22,8 @@ func PostTicketDailyWeightsIdInvoke(c *gin.Context) (openapi_models.PostTicketDa
 	}
 
 	ticketDailyWeightRep.Upsert(db.TicketDailyWeight{
-		Id:        ticketDailyWeightReq.TicketDailyWeight.Id,
 		TicketId:  ticketDailyWeightReq.TicketDailyWeight.TicketId,
-		WorkHour:  ticketDailyWeightReq.TicketDailyWeight.WorkHour,
+		WorkHour: *ticketDailyWeightReq.TicketDailyWeight.WorkHour,
 		Date:      ticketDailyWeightReq.TicketDailyWeight.Date,
 		CreatedAt: time.Time{},
 		UpdatedAt: 0,

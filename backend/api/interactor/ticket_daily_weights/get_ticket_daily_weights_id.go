@@ -5,24 +5,22 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"strconv"
 )
 
 func GetTicketDailyWeightsIdInvoke(c *gin.Context) (openapi_models.GetTicketDailyWeightsIdResponse, error) {
 	ticketDailyWeightRep := repository.NewTicketDailyWeightRepository(middleware.GetRepositoryMode(c)...)
 
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		panic(err)
+	var req openapi_models.GetTicketDailyWeightsIdRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		return openapi_models.GetTicketDailyWeightsIdResponse{}, err
 	}
 
-	ticketDailyWeight := ticketDailyWeightRep.Find(int32(id))
+	ticketDailyWeight := ticketDailyWeightRep.Find(req.TicketId, req.Date)
 
 	return openapi_models.GetTicketDailyWeightsIdResponse{
 		TicketDailyWeight: openapi_models.TicketDailyWeight{
-			Id:        ticketDailyWeight.Id,
 			TicketId:  ticketDailyWeight.TicketId,
-			WorkHour:  ticketDailyWeight.WorkHour,
+			WorkHour: &ticketDailyWeight.WorkHour,
 			Date:      ticketDailyWeight.Date,
 			CreatedAt: ticketDailyWeight.CreatedAt,
 			UpdatedAt: ticketDailyWeight.UpdatedAt,

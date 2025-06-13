@@ -9,6 +9,12 @@
 
 package openapi_models
 
+import (
+	"time"
+)
+
 type GetTicketDailyWeightsIdRequest struct {
-	Id int32 `json:"id,omitempty" form:"id,omitempty"`
+	TicketId int32 `json:"ticketId,omitempty" form:"ticketId,omitempty"`
+
+	Date time.Time `json:"date,omitempty" form:"date,omitempty"`
 }

@@ -415,33 +415,37 @@ export interface DeleteSimulationResponse {
     ''?: string;
 }
 /**
- *
+ * 
  * @export
  * @interface DeleteTicketDailyWeightsIdRequest
  */
 export interface DeleteTicketDailyWeightsIdRequest {
     /**
-     *
+     * 
      * @type {number}
      * @memberof DeleteTicketDailyWeightsIdRequest
      */
-    'id'?: number;
+    'ticketId'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof DeleteTicketDailyWeightsIdRequest
+     */
+    'date'?: string;
 }
-
 /**
- *
+ * 
  * @export
  * @interface DeleteTicketDailyWeightsIdResponse
  */
 export interface DeleteTicketDailyWeightsIdResponse {
     /**
-     *
+     * 
      * @type {string}
      * @memberof DeleteTicketDailyWeightsIdResponse
      */
     'msg'?: string;
 }
-
 /**
  * 
  * @export
@@ -1494,47 +1498,50 @@ export interface GetSimulationResponse {
     'simulationLock': SimulationLock;
 }
 /**
- *
+ * 
  * @export
  * @interface GetTicketDailyWeightsIdRequest
  */
 export interface GetTicketDailyWeightsIdRequest {
     /**
-     *
+     * 
      * @type {number}
      * @memberof GetTicketDailyWeightsIdRequest
      */
-    'id'?: number;
+    'ticketId'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof GetTicketDailyWeightsIdRequest
+     */
+    'date'?: string;
 }
-
 /**
- *
+ * 
  * @export
  * @interface GetTicketDailyWeightsIdResponse
  */
 export interface GetTicketDailyWeightsIdResponse {
     /**
-     *
+     * 
      * @type {TicketDailyWeight}
      * @memberof GetTicketDailyWeightsIdResponse
      */
     'ticketDailyWeight'?: TicketDailyWeight;
 }
-
 /**
- *
+ * 
  * @export
  * @interface GetTicketDailyWeightsResponse
  */
 export interface GetTicketDailyWeightsResponse {
     /**
-     *
+     * 
      * @type {Array<TicketDailyWeight>}
      * @memberof GetTicketDailyWeightsResponse
      */
     'list': Array<TicketDailyWeight>;
 }
-
 /**
  * 
  * @export
@@ -2639,47 +2646,44 @@ export interface PostSimulationResponse {
     ''?: string;
 }
 /**
- *
+ * 
  * @export
  * @interface PostTicketDailyWeightsIdResponse
  */
 export interface PostTicketDailyWeightsIdResponse {
     /**
-     *
+     * 
      * @type {TicketDailyWeight}
      * @memberof PostTicketDailyWeightsIdResponse
      */
     'ticketDailyWeight'?: TicketDailyWeight;
 }
-
 /**
- *
+ * 
  * @export
  * @interface PostTicketDailyWeightsRequest
  */
 export interface PostTicketDailyWeightsRequest {
     /**
-     *
+     * 
      * @type {TicketDailyWeight}
      * @memberof PostTicketDailyWeightsRequest
      */
     'ticketDailyWeight': TicketDailyWeight;
 }
-
 /**
- *
+ * 
  * @export
  * @interface PostTicketDailyWeightsResponse
  */
 export interface PostTicketDailyWeightsResponse {
     /**
-     *
+     * 
      * @type {TicketDailyWeight}
      * @memberof PostTicketDailyWeightsResponse
      */
     'ticketDailyWeight'?: TicketDailyWeight;
 }
-
 /**
  * 
  * @export
@@ -3332,45 +3336,38 @@ export interface Ticket {
      */
     'updated_at'?: number;
 }
-
 /**
- *
+ * 
  * @export
  * @interface TicketDailyWeight
  */
 export interface TicketDailyWeight {
     /**
-     *
-     * @type {number}
-     * @memberof TicketDailyWeight
-     */
-    'id'?: number | null;
-    /**
-     *
+     * 
      * @type {number}
      * @memberof TicketDailyWeight
      */
     'ticketId': number;
     /**
-     *
+     * 
      * @type {number}
      * @memberof TicketDailyWeight
      */
-    'workHour': number;
-    /**
-     *
-     * @type {number}
-     * @memberof TicketDailyWeight
-     */
-    'date': number;
+    'workHour'?: number | null;
     /**
      *
      * @type {string}
      * @memberof TicketDailyWeight
      */
+    'date': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TicketDailyWeight
+     */
     'created_at'?: string;
     /**
-     *
+     * 
      * @type {number}
      * @memberof TicketDailyWeight
      */
@@ -3978,9 +3975,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary DeleteTicketDailyWeightsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -5073,7 +5070,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary GetTicketDailyWeights
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5102,9 +5099,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary GetTicketDailyWeightsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -5872,7 +5869,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary PostFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6335,9 +6332,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary PostTicketDailyWeights
-         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6368,10 +6365,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         *
+         * 
          * @summary PostTicketDailyWeightsId
          * @param {number} id
-         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6926,9 +6923,9 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary DeleteTicketDailyWeightsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7269,7 +7266,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary GetTicketDailyWeights
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7279,9 +7276,9 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary GetTicketDailyWeightsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7526,7 +7523,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary PostFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7673,9 +7670,9 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary PostTicketDailyWeights
-         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7684,10 +7681,10 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         *
+         * 
          * @summary PostTicketDailyWeightsId
          * @param {number} id
-         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7941,9 +7938,9 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteSimulation(deleteSimulationRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary DeleteTicketDailyWeightsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8253,7 +8250,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getSimulationMasterDiff(body, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary GetTicketDailyWeights
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8262,9 +8259,9 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getTicketDailyWeights(options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary GetTicketDailyWeightsId
-         * @param {number} id
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8487,7 +8484,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary PostFeatureOptionsId
-         * @param {number} id
+         * @param {number} id 
          * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8621,9 +8618,9 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.postSimulation(postSimulationRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary PostTicketDailyWeights
-         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8631,10 +8628,10 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.postTicketDailyWeights(postTicketDailyWeightsRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         *
+         * 
          * @summary PostTicketDailyWeightsId
          * @param {number} id
-         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+         * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8898,9 +8895,9 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary DeleteTicketDailyWeightsId
-     * @param {number} id
+     * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -9272,7 +9269,7 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary GetTicketDailyWeights
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9283,9 +9280,9 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary GetTicketDailyWeightsId
-     * @param {number} id
+     * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -9552,7 +9549,7 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary PostFeatureOptionsId
-     * @param {number} id
+     * @param {number} id 
      * @param {PostFeatureOptionsRequest} [postFeatureOptionsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9712,9 +9709,9 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary PostTicketDailyWeights
-     * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+     * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -9724,10 +9721,10 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     *
+     * 
      * @summary PostTicketDailyWeightsId
      * @param {number} id
-     * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest]
+     * @param {PostTicketDailyWeightsRequest} [postTicketDailyWeightsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi

@@ -87,6 +87,10 @@
   padding: 0
 }
 
+#gantt-proxy-wrapper .g-gantt-bar-label {
+  padding: 0
+}
+
 .g-timeunit {
   font-size: 90% !important;
 }
@@ -117,4 +121,9 @@ a.disabled {
 .g-gantt-row.unit-closed .g-gantt-row-bars-container .g-gantt-bar:nth-child(3n) {
   top: 66% !important;
   height: 33% !important;
+}
+
+.g-gantt-bar-edit-input {
+  width: 100%;
+  padding: 0;
 }

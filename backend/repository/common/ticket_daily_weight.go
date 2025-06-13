@@ -6,6 +6,7 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/interfaces"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"time"
 )
 
 // Auto generated start
@@ -20,17 +21,26 @@ type ticketDailyWeightRepository struct {
 func (r *ticketDailyWeightRepository) FindAll() []db.TicketDailyWeight {
 	var ticketDailyWeights []db.TicketDailyWeight
 
-	result := r.con.Order("id DESC").Find(&ticketDailyWeights)
+	result := r.con.Order("ticket_id DESC").Find(&ticketDailyWeights)
 	if result.Error != nil {
 		panic(result.Error)
 	}
 	return ticketDailyWeights
 }
 
-func (r *ticketDailyWeightRepository) Find(id int32) db.TicketDailyWeight {
+func (r *ticketDailyWeightRepository) Find(ticketId int32, date time.Time) db.TicketDailyWeight {
 	var ticketDailyWeight db.TicketDailyWeight
 
-	result := r.con.First(&ticketDailyWeight, id)
+	result := r.con.Where("ticket_id = ? AND date = ?", ticketId, date).First(&ticketDailyWeight)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return ticketDailyWeight
+}
+func (r *ticketDailyWeightRepository) FindByTicketId(ticketId int32) []db.TicketDailyWeight {
+	var ticketDailyWeight []db.TicketDailyWeight
+
+	result := r.con.Where("ticket_id = ?", ticketId).Find(&ticketDailyWeight)
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -39,13 +49,13 @@ func (r *ticketDailyWeightRepository) Find(id int32) db.TicketDailyWeight {
 
 func (r *ticketDailyWeightRepository) Upsert(m db.TicketDailyWeight) {
 	r.con.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "id"}},
+		Columns: []clause.Column{{Name: "ticket_id"}, {Name: "date"}},
 		UpdateAll: true,
 	}).Create(&m)
 }
 
-func (r *ticketDailyWeightRepository) Delete(id int32) {
-	r.con.Where("id = ?", id).Delete(db.TicketDailyWeight{})
+func (r *ticketDailyWeightRepository) Delete(ticketId int32, date time.Time) {
+	r.con.Where("ticket_id = ? AND date = ?", ticketId, date).Delete(db.TicketDailyWeight{})
 }
 
 // Auto generated end

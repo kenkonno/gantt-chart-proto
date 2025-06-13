@@ -5,19 +5,18 @@ import (
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"strconv"
 )
 
 func DeleteTicketDailyWeightsIdInvoke(c *gin.Context) (openapi_models.DeleteTicketDailyWeightsIdResponse, error) {
 
 	ticketDailyWeightRep := repository.NewTicketDailyWeightRepository(middleware.GetRepositoryMode(c)...)
 
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		panic(err)
+	var req openapi_models.DeleteTicketDailyWeightsIdRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		return openapi_models.DeleteTicketDailyWeightsIdResponse{}, err
 	}
 
-	ticketDailyWeightRep.Delete(int32(id))
+	ticketDailyWeightRep.Delete(req.TicketId, req.Date)
 
 	return openapi_models.DeleteTicketDailyWeightsIdResponse{}, nil
 }

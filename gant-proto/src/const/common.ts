@@ -52,7 +52,7 @@ export const FacilityWorkScheduleTypeMap = {
 export type FeatureOption = string
 
 // アプリケーションで利用可能な機能フラグの定数
-export const Features = {
+export const FeatureOption = {
     // --- スケジュール管理 ---
 
     // シミュレーション機能

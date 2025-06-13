@@ -3445,15 +3445,14 @@ components:
       x-tags:
         - TicketDailyWeight
       properties:
-        id:
-          type: integer
-          nullable: true
         ticketId:
           type: integer
         workHour:
           type: integer
+          nullable: true
         date:
-          type: integer
+          type: string
+          format: date-time
         created_at:
           type: string
           format: date-time
@@ -3461,7 +3460,6 @@ components:
           type: integer
       required:
         - ticketId
-        - workHour
         - date
     GetTicketDailyWeightsRequest:
       title: GetTicketDailyWeightsRequest
@@ -3480,9 +3478,12 @@ components:
       title: GetTicketDailyWeightsIdRequest
       type: object
       properties:
-        id:
+        ticketId:
           type: integer
           format: int32
+        date:
+          type: string
+          format: date-time
     GetTicketDailyWeightsIdResponse:
       title: GetTicketDailyWeightsIdResponse
       type: object
@@ -3493,9 +3494,12 @@ components:
       title: DeleteTicketDailyWeightsIdRequest
       type: object
       properties:
-        id:
+        ticketId:
           type: integer
           format: int32
+        date:
+          type: string
+          format: date-time
     DeleteTicketDailyWeightsIdResponse:
       title: DeleteTicketDailyWeightsIdResponse
       type: object

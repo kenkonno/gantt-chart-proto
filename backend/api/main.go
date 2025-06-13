@@ -28,6 +28,7 @@ func main() {
 	r.Use(middleware.RoleBasedAccessControl())
 	r.Use(middleware.AuthMiddleware())
 	r.Use(middleware.GuestAccessControl())
+	// TODO: FeatureOptionの認可を追加する。この仕組みだとAPIのパスを見てDBのオプション有無で認可するって感じかな。そのうち量が多くなると必要になる。
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	r = openapi.NewRouter(r)

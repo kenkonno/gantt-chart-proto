@@ -3,10 +3,9 @@ package db
 import "time"
 
 type TicketDailyWeight struct {
-	Id        *int32 `gorm:"primaryKey;autoIncrement"`
-	TicketId  int32  `gorm:"index:idx_ticket_daily_weight_ticket_id"`
+	TicketId int32     `gorm:"uniqueIndex:idx_ticket_daily_weight_ticket_date"`
+	Date     time.Time `gorm:"uniqueIndex:idx_ticket_daily_weight_ticket_date"`
 	WorkHour  int32
-	Date      int32
 	CreatedAt time.Time
 	UpdatedAt int32
 }
