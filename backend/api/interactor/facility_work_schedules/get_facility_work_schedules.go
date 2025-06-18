@@ -1,7 +1,6 @@
 package facility_work_schedules
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
