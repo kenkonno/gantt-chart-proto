@@ -130,7 +130,7 @@
   </g-gantt-chart>
 </template>
 <style lang="scss" scoped>
-@use '@/assets/gantt.scss';
+@import '@/assets/gantt.scss';
 
 .pileUp-title {
   width: 50%;
