@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --ignore-path .gitignore --fix",
+    "serve": "vue-cli-service serve --port 80",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
     "update-gantt": "npm update @infectoone/vue-ganttastic"
   },
   "dependencies": {
@@ -45,10 +44,13 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.14",
     "@types/showdown": "^2.0.6",
-    "@vitejs/plugin-vue": "^3.1.2",
-    "vite": "^3.2.7",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
     "@vue/compiler-sfc": "^3.3.4",
     "@vue/eslint-config-typescript": "^9.1.0",
     "eslint": "^7.32.0",
