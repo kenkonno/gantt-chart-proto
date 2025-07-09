@@ -86,14 +86,14 @@
   </div>
 </template>
 <style>
-@import '@/assets/gantt-override.scss';
+@use '@/assets/gantt-override.scss';
 #gantt-all-view.byProcess .g-gantt-row-bars-container .g-gantt-bar {
   opacity: 0.8;
 }
 
 </style>
 <style lang="scss" scoped>
-@import '@/assets/gantt.scss';
+@use '@/assets/gantt.scss';
 
 nav {
   padding: 10px;

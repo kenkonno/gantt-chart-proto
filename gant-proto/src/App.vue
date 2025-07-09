@@ -5,7 +5,7 @@
 </template>
 
 <style lang="scss">
-@import '@/assets/common.scss';
+@use '@/assets/common.scss';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
