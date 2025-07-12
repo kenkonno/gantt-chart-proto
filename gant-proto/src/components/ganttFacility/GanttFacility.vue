@@ -205,10 +205,10 @@
   </Suspense>
 </template>
 <style>
-@import '@/assets/gantt-override.scss';
+@use '@/assets/gantt-override.scss';
 </style>
 <style lang="scss" scoped>
-@import '@/assets/gantt';
+@use '@/assets/gantt.scss';
 </style>
 
 <script setup lang="ts">
