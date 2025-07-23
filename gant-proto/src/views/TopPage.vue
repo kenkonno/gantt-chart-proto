@@ -46,7 +46,7 @@
                 <simulation-view @update="updateSimulation"></simulation-view>
               </ModalWithLink>
             </div>
-            <div class="h-50 border-0" style="margin-top: 10px;">
+            <div class="h-50 border-0" style="margin-top: 10px;" v-if="false">
               <PopoutLink url="./graph-view" title="グラフ表示モード" icon="monitoring"></PopoutLink>
             </div>
           </div>
