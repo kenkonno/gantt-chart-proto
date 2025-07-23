@@ -352,7 +352,8 @@ const closeTicketMemo = async (ticket: Ticket, userIds: number[]) => {
   try {
     const result = await postTicketMemoById(ticket.id, ticket.memo, ticket.updated_at)
     ticket.updated_at = result?.updated_at
-    await updateTicket(ticket)
+    // NOTE: 気持ち悪いが、setTicketUserでTicketの更新を行っているので先勝ち処理のアラートを防止するためにコメントアウト
+    // await updateTicket(ticket)
     await mutation.setTicketUser(ticket, userIds)
     await refreshTicketMemo(ticket.id)
     closeEditModal()
