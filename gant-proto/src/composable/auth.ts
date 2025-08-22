@@ -1,17 +1,19 @@
 import {Api} from "@/api/axios";
-import {User} from "@/api";
+import {FeatureOption, User} from "@/api";
 
 // NOTE: composableに入れるのは違う気がするが一旦ここ
 
 let userInfo: User | undefined
 let isSimulateUser: boolean | undefined
+let featureOptions: FeatureOption[] | undefined // auth?に入れるのは微妙かもだけどタイミングが同じなのでいれる。
 
 export async function loggedIn() {
-    // TODO: COOKIE NAME
-    const {data} = await Api.getUserInfo()
-    userInfo = data.user
-    isSimulateUser = data.isSimulateUser
-    return data
+    const {data: userData} = await Api.getUserInfo()
+    const {data} = await Api.getFeatureOptions()
+    userInfo = userData.user
+    isSimulateUser = userData.isSimulateUser
+    featureOptions = data.list
+    return userData
 }
 
 export function getUserInfo() {
@@ -20,4 +22,11 @@ export function getUserInfo() {
         loggedIn()
     }
     return {userInfo, isSimulateUser}
+}
+
+export function getFeatureOptions() {
+    if (featureOptions == undefined) {
+        loggedIn()
+    }
+    return featureOptions
 }

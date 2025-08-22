@@ -93,6 +93,13 @@ var routes = Routes{
 	},
 
 	{
+		"DeleteFeatureOptionsId",
+		http.MethodDelete,
+		"/api/featureOptions/:id",
+		DeleteFeatureOptionsId,
+	},
+
+	{
 		"DeleteGanttGroupsId",
 		http.MethodDelete,
 		"/api/ganttGroups/:id",
@@ -132,6 +139,13 @@ var routes = Routes{
 		http.MethodDelete,
 		"/api/simulation",
 		DeleteSimulation,
+	},
+
+	{
+		"DeleteTicketDailyWeightsId",
+		http.MethodDelete,
+		"/api/ticketDailyWeights/:id",
+		DeleteTicketDailyWeightsId,
 	},
 
 	{
@@ -240,6 +254,20 @@ var routes = Routes{
 	},
 
 	{
+		"GetFeatureOptions",
+		http.MethodGet,
+		"/api/featureOptions",
+		GetFeatureOptions,
+	},
+
+	{
+		"GetFeatureOptionsId",
+		http.MethodGet,
+		"/api/featureOptions/:id",
+		GetFeatureOptionsId,
+	},
+
+	{
 		"GetGanttGroups",
 		http.MethodGet,
 		"/api/ganttGroups",
@@ -328,6 +356,20 @@ var routes = Routes{
 		http.MethodGet,
 		"/api/simulationMasterDiff",
 		GetSimulationMasterDiff,
+	},
+
+	{
+		"GetTicketDailyWeights",
+		http.MethodGet,
+		"/api/ticketDailyWeights",
+		GetTicketDailyWeights,
+	},
+
+	{
+		"GetTicketDailyWeightsId",
+		http.MethodGet,
+		"/api/ticketDailyWeights/:id",
+		GetTicketDailyWeightsId,
 	},
 
 	{
@@ -471,6 +513,20 @@ var routes = Routes{
 	},
 
 	{
+		"PostFeatureOptions",
+		http.MethodPost,
+		"/api/featureOptions",
+		PostFeatureOptions,
+	},
+
+	{
+		"PostFeatureOptionsId",
+		http.MethodPost,
+		"/api/featureOptions/:id",
+		PostFeatureOptionsId,
+	},
+
+	{
 		"PostGanttGroups",
 		http.MethodPost,
 		"/api/ganttGroups",
@@ -552,6 +608,20 @@ var routes = Routes{
 		http.MethodPost,
 		"/api/simulation",
 		PostSimulation,
+	},
+
+	{
+		"PostTicketDailyWeights",
+		http.MethodPost,
+		"/api/ticketDailyWeights",
+		PostTicketDailyWeights,
+	},
+
+	{
+		"PostTicketDailyWeightsId",
+		http.MethodPost,
+		"/api/ticketDailyWeights/:id",
+		PostTicketDailyWeightsId,
 	},
 
 	{

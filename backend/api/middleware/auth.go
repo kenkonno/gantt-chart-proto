@@ -39,6 +39,8 @@ var publicRoute = []string{
 	"GET /api/userInfo",
 	"POST /api/login",
 	"POST /api/logout",
+	"GET /api/featureOptions",
+	"GET /api/featureOptions/:id",
 }
 
 func AuthMiddleware() gin.HandlerFunc {

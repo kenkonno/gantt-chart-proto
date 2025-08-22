@@ -2,10 +2,15 @@
   <nav class="navbar navbar-light bg-light" v-if="allowed('MENU')">
     <div v-if="facilityList.length > 0" style="width: 100%; text-align: left">
       <b>案件設定</b>
-      <select style="display: inline" v-model.number="globalState.currentFacilityId"
-              @input="refreshGantt(Number($event.target.value))">
-        <option v-for="item in facilityList" :key="item.id" :value="item.id">{{ item.name }}<template v-if="item.type === FacilityType.Ordered">✅</template></option>
-      </select>
+      <project-list-name-sort-facility-selector v-if="available( 'ProjectListNameSort')"
+                                                v-model="globalState.currentFacilityId"
+                                                :facility-list="facilityList"
+                                                @update:model-value="refreshGantt"
+      />
+      <facility-selector v-else
+                         v-model="globalState.currentFacilityId"
+                         :facility-list="facilityList"
+                         @update:model-value="refreshGantt"/>
       <template v-if="allowed('FACILITY_SETTINGS')">
         <ModalWithLink title="ユニット一覧" icon="switch_access" :disabled="globalState.currentFacilityId===-1">
           <unit-view></unit-view>
@@ -32,9 +37,11 @@
     <gantt-facility-menu
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
+        :ticket-daily-weight-mode="ticketDailyWeightMode"
         @set-schedule-by-from-to="confirm(gantFacility.setScheduleByFromToProxy)"
         @set-schedule-by-person-day="confirm(gantFacility.setScheduleByPersonDayProxy)"
         @updateDisplayType="updateDisplayType"
+        @updateTicketDailyWeightMode="updateTicketDailyWeightMode"
     ></gantt-facility-menu>
   </div>
   <div v-if="globalState.currentFacilityId <= 0">
@@ -44,11 +51,13 @@
     工程を登録してください。
   </div>
   <div></div>
-  <Suspense v-if="globalState.currentFacilityId > 0 && globalState.processList.length > 0 && globalState.ganttFacilityRefresh">
+  <Suspense
+      v-if="globalState.currentFacilityId > 0 && globalState.processList.length > 0 && globalState.ganttFacilityRefresh">
     <gantt-facility
         ref="gantFacility"
         :gantt-facility-header="GanttHeader"
         :display-type="displayType"
+        :ticket-daily-weight-mode="ticketDailyWeightMode"
     >
     </gantt-facility>
     <template #fallback>
@@ -113,6 +122,7 @@ nav {
 <script setup lang="ts">
 import {inject, ref} from "vue";
 import GanttFacility from "@/components/ganttFacility/GanttFacility.vue";
+import FacilitySelector from "@/components/ganttFacility/FacilitySelector.vue";
 import {
   GLOBAL_MUTATION_KEY,
   GLOBAL_STATE_KEY,
@@ -131,11 +141,14 @@ import Swal from "sweetalert2"
 import {useRoute} from 'vue-router'
 import FacilitySharedLinkView from "@/views/FacilitySharedLinkView.vue";
 import FacilityWorkScheduleView from "@/views/FacilityWorkScheduleView.vue";
+import {available} from "@/composable/featureOption";
+import ProjectListNameSortFacilitySelector
+  from "@/components/ganttFacility/featureOption/ProjectListNameSortFacilitySelector.vue";
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {refreshGantt} = inject(GLOBAL_MUTATION_KEY)!
 
-const {GanttHeader, displayType} = useGanttFacilityMenu()
+const {GanttHeader, displayType, ticketDailyWeightMode} = useGanttFacilityMenu()
 const gantFacility = ref(null)
 
 // パラメーターが存在していれば表示する設備を変更する
@@ -150,6 +163,11 @@ const updateDisplayType = (v: DisplayType) => {
   displayType.value = v
 }
 
+const updateTicketDailyWeightMode = (v: boolean) => {
+  console.log("watch updateTicketDailyWeightMode", v)
+  ticketDailyWeightMode.value = v
+}
+
 const facilityList = computed(() => {
   let result = globalState.facilityList.filter(v => v.status === FacilityStatus.Enabled)
   if (globalState.facilityTypes.length > 0) {
@@ -159,7 +177,7 @@ const facilityList = computed(() => {
   return result.sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1 : 1);
 })
 
-const confirm = async (func : ()=> any) => {
+const confirm = async (func: () => any) => {
   let result = await Swal.fire({
     title: 'リスケ機能実行の確認',
     text: "スケジュールを一括で変更しますがよろしいでしょうか？この変更は元に戻すことはできません。",

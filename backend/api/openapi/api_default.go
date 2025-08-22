@@ -10,34 +10,36 @@
 package openapi
 
 import (
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation_master_diff"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/detect_work_outside_employment_periods"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/logout"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_work_schedules"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/bulk_update_tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units_duplicate"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/holidays"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
-	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_memo"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/login"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/upload_users_csv_file"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_daily_weights"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/all_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/copy_facilitys"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units_duplicate"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facilities"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/gantt_groups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/processes"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/user_info"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/operation_settings"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/departments"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_shared_links"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/milestones"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/facility_work_schedules"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/feature_options"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/ticket_users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/units"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/users"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/default_pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/pile_ups"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/simulation_master_diff"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/bulk_update_tickets"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/logout"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/detect_work_outside_employment_periods"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/interactor/schedule_alerts"
 
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"net/http"
@@ -79,6 +81,16 @@ func DeleteFacilitySharedLinksId(c *gin.Context) {
 func DeleteFacilityWorkSchedulesId(c *gin.Context) {
 	var r openapi_models.DeleteFacilityWorkSchedulesIdResponse
 	r, err := facility_work_schedules.DeleteFacilityWorkSchedulesIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// DeleteFeatureOptionsId - DeleteFeatureOptionsId
+func DeleteFeatureOptionsId(c *gin.Context) {
+	var r openapi_models.DeleteFeatureOptionsIdResponse
+	r, err := feature_options.DeleteFeatureOptionsIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -139,6 +151,16 @@ func DeleteProcessesId(c *gin.Context) {
 func DeleteSimulation(c *gin.Context) {
 	var r openapi_models.DeleteSimulationResponse
 	r, err := simulation.DeleteSimulationInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// DeleteTicketDailyWeightsId - DeleteTicketDailyWeightsId
+func DeleteTicketDailyWeightsId(c *gin.Context) {
+	var r openapi_models.DeleteTicketDailyWeightsIdResponse
+	r, err := ticket_daily_weights.DeleteTicketDailyWeightsIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -295,6 +317,26 @@ func GetFacilityWorkSchedulesId(c *gin.Context) {
 	}
 }
 
+// GetFeatureOptions - GetFeatureOptions
+func GetFeatureOptions(c *gin.Context) {
+	var r openapi_models.GetFeatureOptionsResponse
+	r, err := feature_options.GetFeatureOptionsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// GetFeatureOptionsId - GetFeatureOptionsId
+func GetFeatureOptionsId(c *gin.Context) {
+	var r openapi_models.GetFeatureOptionsIdResponse
+	r, err := feature_options.GetFeatureOptionsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 // GetGanttGroups - GetGanttGroups
 func GetGanttGroups(c *gin.Context) {
 	var r openapi_models.GetGanttGroupsResponse
@@ -419,6 +461,26 @@ func GetSimulation(c *gin.Context) {
 func GetSimulationMasterDiff(c *gin.Context) {
 	var r openapi_models.GetSimulationMasterDiffResponse
 	r, err := simulation_master_diff.GetSimulationMasterDiffInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// GetTicketDailyWeights - GetTicketDailyWeights
+func GetTicketDailyWeights(c *gin.Context) {
+	var r openapi_models.GetTicketDailyWeightsResponse
+	r, err := ticket_daily_weights.GetTicketDailyWeightsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// GetTicketDailyWeightsId - GetTicketDailyWeightsId
+func GetTicketDailyWeightsId(c *gin.Context) {
+	var r openapi_models.GetTicketDailyWeightsIdResponse
+	r, err := ticket_daily_weights.GetTicketDailyWeightsIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)
@@ -625,6 +687,26 @@ func PostFacilityWorkSchedulesId(c *gin.Context) {
 	}
 }
 
+// PostFeatureOptions - PostFeatureOptions
+func PostFeatureOptions(c *gin.Context) {
+	var r openapi_models.PostFeatureOptionsResponse
+	r, err := feature_options.PostFeatureOptionsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostFeatureOptionsId - PostFeatureOptionsId
+func PostFeatureOptionsId(c *gin.Context) {
+	var r openapi_models.PostFeatureOptionsIdResponse
+	r, err := feature_options.PostFeatureOptionsIdInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
 // PostGanttGroups - PostGanttGroups
 func PostGanttGroups(c *gin.Context) {
 	var r openapi_models.PostGanttGroupsResponse
@@ -739,6 +821,26 @@ func PostProcessesId(c *gin.Context) {
 func PostSimulation(c *gin.Context) {
 	var r openapi_models.PostSimulationResponse
 	r, err := simulation.PostSimulationInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostTicketDailyWeights - PostTicketDailyWeights
+func PostTicketDailyWeights(c *gin.Context) {
+	var r openapi_models.PostTicketDailyWeightsResponse
+	r, err := ticket_daily_weights.PostTicketDailyWeightsInvoke(c)
+	if err != nil {
+	} else {
+		c.JSON(http.StatusOK, r)
+	}
+}
+
+// PostTicketDailyWeightsId - PostTicketDailyWeightsId
+func PostTicketDailyWeightsId(c *gin.Context) {
+	var r openapi_models.PostTicketDailyWeightsIdResponse
+	r, err := ticket_daily_weights.PostTicketDailyWeightsIdInvoke(c)
 	if err != nil {
 	} else {
 		c.JSON(http.StatusOK, r)

@@ -21,6 +21,7 @@
             @dragstart-bar="onDragstartBar($event.bar, $event.e)"
             @drag-bar="onDragBar($event.bar, $event.e)"
             @dragend-bar="onDragendBar($event.bar, $event.e)"
+            @bar-update="onBarUpdate($event.bar, $event.newValue)"
             @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
             color-scheme="creamy"
 
@@ -121,11 +122,12 @@
                              :disabled="!allowed('UPDATE_TICKET')"/>
                     </gantt-td>
                     <gantt-td :visible="props.ganttFacilityHeader[9].visible">
-                    <FormNumber class="middle-numeric"
+                      <FormNumber class="middle-numeric"
                                   :value="row.ticket.progress_percent"
                                   @change="mutation.setProgressPercent($event, row.ticket)"
                                   :disabled="!allowed('UPDATE_PROGRESS')"
-                                  :min=0 />
+                                  :min=0
+                      />
                     </gantt-td>
                     <gantt-td :visible="props.ganttFacilityHeader[10].visible" v-if="allowed('UPDATE_TICKET')">
                       <a href="#" @click.prevent="!isUpdateOrder && updateOrder(item.rows, index, -1)"
@@ -210,7 +212,6 @@
 <style lang="scss" scoped>
 @use '@/assets/gantt.scss';
 </style>
-
 <script setup lang="ts">
 import {GanttBarObject, GGanttChart, GGanttRow} from "@infectoone/vue-ganttastic";
 import {useGanttFacility} from "@/composable/ganttFacility";
@@ -240,6 +241,7 @@ import GanttSideMenuByUnit from "@/components/ganttFacility/GanttSideMenuByUnit.
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
   displayType: DisplayType,
+  ticketDailyWeightMode: boolean,
 }
 const props = defineProps<GanttProxyProps>()
 const globalState = inject(GLOBAL_STATE_KEY)!
@@ -251,7 +253,10 @@ const cDepartmentList = computed(() => {
   return result
 })
 
-const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", false, facilityTypes), useGanttFacility()])
+const ret = await Promise.all([
+  getDefaultPileUps(currentFacilityId, "day", false, facilityTypes),
+  useGanttFacility(computed(() => props.ticketDailyWeightMode))
+])
 
 const {
   globalStartDate,
@@ -290,7 +295,9 @@ const {
   isAllOpenUnit,
   toggleUnitOpen,
   toggleAllUnitOpen,
-  getUnitCollapseClass
+  getUnitCollapseClass,
+  updateTicketDailyWeight,
+  ticketDailyWeightMode,
 } = ret[1]
 
 
@@ -398,10 +405,12 @@ let isDragged = false;
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  if (!isDragged) {
-    openTicketDetail(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
+  if (!bar.editable) {
+    if (!isDragged) {
+      openTicketDetail(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
+    }
+    isDragged = false
   }
-  isDragged = false
 }
 
 const onMousedownBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
@@ -441,4 +450,16 @@ const onContextmenuBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string 
   console.log("contextmenu-bar", bar, e, datetime)
 }
 
+const onBarUpdate = async (bar: GanttBarObject, workHour: number | undefined) => {
+  console.log("bar-update", bar, workHour)
+
+  // TODO: 本当は良くないけど文字列でデータを持たせる
+  console.log("bar-update", bar.ganttBarConfig)
+  const [ticketId, date] = bar.ganttBarConfig.id.split("@")
+
+  await updateTicketDailyWeight(+ticketId, date, workHour)
+}
+
+
 </script>
+

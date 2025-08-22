@@ -20,6 +20,7 @@ type simulationRepository struct {
 }
 
 func (r *simulationRepository) InitAllData() {
+
 	// tables
 	tableNames := []string{
 		"departments",
@@ -32,6 +33,7 @@ func (r *simulationRepository) InitAllData() {
 		"processes",
 		"tickets",
 		"ticket_users",
+		"ticket_daily_weights",
 		"units",
 		"users",
 	}
@@ -47,6 +49,7 @@ func (r *simulationRepository) InitAllData() {
 		{"id", "name", "order", "created_at", "updated_at", "color"},
 		{"id", "gantt_group_id", "process_id", "department_id", "limit_date", "estimate", "number_of_worker", "days_after", "start_date", "end_date", "progress_percent", "order", "created_at", "updated_at", "memo"},
 		{"id", "ticket_id", "user_id", "order", "created_at", "updated_at"},
+		{"ticket_id", "work_hour", "date", "created_at", "updated_at"},
 		{"id", "name", "facility_id", "order", "created_at", "updated_at"},
 		{"id", "department_id", "limit_of_operation", "password", "email", "created_at", "updated_at", "role", "last_name", "first_name", "password_reset", "employment_start_date", "employment_end_date"},
 	}
@@ -73,6 +76,7 @@ func (r *simulationRepository) ResetSequence() {
 		"processes",
 		"tickets",
 		"ticket_users",
+		"ticket_daily_weights",
 		"units",
 		"users",
 	}
@@ -97,6 +101,7 @@ func (r *simulationRepository) SwitchTable() {
 		"processes",
 		"tickets",
 		"ticket_users",
+		"ticket_daily_weights",
 		"units",
 		"users",
 	}

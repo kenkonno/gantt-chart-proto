@@ -1257,6 +1257,138 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PostFacilityWorkSchedulesRequest'
+  /api/featureOptions:
+    get:
+      summary: GetFeatureOptions
+      tags: [ ]
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFeatureOptionsResponse'
+              examples: { }
+      operationId: get-featureOptions
+      description: ''
+      parameters: [ ]
+    post:
+      summary: PostFeatureOptions
+      operationId: post-featureOptions
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFeatureOptionsRequest'
+    parameters: [ ]
+  '/api/featureOptions/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetFeatureOptionsId
+      tags: [ ]
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFeatureOptionsIdResponse'
+              examples: { }
+      operationId: get-featureOptions-id
+      description: ''
+    delete:
+      summary: DeleteFeatureOptionsId
+      operationId: delete-featureOptions-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostFeatureOptionsId
+      operationId: post-featureOptions-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFeatureOptionsRequest'
+  /api/ticketDailyWeights:
+    get:
+      summary: GetTicketDailyWeights
+      tags: [ ]
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketDailyWeightsResponse'
+              examples: { }
+      operationId: get-ticketDailyWeights
+      description: ''
+      parameters: [ ]
+    post:
+      summary: PostTicketDailyWeights
+      operationId: post-ticketDailyWeights
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketDailyWeightsRequest'
+    parameters: [ ]
+  '/api/ticketDailyWeights/{id}':
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+    get:
+      summary: GetTicketDailyWeightsId
+      tags: [ ]
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTicketDailyWeightsIdResponse'
+              examples: { }
+      operationId: get-ticketDailyWeights-id
+      description: ''
+    delete:
+      summary: DeleteTicketDailyWeightsId
+      operationId: delete-ticketDailyWeights-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+    post:
+      summary: PostTicketDailyWeightsId
+      operationId: post-ticketDailyWeights-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTicketDailyWeightsRequest'
 components:
   schemas:
     User:
@@ -3220,3 +3352,177 @@ components:
       properties:
         facilityWorkSchedule:
           $ref: '#/components/schemas/FacilityWorkSchedule'
+    FeatureOption:
+      title: FeatureOption
+      type: object
+      x-tags:
+        - FeatureOption
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          x-go-custom-tag: 'binding:"min=1"'
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: integer
+      required:
+        - name
+        - enabled
+    GetFeatureOptionsRequest:
+      title: GetFeatureOptionsRequest
+      type: object
+    GetFeatureOptionsResponse:
+      title: GetFeatureOptionsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureOption'
+      required:
+        - list
+    GetFeatureOptionsIdRequest:
+      title: GetFeatureOptionsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    GetFeatureOptionsIdResponse:
+      title: GetFeatureOptionsIdResponse
+      type: object
+      properties:
+        featureOption:
+          $ref: '#/components/schemas/FeatureOption'
+    DeleteFeatureOptionsIdRequest:
+      title: DeleteFeatureOptionsIdRequest
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+    DeleteFeatureOptionsIdResponse:
+      title: DeleteFeatureOptionsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostFeatureOptionsRequest:
+      title: PostFeatureOptionsRequest
+      type: object
+      properties:
+        featureOption:
+          $ref: '#/components/schemas/FeatureOption'
+      required:
+        - featureOption
+    PostFeatureOptionsResponse:
+      title: PostFeatureOptionsResponse
+      type: object
+      properties:
+        featureOption:
+          $ref: '#/components/schemas/FeatureOption'
+    PostFeatureOptionsIdRequest:
+      title: PostFeatureOptionsIdRequest
+      type: object
+      properties:
+        featureOption:
+          $ref: '#/components/schemas/FeatureOption'
+    PostFeatureOptionsIdResponse:
+      title: PostFeatureOptionsIdResponse
+      type: object
+      properties:
+        featureOption:
+          $ref: '#/components/schemas/FeatureOption'
+    TicketDailyWeight:
+      title: TicketDailyWeight
+      type: object
+      x-tags:
+        - TicketDailyWeight
+      properties:
+        ticketId:
+          type: integer
+        workHour:
+          type: integer
+          nullable: true
+        date:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: integer
+      required:
+        - ticketId
+        - date
+    GetTicketDailyWeightsRequest:
+      title: GetTicketDailyWeightsRequest
+      type: object
+    GetTicketDailyWeightsResponse:
+      title: GetTicketDailyWeightsResponse
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketDailyWeight'
+      required:
+        - list
+    GetTicketDailyWeightsIdRequest:
+      title: GetTicketDailyWeightsIdRequest
+      type: object
+      properties:
+        ticketId:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time
+    GetTicketDailyWeightsIdResponse:
+      title: GetTicketDailyWeightsIdResponse
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
+    DeleteTicketDailyWeightsIdRequest:
+      title: DeleteTicketDailyWeightsIdRequest
+      type: object
+      properties:
+        ticketId:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time
+    DeleteTicketDailyWeightsIdResponse:
+      title: DeleteTicketDailyWeightsIdResponse
+      type: object
+      properties:
+        msg:
+          type: string
+    PostTicketDailyWeightsRequest:
+      title: PostTicketDailyWeightsRequest
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
+      required:
+        - ticketDailyWeight
+    PostTicketDailyWeightsResponse:
+      title: PostTicketDailyWeightsResponse
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'
+    PostTicketDailyWeightsIdResponse:
+      title: PostTicketDailyWeightsIdResponse
+      type: object
+      properties:
+        ticketDailyWeight:
+          $ref: '#/components/schemas/TicketDailyWeight'

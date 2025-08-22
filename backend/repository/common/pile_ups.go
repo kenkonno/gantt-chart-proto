@@ -27,7 +27,7 @@ type pileUpsRepository struct {
 func (r *pileUpsRepository) GetDefaultPileUps(excludeFacilityId int32, facilityTypes []string) []db.DefaultPileUp {
 	var results []db.DefaultPileUp
 
-	r.con.Debug().Raw(fmt.Sprintf(`
+	r.con.Raw(fmt.Sprintf(`
 	WITH w_facilities AS (
 		SELECT MIN(term_from) as min_date, MAX(term_to) as max_date FROM facilities WHERE type IN %s AND status IN ('Enabled')
 	), date_master AS (
