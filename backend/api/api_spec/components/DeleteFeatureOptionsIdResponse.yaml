@@ -1,0 +1,5 @@
+title: DeleteFeatureOptionsIdResponse
+type: object
+properties:
+  msg:
+    type: string

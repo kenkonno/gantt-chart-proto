@@ -1,0 +1,14 @@
+title: GetDetectWorkOutsideEmploymentPeriodsRequest
+type: object
+properties:
+  userId:
+    type: integer
+  employmentStartDate:
+    type: string
+    format: date-time
+  employmentEndDate:
+    type: string
+    format: date-time
+required:
+  - userId
+  - employmentStartDate

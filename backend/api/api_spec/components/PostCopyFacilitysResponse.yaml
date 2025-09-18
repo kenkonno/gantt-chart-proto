@@ -1,0 +1,5 @@
+title: PostCopyFacilitysResponse
+type: object
+properties:
+  '':
+    type: string

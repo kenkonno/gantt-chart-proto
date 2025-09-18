@@ -1,0 +1,22 @@
+title: PileUpByFacility
+x-stoplight:
+  id: 374f50b9bf72b
+type: object
+properties:
+  facilityId:
+    type: integer
+  labels:
+    type: array
+    items:
+      type: number
+  styles:
+    type: array
+    items:
+      type: object
+  hasError:
+    type: boolean
+required:
+  - facilityId
+  - labels
+  - styles
+  - hasError

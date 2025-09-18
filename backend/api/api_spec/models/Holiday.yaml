@@ -1,0 +1,24 @@
+title: Holiday
+type: object
+description: ''
+x-tags:
+  - Holiday
+properties:
+  id:
+    type: integer
+    nullable: true
+  name:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  date:
+    type: string
+    format: date-time
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int
+required:
+  - name
+  - date

@@ -1,0 +1,25 @@
+title: TicketUser
+type: object
+x-tags:
+  - TicketUser
+properties:
+  id:
+    type: integer
+    nullable: true
+  ticket_id:
+    type: integer
+    x-go-custom-tag: 'binding:"min=1"'
+  user_id:
+    type: integer
+    x-go-custom-tag: 'binding:"min=1"'
+  order:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int
+required:
+  - ticket_id
+  - user_id

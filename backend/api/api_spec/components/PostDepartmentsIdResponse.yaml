@@ -1,0 +1,5 @@
+title: PostDepartmentsIdResponse
+type: object
+properties:
+  department:
+    $ref: '../api.yaml#/components/schemas/Department'

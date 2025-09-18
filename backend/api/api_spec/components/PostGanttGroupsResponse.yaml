@@ -1,0 +1,5 @@
+title: PostGanttGroupsResponse
+type: object
+properties:
+  ganttGroup:
+    $ref: '../api.yaml#/components/schemas/GanttGroup'

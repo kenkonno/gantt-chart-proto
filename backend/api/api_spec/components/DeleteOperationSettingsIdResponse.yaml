@@ -1,0 +1,5 @@
+title: DeleteOperationSettingsIdResponse
+type: object
+properties:
+  msg:
+    type: string

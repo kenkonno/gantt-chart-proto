@@ -1,0 +1,5 @@
+title: PostUsersIdRequest
+type: object
+properties:
+  user:
+    $ref: '../api.yaml#/components/schemas/User'

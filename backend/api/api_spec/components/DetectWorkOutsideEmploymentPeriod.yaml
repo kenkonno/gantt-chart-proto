@@ -1,0 +1,9 @@
+title: DetectWorkOutsideEmploymentPeriod
+type: object
+x-tags:
+  - DetectWorkOutsideEmploymentPeriod
+properties:
+  tickets:
+    $ref: '../api.yaml#/components/schemas/Ticket'
+required:
+  - tickets

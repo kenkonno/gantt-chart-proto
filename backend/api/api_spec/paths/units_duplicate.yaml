@@ -1,0 +1,12 @@
+post:
+  summary: DuplicateUnit
+  operationId: post-units-duplicate
+  responses:
+    '200':
+      description: OK
+  description: Duplicates a unit based on the provided unit ID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostUnitsDuplicateRequest.yaml'

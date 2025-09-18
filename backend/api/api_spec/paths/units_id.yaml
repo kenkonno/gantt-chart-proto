@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetUnitsId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetUnitsIdResponse.yaml'
+          examples: { }
+  operationId: get-units-id
+  description: ''
+delete:
+  summary: DeleteUnitsId
+  operationId: delete-units-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostUnitsId
+  operationId: post-units-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostUnitsRequest.yaml'

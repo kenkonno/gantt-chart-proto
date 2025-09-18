@@ -1,0 +1,38 @@
+parameters:
+  - schema:
+      type: integer
+      format: int64
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetOperationSettingsId
+  tags: [ ]
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetOperationSettingsIdResponse.yaml'
+          examples: { }
+  operationId: get-operationSettings-id
+  description: ''
+delete:
+  summary: DeleteOperationSettingsId
+  operationId: delete-operationSettings-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostOperationSettingsId
+  operationId: post-operationSettings-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostOperationSettingsRequest.yaml'

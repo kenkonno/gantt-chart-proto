@@ -1,0 +1,7 @@
+title: PostTicketDailyWeightsRequest
+type: object
+properties:
+  ticketDailyWeight:
+    $ref: '../api.yaml#/components/schemas/TicketDailyWeight'
+required:
+  - ticketDailyWeight

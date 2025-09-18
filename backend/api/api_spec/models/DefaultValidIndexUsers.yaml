@@ -1,0 +1,17 @@
+title: DefaultPileUp
+x-stoplight:
+  id: f6aa84233e81b
+type: object
+properties:
+  UserIds:
+    type: array
+    items:
+      type: integer
+  ValidIndex:
+    type: integer
+  isHoliday:
+    type: boolean
+required:
+  - UserIds
+  - ValidIndex
+  - isHoliday

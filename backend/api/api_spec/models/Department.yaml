@@ -1,0 +1,25 @@
+title: Department
+type: object
+x-tags:
+  - Department
+properties:
+  id:
+    type: integer
+    nullable: true
+  name:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  color:
+    type: string
+  order:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int
+required:
+  - name
+  - color
+  - order

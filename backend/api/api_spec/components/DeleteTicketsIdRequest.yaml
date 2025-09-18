@@ -1,0 +1,6 @@
+title: DeleteTicketsIdRequest
+type: object
+properties:
+  id:
+    type: integer
+    format: int32

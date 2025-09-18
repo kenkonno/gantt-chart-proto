@@ -1,0 +1,15 @@
+title: PostTicketUsersRequest
+type: object
+properties:
+  ticketId:
+    type: integer
+  userIds:
+    type: array
+    items:
+      type: integer
+  createdAt:
+    type: string
+    format: date-time
+required:
+  - ticketId
+  - userIds

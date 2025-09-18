@@ -1,0 +1,13 @@
+post:
+  summary: UploadUsersCsvFile
+  operationId: post-upload-users-csv-file
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/octet-stream:
+        schema:
+          type: string
+          format: binary
+    description: ''

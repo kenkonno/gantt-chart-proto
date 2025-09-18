@@ -1,0 +1,7 @@
+title: GetSimulationResponse
+type: object
+properties:
+  simulationLock:
+    $ref: '../api.yaml#/components/schemas/SimulationLock'
+required:
+  - simulationLock

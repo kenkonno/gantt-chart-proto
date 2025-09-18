@@ -1,0 +1,14 @@
+title: GetDefaultPileUpsRequest
+type: object
+properties:
+  currentFacilityId:
+    type: number
+  isAllMode:
+    type: boolean
+  facilityTypes:
+    type: array
+    items:
+      type: string
+required:
+  - currentFacilityId
+  - isAllMode

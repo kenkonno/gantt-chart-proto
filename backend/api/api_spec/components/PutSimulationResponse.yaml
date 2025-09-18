@@ -1,0 +1,5 @@
+title: PutSimulationResponse
+type: object
+properties:
+  '':
+    type: string

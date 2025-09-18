@@ -1,0 +1,6 @@
+title: DeleteFacilitySharedLinksIdRequest
+type: object
+properties:
+  id:
+    type: integer
+    format: int32

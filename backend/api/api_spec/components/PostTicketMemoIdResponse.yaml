@@ -1,0 +1,12 @@
+title: PostTicketMemoIdResponse
+type: object
+x-stoplight:
+  id: 35b5e2c39f317
+properties:
+  msg:
+    type: string
+  updated_at:
+    type: integer
+required:
+  - msg
+  - updated_at

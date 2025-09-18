@@ -1,0 +1,5 @@
+title: PostMilestonesIdRequest
+type: object
+properties:
+  milestone:
+    $ref: '../api.yaml#/components/schemas/Milestone'

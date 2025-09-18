@@ -1,0 +1,10 @@
+title: GetTicketMemoIdResponse
+type: object
+properties:
+  memo:
+    type: string
+  updated_at:
+    type: integer
+required:
+  - memo
+  - updated_at

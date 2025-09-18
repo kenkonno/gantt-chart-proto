@@ -1,0 +1,5 @@
+title: PostSimulationRequest
+type: object
+properties:
+  '':
+    type: string

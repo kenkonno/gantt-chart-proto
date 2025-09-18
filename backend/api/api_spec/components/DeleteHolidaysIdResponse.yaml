@@ -1,0 +1,5 @@
+title: DeleteHolidaysIdResponse
+type: object
+properties:
+  msg:
+    type: string

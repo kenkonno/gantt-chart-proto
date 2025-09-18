@@ -1,0 +1,1 @@
+export const hasOption = (feature: any, option: string) => feature.properties[option]

@@ -1,0 +1,48 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetFacilitiesId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFacilitiesIdResponse.yaml'
+          examples: { }
+  operationId: get-facilities-id
+  description: ''
+  parameters:
+    - schema:
+        type: string
+      in: query
+      name: mode
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+delete:
+  summary: DeleteFacilitiesId
+  operationId: delete-facilities-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostFacilitiesId
+  operationId: post-facilities-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFacilitiesRequest.yaml'

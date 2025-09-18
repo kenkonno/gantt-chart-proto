@@ -1,0 +1,37 @@
+get:
+  summary: GetDetectWorkOutsideEmploymentPeriods
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetDetectWorkOutsideEmploymentPeriodsResponse.yaml'
+          examples: { }
+  operationId: get-detectWorkOutsideEmploymentPeriods
+  description: ''
+  parameters:
+    - schema:
+        type: integer
+      in: query
+      name: userId
+      required: true
+    - schema:
+        type: string
+        format: date-time
+      in: query
+      name: employmentStartDate
+      required: true
+    - schema:
+        type: string
+        format: date-time
+      in: query
+      name: employmentEndDate
+      allowEmptyValue: true
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32

@@ -1,0 +1,5 @@
+title: DeleteSimulationRequest
+type: object
+properties:
+  '':
+    type: string

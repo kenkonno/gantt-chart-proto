@@ -1,0 +1,42 @@
+get:
+  summary: GetFacilityWorkSchedules
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFacilityWorkSchedulesResponse.yaml'
+          examples: { }
+  operationId: get-facilityWorkSchedules
+  description: ''
+  parameters:
+    - schema:
+        type: number
+      in: query
+      name: facilityId
+      required: true
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+post:
+  summary: PostFacilityWorkSchedules
+  operationId: post-facilityWorkSchedules
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PostFacilityWorkSchedulesResponse.yaml'
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFacilityWorkSchedulesRequest.yaml'
+parameters: [ ]

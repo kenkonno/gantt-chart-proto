@@ -1,0 +1,33 @@
+get:
+  summary: GetFacilities
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFacilitiesResponse.yaml'
+          examples: { }
+  operationId: get-facilities
+  description: ''
+  parameters:
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+post:
+  summary: PostFacilities
+  operationId: post-facilities
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFacilitiesRequest.yaml'
+parameters: [ ]

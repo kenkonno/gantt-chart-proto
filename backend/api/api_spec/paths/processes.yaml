@@ -1,0 +1,27 @@
+get:
+  summary: GetProcesses
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetProcessesResponse.yaml'
+          examples: { }
+  operationId: get-processes
+  description: ''
+  parameters: [ ]
+post:
+  summary: PostProcesses
+  operationId: post-processes
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostProcessesRequest.yaml'
+parameters: [ ]

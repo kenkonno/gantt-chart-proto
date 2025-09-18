@@ -1,0 +1,5 @@
+title: DeleteTicketsIdResponse
+type: object
+properties:
+  msg:
+    type: string

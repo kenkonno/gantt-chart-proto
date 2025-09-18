@@ -1,0 +1,41 @@
+get:
+  summary: GetMilestones
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetMilestonesResponse.yaml'
+          examples: { }
+  operationId: get-milestones
+  description: ''
+  parameters:
+    - schema:
+        type: array
+        items:
+          type: integer
+      in: query
+      name: facilityIds
+    - schema:
+        type: string
+      in: query
+      name: mode
+post:
+  summary: PostMilestones
+  operationId: post-milestones
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PostMilestonesResponse.yaml'
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostMilestonesRequest.yaml'
+parameters: [ ]

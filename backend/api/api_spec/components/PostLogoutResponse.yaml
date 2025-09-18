@@ -1,0 +1,7 @@
+title: PostLogoutResponse
+type: object
+properties:
+  '':
+    type: string
+x-stoplight:
+  id: 77cc94d577de6

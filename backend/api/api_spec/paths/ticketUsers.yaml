@@ -1,0 +1,38 @@
+get:
+  summary: GetTicketUsers
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetTicketUsersResponse.yaml'
+          examples: { }
+  operationId: get-ticketUsers
+  description: ''
+  parameters:
+    - schema:
+        type: array
+        items:
+          type: integer
+      in: query
+      name: ticketIds
+      required: true
+post:
+  summary: PostTicketUsers
+  operationId: post-ticketUsers
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PostTicketUsersResponse.yaml'
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostTicketUsersRequest.yaml'
+parameters: [ ]

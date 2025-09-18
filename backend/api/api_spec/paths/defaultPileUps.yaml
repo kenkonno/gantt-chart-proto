@@ -1,0 +1,35 @@
+get:
+  summary: GetDefaultPileUps
+  tags: [ ]
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetDefaultPileUpsResponse.yaml'
+  operationId: get-defaultPileUps
+  parameters:
+    - schema:
+        type: number
+      in: query
+      name: facilityId
+      required: true
+    - schema:
+        type: boolean
+      in: query
+      name: isAllMode
+      required: true
+    - schema:
+        type: array
+        items:
+          type: string
+      in: query
+      name: facilityTypes
+      required: true
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32

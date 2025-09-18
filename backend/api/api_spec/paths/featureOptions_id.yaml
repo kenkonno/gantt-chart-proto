@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetFeatureOptionsId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFeatureOptionsIdResponse.yaml'
+          examples: { }
+  operationId: get-featureOptions-id
+  description: ''
+delete:
+  summary: DeleteFeatureOptionsId
+  operationId: delete-featureOptions-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostFeatureOptionsId
+  operationId: post-featureOptions-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFeatureOptionsRequest.yaml'

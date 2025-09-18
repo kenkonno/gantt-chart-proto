@@ -1,0 +1,5 @@
+type: object
+properties:
+  history_id:
+    type: integer
+    format: int32

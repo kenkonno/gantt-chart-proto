@@ -1,0 +1,9 @@
+title: GetFacilitiesResponse
+type: object
+properties:
+  list:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Facility'
+required:
+  - list

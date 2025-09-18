@@ -1,0 +1,5 @@
+title: DeleteGanttGroupsIdResponse
+type: object
+properties:
+  msg:
+    type: string

@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetTicketDailyWeightsId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetTicketDailyWeightsIdResponse.yaml'
+          examples: { }
+  operationId: get-ticketDailyWeights-id
+  description: ''
+delete:
+  summary: DeleteTicketDailyWeightsId
+  operationId: delete-ticketDailyWeights-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostTicketDailyWeightsId
+  operationId: post-ticketDailyWeights-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostTicketDailyWeightsRequest.yaml'

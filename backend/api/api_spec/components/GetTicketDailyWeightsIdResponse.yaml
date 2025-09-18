@@ -1,0 +1,5 @@
+title: GetTicketDailyWeightsIdResponse
+type: object
+properties:
+  ticketDailyWeight:
+    $ref: '../api.yaml#/components/schemas/TicketDailyWeight'

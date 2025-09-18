@@ -1,0 +1,5 @@
+title: PostFacilitySharedLinksIdRequest
+type: object
+properties:
+  facilitySharedLink:
+    $ref: '../api.yaml#/components/schemas/FacilitySharedLink'

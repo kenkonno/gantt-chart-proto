@@ -1,0 +1,31 @@
+get:
+  summary: GetAllTicket
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetAllTicketsResponse.yaml'
+          examples: { }
+  operationId: get-all-tickets
+  description: ''
+  parameters:
+    - schema:
+        type: array
+        items:
+          type: string
+      in: query
+      name: facilityTypes
+    - schema:
+        type: string
+      in: query
+      name: mode
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+parameters: [ ]

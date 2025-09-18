@@ -1,0 +1,557 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 58n4s4t3newwe
+info:
+  title: GanttChartApi
+  version: '1.0'
+  description: ''
+paths:
+  /api/users:
+    $ref: ./paths/users.yaml
+  /api/users/{id}:
+    $ref: ./paths/users_id.yaml
+  /api/users/upload:
+    $ref: ./paths/users_upload.yaml
+  /api/departments:
+    $ref: ./paths/departments.yaml
+  /api/departments/{id}:
+    $ref: ./paths/departments_id.yaml
+  /api/facilities:
+    $ref: ./paths/facilities.yaml
+  /api/facilities/{id}:
+    $ref: ./paths/facilities_id.yaml
+  /api/holidays:
+    $ref: ./paths/holidays.yaml
+  /api/holidays/{id}:
+    $ref: ./paths/holidays_id.yaml
+  /api/operationSettings/{id}:
+    $ref: ./paths/operationSettings_id.yaml
+  /api/processes:
+    $ref: ./paths/processes.yaml
+  /api/processes/{id}:
+    $ref: ./paths/processes_id.yaml
+  /api/units:
+    $ref: ./paths/units.yaml
+  /api/units/{id}:
+    $ref: ./paths/units_id.yaml
+  /api/units/duplicate:
+    $ref: ./paths/units_duplicate.yaml
+  /api/ganttGroups:
+    $ref: ./paths/ganttGroups.yaml
+  /api/ganttGroups/{id}:
+    $ref: ./paths/ganttGroups_id.yaml
+  /api/tickets:
+    $ref: ./paths/tickets.yaml
+  /api/tickets/{id}:
+    $ref: ./paths/tickets_id.yaml
+  /api/ticket-memo/{id}:
+    $ref: ./paths/ticket-memo_id.yaml
+  /api/ticketUsers:
+    $ref: ./paths/ticketUsers.yaml
+  /api/ticketUsers/{id}:
+    $ref: ./paths/ticketUsers_id.yaml
+  /api/all-tickets:
+    $ref: ./paths/all-tickets.yaml
+  /api/pileUps:
+    $ref: ./paths/pileUps.yaml
+  /api/copyFacilitys:
+    $ref: ./paths/copyFacilitys.yaml
+  /api/scheduleAlerts:
+    $ref: ./paths/scheduleAlerts.yaml
+  /api/userInfo:
+    $ref: ./paths/userInfo.yaml
+  /api/login:
+    $ref: ./paths/login.yaml
+  /api/logout:
+    $ref: ./paths/logout.yaml
+  /api/milestones:
+    $ref: ./paths/milestones.yaml
+  /api/milestones/{id}:
+    $ref: ./paths/milestones_id.yaml
+  /api/defaultPileUps:
+    $ref: ./paths/defaultPileUps.yaml
+  /api/facilitySharedLinks:
+    $ref: ./paths/facilitySharedLinks.yaml
+  /api/facilitySharedLinks/{id}:
+    $ref: ./paths/facilitySharedLinks_id.yaml
+  /api/simulation:
+    $ref: ./paths/simulation.yaml
+  /api/simulationMasterDiff:
+    $ref: ./paths/simulationMasterDiff.yaml
+  /api/detectWorkOutsideEmploymentPeriods:
+    $ref: ./paths/detectWorkOutsideEmploymentPeriods.yaml
+  /api/bulkUpdateTickets:
+    $ref: ./paths/bulkUpdateTickets.yaml
+  /api/facilityWorkSchedules:
+    $ref: ./paths/facilityWorkSchedules.yaml
+  /api/facilityWorkSchedules/{id}:
+    $ref: ./paths/facilityWorkSchedules_id.yaml
+  /api/histories:
+    $ref: ./paths/histories.yaml
+  /api/histories/{id}:
+    $ref: ./paths/histories_id.yaml
+  /api/featureOptions:
+    $ref: ./paths/featureOptions.yaml
+  '/api/featureOptions/{id}':
+    $ref: ./paths/featureOptions_id.yaml
+  /api/ticketDailyWeights:
+    $ref: ./paths/ticketDailyWeights.yaml
+  '/api/ticketDailyWeights/{id}':
+    $ref: ./paths/ticketDailyWeights_id.yaml
+
+
+components:
+  # ===== Models =====
+  schemas:
+    User:
+      $ref: ./models/User.yaml
+    Department:
+      $ref: ./models/Department.yaml
+    Facility:
+      $ref: ./models/Facility.yaml
+    Holiday:
+      $ref: ./models/Holiday.yaml
+    OperationSetting:
+      $ref: ./models/OperationSetting.yaml
+    Process:
+      $ref: ./models/Process.yaml
+    Unit:
+      $ref: ./models/Unit.yaml
+    WorkHour:
+      $ref: ./models/WorkHour.yaml
+    GanttGroup:
+      $ref: ./models/GanttGroup.yaml
+    Ticket:
+      $ref: ./models/Ticket.yaml
+    TicketUser:
+      $ref: ./models/TicketUser.yaml
+    PileUp:
+      $ref: ./models/PileUp.yaml
+    ScheduleAlert:
+      $ref: ./models/ScheduleAlert.yaml
+    Milestone:
+      $ref: ./models/Milestone.yaml
+    PileUpByPerson:
+      $ref: ./models/PileUpByPerson.yaml
+    PileUpByFacility:
+      $ref: ./models/PileUpByFacility.yaml
+    AssignedPileUp:
+      $ref: ./models/AssignedPileUp.yaml
+    UnAssingedPileUp:
+      $ref: ./models/UnAssingedPileUp.yaml
+    NoOrdersReceivedPileUp:
+      $ref: ./models/NoOrdersReceivedPileUp.yaml
+    DefaultPileUp:
+      $ref: ./models/DefaultPileUp.yaml
+    DefaultValidIndexUsers:
+      $ref: ./models/DefaultValidIndexUsers.yaml
+    FacilitySharedLink:
+      $ref: ./models/FacilitySharedLink.yaml
+    SimulationLock:
+      $ref: ./models/SimulationLock.yaml
+    FacilityWorkSchedule:
+      $ref: ./models/FacilityWorkSchedule.yaml
+    History:
+      $ref: ./models/History.yaml
+    FeatureOption:
+      $ref: ./models/FeatureOption.yaml
+    TicketDailyWeight:
+      $ref: ./models/TicketDailyWeight.yaml
+
+    PutHistoriesIdRequest:
+      $ref: ./components/PutHistoriesIdRequest.yaml
+    GetHistoriesResponse:
+      $ref: ./components/GetHistoriesResponse.yaml
+
+    # ===== Tickets =====
+    GetAllTicketsRequest:
+      $ref: ./components/GetAllTicketsRequest.yaml
+    GetAllTicketsResponse:
+      $ref: ./components/GetAllTicketsResponse.yaml
+    PostBulkUpdateTicketsRequest:
+      $ref: ./components/PostBulkUpdateTicketsRequest.yaml
+    PostBulkUpdateTicketsResponse:
+      $ref: ./components/PostBulkUpdateTicketsResponse.yaml
+    GetTicketMemoIdRequest:
+      $ref: ./components/GetTicketMemoIdRequest.yaml
+    GetTicketMemoIdResponse:
+      $ref: ./components/GetTicketMemoIdResponse.yaml
+    PostTicketMemoIdRequest:
+      $ref: ./components/PostTicketMemoIdRequest.yaml
+    PostTicketMemoIdResponse:
+      $ref: ./components/PostTicketMemoIdResponse.yaml
+    GetTicketUsersRequest:
+      $ref: ./components/GetTicketUsersRequest.yaml
+    GetTicketUsersResponse:
+      $ref: ./components/GetTicketUsersResponse.yaml
+    GetTicketUsersIdRequest:
+      $ref: ./components/GetTicketUsersIdRequest.yaml
+    GetTicketUsersIdResponse:
+      $ref: ./components/GetTicketUsersIdResponse.yaml
+    PostTicketUsersRequest:
+      $ref: ./components/PostTicketUsersRequest.yaml
+    PostTicketUsersResponse:
+      $ref: ./components/PostTicketUsersResponse.yaml
+    PostTicketUsersIdRequest:
+      $ref: ./components/PostTicketUsersIdRequest.yaml
+    PostTicketUsersIdResponse:
+      $ref: ./components/PostTicketUsersIdResponse.yaml
+    DeleteTicketUsersIdRequest:
+      $ref: ./components/DeleteTicketUsersIdRequest.yaml
+    DeleteTicketUsersIdResponse:
+      $ref: ./components/DeleteTicketUsersIdResponse.yaml
+    GetTicketsRequest:
+      $ref: ./components/GetTicketsRequest.yaml
+    GetTicketsResponse:
+      $ref: ./components/GetTicketsResponse.yaml
+    GetTicketsIdRequest:
+      $ref: ./components/GetTicketsIdRequest.yaml
+    GetTicketsIdResponse:
+      $ref: ./components/GetTicketsIdResponse.yaml
+    PostTicketsRequest:
+      $ref: ./components/PostTicketsRequest.yaml
+    PostTicketsResponse:
+      $ref: ./components/PostTicketsResponse.yaml
+    PostTicketsIdRequest:
+      $ref: ./components/PostTicketsIdRequest.yaml
+    PostTicketsIdResponse:
+      $ref: ./components/PostTicketsIdResponse.yaml
+    DeleteTicketsIdRequest:
+      $ref: ./components/DeleteTicketsIdRequest.yaml
+    DeleteTicketsIdResponse:
+      $ref: ./components/DeleteTicketsIdResponse.yaml
+
+    # ===== Facilitys =====
+    PostCopyFacilitysRequest:
+      $ref: ./components/PostCopyFacilitysRequest.yaml
+    PostCopyFacilitysResponse:
+      $ref: ./components/PostCopyFacilitysResponse.yaml
+    GetFacilitiesRequest:
+      $ref: ./components/GetFacilitiesRequest.yaml
+    GetFacilitiesResponse:
+      $ref: ./components/GetFacilitiesResponse.yaml
+    GetFacilitiesIdRequest:
+      $ref: ./components/GetFacilitiesIdRequest.yaml
+    GetFacilitiesIdResponse:
+      $ref: ./components/GetFacilitiesIdResponse.yaml
+    PostFacilitiesRequest:
+      $ref: ./components/PostFacilitiesRequest.yaml
+    PostFacilitiesResponse:
+      $ref: ./components/PostFacilitiesResponse.yaml
+    PostFacilitiesIdRequest:
+      $ref: ./components/PostFacilitiesIdRequest.yaml
+    PostFacilitiesIdResponse:
+      $ref: ./components/PostFacilitiesIdResponse.yaml
+    DeleteFacilitiesIdRequest:
+      $ref: ./components/DeleteFacilitiesIdRequest.yaml
+    DeleteFacilitiesIdResponse:
+      $ref: ./components/DeleteFacilitiesIdResponse.yaml
+    GetFacilitySharedLinksRequest:
+      $ref: ./components/GetFacilitySharedLinksRequest.yaml
+    GetFacilitySharedLinksResponse:
+      $ref: ./components/GetFacilitySharedLinksResponse.yaml
+    GetFacilitySharedLinksIdRequest:
+      $ref: ./components/GetFacilitySharedLinksIdRequest.yaml
+    GetFacilitySharedLinksIdResponse:
+      $ref: ./components/GetFacilitySharedLinksIdResponse.yaml
+    PostFacilitySharedLinksRequest:
+      $ref: ./components/PostFacilitySharedLinksRequest.yaml
+    PostFacilitySharedLinksResponse:
+      $ref: ./components/PostFacilitySharedLinksResponse.yaml
+    PostFacilitySharedLinksIdRequest:
+      $ref: ./components/PostFacilitySharedLinksIdRequest.yaml
+    PostFacilitySharedLinksIdResponse:
+      $ref: ./components/PostFacilitySharedLinksIdResponse.yaml
+    DeleteFacilitySharedLinksIdRequest:
+      $ref: ./components/DeleteFacilitySharedLinksIdRequest.yaml
+    DeleteFacilitySharedLinksIdResponse:
+      $ref: ./components/DeleteFacilitySharedLinksIdResponse.yaml
+    GetFacilityWorkSchedulesRequest:
+      $ref: ./components/GetFacilityWorkSchedulesRequest.yaml
+    GetFacilityWorkSchedulesResponse:
+      $ref: ./components/GetFacilityWorkSchedulesResponse.yaml
+    GetFacilityWorkSchedulesIdRequest:
+      $ref: ./components/GetFacilityWorkSchedulesIdRequest.yaml
+    GetFacilityWorkSchedulesIdResponse:
+      $ref: ./components/GetFacilityWorkSchedulesIdResponse.yaml
+    PostFacilityWorkSchedulesRequest:
+      $ref: ./components/PostFacilityWorkSchedulesRequest.yaml
+    PostFacilityWorkSchedulesResponse:
+      $ref: ./components/PostFacilityWorkSchedulesResponse.yaml
+    PostFacilityWorkSchedulesIdRequest:
+      $ref: ./components/PostFacilityWorkSchedulesIdRequest.yaml
+    PostFacilityWorkSchedulesIdResponse:
+      $ref: ./components/PostFacilityWorkSchedulesIdResponse.yaml
+    DeleteFacilityWorkSchedulesIdRequest:
+      $ref: ./components/DeleteFacilityWorkSchedulesIdRequest.yaml
+    DeleteFacilityWorkSchedulesIdResponse:
+      $ref: ./components/DeleteFacilityWorkSchedulesIdResponse.yaml
+    GetGanttGroupsRequest:
+      $ref: ./components/GetGanttGroupsRequest.yaml
+    GetGanttGroupsResponse:
+      $ref: ./components/GetGanttGroupsResponse.yaml
+    GetGanttGroupsIdRequest:
+      $ref: ./components/GetGanttGroupsIdRequest.yaml
+    GetGanttGroupsIdResponse:
+      $ref: ./components/GetGanttGroupsIdResponse.yaml
+    PostGanttGroupsRequest:
+      $ref: ./components/PostGanttGroupsRequest.yaml
+    PostGanttGroupsResponse:
+      $ref: ./components/PostGanttGroupsResponse.yaml
+    PostGanttGroupsIdRequest:
+      $ref: ./components/PostGanttGroupsIdRequest.yaml
+    PostGanttGroupsIdResponse:
+      $ref: ./components/PostGanttGroupsIdResponse.yaml
+    DeleteGanttGroupsIdRequest:
+      $ref: ./components/DeleteGanttGroupsIdRequest.yaml
+    DeleteGanttGroupsIdResponse:
+      $ref: ./components/DeleteGanttGroupsIdResponse.yaml
+
+    # ===== PileUps =====
+    GetDefaultPileUpsRequest:
+      $ref: ./components/GetDefaultPileUpsRequest.yaml
+    GetDefaultPileUpsResponse:
+      $ref: ./components/GetDefaultPileUpsResponse.yaml
+    DetectWorkOutsideEmploymentPeriod:
+      $ref: ./components/DetectWorkOutsideEmploymentPeriod.yaml
+    GetDetectWorkOutsideEmploymentPeriodsRequest:
+      $ref: ./components/GetDetectWorkOutsideEmploymentPeriodsRequest.yaml
+    GetDetectWorkOutsideEmploymentPeriodsResponse:
+      $ref: ./components/GetDetectWorkOutsideEmploymentPeriodsResponse.yaml
+    GetPileUpsRequest:
+      $ref: ./components/GetPileUpsRequest.yaml
+    GetPileUpsResponse:
+      $ref: ./components/GetPileUpsResponse.yaml
+
+    # ===== Login =====
+    PostLoginRequest:
+      $ref: ./components/PostLoginRequest.yaml
+    PostLoginResponse:
+      $ref: ./components/PostLoginResponse.yaml
+    PostLogoutResponse:
+      $ref: ./components/PostLogoutResponse.yaml
+
+    # ===== ScheduleAlerts =====
+    GetScheduleAlertsRequest:
+      $ref: ./components/GetScheduleAlertsRequest.yaml
+    GetScheduleAlertsResponse:
+      $ref: ./components/GetScheduleAlertsResponse.yaml
+
+    # ===== Simulation =====
+    GetSimulationRequest:
+      $ref: ./components/GetSimulationRequest.yaml
+    GetSimulationResponse:
+      $ref: ./components/GetSimulationResponse.yaml
+    PostSimulationRequest:
+      $ref: ./components/PostSimulationRequest.yaml
+    PostSimulationResponse:
+      $ref: ./components/PostSimulationResponse.yaml
+    PutSimulationRequest:
+      $ref: ./components/PutSimulationRequest.yaml
+    PutSimulationResponse:
+      $ref: ./components/PutSimulationResponse.yaml
+    DeleteSimulationRequest:
+      $ref: ./components/DeleteSimulationRequest.yaml
+    DeleteSimulationResponse:
+      $ref: ./components/DeleteSimulationResponse.yaml
+    GetSimulationMasterDiffRequest:
+      $ref: ./components/GetSimulationMasterDiffRequest.yaml
+    GetSimulationMasterDiffResponse:
+      $ref: ./components/GetSimulationMasterDiffResponse.yaml
+
+    # ===== Users =====
+    GetUsersRequest:
+      $ref: ./components/GetUsersRequest.yaml
+    GetUsersResponse:
+      $ref: ./components/GetUsersResponse.yaml
+    GetUsersIdRequest:
+      $ref: ./components/GetUsersIdRequest.yaml
+    GetUsersIdResponse:
+      $ref: ./components/GetUsersIdResponse.yaml
+    PostUsersRequest:
+      $ref: ./components/PostUsersRequest.yaml
+    PostUsersResponse:
+      $ref: ./components/PostUsersResponse.yaml
+    PostUsersIdRequest:
+      $ref: ./components/PostUsersIdRequest.yaml
+    PostUsersIdResponse:
+      $ref: ./components/PostUsersIdResponse.yaml
+    DeleteUsersIdRequest:
+      $ref: ./components/DeleteUsersIdRequest.yaml
+    DeleteUsersIdResponse:
+      $ref: ./components/DeleteUsersIdResponse.yaml
+    GetUserInfoResponse:
+      $ref: ./components/GetUserInfoResponse.yaml
+    PostUploadUsersCsvFileRequest:
+      $ref: ./components/PostUploadUsersCsvFileRequest.yaml
+    PostUploadUsersCsvFileResponse:
+      $ref: ./components/PostUploadUsersCsvFileResponse.yaml
+
+    # ===== Master =====
+    GetUnitsRequest:
+      $ref: ./components/GetUnitsRequest.yaml
+    GetUnitsResponse:
+      $ref: ./components/GetUnitsResponse.yaml
+    GetUnitsIdRequest:
+      $ref: ./components/GetUnitsIdRequest.yaml
+    GetUnitsIdResponse:
+      $ref: ./components/GetUnitsIdResponse.yaml
+    PostUnitsRequest:
+      $ref: ./components/PostUnitsRequest.yaml
+    PostUnitsResponse:
+      $ref: ./components/PostUnitsResponse.yaml
+    PostUnitsIdRequest:
+      $ref: ./components/PostUnitsIdRequest.yaml
+    PostUnitsIdResponse:
+      $ref: ./components/PostUnitsIdResponse.yaml
+    DeleteUnitsIdRequest:
+      $ref: ./components/DeleteUnitsIdRequest.yaml
+    DeleteUnitsIdResponse:
+      $ref: ./components/DeleteUnitsIdResponse.yaml
+    PostUnitsDuplicateRequest:
+      $ref: ./components/PostUnitsDuplicateRequest.yaml
+    PostUnitsDuplicateResponse:
+      $ref: ./components/PostUnitsDuplicateResponse.yaml
+    GetProcessesRequest:
+      $ref: ./components/GetProcessesRequest.yaml
+    GetProcessesResponse:
+      $ref: ./components/GetProcessesResponse.yaml
+    GetProcessesIdRequest:
+      $ref: ./components/GetProcessesIdRequest.yaml
+    GetProcessesIdResponse:
+      $ref: ./components/GetProcessesIdResponse.yaml
+    PostProcessesRequest:
+      $ref: ./components/PostProcessesRequest.yaml
+    PostProcessesResponse:
+      $ref: ./components/PostProcessesResponse.yaml
+    PostProcessesIdRequest:
+      $ref: ./components/PostProcessesIdRequest.yaml
+    PostProcessesIdResponse:
+      $ref: ./components/PostProcessesIdResponse.yaml
+    DeleteProcessesIdRequest:
+      $ref: ./components/DeleteProcessesIdRequest.yaml
+    DeleteProcessesIdResponse:
+      $ref: ./components/DeleteProcessesIdResponse.yaml
+    GetOperationSettingsRequest:
+      $ref: ./components/GetOperationSettingsRequest.yaml
+    GetOperationSettingsResponse:
+      $ref: ./components/GetOperationSettingsResponse.yaml
+    GetOperationSettingsIdRequest:
+      $ref: ./components/GetOperationSettingsIdRequest.yaml
+    GetOperationSettingsIdResponse:
+      $ref: ./components/GetOperationSettingsIdResponse.yaml
+    PostOperationSettingsRequest:
+      $ref: ./components/PostOperationSettingsRequest.yaml
+    PostOperationSettingsResponse:
+      $ref: ./components/PostOperationSettingsResponse.yaml
+    PostOperationSettingsIdRequest:
+      $ref: ./components/PostOperationSettingsIdRequest.yaml
+    PostOperationSettingsIdResponse:
+      $ref: ./components/PostOperationSettingsIdResponse.yaml
+    DeleteOperationSettingsIdRequest:
+      $ref: ./components/DeleteOperationSettingsIdRequest.yaml
+    DeleteOperationSettingsIdResponse:
+      $ref: ./components/DeleteOperationSettingsIdResponse.yaml
+    GetMilestonesRequest:
+      $ref: ./components/GetMilestonesRequest.yaml
+    GetMilestonesResponse:
+      $ref: ./components/GetMilestonesResponse.yaml
+    GetMilestonesIdRequest:
+      $ref: ./components/GetMilestonesIdRequest.yaml
+    GetMilestonesIdResponse:
+      $ref: ./components/GetMilestonesIdResponse.yaml
+    PostMilestonesRequest:
+      $ref: ./components/PostMilestonesRequest.yaml
+    PostMilestonesResponse:
+      $ref: ./components/PostMilestonesResponse.yaml
+    PostMilestonesIdRequest:
+      $ref: ./components/PostMilestonesIdRequest.yaml
+    PostMilestonesIdResponse:
+      $ref: ./components/PostMilestonesIdResponse.yaml
+    DeleteMilestonesIdRequest:
+      $ref: ./components/DeleteMilestonesIdRequest.yaml
+    DeleteMilestonesIdResponse:
+      $ref: ./components/DeleteMilestonesIdResponse.yaml
+    GetHolidaysRequest:
+      $ref: ./components/GetHolidaysRequest.yaml
+    GetHolidaysResponse:
+      $ref: ./components/GetHolidaysResponse.yaml
+    GetHolidaysIdRequest:
+      $ref: ./components/GetHolidaysIdRequest.yaml
+    GetHolidaysIdResponse:
+      $ref: ./components/GetHolidaysIdResponse.yaml
+    PostHolidaysRequest:
+      $ref: ./components/PostHolidaysRequest.yaml
+    PostHolidaysResponse:
+      $ref: ./components/PostHolidaysResponse.yaml
+    PostHolidaysIdRequest:
+      $ref: ./components/PostHolidaysIdRequest.yaml
+    PostHolidaysIdResponse:
+      $ref: ./components/PostHolidaysIdResponse.yaml
+    DeleteHolidaysIdRequest:
+      $ref: ./components/DeleteHolidaysIdRequest.yaml
+    DeleteHolidaysIdResponse:
+      $ref: ./components/DeleteHolidaysIdResponse.yaml
+    GetDepartmentsRequest:
+      $ref: ./components/GetDepartmentsRequest.yaml
+    GetDepartmentsResponse:
+      $ref: ./components/GetDepartmentsResponse.yaml
+    GetDepartmentsIdRequest:
+      $ref: ./components/GetDepartmentsIdRequest.yaml
+    GetDepartmentsIdResponse:
+      $ref: ./components/GetDepartmentsIdResponse.yaml
+    PostDepartmentsRequest:
+      $ref: ./components/PostDepartmentsRequest.yaml
+    PostDepartmentsResponse:
+      $ref: ./components/PostDepartmentsResponse.yaml
+    PostDepartmentsIdRequest:
+      $ref: ./components/PostDepartmentsIdRequest.yaml
+    PostDepartmentsIdResponse:
+      $ref: ./components/PostDepartmentsIdResponse.yaml
+    DeleteDepartmentsIdRequest:
+      $ref: ./components/DeleteDepartmentsIdRequest.yaml
+    DeleteDepartmentsIdResponse:
+      $ref: ./components/DeleteDepartmentsIdResponse.yaml
+
+
+    # ===== FeatureOptions =====
+    GetFeatureOptionsRequest:
+      $ref: ./components/GetFeatureOptionsRequest.yaml
+    GetFeatureOptionsResponse:
+      $ref: ./components/GetFeatureOptionsResponse.yaml
+    GetFeatureOptionsIdRequest:
+      $ref: ./components/GetFeatureOptionsIdRequest.yaml
+    GetFeatureOptionsIdResponse:
+      $ref: ./components/GetFeatureOptionsIdResponse.yaml
+    DeleteFeatureOptionsIdRequest:
+      $ref: ./components/DeleteFeatureOptionsIdRequest.yaml
+    DeleteFeatureOptionsIdResponse:
+      $ref: ./components/DeleteFeatureOptionsIdResponse.yaml
+    PostFeatureOptionsRequest:
+      $ref: ./components/PostFeatureOptionsRequest.yaml
+    PostFeatureOptionsResponse:
+      $ref: ./components/PostFeatureOptionsResponse.yaml
+    PostFeatureOptionsIdRequest:
+      $ref: ./components/PostFeatureOptionsIdRequest.yaml
+    PostFeatureOptionsIdResponse:
+      $ref: ./components/PostFeatureOptionsIdResponse.yaml
+
+    # ===== TicketDailyWeights =====
+    GetTicketDailyWeightsRequest:
+      $ref: ./components/GetTicketDailyWeightsRequest.yaml
+    GetTicketDailyWeightsResponse:
+      $ref: ./components/GetTicketDailyWeightsResponse.yaml
+    GetTicketDailyWeightsIdRequest:
+      $ref: ./components/GetTicketDailyWeightsIdRequest.yaml
+    GetTicketDailyWeightsIdResponse:
+      $ref: ./components/GetTicketDailyWeightsIdResponse.yaml
+    DeleteTicketDailyWeightsIdRequest:
+      $ref: ./components/DeleteTicketDailyWeightsIdRequest.yaml
+    DeleteTicketDailyWeightsIdResponse:
+      $ref: ./components/DeleteTicketDailyWeightsIdResponse.yaml
+    PostTicketDailyWeightsRequest:
+      $ref: ./components/PostTicketDailyWeightsRequest.yaml
+    PostTicketDailyWeightsResponse:
+      $ref: ./components/PostTicketDailyWeightsResponse.yaml
+    PostTicketDailyWeightsIdResponse:
+      $ref: ./components/PostTicketDailyWeightsIdResponse.yaml

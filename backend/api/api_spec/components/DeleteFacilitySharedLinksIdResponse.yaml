@@ -1,0 +1,5 @@
+title: DeleteFacilitySharedLinksIdResponse
+type: object
+properties:
+  msg:
+    type: string

@@ -1,0 +1,5 @@
+title: PostTicketUsersIdRequest
+type: object
+properties:
+  ticketUser:
+    $ref: '../api.yaml#/components/schemas/TicketUser'

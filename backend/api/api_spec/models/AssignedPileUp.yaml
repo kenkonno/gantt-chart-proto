@@ -1,0 +1,24 @@
+title: AssignedPileUp
+x-stoplight:
+  id: d89f4017f257f
+type: object
+properties:
+  users:
+    type: array
+    items:
+      $ref: './PileUpByPerson.yaml'
+  labels:
+    type: array
+    items:
+      type: number
+  styles:
+    type: array
+    items:
+      type: object
+  display:
+    type: boolean
+required:
+  - users
+  - labels
+  - styles
+  - display

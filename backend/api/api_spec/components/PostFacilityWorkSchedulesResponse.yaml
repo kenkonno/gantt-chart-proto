@@ -1,0 +1,5 @@
+title: PostFacilityWorkSchedulesResponse
+type: object
+properties:
+  facilityWorkSchedule:
+    $ref: '../api.yaml#/components/schemas/FacilityWorkSchedule'

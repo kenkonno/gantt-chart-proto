@@ -1,0 +1,24 @@
+title: GetPileUpsResponse
+type: object
+properties:
+  list:
+    type: array
+    items:
+      type: object
+      properties:
+        facilityId:
+          type: integer
+        holidays:
+          type: array
+          items:
+            $ref: '../api.yaml#/components/schemas/Holiday'
+        ganttGroups:
+          type: array
+          items:
+            $ref: '../api.yaml#/components/schemas/GanttGroup'
+      required:
+        - facilityId
+        - holidays
+        - ganttGroups
+required:
+  - list

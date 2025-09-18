@@ -1,0 +1,27 @@
+get:
+  summary: GetHolidays
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetHolidaysResponse.yaml'
+          examples: { }
+  operationId: get-holidays
+  description: ''
+  parameters: [ ]
+post:
+  summary: PostHolidays
+  operationId: post-holidays
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostHolidaysRequest.yaml'
+parameters: [ ]

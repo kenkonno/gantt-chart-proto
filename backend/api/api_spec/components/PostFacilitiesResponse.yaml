@@ -1,0 +1,5 @@
+title: PostFacilitiesResponse
+type: object
+properties:
+  facility:
+    $ref: '../api.yaml#/components/schemas/Facility'

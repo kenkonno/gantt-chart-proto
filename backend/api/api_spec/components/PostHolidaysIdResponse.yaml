@@ -1,0 +1,5 @@
+title: PostHolidaysIdResponse
+type: object
+properties:
+  holiday:
+    $ref: '../api.yaml#/components/schemas/Holiday'

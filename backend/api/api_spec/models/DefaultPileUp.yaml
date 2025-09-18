@@ -1,0 +1,27 @@
+title: DefaultPileUp
+x-stoplight:
+  id: 61383b2e1a9c8
+type: object
+properties:
+  departmentId:
+    type: integer
+  assignedUser:
+    $ref: './AssignedPileUp.yaml'
+  unAssignedPileUp:
+    $ref: './UnAssingedPileUp.yaml'
+  noOrdersReceivedPileUp:
+    $ref: './NoOrdersReceivedPileUp.yaml'
+  labels:
+    type: array
+    items:
+      type: number
+  styles:
+    type: array
+    items:
+      type: object
+  display:
+    type: boolean
+required:
+  - labels
+  - styles
+  - display

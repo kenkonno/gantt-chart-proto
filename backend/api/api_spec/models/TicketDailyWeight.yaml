@@ -1,0 +1,21 @@
+title: TicketDailyWeight
+type: object
+x-tags:
+  - TicketDailyWeight
+properties:
+  ticketId:
+    type: integer
+  workHour:
+    type: integer
+    nullable: true
+  date:
+    type: string
+    format: date-time
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+required:
+  - ticketId
+  - date

@@ -1,0 +1,4 @@
+title: GetTicketsRequest
+type: object
+x-stoplight:
+  id: 98d5b9fbccc01

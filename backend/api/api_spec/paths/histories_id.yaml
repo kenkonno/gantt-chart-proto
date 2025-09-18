@@ -1,0 +1,26 @@
+parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+      format: int32
+put:
+  tags:
+    - history
+  summary: Update a history snapshot's name
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../components/PutHistoriesIdRequest.yaml"
+  responses:
+    "200":
+      description: OK
+delete:
+  tags:
+    - history
+  summary: Delete a history snapshot
+  responses:
+    "200":
+      description: OK

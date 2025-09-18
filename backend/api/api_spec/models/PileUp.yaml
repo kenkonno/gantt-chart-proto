@@ -1,0 +1,15 @@
+title: PileUp
+type: object
+properties:
+  gantt_groups:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  holidays:
+    type: integer
+    x-go-custom-tag: 'binding:"min=1"'
+required:
+  - gantt_groups
+  - holidays
+description: ''
+x-tags:
+  - PileUp

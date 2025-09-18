@@ -1,0 +1,5 @@
+title: DeleteDepartmentsIdResponse
+type: object
+properties:
+  msg:
+    type: string

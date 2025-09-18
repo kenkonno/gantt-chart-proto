@@ -1,0 +1,7 @@
+title: WorkHour
+type: object
+properties:
+  process_id:
+    type: integer
+  work_hour:
+    type: integer

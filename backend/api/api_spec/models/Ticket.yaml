@@ -1,0 +1,54 @@
+title: Ticket
+type: object
+x-tags:
+  - Ticket
+properties:
+  id:
+    type: integer
+    nullable: true
+  gantt_group_id:
+    type: integer
+    x-go-custom-tag: 'binding:"min=1"'
+  process_id:
+    type: integer
+    nullable: true
+  department_id:
+    type: integer
+    nullable: true
+  limit_date:
+    type: string
+    format: date-time
+    nullable: true
+  estimate:
+    type: integer
+    nullable: true
+  number_of_worker:
+    type: integer
+    nullable: true
+  days_after:
+    type: integer
+    nullable: true
+  start_date:
+    type: string
+    format: date-time
+    nullable: true
+  end_date:
+    type: string
+    format: date-time
+    nullable: true
+  progress_percent:
+    type: integer
+    nullable: true
+  memo:
+    type: string
+  order:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int
+required:
+  - gantt_group_id
+  - order

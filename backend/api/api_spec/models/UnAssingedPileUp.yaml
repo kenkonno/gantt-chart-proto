@@ -1,0 +1,24 @@
+title: UnAssingedPileUp
+x-stoplight:
+  id: ec0812807ed94
+type: object
+properties:
+  facilities:
+    type: array
+    items:
+      $ref: './PileUpByFacility.yaml'
+  labels:
+    type: array
+    items:
+      type: number
+  styles:
+    type: array
+    items:
+      type: object
+  display:
+    type: boolean
+required:
+  - facilities
+  - labels
+  - styles
+  - display

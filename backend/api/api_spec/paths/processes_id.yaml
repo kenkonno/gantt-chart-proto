@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetProcessesId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetProcessesIdResponse.yaml'
+          examples: { }
+  operationId: get-processes-id
+  description: ''
+delete:
+  summary: DeleteProcessesId
+  operationId: delete-processes-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostProcessesId
+  operationId: post-processes-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostProcessesRequest.yaml'

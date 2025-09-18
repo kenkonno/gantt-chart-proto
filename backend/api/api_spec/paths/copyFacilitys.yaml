@@ -1,0 +1,13 @@
+post:
+  summary: PostCopyFacilitys
+  operationId: post-copyFacilitys
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostCopyFacilitysRequest.yaml'
+parameters: [ ]

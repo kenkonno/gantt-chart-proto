@@ -1,0 +1,25 @@
+get:
+  summary: GetPileUps
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetPileUpsResponse.yaml'
+          examples: { }
+  operationId: get-pileUps
+  description: ''
+  parameters:
+    - schema:
+        type: integer
+      in: query
+      name: facilityId
+      required: true
+    - schema:
+        type: array
+        items:
+          type: string
+      in: query
+      name: facilityTypes

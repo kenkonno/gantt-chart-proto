@@ -1,0 +1,44 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetDepartmentsId
+  tags: [ ]
+  parameters:
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetDepartmentsIdResponse.yaml'
+          examples: { }
+  operationId: get-departments-id
+  description: ''
+delete:
+  summary: DeleteDepartmentsId
+  operationId: delete-departments-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostDepartmentsId
+  operationId: post-departments-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostDepartmentsRequest.yaml'

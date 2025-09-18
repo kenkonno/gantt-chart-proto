@@ -1,0 +1,33 @@
+get:
+  summary: GetTicketDailyWeights
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetTicketDailyWeightsResponse.yaml'
+          examples: { }
+  operationId: get-ticketDailyWeights
+  description: ''
+  parameters:
+    - name: facilityId
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+post:
+  summary: PostTicketDailyWeights
+  operationId: post-ticketDailyWeights
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostTicketDailyWeightsRequest.yaml'
+parameters: [ ]

@@ -1,0 +1,7 @@
+title: PostUnitsRequest
+type: object
+properties:
+  unit:
+    $ref: '../api.yaml#/components/schemas/Unit'
+required:
+  - unit

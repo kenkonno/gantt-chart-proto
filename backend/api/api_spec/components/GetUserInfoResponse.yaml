@@ -1,0 +1,9 @@
+title: GetUserInfoResponse
+x-stoplight:
+  id: vu4rjgwhwviqz
+type: object
+properties:
+  user:
+    $ref: '../api.yaml#/components/schemas/User'
+  isSimulateUser:
+    type: boolean

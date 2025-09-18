@@ -1,0 +1,5 @@
+title: GetUnitsResponse
+type: object
+properties:
+  unit:
+    $ref: '../api.yaml#/components/schemas/Unit'

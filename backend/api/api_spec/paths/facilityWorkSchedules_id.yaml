@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetFacilityWorkSchedulesId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFacilityWorkSchedulesIdResponse.yaml'
+          examples: { }
+  operationId: get-facilityWorkSchedules-id
+  description: ''
+delete:
+  summary: DeleteFacilityWorkSchedulesId
+  operationId: delete-facilityWorkSchedules-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostFacilityWorkSchedulesId
+  operationId: post-facilityWorkSchedules-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFacilityWorkSchedulesRequest.yaml'

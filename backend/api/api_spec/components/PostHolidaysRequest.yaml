@@ -1,0 +1,7 @@
+title: PostHolidaysRequest
+type: object
+properties:
+  holiday:
+    $ref: '../api.yaml#/components/schemas/Holiday'
+required:
+  - holiday

@@ -1,0 +1,32 @@
+get:
+  summary: GetUnits
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetUnitsResponse.yaml'
+          examples: { }
+  operationId: get-units
+  description: ''
+  parameters:
+    - schema:
+        type: integer
+      in: query
+      name: facilityId
+      required: true
+post:
+  summary: PostUnits
+  operationId: post-units
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostUnitsRequest.yaml'
+parameters: [ ]

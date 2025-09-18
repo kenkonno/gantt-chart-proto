@@ -1,0 +1,5 @@
+title: DeleteFacilitiesIdResponse
+type: object
+properties:
+  msg:
+    type: string

@@ -1,0 +1,11 @@
+title: GetTicketsResponse
+type: object
+properties:
+  list:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Ticket'
+required:
+  - list
+x-stoplight:
+  id: 3602e5924e7ec

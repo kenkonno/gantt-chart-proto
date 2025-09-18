@@ -1,0 +1,88 @@
+title: GetSimulationMasterDiffResponse
+type: object
+properties:
+  beforeProcesses:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Process'
+  diffProcesses:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Process'
+  afterProcesses:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Process'
+  beforeDepartments:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Department'
+  diffDepartments:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Department'
+  afterDepartments:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Department'
+  beforeUsers:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/User'
+  diffUsers:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/User'
+  afterUsers:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/User'
+  beforeUnits:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Unit'
+  diffUnits:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Unit'
+  afterUnits:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Unit'
+  beforeHolidays:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Holiday'
+  diffHolidays:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Holiday'
+  afterHolidays:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Holiday'
+  beforeMilestones:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Milestone'
+  diffMilestones:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Milestone'
+  afterMilestones:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Milestone'
+required:
+  - beforeProcesses
+  - afterProcesses
+  - beforeDepartments
+  - afterDepartments
+  - beforeUsers
+  - afterUsers
+  - beforeUnits
+  - afterUnits
+  - beforeHolidays
+  - afterHolidays
+  - beforeMilestones
+  - afterMilestones

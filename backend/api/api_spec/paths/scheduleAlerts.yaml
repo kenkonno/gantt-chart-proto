@@ -1,0 +1,15 @@
+get:
+  summary: GetScheduleAlerts
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetScheduleAlertsResponse.yaml'
+          examples: { }
+  operationId: get-scheduleAlerts
+  description: ''
+  parameters: [ ]
+parameters: [ ]

@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetHolidaysId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetHolidaysIdResponse.yaml'
+          examples: { }
+  operationId: get-holidays-id
+  description: ''
+delete:
+  summary: DeleteHolidaysId
+  operationId: delete-holidays-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostHolidaysId
+  operationId: post-holidays-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostHolidaysRequest.yaml'

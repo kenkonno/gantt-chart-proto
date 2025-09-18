@@ -1,0 +1,9 @@
+title: PostBulkUpdateTicketsResponse
+type: object
+properties:
+  tickets:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/Ticket'
+required:
+  - tickets

@@ -1,0 +1,15 @@
+get:
+  summary: ''
+  operationId: get-simulation-master-diff
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetSimulationMasterDiffResponse.yaml'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/GetSimulationMasterDiffRequest.yaml'

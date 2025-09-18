@@ -1,0 +1,5 @@
+title: GetFeatureOptionsIdResponse
+type: object
+properties:
+  featureOption:
+    $ref: '../api.yaml#/components/schemas/FeatureOption'

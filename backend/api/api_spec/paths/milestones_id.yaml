@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetMilestonesId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetMilestonesIdResponse.yaml'
+          examples: { }
+  operationId: get-milestones-id
+  description: ''
+delete:
+  summary: DeleteMilestonesId
+  operationId: delete-milestones-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostMilestonesId
+  operationId: post-milestones-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostMilestonesRequest.yaml'

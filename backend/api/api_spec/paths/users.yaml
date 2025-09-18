@@ -1,0 +1,33 @@
+get:
+  summary: GetUsers
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetUsersResponse.yaml'
+          examples: { }
+  operationId: get-users
+  description: ''
+  parameters:
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+post:
+  summary: PostUsers
+  operationId: post-users
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostUsersRequest.yaml'
+parameters: [ ]

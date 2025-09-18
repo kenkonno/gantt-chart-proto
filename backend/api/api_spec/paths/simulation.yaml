@@ -1,0 +1,64 @@
+post:
+  summary: PostSimulation
+  operationId: post-simulation
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PostSimulationResponse.yaml'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostSimulationRequest.yaml'
+      application/xml:
+        schema:
+          type: object
+          properties: { }
+get:
+  summary: ''
+  operationId: get-simulation
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetSimulationResponse.yaml'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/GetSimulationRequest.yaml'
+put:
+  summary: ''
+  operationId: put-simulation
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PutSimulationResponse.yaml'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PutSimulationRequest.yaml'
+delete:
+  summary: ''
+  operationId: delete-simulation
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/DeleteSimulationResponse.yaml'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/DeleteSimulationRequest.yaml'

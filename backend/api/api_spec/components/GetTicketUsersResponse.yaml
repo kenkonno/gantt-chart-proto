@@ -1,0 +1,9 @@
+title: GetTicketUsersResponse
+type: object
+properties:
+  list:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/TicketUser'
+required:
+  - list

@@ -1,0 +1,26 @@
+title: OperationSetting
+type: object
+description: ''
+x-tags:
+  - OperationSetting
+properties:
+  id:
+    type: integer
+    nullable: true
+  facility_id:
+    type: integer
+  unit_id:
+    type: integer
+  workHours:
+    x-go-custom-tag: 'binding:"min=1"'
+    type: array
+    items:
+      $ref: './WorkHour.yaml'
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int32
+required:
+  - workHours

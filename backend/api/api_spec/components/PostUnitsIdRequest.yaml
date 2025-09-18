@@ -1,0 +1,5 @@
+title: PostUnitsIdRequest
+type: object
+properties:
+  unit:
+    $ref: '../api.yaml#/components/schemas/Unit'

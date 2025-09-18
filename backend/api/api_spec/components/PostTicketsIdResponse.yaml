@@ -1,0 +1,5 @@
+title: PostTicketsIdResponse
+type: object
+properties:
+  ticket:
+    $ref: '../api.yaml#/components/schemas/Ticket'

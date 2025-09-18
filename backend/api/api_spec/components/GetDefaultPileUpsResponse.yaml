@@ -1,0 +1,18 @@
+title: GetDefaultPileUpsResponse
+type: object
+properties:
+  defaultPileUps:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/DefaultPileUp'
+  globalStartDate:
+    type: string
+    format: date-time
+  defaultValidUserIndexes:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/DefaultValidIndexUsers'
+required:
+  - defaultPileUps
+  - globalStartDate
+  - defaultValidUserIndexes

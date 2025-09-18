@@ -1,0 +1,7 @@
+title: PutSimulationRequest
+type: object
+properties:
+  mode:
+    type: string
+required:
+  - mode

@@ -1,0 +1,10 @@
+title: PostCopyFacilitysRequest
+type: object
+properties:
+  facilityId:
+    type: integer
+  facility:
+    $ref: '../api.yaml#/components/schemas/Facility'
+required:
+  - facilityId
+  - facility

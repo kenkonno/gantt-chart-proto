@@ -1,0 +1,21 @@
+post:
+  summary: ''
+  operationId: post-login
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            id:
+              type: string
+            password:
+              type: string
+            uuid:
+              type: string
+          required:
+            - id
+            - password

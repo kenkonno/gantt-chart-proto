@@ -1,0 +1,5 @@
+title: DeleteUsersIdResponse
+type: object
+properties:
+  msg:
+    type: string

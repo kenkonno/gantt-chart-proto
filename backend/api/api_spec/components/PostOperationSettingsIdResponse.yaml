@@ -1,0 +1,5 @@
+title: PostOperationSettingsIdResponse
+type: object
+properties:
+  operationSetting:
+    $ref: '../api.yaml#/components/schemas/OperationSetting'

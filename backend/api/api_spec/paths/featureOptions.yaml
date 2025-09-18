@@ -1,0 +1,27 @@
+get:
+  summary: GetFeatureOptions
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFeatureOptionsResponse.yaml'
+          examples: { }
+  operationId: get-featureOptions
+  description: ''
+  parameters: [ ]
+post:
+  summary: PostFeatureOptions
+  operationId: post-featureOptions
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFeatureOptionsRequest.yaml'
+parameters: [ ]

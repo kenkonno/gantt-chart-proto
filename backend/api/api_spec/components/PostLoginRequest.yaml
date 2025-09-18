@@ -1,0 +1,12 @@
+title: PostLoginRequest
+x-stoplight:
+  id: 26mxo5zdv02sl
+type: object
+properties:
+  id:
+    type: string
+  password:
+    type: string
+required:
+  - id
+  - password

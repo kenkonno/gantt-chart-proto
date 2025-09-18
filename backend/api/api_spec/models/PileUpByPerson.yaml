@@ -1,0 +1,22 @@
+title: PileUpByPerson
+x-stoplight:
+  id: kynrsc9jdxc3e
+type: object
+properties:
+  user:
+    $ref: './User.yaml'
+  labels:
+    type: array
+    items:
+      type: number
+  styles:
+    type: array
+    items:
+      type: object
+  hasError:
+    type: boolean
+required:
+  - user
+  - labels
+  - styles
+  - hasError

@@ -1,0 +1,9 @@
+title: PostTicketUsersResponse
+type: object
+properties:
+  ticketUsers:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/TicketUser'
+required:
+  - ticketUsers

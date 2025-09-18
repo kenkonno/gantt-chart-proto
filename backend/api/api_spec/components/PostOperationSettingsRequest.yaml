@@ -1,0 +1,7 @@
+title: PostOperationSettingsRequest
+type: object
+properties:
+  operationSettings:
+    type: array
+    items:
+      $ref: '../api.yaml#/components/schemas/OperationSetting'

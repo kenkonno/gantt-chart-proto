@@ -1,0 +1,26 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetTicketUsersId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetTicketUsersIdResponse.yaml'
+          examples: { }
+  operationId: get-ticketUsers-id
+  description: ''
+delete:
+  summary: DeleteTicketUsersId
+  operationId: delete-ticketUsers-id
+  responses:
+    '200':
+      description: OK
+  description: ''

@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetGanttGroupsId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetGanttGroupsIdResponse.yaml'
+          examples: { }
+  operationId: get-ganttGroups-id
+  description: ''
+delete:
+  summary: DeleteGanttGroupsId
+  operationId: delete-ganttGroups-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostGanttGroupsId
+  operationId: post-ganttGroups-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostGanttGroupsRequest.yaml'

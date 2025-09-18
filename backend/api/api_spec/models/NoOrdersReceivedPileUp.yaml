@@ -1,0 +1,24 @@
+title: NoOrdersReceivedPileUp
+x-stoplight:
+  id: f087ad3e0d284
+type: object
+properties:
+  facilities:
+    type: array
+    items:
+      $ref: './PileUpByFacility.yaml'
+  labels:
+    type: array
+    items:
+      type: number
+  styles:
+    type: array
+    items:
+      type: object
+  display:
+    type: boolean
+required:
+  - facilities
+  - labels
+  - styles
+  - display

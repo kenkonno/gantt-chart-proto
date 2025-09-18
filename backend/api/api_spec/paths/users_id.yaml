@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetUsersId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetUsersIdResponse.yaml'
+          examples: { }
+  operationId: get-users-id
+  description: ''
+delete:
+  summary: DeleteUsersId
+  operationId: delete-users-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostUsersId
+  operationId: post-users-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostUsersRequest.yaml'

@@ -1,0 +1,17 @@
+title: SimulationLock
+type: object
+properties:
+  simulationName:
+    type: string
+  status:
+    type: string
+  lockedAt:
+    type: string
+    format: date-time
+  lockedBy:
+    type: integer
+required:
+  - simulationName
+  - status
+  - lockedAt
+  - lockedBy

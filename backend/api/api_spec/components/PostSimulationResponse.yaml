@@ -1,0 +1,5 @@
+title: PostSimulationResponse
+type: object
+properties:
+  '':
+    type: string

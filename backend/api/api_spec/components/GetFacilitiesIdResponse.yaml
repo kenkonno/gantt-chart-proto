@@ -1,0 +1,5 @@
+title: GetFacilitiesResponse
+type: object
+properties:
+  facility:
+    $ref: '../api.yaml#/components/schemas/Facility'

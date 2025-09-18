@@ -1,0 +1,44 @@
+title: ScheduleAlert
+type: object
+x-tags:
+  - ScheduleAlert
+properties:
+  facility_id:
+    type: integer
+  facility_name:
+    type: string
+  unit_id:
+    type: integer
+  unit_name:
+    type: string
+  process_id:
+    type: integer
+  process_name:
+    type: string
+  end_date:
+    type: string
+    format: date-time
+  start_date:
+    type: string
+    format: date-time
+  actual_progress_date:
+    type: string
+    format: date-time
+  progress_percent:
+    x-go-custom-tag: 'binding:"min=1"'
+    type: number
+  delay_days:
+    type: number
+  ticket_id:
+    type: integer
+required:
+  - facility_id
+  - facility_name
+  - unit_id
+  - unit_name
+  - process_id
+  - process_name
+  - end_date
+  - start_date
+  - progress_percent
+  - delay_days

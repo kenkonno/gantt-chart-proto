@@ -1,0 +1,5 @@
+title: PostProcessesIdRequest
+type: object
+properties:
+  process:
+    $ref: '../api.yaml#/components/schemas/Process'

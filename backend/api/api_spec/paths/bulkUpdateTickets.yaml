@@ -1,0 +1,17 @@
+post:
+  summary: PostBulkUpdateTickets
+  operationId: post-bulkUpdateTickets
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PostBulkUpdateTicketsResponse.yaml'
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostBulkUpdateTicketsRequest.yaml'
+parameters: [ ]

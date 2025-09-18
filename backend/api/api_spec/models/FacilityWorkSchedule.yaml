@@ -1,0 +1,26 @@
+title: FacilityWorkSchedule
+type: object
+x-tags:
+  - FacilityWorkSchedule
+properties:
+  id:
+    type: integer
+    nullable: true
+  facility_id:
+    type: integer
+    x-go-custom-tag: 'binding:"min=1"'
+  date:
+    type: string
+    format: date-time
+  type:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+required:
+  - facility_id
+  - date
+  - type

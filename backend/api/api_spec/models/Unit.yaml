@@ -1,0 +1,24 @@
+title: Unit
+type: object
+x-tags:
+  - Unit
+properties:
+  id:
+    type: integer
+    nullable: true
+  facility_id:
+    type: integer
+  name:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  order:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int
+required:
+  - facility_id
+  - name

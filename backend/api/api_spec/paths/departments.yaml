@@ -1,0 +1,33 @@
+get:
+  summary: GetDepartments
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetDepartmentsResponse.yaml'
+          examples: { }
+  operationId: get-departments
+  description: ''
+  parameters:
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+post:
+  summary: PostDepartments
+  operationId: post-departments
+  responses:
+    '200':
+      description: OK
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostDepartmentsRequest.yaml'
+parameters: [ ]

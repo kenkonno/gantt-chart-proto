@@ -1,0 +1,5 @@
+title: DeleteUnitsIdResponse
+type: object
+properties:
+  msg:
+    type: string

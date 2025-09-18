@@ -1,0 +1,37 @@
+parameters:
+  - schema:
+      type: number
+    name: id
+    in: path
+    required: true
+get:
+  summary: GetFacilitySharedLinksId
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFacilitySharedLinksIdResponse.yaml'
+          examples: { }
+  operationId: get-facilitySharedLinks-id
+  description: ''
+delete:
+  summary: DeleteFacilitySharedLinksId
+  operationId: delete-facilitySharedLinks-id
+  responses:
+    '200':
+      description: OK
+  description: ''
+post:
+  summary: PostFacilitySharedLinksId
+  operationId: post-facilitySharedLinks-id
+  responses:
+    '200':
+      description: OK
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFacilitySharedLinksRequest.yaml'

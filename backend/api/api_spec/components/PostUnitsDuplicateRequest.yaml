@@ -1,0 +1,50 @@
+type: object
+properties:
+  unitId:
+    type: integer
+    description: ID of the unit to duplicate
+  unitName:
+    type: string
+    description: new unit name
+  copyProcessId:
+    type: boolean
+    description: Flag to copy ProcessId field from source ticket
+  copyDepartmentId:
+    type: boolean
+    description: Flag to copy DepartmentId field from source ticket
+  copyEstimate:
+    type: boolean
+    description: Flag to copy Estimate field from source ticket
+  copyNumberOfWorker:
+    type: boolean
+    description: Flag to copy NumberOfWorker field from source ticket
+  copyDaysAfter:
+    type: boolean
+    description: Flag to copy DaysAfter field from source ticket
+  copyStartDate:
+    type: boolean
+    description: Flag to copy StartDate field from source ticket
+  copyEndDate:
+    type: boolean
+    description: Flag to copy EndDate field from source ticket
+  copyProgressPercent:
+    type: boolean
+    description: Flag to copy ProgressPercent field from source ticket
+  copyMemo:
+    type: boolean
+    description: Flag to copy Memo field from source ticket
+  copyTicketUser:
+    type: boolean
+    description: Flag to copy copyTicketUser field from source ticket
+required:
+  - unitId
+  - copyProcessId
+  - copyDepartmentId
+  - copyEstimate
+  - copyNumberOfWorker
+  - copyDaysAfter
+  - copyStartDate
+  - copyEndDate
+  - copyProgressPercent
+  - copyMemo
+  - copyTicketUser

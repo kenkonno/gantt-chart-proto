@@ -1,0 +1,51 @@
+title: User
+type: object
+x-tags:
+  - User
+properties:
+  id:
+    type: integer
+    nullable: true
+  department_id:
+    type: integer
+  limit_of_operation:
+    type: number
+  lastName:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  firstName:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  password:
+    type: string
+    x-go-custom-tag: 'binding:"min=0"'
+  email:
+    type: string
+    x-go-custom-tag: 'binding:"min=1"'
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: integer
+    format: int64
+  role:
+    type: string
+  password_reset:
+    type: boolean
+  employment_start_date:
+    type: string
+    format: date-time
+  employment_end_date:
+    type: string
+    format: date-time
+    nullable: true
+required:
+  - department_id
+  - limit_of_operation
+  - lastName
+  - firstName
+  - password
+  - email
+  - role
+  - password_reset
+  - employment_start_date

@@ -1,0 +1,37 @@
+get:
+  summary: GetFacilitySharedLinks
+  tags: [ ]
+  responses:
+    '200':
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../components/GetFacilitySharedLinksResponse.yaml'
+          examples: { }
+  operationId: get-facilitySharedLinks
+  description: ''
+  parameters:
+    - name: history_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+post:
+  summary: PostFacilitySharedLinks
+  operationId: post-facilitySharedLinks
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components/PostFacilitySharedLinksResponse.yaml'
+  description: ''
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/PostFacilitySharedLinksRequest.yaml'
+parameters: [ ]
