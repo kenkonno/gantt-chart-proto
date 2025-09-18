@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetFacilitySharedLinksResponse struct {
-
 	List []FacilitySharedLink `json:"list" form:"list"`
 }

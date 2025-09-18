@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostFacilitySharedLinksIdRequest struct {
-
 	FacilitySharedLink FacilitySharedLink `json:"facilitySharedLink,omitempty" form:"facilitySharedLink,omitempty"`
 }

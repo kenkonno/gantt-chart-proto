@@ -10,7 +10,6 @@
 package openapi_models
 
 type NoOrdersReceivedPileUp struct {
-
 	Facilities []PileUpByFacility `json:"facilities" form:"facilities"`
 
 	Labels []float32 `json:"labels" form:"labels"`

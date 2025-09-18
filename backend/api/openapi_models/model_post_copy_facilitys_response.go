@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostCopyFacilitysResponse struct {
-
-	 string `json:",omitempty" form:",omitempty"`
+	string `json:",omitempty" form:",omitempty"`
 }

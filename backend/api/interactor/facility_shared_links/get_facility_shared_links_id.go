@@ -1,14 +1,15 @@
 package facility_shared_links
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"strconv"
-	"time"
 )
 
 // facilityIdをもとに取得する
@@ -41,7 +42,7 @@ func GetFacilitySharedLinksIdInvoke(c *gin.Context) (openapi_models.GetFacilityS
 			FacilityId: facilitySharedLink.FacilityId,
 			Uuid:       &facilitySharedLink.Uuid,
 			CreatedAt:  facilitySharedLink.CreatedAt,
-			UpdatedAt:  int(facilitySharedLink.UpdatedAt),
+			UpdatedAt: int32(facilitySharedLink.UpdatedAt),
 		},
 	}, nil
 }

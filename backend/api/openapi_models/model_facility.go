@@ -14,7 +14,6 @@ import (
 )
 
 type Facility struct {
-
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	Name string `json:"name" form:"name" binding:"min=1"`
@@ -34,4 +33,6 @@ type Facility struct {
 	Type string `json:"type" form:"type"`
 
 	ShipmentDueDate time.Time `json:"shipment_due_date" form:"shipment_due_date"`
+
+	FreeText *string `json:"free_text,omitempty" form:"free_text,omitempty"`
 }

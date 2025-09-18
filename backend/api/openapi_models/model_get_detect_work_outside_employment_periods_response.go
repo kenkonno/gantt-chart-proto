@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetDetectWorkOutsideEmploymentPeriodsResponse struct {
-
 	List []Ticket `json:"list" form:"list"`
 }

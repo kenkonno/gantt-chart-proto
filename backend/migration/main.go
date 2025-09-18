@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/connection"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 var con = connection.GetConnection()
@@ -26,6 +27,8 @@ func main() {
 	migrate(db.FacilitySharedLink{})
 	migrate(db.SimulationLock{})
 	migrate(db.FacilityWorkSchedule{})
+	migrate(db.FeatureOption{})
+	migrate(db.TicketDailyWeight{})
 
 	// simulation
 	migrate(db.SimulationDepartment{})
@@ -41,6 +44,24 @@ func main() {
 	migrate(db.SimulationMilestone{})
 	migrate(db.SimulationFacilitySharedLink{})
 	migrate(db.SimulationFacilityWorkSchedule{})
+	migrate(db.SimulationFeatureOption{})
+	migrate(db.SimulationTicketDailyWeight{})
+
+	// history
+	migrate(db.HistoryFacility{})
+	migrate(db.HistoryDepartment{})
+	migrate(db.HistoryFacility{})
+	migrate(db.HistoryHoliday{})
+	migrate(db.HistoryOperationSetting{})
+	migrate(db.HistoryProcess{})
+	migrate(db.HistoryUnit{})
+	migrate(db.HistoryUser{})
+	migrate(db.HistoryGanttGroup{})
+	migrate(db.HistoryTicketUser{})
+	migrate(db.HistoryTicket{})
+	migrate(db.HistoryMilestone{})
+	migrate(db.HistoryFacilitySharedLink{})
+	migrate(db.HistoryFacilityWorkSchedule{})
 
 	createDefaultUser()
 }

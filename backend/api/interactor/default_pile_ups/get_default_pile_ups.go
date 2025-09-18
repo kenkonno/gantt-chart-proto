@@ -1,17 +1,19 @@
 package default_pile_ups
 
 import (
+	"math"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/utils"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
 	"golang.org/x/exp/slices"
-	"math"
-	"strconv"
-	"time"
 )
 
 const errorStyle = "rgb(255 89 89)"
@@ -22,6 +24,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
 	departmentRep := repository.NewDepartmentRepository(middleware.GetRepositoryMode(c)...)
 	userRep := repository.NewUserRepository(middleware.GetRepositoryMode(c)...)
+	ticketDailyWeightRep := repository.NewTicketDailyWeightRepository(middleware.GetRepositoryMode(c)...)
 
 	excludeFacilityId, err := strconv.Atoi(c.Query("facilityId"))
 	if err != nil {
@@ -38,7 +41,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 	}
 
 	departments := departmentRep.FindAll()
-	facilities := facilityRep.FindAll(facilityTypes, []string{constants.FacilityStatusEnabled})
+	facilities := facilityRep.FindAll(facilityTypes, []string{constants.FacilityStatusEnabled}, utils.GetProjectSortKey())
 	facilityMap := lo.Associate(facilities, func(item db.Facility) (int32, db.Facility) {
 		return *item.Id, item
 	})
@@ -73,15 +76,12 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 
 	// 積み上げ情報をマージして返却する
 	for _, ticket := range allFacilityPileUps {
-		// 一日当たりの稼働工数の算出（どこかで使用齟齬が起きたと思われる、操作していて自然な方に合わせる）
-		var workPerDay float32
-		if len(ticket.UserIds) > 0 {
-			// アサイン済みの場合は一日当たりの稼働は総工数 / 総稼動可能日数
-			workPerDay = float32(*ticket.Estimate) / ticket.NumberOfWorkerByDay
-		} else {
-			// 未アサインの場合は総工数 / 営業日 / 人数
-			workPerDay = float32(*ticket.Estimate) / float32(ticket.NumberOfWorkDay) / float32(*ticket.NumberOfWorker)
-		}
+		// チケットに紐づく重みづけデータの取得
+		// １日当たりの工数を計算するクラス
+		workPerDayCalculator := NewWorkPerDayCalculatorFactory(ticketDailyWeightRep, globalStartDate, ticket, validUserMap)
+
+		// 一日当たりの稼働工数の算出
+		workPerDay := workPerDayCalculator.CalculateWorkPerDay(&ticket, validUserMap)
 		// 対象部署の取得
 		// 確定の場合
 		// TODO: スタイルとエラーの適応。一旦は数字が合うのかフロントとの結合も大事なので保留とする
@@ -90,6 +90,8 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 		if len(ticket.UserIds) > 0 {
 			// アサイン済みの場合 [担当者] [積み上げ、アサイン済み]に計上する
 			for _, validIndex := range ticket.ValidIndexes {
+				// 重要：オプションによって変動する工数を計算
+				currentWorkPerDay := workPerDayCalculator.ReCalculateWorkPerDayByValidIndex(workPerDay, validIndex, &ticket)
 				for _, userId := range ticket.UserIds {
 					// アサイン済みの場合はユーザーから対象のpileUpsを指定する（部署が指定されていないケースがあるため）
 					targetPileUp, exists := lo.Find(defaultPileUps, func(item openapi_models.DefaultPileUp) bool {
@@ -116,7 +118,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 					))
 
 					// 部署への積み上げ(共通)
-					targetPileUp.Labels[validIndex] += workPerDay
+					targetPileUp.Labels[validIndex] += currentWorkPerDay
 					// エラー判定
 					if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.Styles[validIndex])
@@ -124,7 +126,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 
 					if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
 						// アサイン済みへの積み上げ
-						targetPileUp.AssignedUser.Labels[validIndex] += workPerDay
+						targetPileUp.AssignedUser.Labels[validIndex] += currentWorkPerDay
 						if pileUpLabelFormat(targetPileUp.AssignedUser.Labels[validIndex]) > numberOfDepartmentUsers {
 							applyErrorStyle(&targetPileUp.AssignedUser.Styles[validIndex])
 						}
@@ -133,14 +135,14 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 							return *item.User.Id == userId
 						})
 						if userExists {
-							targetUserPileUp.Labels[validIndex] += workPerDay
+							targetUserPileUp.Labels[validIndex] += currentWorkPerDay
 							if pileUpLabelFormat(targetUserPileUp.Labels[validIndex]) > 1 {
 								applyErrorStyle(&targetUserPileUp.Styles[validIndex])
 							}
 						}
 					} else {
 						// 未確定の場合 への積み上げ
-						targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += workPerDay
+						targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += currentWorkPerDay
 						if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 							applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
 						}
@@ -150,7 +152,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 							return ticket.FacilityId == item.FacilityId
 						})
 						if facilityExists {
-							targetFacilityPileUp.Labels[validIndex] += workPerDay
+							targetFacilityPileUp.Labels[validIndex] += currentWorkPerDay
 						}
 					}
 				}
@@ -166,6 +168,8 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 
 			// 未アサインの場合 [未アサインのその設備] [積み上げ、未アサイン積み上げ]に計上する
 			for _, validIndex := range ticket.ValidIndexes {
+				// 重要：オプションによって変動する工数を計算
+				currentWorkPerDay := workPerDayCalculator.ReCalculateWorkPerDayByValidIndex(workPerDay, validIndex, &ticket)
 				if len(targetPileUp.Labels) <= int(validIndex) {
 					continue
 				}
@@ -177,7 +181,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 				))
 
 				// 部署への積み上げ
-				targetPileUp.Labels[validIndex] += workPerDay
+				targetPileUp.Labels[validIndex] += currentWorkPerDay
 				if pileUpLabelFormat(targetPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 					applyErrorStyle(&targetPileUp.Styles[validIndex])
 				}
@@ -185,7 +189,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 				if facilityMap[ticket.FacilityId].Type == constants.FacilityTypeOrdered {
 
 					// 未アサインへの積み上げ
-					targetPileUp.UnAssignedPileUp.Labels[validIndex] += workPerDay
+					targetPileUp.UnAssignedPileUp.Labels[validIndex] += currentWorkPerDay
 					if pileUpLabelFormat(targetPileUp.UnAssignedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.UnAssignedPileUp.Styles[validIndex])
 					}
@@ -195,11 +199,11 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 						return ticket.FacilityId == item.FacilityId
 					})
 					if facilityExists {
-						targetFacilityPileUp.Labels[validIndex] += workPerDay
+						targetFacilityPileUp.Labels[validIndex] += currentWorkPerDay
 					}
 				} else {
 					// 未確定の場合 への積み上げ
-					targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += workPerDay
+					targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex] += currentWorkPerDay
 
 					if pileUpLabelFormat(targetPileUp.NoOrdersReceivedPileUp.Labels[validIndex]) > numberOfDepartmentUsers {
 						applyErrorStyle(&targetPileUp.NoOrdersReceivedPileUp.Styles[validIndex])
@@ -210,7 +214,7 @@ func GetDefaultPileUpsInvoke(c *gin.Context) (openapi_models.GetDefaultPileUpsRe
 						return ticket.FacilityId == item.FacilityId
 					})
 					if facilityExists {
-						targetFacilityPileUp.Labels[validIndex] += workPerDay
+						targetFacilityPileUp.Labels[validIndex] += currentWorkPerDay
 					}
 				}
 			}
@@ -341,4 +345,9 @@ func applyGrayOutStyle(v *map[string]interface{}) {
 		*v = make(map[string]interface{})
 	}
 	(*v)["background-color"] = grayOutStyle
+}
+
+// getValidIndex globalStartDateから何日目なのかを返す
+func getValidIndex(globalStartDate time.Time, date time.Time) int32 {
+	return int32(date.Sub(globalStartDate).Hours() / 24)
 }

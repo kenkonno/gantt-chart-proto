@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostTicketsResponse struct {
-
 	Ticket Ticket `json:"ticket,omitempty" form:"ticket,omitempty"`
 }

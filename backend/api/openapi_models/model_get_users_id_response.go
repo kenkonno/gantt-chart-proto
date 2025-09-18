@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetUsersIdResponse struct {
-
 	User User `json:"user,omitempty" form:"user,omitempty"`
 }

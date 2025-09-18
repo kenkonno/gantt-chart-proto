@@ -1,13 +1,14 @@
 package milestones
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
-	"strconv"
 )
 
 func GetMilestonesInvoke(c *gin.Context) (openapi_models.GetMilestonesResponse, error) {
@@ -34,7 +35,7 @@ func GetMilestonesInvoke(c *gin.Context) (openapi_models.GetMilestonesResponse, 
 				Description: item.Description,
 				Order:       int32(item.Order),
 				CreatedAt:   item.CreatedAt,
-				UpdatedAt:   int(item.UpdatedAt),
+				UpdatedAt: int32(item.UpdatedAt),
 			}
 		}),
 	}, nil

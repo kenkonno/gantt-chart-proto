@@ -1,12 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi"
-	"os"
 )
 
 func main() {

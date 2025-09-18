@@ -23,7 +23,7 @@ func PutSimulationInvoke(c *gin.Context) (openapi_models.PutSimulationResponse, 
 		// 各種simulation_xxx テーブルをリネームして本チャンに切り替える。
 		simulationRep := simulation.NewSimulationRepository()
 		simulationRep.SwitchTable()
-		simulationRep.ResetSequence()
+		simulationRep.ResetSequence(nil)
 		simulationLockRep.Delete(constants.SimulateTypeSchedule)
 		connection.ReOpenConnection()
 	} else {

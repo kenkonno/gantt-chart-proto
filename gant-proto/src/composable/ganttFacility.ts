@@ -1,7 +1,16 @@
 import dayjs, {Dayjs} from "dayjs";
 import {GanttBarObject, MileStone} from "@infectoone/vue-ganttastic";
-import {computed, inject, ref, toValue} from "vue";
-import {FacilityWorkSchedule, GanttGroup, Holiday, OperationSetting, Ticket, TicketUser, User} from "@/api";
+import {computed, ComputedRef, inject, ref, toValue, watch} from "vue";
+import {
+    FacilityWorkSchedule,
+    GanttGroup,
+    Holiday,
+    OperationSetting, PostTicketDailyWeightsRequest,
+    Ticket,
+    TicketDailyWeight,
+    TicketUser,
+    User
+} from "@/api";
 import {Api} from "@/api/axios";
 import {useGanttGroupTable} from "@/composable/ganttGroup";
 import {useTicketTable} from "@/composable/ticket";
@@ -16,8 +25,13 @@ import {
     getEndDateByRequiredBusinessDay,
     getNumberOfBusinessDays, YMDDateToGanttEndDate, YMDDateToGanttStartDate
 } from "@/coreFunctions/manHourCalculation";
-import {DAYJS_FORMAT} from "@/utils/day";
-import {ApiMode, DEFAULT_PROCESS_COLOR, FacilityWorkScheduleType, FacilityWorkScheduleTypeMap} from "@/const/common";
+import {DAYJS_FORMAT, DAYJS_FORMAT_YMD} from "@/utils/day";
+import {
+    ApiMode,
+    DEFAULT_PROCESS_COLOR,
+    FacilityWorkScheduleType,
+    FeatureOption
+} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
 import {allowed} from "@/composable/role";
@@ -25,6 +39,7 @@ import {useMilestoneTable} from "@/composable/milestone";
 import {getUserInfo} from "@/composable/auth";
 import Swal from "sweetalert2";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
+import {available} from "@/composable/featureOption";
 
 export type GanttChartGroup = {
     ganttGroup: GanttGroup // TODO: 結局ganttRowにganttGroup設定しているから設計としては微妙っぽい。
@@ -55,7 +70,7 @@ function getScheduledOperatingHours(operationSettings: OperationSetting[], row: 
     }, 0);
 }
 
-export async function useGanttFacility() {
+export async function useGanttFacility(ticketDailyWeightMode: ComputedRef<boolean>) {
     // injectはsetupと同期的に呼び出す必要あり
     const {currentFacilityId} = inject(GLOBAL_STATE_KEY)!
     const {getScheduleAlert} = inject(GLOBAL_ACTION_KEY)!
@@ -69,6 +84,13 @@ export async function useGanttFacility() {
         unitMap,
         facilityWorkScheduleMap
     } = inject(GLOBAL_STATE_KEY)!
+
+    // 重みづけオプション
+    watch(ticketDailyWeightMode, (newValue, oldValue) => {
+        console.log("watch", ticketDailyWeightMode)
+        refreshBars()
+    })
+
     const {facility} = await useFacility(currentFacilityId)
     const chartStart = ref(dayjs(facility.value.term_from).format(DAYJS_FORMAT))
     const chartEnd = ref(dayjs(facility.value.term_to).format(DAYJS_FORMAT))
@@ -199,7 +221,7 @@ export async function useGanttFacility() {
 
     // ganttGroupIdに紐づくUnitの開閉状況によりクラスを返却する
     const getUnitCollapseClass = (bar: GanttBarObject[]) => {
-        if (bar.length == 0 ) return ""
+        if (bar.length == 0) return ""
         if (bar[0].ganttGroupId == undefined) return "" // 追加行のためクラス不要
         const ganttGroupId = bar[0].ganttGroupId
         const unitId = ganttGroupList.value.find(v => v.id === ganttGroupId)?.unit_id
@@ -240,12 +262,12 @@ export async function useGanttFacility() {
         ganttGroupList.value.forEach(ganttGroup => {
             let filteredTicketList = ticketList.value.filter(ticket => ticket.gantt_group_id === ganttGroup.id)
                 .sort((a, b) => a.order < b.order ? -1 : 1)
-            if (selectedDepartment.value != undefined) {
-                filteredTicketList = filteredTicketList.filter(ticket => ticket.department_id == selectedDepartment.value)
+            if (selectedDepartment.value.length > 0) {
+                filteredTicketList = filteredTicketList.filter(ticket => selectedDepartment.value.includes(ticket.department_id!))
             }
-            if (selectedUser.value != undefined) {
+            if (selectedUser.value.length > 0) {
                 // 選択されたユーザーだけに絞り込む
-                const targetTicketIds = ticketUserList.value.filter(ticketUser => ticketUser.user_id == selectedUser.value).map(v => v.ticket_id)
+                const targetTicketIds = ticketUserList.value.filter(ticketUser => selectedUser.value.includes(ticketUser.user_id!)).map(v => v.ticket_id)
                 filteredTicketList = filteredTicketList.filter(ticket => {
                     return targetTicketIds.includes(ticket.id!)
                 })
@@ -253,7 +275,7 @@ export async function useGanttFacility() {
 
             // push処理を実行すべきかどうかを判断する条件
             // 1件以上あればpushする。部署が選択されていなければ空でもプッシュする。
-            const shouldPush = (selectedDepartment.value === undefined && selectedUser.value === undefined) || filteredTicketList.length > 0;
+            const shouldPush = (selectedDepartment.value.length === 0 && selectedUser.value.length === 0) || filteredTicketList.length > 0;
 
             if (shouldPush) {
                 ganttChartGroup.value.push(
@@ -268,7 +290,7 @@ export async function useGanttFacility() {
         })
     }
     const hasFilter = computed(() => {
-        return selectedDepartment.value != undefined || selectedUser.value
+        return selectedDepartment.value.length > 0 || selectedUser.value.length > 0
     })
 
 
@@ -277,6 +299,9 @@ export async function useGanttFacility() {
     // ガントチャート描画用のオブジェクトの生成
     const refreshBars = async () => {
         const prodGanttBarObjects = await getProdTicketsIfSimulation()
+        // 重みづけデータ
+        const ticketDailyWeights = available(FeatureOption.WorkloadWeighting) ? (await Api.getTicketDailyWeights(facility.value.id!)).data.list : []
+
         bars.value.length = 0;
         ganttChartGroup.value.forEach(unit => {
             const emptyRow: GanttBarObject = {
@@ -287,8 +312,80 @@ export async function useGanttFacility() {
                     style: {backgroundColor: BAR_NORMAL_COLOR}
                 }
             }
-            // まとめて表示機能を実装する. まとめられている場合はユニットの情報をすべて１つの要素に詰め込める。
-            if (!isOpenUnit(unit.unitId)) {
+            if (isOpenUnit(unit.unitId)) {
+                bars.value.push(...unit.rows.map(task => {
+                    const result: GanttBarObject[] = []
+                    const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
+                    if (prodBar != undefined) {
+                        prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
+                        result.push(prodBar)
+                    }
+                    result.push(<GanttBarObject>{
+                        beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
+                        endDate: endOfDay(task.ticket!.end_date!),
+                        ganttGroupId: unit.ganttGroup.id,
+                        ganttBarConfig: {
+                            dragLimitLeft: 0,
+                            dragLimitRight: 0,
+                            hasHandles: allowed('UPDATE_TICKET'),
+                            immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
+                            id: task.ticket?.id!.toString(),
+                            label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
+                            style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
+                            progress: task.ticket?.progress_percent,
+                            progressColor: BAR_COMPLETE_COLOR
+                        }
+                    })
+
+                    // 重みづけ機能
+                    if (available(FeatureOption.WorkloadWeighting) && ticketDailyWeightMode.value) {
+                        const find = (ticketId: number, date: Dayjs) => {
+                            const target = ticketDailyWeights.find((v: TicketDailyWeight) => {
+                                return v.ticketId == ticketId && dayjs(v.date).isSame(date)
+                            })?.workHour
+                            return target == undefined ? "" : target.toString()
+                        }
+                        // from-to全て埋める
+                        const endDate = dayjs(task.ticket!.end_date!)
+                        let currentDate = dayjs(task.ticket!.start_date!)
+
+                        const weightValueStyle = {
+                            "align-items": "center",
+                            "background-color": "#f0f0f0", /* 現在のグレーに近い色 */
+                            "border": "1px solid #ddd",
+                            "cursor": "pointer",
+                            "font-size": "14px",
+                            "color": "#333",
+                            "transition": "all 0.2s ease-in-out", /* アニメーションを滑らかに */
+                            "box-shadow": "0 1px 2px rgba(0, 0, 0, 0.05)", /* 薄い影 */
+                            "opacity": "0.8"
+                        }
+
+                        // 開始日から終了日まで日毎にループ
+                        while (currentDate.isBefore(endDate, 'day') || currentDate.isSame(endDate, 'day')) {
+                            const ticketId = (task.ticket as Ticket).id!
+                            result.push(<GanttBarObject>{
+                                beginDate: currentDate.format(DAYJS_FORMAT),
+                                endDate: endOfDay(currentDate.format('YYYYMMDD')),
+                                ganttGroupId: unit.ganttGroup.id,
+                                editable: true, // 重みづけのチケット
+                                ganttBarConfig: {
+                                    id: ticketId.toString() + "@" + currentDate.format(DAYJS_FORMAT_YMD),
+                                    hasHandles: false,
+                                    immobile: true,
+                                    label: find(ticketId, currentDate).toString(), // TODO: 重みづけ weightValue に差し替える
+                                    style: weightValueStyle,
+                                    progressColor: "gray"
+                                }
+                            })
+                            // 次の日に進める
+                            currentDate = currentDate.add(1, 'day')
+                        }
+                    }
+                    return result
+                }))
+            } else {
+                // まとめて表示機能を実装する. まとめられている場合はユニットの情報をすべて１つの要素に詰め込める。
                 const result: GanttBarObject[] = []
                 unit.rows.forEach(task => {
                     const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
@@ -314,32 +411,6 @@ export async function useGanttFacility() {
                     })
                 })
                 bars.value.push(result)
-            } else {
-                bars.value.push(...unit.rows.map(task => {
-                    const result: GanttBarObject[] = []
-                    const prodBar = prodGanttBarObjects.find(v => v.ganttBarConfig.id == task.ticket?.id?.toString())
-                    if (prodBar != undefined) {
-                        prodBar.ganttBarConfig.id = "simulate_" + prodBar.ganttBarConfig.id
-                        result.push(prodBar)
-                    }
-                    result.push(<GanttBarObject>{
-                        beginDate: dayjs(task.ticket!.start_date!).format(DAYJS_FORMAT),
-                        endDate: endOfDay(task.ticket!.end_date!),
-                        ganttGroupId: unit.ganttGroup.id,
-                        ganttBarConfig: {
-                            dragLimitLeft: 0,
-                            dragLimitRight: 0,
-                            hasHandles: allowed('UPDATE_TICKET'),
-                            immobile: !allowed('UPDATE_TICKET'), // TODO: なぜか判定が逆転している
-                            id: task.ticket?.id!.toString(),
-                            label: getProcessName(task.ticket?.process_id == null ? -1 : task.ticket?.process_id),
-                            style: {backgroundColor: getProcessColor(task.ticket?.process_id)},
-                            progress: task.ticket?.progress_percent,
-                            progressColor: BAR_COMPLETE_COLOR
-                        }
-                    })
-                    return result
-                }))
             }
             // ボタン用の空行を追加する
             if (!hasFilter.value && allowed('UPDATE_TICKET') && isOpenUnit(unit.ganttGroup.unit_id)) {
@@ -850,6 +921,17 @@ export async function useGanttFacility() {
         return ganttGroup.unit_id
     }
 
+    const updateTicketDailyWeight = async (ticketId: number, date: string, workHour?: number) => {
+        const req: PostTicketDailyWeightsRequest = {
+            ticketDailyWeight: {
+                ticketId: ticketId,
+                date: date + "T00:00:00.00000+09:00",
+                workHour: workHour,
+            }
+        }
+        await Api.postTicketDailyWeights(req)
+    }
+
     return {
         bars,
         chartEnd,
@@ -884,6 +966,7 @@ export async function useGanttFacility() {
         getUnitCollapseClass,
         isAllOpenUnit,
         toggleAllUnitOpen,
+        updateTicketDailyWeight,
     }
 }
 
@@ -916,5 +999,4 @@ const ticketToGanttRow = (ticket: Ticket, ticketUserList: TicketUser[], ganttGro
     }
     return result
 }
-
 

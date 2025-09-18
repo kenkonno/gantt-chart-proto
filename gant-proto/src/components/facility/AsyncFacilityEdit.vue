@@ -40,6 +40,12 @@
       </select>
     </div>
 
+    <div v-if="available('ProjectListFreeText')" class="mb-2">
+      <label class="form-label" for="id">自由入力</label>
+      <input class="form-control" type="text" name="free_text" id="free_text" v-model="facility.free_text"
+             :disabled="false">
+    </div>
+
     <div class="mb-2">
       <label class="form-label" for="id">作成日</label>
       <input class="form-control" type="text" name="createdAt" id="createdAt" v-model="facility.created_at"
@@ -76,6 +82,7 @@ import {
 } from "@/composable/facility";
 import {FacilityStatusMap, FacilityTypeMap} from "@/const/common";
 import InputRequired from "@/components/form/InputRequired.vue";
+import {available} from "@/composable/featureOption";
 
 interface AsyncFacilityEdit {
   id: number | undefined,

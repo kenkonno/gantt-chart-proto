@@ -14,7 +14,6 @@ import (
 )
 
 type Process struct {
-
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	Name string `json:"name" form:"name" binding:"min=1"`

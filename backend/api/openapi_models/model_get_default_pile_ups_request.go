@@ -10,7 +10,6 @@
 package openapi_models
 
 type GetDefaultPileUpsRequest struct {
-
 	CurrentFacilityId float32 `json:"currentFacilityId" form:"currentFacilityId"`
 
 	IsAllMode bool `json:"isAllMode" form:"isAllMode"`

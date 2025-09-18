@@ -2,15 +2,16 @@ package middleware
 
 import (
 	"crypto/tls"
+	"net/http"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository/simulation"
 	"github.com/samber/lo"
-	"net/http"
-	"os"
-	"strconv"
-	"time"
 )
 
 var redisClient *redis.Client
@@ -39,6 +40,8 @@ var publicRoute = []string{
 	"GET /api/userInfo",
 	"POST /api/login",
 	"POST /api/logout",
+	"GET /api/featureOptions",
+	"GET /api/featureOptions/:id",
 }
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -114,6 +117,14 @@ func GetRepositoryMode(c *gin.Context) []string {
 	cache, exists := c.Get("repository_mode")
 	if exists {
 		return cache.([]string)
+	}
+
+	// history_idが指定されている場合は履歴モードを優先する
+	historyIdStr := c.Query("history_id")
+	if historyIdStr != "" {
+		result := []string{constants.RepositoryModeHistory, historyIdStr}
+		c.Set("repository_mode", result)
+		return result
 	}
 
 	var result []string

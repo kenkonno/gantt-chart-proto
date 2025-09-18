@@ -60,18 +60,18 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
     const filteredAllTickets = allTickets
     const filteredAllTicketUsers = allTicketUsers
     // チケット、案件の絞り込みを実施する
-    if (selectedDepartment.value != undefined) {
-        filteredAllTickets.list = filteredAllTickets.list.filter(v => v.department_id == selectedDepartment.value)
+    if (selectedDepartment.value.length > 0) {
+        filteredAllTickets.list = filteredAllTickets.list.filter(v => selectedDepartment.value.includes(v.department_id!))
         const ticketIds = filteredAllTickets.list.map(v => v.id)
         filteredAllTicketUsers.list = filteredAllTicketUsers.list.filter(v => ticketIds.includes(v.ticket_id))
     }
-    if (selectedUser.value != undefined) {
-        filteredAllTicketUsers.list = filteredAllTicketUsers.list.filter(v => v.user_id == selectedUser.value)
+    if (selectedUser.value.length > 0) {
+        filteredAllTicketUsers.list = filteredAllTicketUsers.list.filter(v => selectedUser.value.includes(v.user_id!))
         const ticketIds = filteredAllTicketUsers.list.map(v => v.ticket_id)
         filteredAllTickets.list = filteredAllTickets.list.filter(v => ticketIds.includes(v.id!))
     }
     const hasFilter = () => {
-        return selectedDepartment.value != undefined || selectedUser.value != undefined
+        return selectedDepartment.value.length > 0 || selectedUser.value.length > 0
     }
     // TODO: ここでチケットから 案件が絞り込めれば長楽 コードに違和感があるがAPI呼び出しをする
     if (hasFilter()) {
@@ -169,7 +169,6 @@ export async function useGanttAll(aggregationAxis: AggregationAxis) {
                 return p
             }
         }, 0) / estimate * 100
-
 
         return {
             tickets,

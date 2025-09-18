@@ -10,7 +10,6 @@
 package openapi_models
 
 type PostCopyFacilitysRequest struct {
-
 	FacilityId int32 `json:"facilityId" form:"facilityId"`
 
 	Facility Facility `json:"facility" form:"facility"`

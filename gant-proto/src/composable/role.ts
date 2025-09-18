@@ -76,6 +76,22 @@ const Worker = {
     "CSV_UPLOAD": false,
     "UPDATE_MASTER": false,
 }
+const WorkerWithPileUps = {
+    "ALL_SETTINGS": false,
+    "FACILITY_SETTINGS": false,
+    "UPDATE_TICKET": false,
+    "UPDATE_PROGRESS": true,
+    "ADD_TICKET": false,
+    "CHANGE_ROLE": false,
+    "VIEW_PILEUPS": true,
+    "VIEW_SCHEDULE_ALERT": true,
+    "ALL_VIEW": true,
+    "UPDATE_USER": true,
+    "MENU": true,
+    "FORCE_SIMULATE_USER": false,
+    "CSV_UPLOAD": false,
+    "UPDATE_MASTER": false,
+}
 const Guest = {
     "ALL_SETTINGS": false,
     "FACILITY_SETTINGS": false,
@@ -103,6 +119,8 @@ export function allowed(section: Section) {
             return Manager[section]
         case RoleType.Worker:
             return Worker[section]
+        case RoleType.WorkerWithPileUps:
+            return WorkerWithPileUps[section]
         case RoleType.Viewer:
             return Viewer[section]
         case RoleType.Guest:

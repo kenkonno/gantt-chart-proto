@@ -3,7 +3,7 @@ import dayjs, {Dayjs} from "dayjs";
 import {Department, Facility, Holiday, Ticket, TicketUser, User} from "@/api";
 import {dayBetween, ganttDateToYMDDate} from "@/coreFunctions/manHourCalculation";
 import {Api} from "@/api/axios";
-import {FacilityStatus, FacilityType} from "@/const/common";
+import {FacilityStatus, FacilityType, FeatureOption} from "@/const/common";
 import {DisplayType} from "@/composable/ganttFacilityMenu";
 import {globalFilterGetter, globalFilterMutation} from "@/utils/globalFilterState";
 import {pileUpLabelFormat} from "@/utils/filters";
@@ -206,12 +206,13 @@ function initPileUps(
 }
 
 // NOTE: displayType は単なるストリングなので computedRefで渡さないと watch が機能しない
-export const usePileUps = (
+export const usePileUps = async (
     startDate: string, endDate: string, isAllMode: boolean,
     facility: Facility,
     tickets: Ref<Ticket[]>, ticketUsers: Ref<TicketUser[]>,
     displayType: Ref<"day" | "week" | "hour" | "month">,
     holidays: Ref<Holiday[]>, departmentList: Department[], userList: User[], facilityList: Facility[],
+    forceReload: Ref<boolean>,
     defaultValidUserIndexMap: Map<number, number[]>,
     defaultPileUps?: PileUps[],
     globalStartDate?: string,
@@ -243,14 +244,15 @@ export const usePileUps = (
     window.addEventListener("beforeunload", saveFilter)
 
     let refreshPileUpByPersonExclusive = false
-    watch([displayType, tickets, ticketUsers, holidays], () => {
-        refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？
+    watch([displayType, tickets, ticketUsers, holidays, forceReload], async () => {
+        console.log("############## function watch", displayType.value, tickets.value, ticketUsers.value, holidays.value, forceReload)
+        await refreshPileUps() // FIXME: watchでやるべきなのかどうかめちゃ悩む。これがMなのか？
     }, {
         deep: true
     })
 
     // 人単位・部署単位ともに更新する
-    const refreshPileUps = () => {
+    const refreshPileUps = async () => {
         console.log("############## function refreshPileUps", refreshPileUpByPersonExclusive)
         if (refreshPileUpByPersonExclusive) {
             return
@@ -261,6 +263,13 @@ export const usePileUps = (
         if (pileUps.value.length > 0) saveFilter()
         const validUserIndexMap = initPileUps(endDate, startDate, isAllMode, userList, pileUps, departmentList, filteredFacilityList, defaultValidUserIndexMap, defaultPileUps, globalStartDate);
 
+        // 重みづけデータの取得
+        let ticketDailyWeights: TicketDailyWeight[] = []
+        if (available(FeatureOption.WorkloadWeighting)) {
+            const facilityId = facility ? facility.id! : undefined
+            ticketDailyWeights = (await Api.getTicketDailyWeights(facilityId)).data.list
+        }
+
         // 全てのチケットから積み上げを更新する
         tickets.value.forEach(ticket => {
             setWorkHour(
@@ -268,7 +277,7 @@ export const usePileUps = (
                 facility,
                 ticket,
                 ticketUsers.value.filter(v => v.ticket_id === ticket.id),
-                startDate, endDate, holidays.value, userList, validUserIndexMap!
+                startDate, endDate, holidays.value, userList, validUserIndexMap!, ticketDailyWeights.filter(v => v.ticketId === ticket.id!)
             )
         })
 
@@ -333,6 +342,7 @@ export const usePileUps = (
      * @param holidays
      * @param userList
      * @param defaultValidUserIndexMap
+     * @param ticketDailyWeights
      */
     const setWorkHour = (pileUps: PileUps[],
                          facility: Facility,
@@ -340,7 +350,10 @@ export const usePileUps = (
                          ticketUsers: TicketUser[],
                          facilityStartDate: string,
                          facilityEndDate: string,
-                         holidays: Holiday[], userList: User[], defaultValidUserIndexMap: Map<number, number[]>) => {
+                         holidays: Holiday[],
+                         userList: User[],
+                         defaultValidUserIndexMap: Map<number, number[]>,
+                         ticketDailyWeights: TicketDailyWeight[]) => {
 
         // TODO: validationは変更する
         if (ticket.start_date == null || ticket.end_date == null || ticket.estimate == null) {
@@ -372,17 +385,15 @@ export const usePileUps = (
 
         // NOTE: APIのget_default_pile_ups.go と必ず合わせること
         const ticketUserIds = ticketUsers.map(v => v.user_id)
-        let workPerDay: number
-        if (ticketUserIds.length > 0) {
-            const numberOfWorkerByDay = validIndexes.reduce((sum, key) => {
-                return sum + (defaultValidUserIndexMap.get(key)?.filter(v => ticketUserIds.includes(v)).length || 0)
-            }, 0)
-            workPerDay = ticket.estimate / numberOfWorkerByDay
-        } else if (ticket.number_of_worker != undefined && ticket.number_of_worker > 0) {
-            workPerDay = ticket.estimate / validIndexes.length / ticket.number_of_worker
-        } else {
-            return
+        const defaultPileUpForWork = <DefaultPileUpForWork>{
+            id: ticket.id,
+            estimate: ticket.estimate,
+            numberOfWorker: ticket.number_of_worker,
+            userIds: ticketUserIds,
+            validIndexes: validIndexes
         }
+        const workPerDayCalculator = newWorkPerDayCalculatorFactory(ticketDailyWeights, facilityStartDate, defaultPileUpForWork, defaultValidUserIndexMap) // NOTE: API側ではglobalStartDateを渡しているが、フロントではfacilityStartDateで正しい。チケットのvalidIndexとweightの日付から算出したvalidIndexを対応させるため。バックエンドは全体を計算するのでglobalStartDateが正しくなる。
+        const workPerDay = workPerDayCalculator.calculateWorkPerDay(defaultPileUpForWork, defaultValidUserIndexMap)
 
         /**
          * 集計とエラーの仕様を整理する
@@ -404,6 +415,8 @@ export const usePileUps = (
         if (ticketUserIds.length > 0) {
             // アサイン済みの場合 [担当者] [積み上げ、アサイン済み]に計上する
             validIndexes.forEach(validIndex => {
+                // 重要：オプションによって変動する工数を計算
+                const currentWorkPerDay = workPerDayCalculator.reCalculateWorkPerDayByValidIndex(workPerDay, validIndex, defaultPileUpForWork)
                 ticketUserIds.forEach(userId => {
                     // アサイン済みの場合はユーザーから対象のpileUpsを指定する（部署が指定されていないケースがあるため）
                     const user = userList.find(user => user.id === userId)
@@ -425,33 +438,33 @@ export const usePileUps = (
                     const numberOfDepartmentUsers = userList.filter(v => v.department_id === user.department_id).filter(v => defaultValidUserIndexMap.get(validIndex)?.includes(v.id!)).length
 
                     // 部署への積み上げ(共通)
-                    targetPileUp.labels[validIndex] += workPerDay
+                    targetPileUp.labels[validIndex] += currentWorkPerDay
                     if (pileUpLabelFormat(targetPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                         targetPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                     }
 
                     if (facility.type == FacilityType.Ordered) {
                         // アサイン済みへの積み上げ
-                        targetPileUp.assignedUser.labels[validIndex] += workPerDay
+                        targetPileUp.assignedUser.labels[validIndex] += currentWorkPerDay
                         if (pileUpLabelFormat(targetPileUp.assignedUser.labels[validIndex]) > numberOfDepartmentUsers) {
                             targetPileUp.assignedUser.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                         }
                         // ユーザーの足し上げ処理
                         const targetUserPileUp = targetPileUp.assignedUser.users.find(v => v.user.id == userId)!
-                        targetUserPileUp.labels[validIndex] += workPerDay
+                        targetUserPileUp.labels[validIndex] += currentWorkPerDay
                         if (pileUpLabelFormat(targetUserPileUp.labels[validIndex]) > 1) {
                             targetUserPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                         }
                     } else {
                         // 未確定の場合 への積み上げ
-                        targetPileUp.noOrdersReceivedPileUp.labels[validIndex] += workPerDay
+                        targetPileUp.noOrdersReceivedPileUp.labels[validIndex] += currentWorkPerDay
                         if (pileUpLabelFormat(targetPileUp.noOrdersReceivedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                             targetPileUp.noOrdersReceivedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                         }
 
                         // 未確定の場合の設備への積み上げ
                         const targetFacilityPileUp = targetPileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!
-                        targetFacilityPileUp.labels[validIndex] += workPerDay
+                        targetFacilityPileUp.labels[validIndex] += currentWorkPerDay
                     }
                 })
             })
@@ -462,6 +475,8 @@ export const usePileUps = (
 
             // 未アサインの場合 [未アサインのその設備] [積み上げ、未アサイン積み上げ]に計上する
             validIndexes.forEach(validIndex => {
+                // 重要：オプションによって変動する工数を計算
+                const currentWorkPerDay = workPerDayCalculator.reCalculateWorkPerDayByValidIndex(workPerDay, validIndex, defaultPileUpForWork)
                 // 設備の期間外の場合は処理を中断
                 if (targetPileUp.labels.length <= validIndex) {
                     return
@@ -470,111 +485,33 @@ export const usePileUps = (
                 const numberOfDepartmentUsers = userList.filter(v => v.department_id === targetPileUp.departmentId).filter(v => defaultValidUserIndexMap.get(validIndex)?.includes(v.id!)).length
 
                 // 部署への積み上げ（共通）
-                targetPileUp.labels[validIndex] += workPerDay
+                targetPileUp.labels[validIndex] += currentWorkPerDay
                 if (pileUpLabelFormat(targetPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                     targetPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                 }
                 if (facility.type === FacilityType.Ordered) {
                     // 未アサインへ積み上げ
-                    targetPileUp.unAssignedPileUp.labels[validIndex] += workPerDay
+                    targetPileUp.unAssignedPileUp.labels[validIndex] += currentWorkPerDay
                     if (pileUpLabelFormat(targetPileUp.unAssignedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                         targetPileUp.unAssignedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                     }
 
                     // 未アサインの設備へ積み上げ
                     const targetFacilityPileUp = targetPileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!
-                    targetFacilityPileUp.labels[validIndex] += workPerDay
+                    targetFacilityPileUp.labels[validIndex] += currentWorkPerDay
                 } else {
                     // 未確定の場合 への積み上げ
-                    targetPileUp.noOrdersReceivedPileUp.labels[validIndex] += workPerDay
+                    targetPileUp.noOrdersReceivedPileUp.labels[validIndex] += currentWorkPerDay
                     if (pileUpLabelFormat(targetPileUp.noOrdersReceivedPileUp.labels[validIndex]) > numberOfDepartmentUsers) {
                         targetPileUp.noOrdersReceivedPileUp.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
                     }
                     // 設備への積み上げ
                     const targetFacilityPileUp = targetPileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!
-                    targetFacilityPileUp.labels[validIndex] += workPerDay
+                    targetFacilityPileUp.labels[validIndex] += currentWorkPerDay
                 }
             })
         }
-        // 旧資産をメモとして残しておくgithubつかえやってはなしではあるが。
-        // // 確定の場合
-        // if (facility.type === FacilityType.Ordered) {
-        //     const ticketUserIds = ticketUsers.map(v => v.user_id)
-        //     // アサイン済み
-        //     if (ticketUserIds.length > 0) {
-        //         // 総稼働日数を計算
-        //         // 予定工数 / 総稼働日数で分配する
-        //
-        //         // ユーザーに紐づく部署を設定
-        //         ticketUserIds.forEach(userId => {
-        //             const user = userList.find(user => user.id === userId)
-        //             if (user == undefined) return console.warn("user is not exists", userId)
-        //             const pileUp = pileUps.find(pileUp => pileUp.departmentId === user.department_id)!
-        //             if (pileUp == undefined) return console.warn("departmentId is not exists", user.department_id)
-        //             rows.push(pileUp.assignedUser.users.find(v => v.user.id === user.id)!)
-        //             summaryRows.push([pileUp, pileUp.assignedUser])
-        //             summaryLimit.push(userList.filter(v => v.department_id === user.department_id).length)
-        //         })
-        //     } else {
-        //         workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
-        //         // チケットに紐づく部署を設定
-        //         const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
-        //         if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
-        //         rows.push(pileUp.unAssignedPileUp.facilities.find(v => v.facilityId === facility.id)!)
-        //         // TODO: サマリーの計上先にするかヒアリング。絵面的には含めないっぽい。含める場合はpileUp事態をsummaryRowsに追加する
-        //         summaryRows.push([pileUp, pileUp.unAssignedPileUp])
-        //         summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length, 9999) // TODO: あり得ない上限にしてエラーにならないようにしている。
-        //         rowErrorFunc = facilityErrorFunc
-        //     }
-        // } else if (facility.type === FacilityType.Prepared) {
-        //     workHour = ticket.estimate / numberOfBusinessDays / (ticket.number_of_worker ?? 1)
-        //     const pileUp = pileUps.find(pileUp => pileUp.departmentId === ticket.department_id)
-        //     if (pileUp == undefined) return console.warn("departmentId is not exists", ticket.department_id)
-        //     rows.push(pileUp.noOrdersReceivedPileUp.facilities.find(v => v.facilityId === facility.id)!)
-        //     summaryRows.push([pileUp, pileUp.noOrdersReceivedPileUp])
-        //     summaryLimit.push(userList.filter(v => v.department_id === pileUp.departmentId).length)
-        //     rowErrorFunc = facilityErrorFunc
-        // }
-        // allocateWorkingHours(rows, summaryRows, rowErrorFunc, summaryLimit, validIndexes, estimate, workHour)
     }
-    // /**
-    //  * 作業時間の割り当てを実施する。
-    //  * summaryRowsはrowsのi番目の結果と同じ作業時間を割り当てる
-    //  * @param rows
-    //  * @param summaryRows
-    //  * @param rowErrorFunc
-    //  * @param summaryLimit
-    //  * @param validIndexes
-    //  * @param estimate
-    //  * @param workHour
-    //  */
-    // const allocateWorkingHours = (rows: PileUpRow[], summaryRows: PileUpRow[][], rowErrorFunc: (v: number) => boolean, summaryLimit: number[], validIndexes: number[], estimate: number, workHour: number) => {
-    //     validIndexes.forEach((validIndex) => {
-    //         rows.forEach((v, i) => {
-    //             if (estimate < 0) {
-    //                 return
-    //             }
-    //             let workHourResult = 0
-    //             if (estimate - workHour < 0) {
-    //                 workHourResult = estimate
-    //             } else {
-    //                 workHourResult = workHour
-    //             }
-    //             v.labels[validIndex] += workHourResult
-    //             if (rowErrorFunc(v.labels[validIndex])) {
-    //                 v.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
-    //             }
-    //             // ユーザーごとに割当先が異なることに注意
-    //             summaryRows[i].forEach(pileUpRow => {
-    //                 pileUpRow.labels[validIndex] += workHourResult
-    //                 if (pileUpLabelFormat(pileUpRow.labels[validIndex]) > summaryLimit[i]) {
-    //                     pileUpRow.styles[validIndex] = {color: PILEUP_DANGER_COLOR}
-    //                 }
-    //             })
-    //             estimate -= workHour
-    //         })
-    //     })
-    // }
 
     // 日付からどのindexに該当するか取得する
     const getIndexByDate = (facilityStartDate: Dayjs, date: Dayjs) => {
@@ -732,7 +669,7 @@ export const usePileUps = (
         return {labels: result.labels, styles: result.styles}
     }
 
-    refreshPileUps()
+    await refreshPileUps()
 
     return {
         // pileUpFilters,
@@ -740,7 +677,6 @@ export const usePileUps = (
         // pileUpsByPerson,
         // displayPileUps,
         pileUps,
-        refreshPileUps,
     }
 }
 /**
@@ -825,3 +761,206 @@ export const getDefaultPileUps = async (
     }
 }
 
+// work_per_day_calculator
+
+import {TicketDailyWeight} from "@/api";
+import {available} from "@/composable/featureOption";
+
+// TypeScript equivalent of Go's db.DefaultPileUp for work calculation
+interface DefaultPileUpForWork {
+    id?: number | null;
+    estimate?: number | null;
+    numberOfWorker?: number | null;
+    userIds: number[];
+    validIndexes: number[];
+}
+
+// WorkPerDayCalculator interface equivalent to Go interface
+interface WorkPerDayCalculator {
+    calculateWorkPerDay(ticket: DefaultPileUpForWork, validUserMap: Map<number, number[]>): number;
+
+    reCalculateWorkPerDayByValidIndex(workHour: number, validIndex: number, ticket: DefaultPileUpForWork): number;
+}
+
+// Factory function equivalent to Go's NewWorkPerDayCalculatorFactory
+function newWorkPerDayCalculatorFactory(
+    ticketDailyWeights: TicketDailyWeight[],
+    globalStartDate: string,
+    ticket: DefaultPileUpForWork,
+    validUserMap: Map<number, number[]>
+): WorkPerDayCalculator {
+    if (available(FeatureOption.WorkloadWeighting)) {
+        if (ticket.userIds.length > 0) {
+            return new WeightWorkPerDayWithAssignCalculator(ticketDailyWeights, validUserMap, globalStartDate);
+        } else {
+            return new WeightWorkPerDayWithNoAssignCalculator(ticketDailyWeights, validUserMap, globalStartDate);
+        }
+    } else {
+        return new DefaultWorkPerDayCalculator();
+    }
+}
+
+// Utility function equivalent to Go's getValidIndex
+function getValidIndex(globalStartDate: string, date: string): number {
+    return dayjs(date).diff(dayjs(globalStartDate), 'day');
+}
+
+// DefaultWorkPerDayCalculator - equivalent to Go's DefaultWorkPerDayCalculator
+class DefaultWorkPerDayCalculator implements WorkPerDayCalculator {
+    calculateWorkPerDay(ticket: DefaultPileUpForWork, validUserMap: Map<number, number[]>): number {
+        if (ticket.userIds.length > 0) {
+            // Calculate total number of worker days
+            const numberOfWorkerByDay = ticket.validIndexes.reduce((agg, item) => {
+                const validIndexUsers = validUserMap.get(item);
+                if (!validIndexUsers) {
+                    return agg;
+                }
+                const assignedUsers = validIndexUsers.filter(userId => ticket.userIds.includes(userId));
+                return agg + assignedUsers.length;
+            }, 0);
+
+            // For assigned tickets, work per day = total estimate / total available worker days
+            return (ticket.estimate ?? 0) / numberOfWorkerByDay;
+        } else {
+            return (ticket.estimate ?? 0) / (ticket.validIndexes.length);
+        }
+    }
+
+    reCalculateWorkPerDayByValidIndex(workHour: number, _validIndex: number, _ticket: DefaultPileUpForWork): number {
+        // Default implementation - no change
+        return workHour;
+    }
+}
+
+// WeightWorkPerDayWithAssignCalculator - equivalent to Go's version
+class WeightWorkPerDayWithAssignCalculator implements WorkPerDayCalculator {
+    private ticketDailyWeights: TicketDailyWeight[];
+    private validUserMap: Map<number, number[]>;
+    private ticketDailyWeightValidMap: Map<number, TicketDailyWeight>;
+
+    constructor(
+        ticketDailyWeights: TicketDailyWeight[],
+        validUserMap: Map<number, number[]>,
+        globalStartDate: string
+    ) {
+        this.ticketDailyWeights = ticketDailyWeights;
+        this.validUserMap = validUserMap;
+
+        // Create ticketDailyWeightValidMap equivalent to Go's lo.Associate
+        this.ticketDailyWeightValidMap = new Map();
+        ticketDailyWeights.forEach(item => {
+            const validIndex = getValidIndex(globalStartDate, item.date);
+            this.ticketDailyWeightValidMap.set(validIndex, item);
+        });
+    }
+
+    calculateWorkPerDay(ticket: DefaultPileUpForWork, validUserMap: Map<number, number[]>): number {
+        let totalWeight = 0
+        // Calculate total worker days excluding weighted days
+        const numberOfWorkerByDay = ticket.validIndexes.reduce((agg, item) => {
+            // Skip weighted days
+            if (this.ticketDailyWeightValidMap.has(item)) {
+                totalWeight += this.ticketDailyWeightValidMap.get(item)!.workHour!
+                return agg;
+            }
+
+            const validIndexUsers = validUserMap.get(item);
+            if (!validIndexUsers) {
+                return agg;
+            }
+
+            // Intersect validIndexUsers with ticket.userIds
+            const intersection = validIndexUsers.filter(userId => ticket.userIds.includes(userId));
+            return agg + intersection.length;
+        }, 0);
+
+        // (estimated hours - weighted hours) / total worker days excluding weighted days
+        return ((ticket.estimate ?? 0) - totalWeight) / numberOfWorkerByDay;
+    }
+
+    reCalculateWorkPerDayByValidIndex(workHour: number, validIndex: number, ticket: DefaultPileUpForWork): number {
+        // If weighted day exists
+        const ticketDailyWeight = this.ticketDailyWeightValidMap.get(validIndex);
+        if (ticketDailyWeight) {
+            // Valid users for this day
+            const validUsers = this.validUserMap.get(validIndex);
+            if (validUsers) {
+                // Distribute weight among valid ticket assignees
+                const intersection = validUsers.filter(userId => ticket.userIds.includes(userId));
+                workHour = (ticketDailyWeight.workHour ?? 0) / intersection.length;
+            }
+        }
+        return workHour;
+    }
+}
+
+// WeightWorkPerDayWithNoAssignCalculator - equivalent to Go's version  
+class WeightWorkPerDayWithNoAssignCalculator implements WorkPerDayCalculator {
+    private ticketDailyWeights: TicketDailyWeight[];
+    private validUserMap: Map<number, number[]>;
+    private ticketDailyWeightValidMap: Map<number, TicketDailyWeight>;
+
+    constructor(
+        ticketDailyWeights: TicketDailyWeight[],
+        validUserMap: Map<number, number[]>,
+        globalStartDate: string
+    ) {
+        this.ticketDailyWeights = ticketDailyWeights;
+        this.validUserMap = validUserMap;
+
+        // Create ticketDailyWeightValidMap
+        this.ticketDailyWeightValidMap = new Map();
+        ticketDailyWeights.forEach(item => {
+            const validIndex = getValidIndex(globalStartDate, item.date);
+            this.ticketDailyWeightValidMap.set(validIndex, item);
+        });
+    }
+
+    calculateWorkPerDay(ticket: DefaultPileUpForWork, _validUserMap: Map<number, number[]>): number {
+        // チケットの範囲内の重みづけの総工数を計算する
+        const totalWeightHours = ticket.validIndexes.reduce((agg, item) => {
+            if (this.ticketDailyWeightValidMap.has(item)) {
+                return agg + this.ticketDailyWeightValidMap.get(item)!.workHour!
+            }
+            return agg;
+        }, 0);
+        // Count work days excluding weighted days
+        const numberOfWorkDay = ticket.validIndexes.filter(item => {
+            // Exclude weighted days
+            return !this.ticketDailyWeightValidMap.has(item);
+        }).length;
+
+        // Distribute remaining estimate excluding weighted hours
+        return ((ticket.estimate ?? 0) - totalWeightHours) / numberOfWorkDay;
+    }
+
+    reCalculateWorkPerDayByValidIndex(workHour: number, validIndex: number, _ticket: DefaultPileUpForWork): number {
+        // If weighted day exists
+        const ticketDailyWeight = this.ticketDailyWeightValidMap.get(validIndex);
+        if (ticketDailyWeight) {
+            // For unassigned tickets, no distribution needed - use weight directly
+            return ticketDailyWeight.workHour ?? 0;
+        }
+        return workHour;
+    }
+}
+
+// Helper function to convert Ticket to DefaultPileUpForWork
+function ticketToDefaultPileUpForWork(ticket: Ticket, userIds: number[], validIndexes: number[]): DefaultPileUpForWork {
+    return {
+        id: ticket.id,
+        estimate: ticket.estimate,
+        numberOfWorker: ticket.number_of_worker,
+        userIds: userIds,
+        validIndexes: validIndexes
+    };
+}
+
+// Export the main factory function and utility functions
+export {
+    WorkPerDayCalculator,
+    DefaultPileUpForWork,
+    newWorkPerDayCalculatorFactory,
+    ticketToDefaultPileUpForWork,
+    getValidIndex
+};

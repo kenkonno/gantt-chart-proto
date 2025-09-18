@@ -1,13 +1,14 @@
 package facility_work_schedules
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
-	"strconv"
 )
 
 func GetFacilityWorkSchedulesInvoke(c *gin.Context) (openapi_models.GetFacilityWorkSchedulesResponse, error) {
@@ -27,7 +28,7 @@ func GetFacilityWorkSchedulesInvoke(c *gin.Context) (openapi_models.GetFacilityW
 				Date:       item.Date,
 				Type:       item.Type,
 				CreatedAt:  item.CreatedAt,
-				UpdatedAt:  int(item.UpdatedAt),
+				UpdatedAt: int32(item.UpdatedAt),
 			}
 		}),
 	}, nil

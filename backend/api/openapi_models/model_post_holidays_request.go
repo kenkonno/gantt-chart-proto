@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostHolidaysRequest struct {
-
 	Holiday Holiday `json:"holiday" form:"holiday"`
 }

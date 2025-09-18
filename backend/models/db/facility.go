@@ -12,6 +12,7 @@ type Facility struct {
 	Order           int
 	Status          string
 	Type            string
+	FreeText *string
 	ShipmentDueDate time.Time
 	CreatedAt       time.Time
 	UpdatedAt       int32

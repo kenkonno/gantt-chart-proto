@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostFacilityWorkSchedulesRequest struct {
-
 	FacilityWorkSchedule FacilityWorkSchedule `json:"facilityWorkSchedule,omitempty" form:"facilityWorkSchedule,omitempty"`
 }

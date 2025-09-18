@@ -13,8 +13,8 @@ import (
 	"time"
 )
 
+// Milestone -
 type Milestone struct {
-
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	FacilityId int32 `json:"facility_id" form:"facility_id" binding:"min=1"`
@@ -27,5 +27,5 @@ type Milestone struct {
 
 	CreatedAt time.Time `json:"created_at,omitempty" form:"created_at,omitempty"`
 
-	UpdatedAt int `json:"updated_at,omitempty" form:"updated_at,omitempty"`
+	UpdatedAt int32 `json:"updated_at,omitempty" form:"updated_at,omitempty"`
 }

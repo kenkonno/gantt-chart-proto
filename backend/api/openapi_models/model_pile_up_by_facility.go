@@ -10,7 +10,6 @@
 package openapi_models
 
 type PileUpByFacility struct {
-
 	FacilityId int32 `json:"facilityId" form:"facilityId"`
 
 	Labels []float32 `json:"labels" form:"labels"`

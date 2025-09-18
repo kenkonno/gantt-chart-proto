@@ -38,7 +38,7 @@ func (r *ticketRepository) FindByFacilityType(facilityTypes []string, facilitySt
 	if len(facilityStatus) > 0 {
 		builder.Where("facilities.status IN ?", facilityStatus)
 	}
-	builder.Debug().Find(&tickets)
+	builder.Find(&tickets)
 	if builder.Error != nil {
 		panic(builder.Error)
 	}
@@ -110,7 +110,7 @@ func (r *ticketRepository) FindByGanttGroupIds(ganttGroupIds []int32) []db.Ticke
 func (r *ticketRepository) FindByUserIds(userIds []int32, facilityStatus string) []db.Ticket {
 	var tickets []db.Ticket
 
-	result := r.con.Debug().Distinct().
+	result := r.con.Distinct().
 		Joins("JOIN ticket_users ON tickets.id = ticket_users.ticket_id").
 		Joins("JOIN gantt_groups ON tickets.gantt_group_id = gantt_groups.id").
 		Joins("JOIN facilities ON facilities.id = gantt_groups.facility_id").

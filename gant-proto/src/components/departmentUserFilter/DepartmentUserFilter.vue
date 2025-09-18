@@ -1,29 +1,24 @@
 <template>
   <div class="wrapper d-flex department-user-filter-wrapper">
     <div>部署：</div>
-    <multiselect
+    <CustomMultiselect
         class="select-box"
-        :value="cSelectedDepartment"
-        @input="inputDepartment"
-        :searchable="true"
+        v-model="selectedDepartment"
         :options="departmentOptions"
-        :allow-empty="true"
-        mode="tags"
-        :max="1"
-        @change="refresh"
+        @update:modelValue="refresh"
+        :max="max"
+        placeholder="部署を選択"
+        no-options-text="部署を登録してください"
     />
     <div>担当者：</div>
-    <multiselect
+    <CustomMultiselect
         class="select-box"
-        :value="cSelectedUser"
-        @input="inputUser"
-        :searchable="true"
+        v-model="selectedUser"
         :options="userOptions"
-        :allow-empty="true"
-        :taggable="true"
-        mode="tags"
-        :max="1"
-        @change="refresh"
+        @update:modelValue="refresh"
+        :max="max"
+        placeholder="担当者を選択"
+        no-options-text="担当者を登録してください"
     />
   </div>
 </template>
@@ -32,8 +27,14 @@
 import {computed, inject} from "vue";
 import {GLOBAL_MUTATION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
 import {GLOBAL_DEPARTMENT_USER_FILTER_KEY} from "@/composable/departmentUserFilter";
-import Multiselect from "@vueform/multiselect";
 import router from "@/router";
+import {available} from "@/composable/featureOption";
+import {FeatureOption} from "@/const/common";
+import CustomMultiselect from "@/components/form/CustomMultiselect.vue";
+
+const max = computed(() => {
+  return available(FeatureOption.MultiSelectFilter) ? -1 : 1
+})
 
 const globalState = inject(GLOBAL_STATE_KEY)!
 const {selectedUser, selectedDepartment} = inject(GLOBAL_DEPARTMENT_USER_FILTER_KEY)!
@@ -41,18 +42,20 @@ const {refreshGantt, refreshGanttAll} = inject(GLOBAL_MUTATION_KEY)!
 
 const departmentOptions = computed(() => {
   return globalState.departmentList.map(v => {
-    return {value: v.id, label: v.name}
+    return {value: v.id, label: v.name, runeName: v.name.substring(0, 1)}
   })
 })
+
 const userOptions = computed(() => {
   return globalState.userList.filter(v => {
-    if (selectedDepartment.value == undefined) {
+    if (selectedDepartment.value.length == 0) {
       return true
     } else {
-      return v.department_id == selectedDepartment.value
+      return selectedDepartment.value.includes(v.department_id)
     }
   }).map(v => {
-    return {value: v.id, label: `${v.lastName} ${v.firstName}`}
+    const runeName = (v.lastName ? v.lastName.substring(0, 1) : "") + (v.firstName ? v.firstName.substring(0, 1) : "")
+    return {value: v.id, label: `${v.lastName} ${v.firstName}`, runeName: runeName}
   })
 })
 
@@ -63,21 +66,6 @@ const refresh = () => {
   if (router.currentRoute.value.name == "gantt-all-view") {
     refreshGanttAll()
   }
-}
-
-const cSelectedDepartment = computed(() => {
-  return [selectedDepartment.value]
-})
-const cSelectedUser = computed(() => {
-  return [selectedUser.value]
-})
-
-
-const inputDepartment = (v: number[]) => {
-  selectedDepartment.value = v[0]
-}
-const inputUser = (v: number[]) => {
-  selectedUser.value = v[0]
 }
 
 </script>

@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// Holiday - 
+// Holiday -
 type Holiday struct {
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 

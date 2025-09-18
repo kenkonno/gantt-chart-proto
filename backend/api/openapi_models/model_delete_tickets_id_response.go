@@ -10,6 +10,5 @@
 package openapi_models
 
 type DeleteTicketsIdResponse struct {
-
 	Msg string `json:"msg,omitempty" form:"msg,omitempty"`
 }

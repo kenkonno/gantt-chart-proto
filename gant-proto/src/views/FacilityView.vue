@@ -4,7 +4,7 @@
         @open-edit-modal="openEditModal"
         @move-up="innerUpdateFacilityOrder($event, -1)"
         @move-down="innerUpdateFacilityOrder($event, 1)"
-        :list="sortedFacilityList"
+        :list="facilityList"
         :is-view-only="isViewOnly"
         :is-simulate="isSimulate"
     />
@@ -32,7 +32,7 @@ import AsyncFacilityEdit from "@/components/facility/AsyncFacilityEdit.vue";
 import DefaultModal from "@/components/modal/DefaultModal.vue";
 import {useModalWithId} from "@/composable/modalWIthId";
 import {GLOBAL_ACTION_KEY, GLOBAL_STATE_KEY} from "@/composable/globalState";
-import {computed, inject} from "vue";
+import {inject} from "vue";
 import {useIsSimulate} from "@/composable/isSimulate";
 
 const {facilityList} = inject(GLOBAL_STATE_KEY)!
@@ -43,10 +43,6 @@ defineEmits(["update"])
 const closeModalProxy = async () => {
   closeEditModal()
 }
-const sortedFacilityList = computed(() => {
-  // TODO: 0がレスポンスから消えている
-  return [...facilityList].sort((a, b) => (b.order ? b.order : 0) < (a.order ? a.order : 0) ? -1: 1);
-});
 
 // 降順で渡しているのでindexと方向を逆転させる
 const innerUpdateFacilityOrder = (index: number, direction: number) => {

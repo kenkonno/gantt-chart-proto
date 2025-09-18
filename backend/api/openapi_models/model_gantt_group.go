@@ -14,7 +14,6 @@ import (
 )
 
 type GanttGroup struct {
-
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	FacilityId int32 `json:"facility_id" form:"facility_id" binding:"min=1"`

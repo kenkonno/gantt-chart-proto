@@ -31,6 +31,7 @@ func PostFacilitiesInvoke(c *gin.Context) (openapi_models.PostFacilitiesResponse
 		Order:           int(facilityReq.Facility.Order),
 		Status:          facilityReq.Facility.Status,
 		Type:            facilityReq.Facility.Type,
+		FreeText: facilityReq.Facility.FreeText,
 		ShipmentDueDate: facilityReq.Facility.ShipmentDueDate,
 		CreatedAt:       time.Time{},
 		UpdatedAt:       0,

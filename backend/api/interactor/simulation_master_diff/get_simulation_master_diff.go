@@ -2,12 +2,13 @@ package simulation_master_diff
 
 import (
 	"fmt"
+	"reflect"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
-	"reflect"
 )
 
 func GetSimulationMasterDiffInvoke(c *gin.Context) (openapi_models.GetSimulationMasterDiffResponse, error) {
@@ -217,7 +218,7 @@ func convertMilestones(list []db.Milestone) []openapi_models.Milestone {
 			Description: item.Description,
 			Order:       int32(item.Order),
 			CreatedAt:   item.CreatedAt,
-			UpdatedAt:   int(item.UpdatedAt),
+			UpdatedAt: int32(item.UpdatedAt),
 		}
 	})
 }

@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetFacilityWorkSchedulesResponse struct {
-
 	List []FacilityWorkSchedule `json:"list" form:"list"`
 }

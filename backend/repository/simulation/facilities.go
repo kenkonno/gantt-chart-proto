@@ -21,10 +21,10 @@ type facilityRepository struct {
 	table string
 }
 
-func (r *facilityRepository) FindAll(facilityTypes []string, facilityStatus []string) []db.Facility {
+func (r *facilityRepository) FindAll(facilityTypes []string, facilityStatus []string, orderColumn string) []db.Facility {
 	var facilities []db.Facility
 
-	builder := r.con.Table(r.table).Order(`"order" ASC`)
+	builder := r.con.Table(r.table).Order(`"` + orderColumn + `" ASC`)
 	if len(facilityTypes) > 0 {
 		builder.Where("simulation_facilities.type IN ?", facilityTypes)
 	}

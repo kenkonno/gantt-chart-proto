@@ -10,7 +10,6 @@
 package openapi_models
 
 type GetSimulationMasterDiffResponse struct {
-
 	BeforeProcesses []Process `json:"beforeProcesses" form:"beforeProcesses"`
 
 	DiffProcesses []Process `json:"diffProcesses,omitempty" form:"diffProcesses,omitempty"`

@@ -35,6 +35,7 @@ export async function useFacility(facilityId?: number) {
     const facility = ref<Facility>({
         id: null,
         name: "",
+        free_text: "",
         term_from: "",
         term_to: "",
         shipment_due_date: "",
@@ -57,6 +58,7 @@ export async function useFacility(facilityId?: number) {
             facility.value.updated_at = data.facility.updated_at
             facility.value.status = data.facility.status
             facility.value.type = data.facility.type
+            facility.value.free_text = data.facility.free_text
         }
     }
 

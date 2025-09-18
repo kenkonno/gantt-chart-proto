@@ -14,7 +14,6 @@ import (
 )
 
 type SimulationLock struct {
-
 	SimulationName string `json:"simulationName" form:"simulationName"`
 
 	Status string `json:"status" form:"status"`

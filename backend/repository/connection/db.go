@@ -5,8 +5,11 @@ import (
 	"github.com/samber/lo"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 var con *gorm.DB
@@ -19,6 +22,14 @@ func init() {
 }
 
 func openConnection() *gorm.DB {
+	// 新しいロガーの設定
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Second, // スロークエリの閾値を1秒に設定
+		},
+	)
+
 	fmt.Println("INITIALIZE DB CONNECTION")
 	// connectionの取得
 	host := os.Getenv("POSTGRES_HOST")
@@ -28,10 +39,15 @@ func openConnection() *gorm.DB {
 	port := os.Getenv("POSTGRES_PORT")
 	fmt.Println(fmt.Sprintf("host=%s user=%s dbname=%s port=%s sslmode=prefer TimeZone=Asia/Tokyo", host, user, dbname, port))
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=prefer TimeZone=Asia/Tokyo", host, user, password, dbname, port)
-	d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	// カスタムロガーを設定してGORMを開く
+	d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger, // ここで設定
+	})
 	if err != nil {
 		panic(err)
 	}
+
 	return d
 }
 

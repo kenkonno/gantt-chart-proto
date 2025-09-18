@@ -177,6 +177,7 @@ type PileUpsProps = {
   defaultPileUps: PileUps[],
   globalStartDate: string,
   defaultValidUserIndexMap: Map<number, number[]>,
+  forceReload: boolean, // 強制的に再計算させる用のフラグ。トグルで利用する。
 }
 const props = defineProps<PileUpsProps>()
 const {facilityList, departmentList, userList} = inject(GLOBAL_STATE_KEY)!
@@ -193,14 +194,14 @@ const displayPrepared = (display: boolean) => {
 // 開始日、終了日は現在の案件。
 // DefaultPileUpsByDepartment,DefaultPileUpsByPerson を受け付けるようにする
 const isAllMode = props.currentFacilityId === -1
-const {tickets, ticketUsers, holidays, displayType} = toRefs(props)
+const {tickets, ticketUsers, holidays, displayType, forceReload} = toRefs(props)
 const {
   // pileUpFilters,
   // pileUpsByDepartment,
   // pileUpsByPerson,
   // displayPileUps,
     pileUps,
-} = usePileUps(
+} = await usePileUps(
     props.chartStart,
     props.chartEnd,
     isAllMode,
@@ -212,6 +213,7 @@ const {
     departmentList,
     userList,
     facilityList,
+    forceReload,
     props.defaultValidUserIndexMap,
     props.defaultPileUps,
     props.globalStartDate,
@@ -229,14 +231,19 @@ const toggleDisplay = (departmentId: number, type: "" | "assignedUser" | "noOrde
 const cPileUps = computed(() => {
   let result: PileUps[] = pileUps.value
   // 部署のフィルタ
-  if (selectedDepartment.value !== undefined) {
-    result = result.filter(v => v.departmentId === selectedDepartment.value)
+  if (selectedDepartment.value.length > 0) {
+    result = result.filter(v => selectedDepartment.value.includes(v.departmentId))
   }
-  if (selectedUser.value !== undefined) {
+  if (selectedUser.value.length > 0) {
     result = result.map(function(v): PileUps {
       // ユーザーに紐づく部署を特定する
       return {
-        assignedUser: {display: v.assignedUser.display, labels: v.assignedUser.labels, styles: v.assignedUser.styles, users: v.assignedUser.users.filter(user => user.user.id === selectedUser.value)},
+        assignedUser: {
+          display: v.assignedUser.display,
+          labels: v.assignedUser.labels,
+          styles: v.assignedUser.styles,
+          users: v.assignedUser.users.filter(user => selectedUser.value.includes(user.user.id))
+        },
         noOrdersReceivedPileUp: {display: v.noOrdersReceivedPileUp.display, facilities: [], labels: [], styles: []},
         unAssignedPileUp: {display: v.unAssignedPileUp.display, facilities: [], labels: [], styles: []},
         departmentId: v.departmentId,

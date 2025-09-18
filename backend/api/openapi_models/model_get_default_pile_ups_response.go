@@ -14,7 +14,6 @@ import (
 )
 
 type GetDefaultPileUpsResponse struct {
-
 	DefaultPileUps []DefaultPileUp `json:"defaultPileUps" form:"defaultPileUps"`
 
 	GlobalStartDate time.Time `json:"globalStartDate" form:"globalStartDate"`

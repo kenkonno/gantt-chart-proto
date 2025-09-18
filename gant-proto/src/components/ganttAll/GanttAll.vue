@@ -79,6 +79,7 @@
           :defaultPileUps="defaultPileUps"
           :global-start-date="globalStartDate"
           :default-valid-user-index-map="defaultValidUserIndexMap"
+          :force-reload="false"
           v-if="allowed('VIEW_PILEUPS') && globalState.showPileUp"
       >
       </PileUps>

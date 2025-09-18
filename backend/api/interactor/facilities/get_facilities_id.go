@@ -1,11 +1,12 @@
 package facilities
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"strconv"
 )
 
 func GetFacilitiesIdInvoke(c *gin.Context) (openapi_models.GetFacilitiesIdResponse, error) {
@@ -34,6 +35,7 @@ func GetFacilitiesIdInvoke(c *gin.Context) (openapi_models.GetFacilitiesIdRespon
 			Status:    facility.Status,
 			Type:      facility.Type,
 			ShipmentDueDate: facility.ShipmentDueDate,
+			FreeText:  facility.FreeText,
 		},
 	}, nil
 }

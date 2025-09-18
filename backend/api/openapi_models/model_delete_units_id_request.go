@@ -10,6 +10,5 @@
 package openapi_models
 
 type DeleteUnitsIdRequest struct {
-
 	Id int32 `json:"id,omitempty" form:"id,omitempty"`
 }

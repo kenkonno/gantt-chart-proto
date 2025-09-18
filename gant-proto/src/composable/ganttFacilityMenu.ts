@@ -32,6 +32,9 @@ export function useGanttFacilityMenu() {
     }
     const displayType = ref<DisplayType>(savedViewType)
 
+    // 重みづけ
+    const ticketDailyWeightMode = ref<boolean>(false)
+
     // フィルタ保存関連
     const safeFilter = () => {
         globalFilterMutation.updateGanttFacilityMenu(GanttHeader.value)
@@ -45,5 +48,6 @@ export function useGanttFacilityMenu() {
     return {
         GanttHeader,
         displayType,
+        ticketDailyWeightMode,
     }
 }

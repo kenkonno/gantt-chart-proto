@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostSimulationRequest struct {
-
-	 string `json:",omitempty" form:",omitempty"`
+	string `json:",omitempty" form:",omitempty"`
 }

@@ -1,11 +1,12 @@
 package milestones
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
-	"strconv"
 )
 
 func GetMilestonesIdInvoke(c *gin.Context) (openapi_models.GetMilestonesIdResponse, error) {
@@ -20,13 +21,13 @@ func GetMilestonesIdInvoke(c *gin.Context) (openapi_models.GetMilestonesIdRespon
 
 	return openapi_models.GetMilestonesIdResponse{
 		Milestone: openapi_models.Milestone{
-			Id:              milestone.Id,
-			FacilityId:      milestone.FacilityId,
-			Date:            milestone.Date,
-			Description:     milestone.Description,
-			Order:           int32(milestone.Order),
-			CreatedAt:       milestone.CreatedAt,
-			UpdatedAt:       int(milestone.UpdatedAt),
+			Id:          milestone.Id,
+			FacilityId:  milestone.FacilityId,
+			Date:        milestone.Date,
+			Description: milestone.Description,
+			Order:       int32(milestone.Order),
+			CreatedAt:   milestone.CreatedAt,
+			UpdatedAt:   int32(milestone.UpdatedAt),
 		},
 	}, nil
 }

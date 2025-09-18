@@ -2,11 +2,13 @@ rm -rf ./gen/*
 rm -rf ./openapi_models/*
 rm -rf ./openapi/*
 
+# bundle
+npx @redocly/cli bundle ./api_spec/api.yaml -o ./api_spec/bundled.yaml
 
 # gen
-"C:\Program Files\JetBrains\IntelliJ IDEA 2022.2.1\jbr\bin\java.exe" -jar \
+java -jar \
   "openapi-generator-cli-6.6.0.jar" \
-  generate -g go-gin-server -i "./GanttChartApi.yaml" -o "gen"
+  generate -g go-gin-server -i "./api_spec/bundled.yaml" -o "gen"
 
 mv ./gen/go/model* ./openapi_models
 mv ./gen/go/* ./openapi/

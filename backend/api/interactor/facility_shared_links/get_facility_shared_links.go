@@ -22,7 +22,7 @@ func GetFacilitySharedLinksInvoke(c *gin.Context) (openapi_models.GetFacilitySha
 				FacilityId: item.FacilityId,
 				Uuid:       &item.Uuid,
 				CreatedAt:  item.CreatedAt,
-				UpdatedAt:  int(item.UpdatedAt),
+				UpdatedAt: int32(item.UpdatedAt),
 			}
 		}),
 	}, nil

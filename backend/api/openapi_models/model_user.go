@@ -14,7 +14,6 @@ import (
 )
 
 type User struct {
-
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	DepartmentId int32 `json:"department_id" form:"department_id"`

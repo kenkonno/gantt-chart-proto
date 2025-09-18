@@ -48,6 +48,17 @@
         </label>
       </div>
     </div>
+    <div class="d-flex justify-middle mx-1"
+         v-if="available(FeatureOption.WorkloadWeighting) && allowed('VIEW_PILEUPS')">
+      <div class="form-check">
+        <label class="form-check-label" for="ticketDailyWeightMode">
+          <input class="form-check-input" type="checkbox" name="ticketDailyWeightMode" id="ticketDailyWeightMode"
+                 v-model="ticketDailyWeightMode"
+                 @change="emits('updateTicketDailyWeightMode', $event.target.checked)">
+          重みづけ
+        </label>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -57,10 +68,13 @@ import {Tippy} from "vue-tippy";
 import {DisplayType, GanttFacilityHeader} from "@/composable/ganttFacilityMenu";
 import {ref} from "vue";
 import {allowed} from "@/composable/role";
+import {available} from "@/composable/featureOption";
+import {FeatureOption} from "@/const/common";
 
 type GanttFacilityMenuProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
   displayType: DisplayType,
+  ticketDailyWeightMode: boolean,
 }
 
 const emits = defineEmits(["setScheduleByPersonDay", "setScheduleByFromTo", "updateDisplayType"])
@@ -68,4 +82,5 @@ const props = defineProps<GanttFacilityMenuProps>()
 
 const ganttFacilityHeader = ref(props.ganttFacilityHeader)
 const displayType = ref(props.displayType)
+const ticketDailyWeightMode = ref(props.displayType)
 </script>

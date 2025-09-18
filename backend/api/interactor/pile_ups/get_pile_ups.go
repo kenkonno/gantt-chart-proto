@@ -1,15 +1,17 @@
 package pile_ups
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/constants"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/utils"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
 	"golang.org/x/exp/slices"
-	"strconv"
 )
 
 func GetPileUpsInvoke(c *gin.Context) (openapi_models.GetPileUpsResponse, error) {
@@ -27,7 +29,7 @@ func GetPileUpsInvoke(c *gin.Context) (openapi_models.GetPileUpsResponse, error)
 		panic(err)
 	}
 	facilityRep := repository.NewFacilityRepository(middleware.GetRepositoryMode(c)...)
-	facilities := lo.Filter(facilityRep.FindAll(facilityTypes, []string{constants.FacilityStatusEnabled}), func(item db.Facility, index int) bool {
+	facilities := lo.Filter(facilityRep.FindAll(facilityTypes, []string{constants.FacilityStatusEnabled}, utils.GetProjectSortKey()), func(item db.Facility, index int) bool {
 		return *item.Id != int32(excludeFacilityId)
 	})
 	ganttGroupRep := repository.NewGanttGroupRepository(middleware.GetRepositoryMode(c)...)

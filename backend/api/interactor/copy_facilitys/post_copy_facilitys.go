@@ -1,14 +1,16 @@
 package copy_facilitys
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/middleware"
 	"github.com/kenkonno/gantt-chart-proto/backend/api/openapi_models"
+	"github.com/kenkonno/gantt-chart-proto/backend/api/utils"
 	"github.com/kenkonno/gantt-chart-proto/backend/models/db"
 	"github.com/kenkonno/gantt-chart-proto/backend/repository"
 	"github.com/samber/lo"
-	"net/http"
-	"time"
 )
 
 func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysResponse, error) {
@@ -41,7 +43,7 @@ func PostCopyFacilitysInvoke(c *gin.Context) (openapi_models.PostCopyFacilitysRe
 	}))
 
 	// コピーを実施する、順番は Facility -> Unit | GanttGroups -> (Ticket)
-	allFacility := facilityRep.FindAll([]string{}, []string{})
+	allFacility := facilityRep.FindAll([]string{}, []string{}, utils.GetProjectSortKey())
 	order := lo.MaxBy(allFacility, func(a db.Facility, b db.Facility) bool {
 		return a.Order > b.Order
 	}).Order + 1

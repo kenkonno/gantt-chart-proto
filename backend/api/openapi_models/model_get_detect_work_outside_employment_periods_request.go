@@ -14,7 +14,6 @@ import (
 )
 
 type GetDetectWorkOutsideEmploymentPeriodsRequest struct {
-
 	UserId int32 `json:"userId" form:"userId"`
 
 	EmploymentStartDate time.Time `json:"employmentStartDate" form:"employmentStartDate"`

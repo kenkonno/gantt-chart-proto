@@ -21,6 +21,7 @@
             @dragstart-bar="onDragstartBar($event.bar, $event.e)"
             @drag-bar="onDragBar($event.bar, $event.e)"
             @dragend-bar="onDragendBar($event.bar, $event.e)"
+            @bar-update="onBarUpdate($event.bar, $event.newValue)"
             @contextmenu-bar="onContextmenuBar($event.bar, $event.e, $event.datetime)"
             color-scheme="creamy"
 
@@ -186,6 +187,7 @@
             :global-start-date="globalStartDate"
             :default-valid-user-index-map="defaultValidUserIndexMap"
             v-if="globalState.pileUpsRefresh && allowed('VIEW_PILEUPS') && globalState.showPileUp"
+            :force-reload="forcePileUpReload"
         >
         </PileUps>
       </div>
@@ -240,6 +242,7 @@ import GanttSideMenuByUnit from "@/components/ganttFacility/GanttSideMenuByUnit.
 type GanttProxyProps = {
   ganttFacilityHeader: GanttFacilityHeader[],
   displayType: DisplayType,
+  ticketDailyWeightMode: boolean,
 }
 const props = defineProps<GanttProxyProps>()
 const globalState = inject(GLOBAL_STATE_KEY)!
@@ -251,7 +254,12 @@ const cDepartmentList = computed(() => {
   return result
 })
 
-const ret = await Promise.all([getDefaultPileUps(currentFacilityId, "day", false, facilityTypes), useGanttFacility()])
+const forcePileUpReload = ref(false)
+
+const ret = await Promise.all([
+  getDefaultPileUps(currentFacilityId, "day", false, facilityTypes),
+  useGanttFacility(computed(() => props.ticketDailyWeightMode))
+])
 
 const {
   globalStartDate,
@@ -290,7 +298,8 @@ const {
   isAllOpenUnit,
   toggleUnitOpen,
   toggleAllUnitOpen,
-  getUnitCollapseClass
+  getUnitCollapseClass,
+  updateTicketDailyWeight,
 } = ret[1]
 
 
@@ -352,8 +361,7 @@ const closeTicketMemo = async (ticket: Ticket, userIds: number[]) => {
   try {
     const result = await postTicketMemoById(ticket.id, ticket.memo, ticket.updated_at)
     ticket.updated_at = result?.updated_at
-    // NOTE: 気持ち悪いが、setTicketUserでTicketの更新を行っているので先勝ち処理のアラートを防止するためにコメントアウト
-    // await updateTicket(ticket)
+    await updateTicket(ticket)
     await mutation.setTicketUser(ticket, userIds)
     await refreshTicketMemo(ticket.id)
     closeEditModal()
@@ -398,10 +406,12 @@ let isDragged = false;
 // ここからイベントフック
 const onClickBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("click-bar", bar, e, datetime)
-  if (!isDragged) {
-    openTicketDetail(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
+  if (!bar.editable) {
+    if (!isDragged) {
+      openTicketDetail(Number(bar.ganttBarConfig.id), getUnitIdByTicketId(Number(bar.ganttBarConfig.id)))
+    }
+    isDragged = false
   }
-  isDragged = false
 }
 
 const onMousedownBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
@@ -439,6 +449,15 @@ const onDragendBar = async (
 
 const onContextmenuBar = (bar: GanttBarObject, e: MouseEvent, datetime?: string | Date) => {
   console.log("contextmenu-bar", bar, e, datetime)
+}
+
+const onBarUpdate = async (bar: GanttBarObject, workHour: number | undefined) => {
+  console.log("bar-update", bar, workHour)
+  // TODO: 本当は良くないけど文字列でデータを持たせる
+  console.log("bar-update", bar.ganttBarConfig)
+  const [ticketId, date] = bar.ganttBarConfig.id.split("@")
+  await updateTicketDailyWeight(+ticketId, date, workHour)
+  forcePileUpReload.value = !forcePileUpReload.value
 }
 
 </script>

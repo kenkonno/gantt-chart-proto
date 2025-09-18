@@ -10,6 +10,5 @@
 package openapi_models
 
 type PostUnitsRequest struct {
-
 	Unit Unit `json:"unit" form:"unit"`
 }

@@ -10,6 +10,5 @@
 package openapi_models
 
 type GetMilestonesResponse struct {
-
 	List []Milestone `json:"list" form:"list"`
 }

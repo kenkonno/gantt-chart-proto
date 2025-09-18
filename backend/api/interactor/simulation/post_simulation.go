@@ -29,7 +29,7 @@ func PostSimulationInvoke(c *gin.Context) (openapi_models.PostSimulationResponse
 	// 全てのシミュレーションテーブルを初期化しデータをコピーする
 	simulationRep := simulation.NewSimulationRepository()
 	simulationRep.InitAllData()
-	simulationRep.ResetSequence()
+	simulationRep.ResetSequence(nil)
 
 	return openapi_models.PostSimulationResponse{}, nil
 }

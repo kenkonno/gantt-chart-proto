@@ -14,7 +14,6 @@ import (
 )
 
 type TicketUser struct {
-
 	Id *int32 `json:"id,omitempty" form:"id,omitempty"`
 
 	TicketId int32 `json:"ticket_id" form:"ticket_id" binding:"min=1"`
