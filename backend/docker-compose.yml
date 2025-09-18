@@ -35,7 +35,7 @@ services:
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/api
 #    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/api
 
-#    image: 724772070484.dkr.ecr.ap-northeast-1.amazonaws.com/ftech-prod-tasmap/api
+    image: 724772070484.dkr.ecr.ap-northeast-1.amazonaws.com/ftech-prod-tasmap/api
 #    image: 428292434364.dkr.ecr.ap-northeast-1.amazonaws.com/aplsalpine-nagaoka-prod-tasmap/api
 #    image: 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com/alpsalpine-oketani-prod-tasmap/api
 #    image: 292207393783.dkr.ecr.ap-northeast-1.amazonaws.com/set-prod-tasmap/api
@@ -66,7 +66,7 @@ services:
 #    image: 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com/epson-prod-koteikanri/migration
 #    image: 084828592402.dkr.ecr.ap-northeast-1.amazonaws.com/mds-prod-koteikanri/migration
 
-#    image: 724772070484.dkr.ecr.ap-northeast-1.amazonaws.com/ftech-prod-tasmap/migration
+    image: 724772070484.dkr.ecr.ap-northeast-1.amazonaws.com/ftech-prod-tasmap/migration
 #    image: 428292434364.dkr.ecr.ap-northeast-1.amazonaws.com/aplsalpine-nagaoka-prod-tasmap/migration
 #    image: 217605528673.dkr.ecr.ap-northeast-1.amazonaws.com/alpsalpine-oketani-prod-tasmap/migration
 #    image: 292207393783.dkr.ecr.ap-northeast-1.amazonaws.com/set-prod-tasmap/migration

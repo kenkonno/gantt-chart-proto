@@ -99,6 +99,8 @@ docker logs $(docker ps -ql) -f
 # AWS環境へbuild
 $ aws ecr get-login-password --region ap-northeast-1 --profile=dev-laurensia | docker login --username AWS --password-stdin 866026585491.dkr.ecr.ap-northeast-1.amazonaws.com
 $ aws ecr get-login-password --region ap-northeast-1 --profile=epson-prod | docker login --username AWS --password-stdin 339712996936.dkr.ecr.ap-northeast-1.amazonaws.com
+$ aws ecr get-login-password --region ap-northeast-1 --profile=ftech-prod | docker login --username AWS --password-stdin
+724772070484.dkr.ecr.ap-northeast-1.amazonaws.com
 Login Succeeded
 docker-compose build
 docker-compose push
