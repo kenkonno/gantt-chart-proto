@@ -457,6 +457,7 @@ const onBarUpdate = async (bar: GanttBarObject, workHour: number | undefined) =>
   console.log("bar-update", bar.ganttBarConfig)
   const [ticketId, date] = bar.ganttBarConfig.id.split("@")
   await updateTicketDailyWeight(+ticketId, date, workHour)
+
   forcePileUpReload.value = !forcePileUpReload.value
 }
 

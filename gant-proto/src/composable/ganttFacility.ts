@@ -929,7 +929,14 @@ export async function useGanttFacility(ticketDailyWeightMode: ComputedRef<boolea
                 workHour: workHour,
             }
         }
-        await Api.postTicketDailyWeights(req)
+        try {
+            await Api.postTicketDailyWeights(req)
+        } catch {
+            // エラー発生時は削除リクエストにする
+            req.ticketDailyWeight.workHour = undefined
+            await Api.postTicketDailyWeights(req)
+            await refreshBars()
+        }
     }
 
     return {
