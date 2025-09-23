@@ -2,32 +2,30 @@ version: '3'
 
 services:
 
-  gantt_postgres:
-    container_name: gantt_postgres
+  tasmap_postgres:
+    image: laurensia/tasmap-postgres
+    container_name: tasmap_postgres
     build:
       context: .
       dockerfile: ./docker/postgres/Dockerfile
-    ports:
-      - "5433:5432"
     env_file: .env
     volumes:
-      - dbdata_gantt:/var/lib/postgresql/data
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - dbdata_tasmap:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - tasmap-network
 
-  gantt_api:
-    container_name: gantt_api
-    ports:
-      - "8080:8080"
+  tasmap_api:
+    image: laurensia/tasmap-api
+    container_name: tasmap_api
     depends_on:
-      gantt_postgres:
+      tasmap_postgres:
         condition: service_healthy
-      gantt_session:
+      tasmap_session:
         condition: service_started
     build:
       context: .
@@ -37,11 +35,15 @@ services:
       - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
     tty:
       true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    networks:
+      - tasmap-network
 
-  gantt_migration:
-    container_name: gantt_migration
+  tasmap_migration:
+    image: laurensia/tasmap-migration
+    container_name: tasmap_migration
+    depends_on:
+      tasmap_postgres:
+        condition: service_healthy
     build:
       context: .
       dockerfile: ./docker/migration/DockerfileForProvision
@@ -50,30 +52,36 @@ services:
       - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
     tty:
       true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    networks:
+      - tasmap-network
 
-  gantt_session:
-    container_name: gantt_session
+  tasmap_session:
+    image: laurensia/tasmap-session
+    container_name: tasmap_session
     build:
       context: .
       dockerfile: ./docker/session/Dockerfile
-    ports:
-      - "6379:6379"
     env_file: .env
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    networks:
+      - tasmap-network
 
-  gantt_web:
-    container_name: gantt_web
+  tasmap_web:
+    image: laurensia/tasmap-web
+    container_name: tasmap_web
+    depends_on:
+      tasmap_api:
+        condition: service_started
+    ports:
+      - "80:80"
     build:
       context: .
       dockerfile: ./docker/web/Dockerfile
-    ports:
-      - "80:80"
     env_file: .env
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    networks:
+      - tasmap-network
 volumes:
-  dbdata_gantt:
+  dbdata_tasmap:
     external: true
+networks:
+  tasmap-network:
+    driver: bridge
