@@ -12,19 +12,32 @@ import (
 
 func main() {
 	r := gin.Default()
-	cfg := cors.DefaultConfig()
-	//cfg.AllowOrigins = []string{"http://localhost:8080"}
-	cfg.AllowOrigins = []string{os.Getenv("ORIGIN")}
-	cfg.AllowMethods = []string{
-		"POST",
-		"GET",
-		"OPTIONS",
-		"PUT",
-		"DELETE",
+
+	// CORSの設定を準備
+	cfg := cors.Config{
+		AllowCredentials: true,
+		AllowMethods: []string{
+			"POST", "GET", "OPTIONS", "PUT", "DELETE",
+		},
+		AllowHeaders: []string{
+			"Access-Control-Allow-Headers", "Content-Type", "Content-Length",
+			"Accept-Encoding", "X-CSRF-Token", "Authorization",
+		},
 	}
-	cfg.AllowHeaders = []string{"Content-Type"}
-	cfg.AllowCredentials = true
-	cfg.AllowWildcard = true
+
+	// 環境変数 ORIGIN の値に応じて設定を分岐
+	origin := os.Getenv("ORIGIN")
+	if origin == "*" {
+		// "*" の場合は、どのオリジンも動的に許可する
+		// これにより認証情報 (Credentials) との併用が可能になります
+		cfg.AllowOriginFunc = func(origin string) bool {
+			return true
+		}
+	} else {
+		// "*" 以外の場合は、指定されたオリジンのみを許可する
+		cfg.AllowOrigins = []string{origin}
+	}
+
 	r.Use(cors.New(cfg))
 	r.Use(middleware.RoleBasedAccessControl())
 	r.Use(middleware.AuthMiddleware())
@@ -32,7 +45,5 @@ func main() {
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	r = openapi.NewRouter(r)
-	//r.LoadHTMLGlob("templates/*") TODO: たぶん現状では不要。
-	// Listen and Server in 0.0.0.0:8080
 	r.Run(":" + os.Getenv("API_PORT"))
 }
