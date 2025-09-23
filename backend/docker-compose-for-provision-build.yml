@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+
+  tasmap_postgres:
+    image: laurensia/tasmap-postgres
+    container_name: tasmap_postgres
+    build:
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
+    ports:
+      - "5433:5432"
+    env_file: .env
+    volumes:
+      - dbdata_gantt:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tasmap-network
+
+  tasmap_api:
+    image: laurensia/tasmap-api
+    container_name: tasmap_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      tasmap_postgres:
+        condition: service_healthy
+      tasmap_session:
+        condition: service_started
+    build:
+      context: .
+      dockerfile: ./docker/api/DockerfileForProvision
+    env_file: .env
+    volumes:
+      - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
+    tty:
+      true
+    networks:
+      - tasmap-network
+
+  tasmap_migration:
+    image: laurensia/tasmap-migration
+    container_name: tasmap_migration
+    build:
+      context: .
+      dockerfile: ./docker/migration/DockerfileForProvision
+    env_file: .env
+    volumes:
+      - ./:/go/src/github.com/kenkonno/gantt-chart-proto/backend/
+    tty:
+      true
+    networks:
+      - tasmap-network
+
+  tasmap_session:
+    image: laurensia/tasmap-session
+    container_name: tasmap_session
+    build:
+      context: .
+      dockerfile: ./docker/session/Dockerfile
+    ports:
+      - "6379:6379"
+    env_file: .env
+    networks:
+      - tasmap-network
+
+  tasmap_web:
+    image: laurensia/tasmap-web
+    container_name: tasmap_web
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+    ports:
+      - "80:80"
+    env_file: .env
+    networks:
+      - tasmap-network
+volumes:
+  dbdata_gantt:
+    external: true
+networks:
+  tasmap-network:
+    driver: bridge
