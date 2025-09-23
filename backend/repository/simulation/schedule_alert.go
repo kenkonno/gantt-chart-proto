@@ -61,11 +61,19 @@ func (r *scheduleAlertRepository) FindAll() []db.ScheduleAlert {
   			 ,   t.id as ticket_id
 			 ,   (SELECT ARRAY_AGG(date ORDER BY date)
 				  FROM generate_series(t.start_date, f.term_to, interval '1days') as date
-				  WHERE date NOT IN (SELECT h.date FROM simulation_holidays h WHERE f.id = h.facility_id)
+				  WHERE NOT EXISTS (SELECT * FROM (SELECT date FROM simulation_holidays
+					  UNION
+					  SELECT date FROM simulation_facility_work_schedules fws WHERE type = 'Holiday' AND fws.facility_id = f.id
+					  EXCEPT
+					  SELECT date FROM simulation_facility_work_schedules fws WHERE type = 'WorkingDay' AND fws.facility_id = f.id) as h WHERE date.date = h.date)
 				  ) as term_business_dates
 			 ,   (SELECT ARRAY_AGG(date ORDER BY date)
 				  FROM generate_series(t.start_date, t.end_date, interval '1days') as date
-				  WHERE date NOT IN (SELECT h.date FROM simulation_holidays h WHERE f.id = h.facility_id)
+				  WHERE NOT EXISTS (SELECT * FROM (SELECT date FROM simulation_holidays
+					  UNION
+					  SELECT date FROM simulation_facility_work_schedules fws WHERE type = 'Holiday' AND fws.facility_id = f.id
+					  EXCEPT
+					  SELECT date FROM simulation_facility_work_schedules fws WHERE type = 'WorkingDay' AND fws.facility_id = f.id) as h WHERE date.date = h.date)
 				) as ticket_business_dates
 			 ,   f."order" as facility_order
 			 ,   p."order" as process_order

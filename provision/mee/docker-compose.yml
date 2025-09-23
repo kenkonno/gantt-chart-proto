@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+
+  tasmap_postgres:
+    image: laurensia/tasmap-postgres
+    container_name: tasmap_postgres
+    env_file: .env
+    volumes:
+      - dbdata_tasmap:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tasmap-network
+
+  tasmap_api:
+    image: laurensia/tasmap-api
+    container_name: tasmap_api
+    depends_on:
+      tasmap_postgres:
+        condition: service_healthy
+      tasmap_session:
+        condition: service_started
+    env_file: .env
+    tty:
+      true
+    networks:
+      - tasmap-network
+
+  tasmap_migration:
+    image: laurensia/tasmap-migration
+    container_name: tasmap_migration
+    depends_on:
+      tasmap_postgres:
+        condition: service_healthy
+    env_file: .env
+    tty:
+      true
+    networks:
+      - tasmap-network
+
+  tasmap_session:
+    image: laurensia/tasmap-session
+    container_name: tasmap_session
+    env_file: .env
+    networks:
+      - tasmap-network
+
+  tasmap_web:
+    image: laurensia/tasmap-web
+    container_name: tasmap_web
+    depends_on:
+      tasmap_api:
+        condition: service_started
+    ports:
+      - "80:80"
+    env_file: .env
+    networks:
+      - tasmap-network
+
+  tasmap_db_init:
+    image: laurensia/tasmap-init-data
+    container_name: tasmap-init-data
+    depends_on:
+      tasmap_postgres:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - tasmap-network
+    profiles:
+      - init
+
+volumes:
+  dbdata_tasmap:
+    external: true
+networks:
+  tasmap-network:
+    driver: bridge

@@ -55,13 +55,21 @@ func (r *scheduleAlertRepository) FindAll() []db.ScheduleAlert {
 			 ,   t.start_date
 			 ,   t.end_date
   			 ,   t.id as ticket_id
-			 ,   (SELECT ARRAY_AGG(date ORDER BY date)
+			 ,   (SELECT ARRAY_AGG(date ORDER BY date) -- 稼働日のみを抽出する
 				  FROM generate_series(t.start_date, f.term_to, interval '1days') as date
-				  WHERE date NOT IN (SELECT h.date FROM holidays h WHERE f.id = h.facility_id)
+				  WHERE NOT EXISTS (SELECT * FROM (SELECT date FROM holidays
+					  UNION
+					  SELECT date FROM facility_work_schedules fws WHERE type = 'Holiday' AND fws.facility_id = f.id
+					  EXCEPT
+					  SELECT date FROM facility_work_schedules fws WHERE type = 'WorkingDay' AND fws.facility_id = f.id) as h WHERE date.date = h.date)
 				  ) as term_business_dates
-			 ,   (SELECT ARRAY_AGG(date ORDER BY date)
+			 ,   (SELECT ARRAY_AGG(date ORDER BY date) -- 稼働日のみを抽出する
 				  FROM generate_series(t.start_date, t.end_date, interval '1days') as date
-				  WHERE date NOT IN (SELECT h.date FROM holidays h WHERE f.id = h.facility_id)
+				  WHERE NOT EXISTS (SELECT * FROM (SELECT date FROM holidays
+					  UNION
+					  SELECT date FROM facility_work_schedules fws WHERE type = 'Holiday' AND fws.facility_id = f.id
+					  EXCEPT
+					  SELECT date FROM facility_work_schedules fws WHERE type = 'WorkingDay' AND fws.facility_id = f.id) as h WHERE date.date = h.date)
 				) as ticket_business_dates
 			 ,   f."order" as facility_order
 			 ,   p."order" as process_order
