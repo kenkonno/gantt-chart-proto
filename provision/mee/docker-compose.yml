@@ -5,9 +5,6 @@ services:
   tasmap_postgres:
     image: laurensia/tasmap-postgres
     container_name: tasmap_postgres
-    build:
-      context: .
-      dockerfile: ./docker/postgres/Dockerfile
     env_file: .env
     volumes:
       - dbdata_tasmap:/var/lib/postgresql/data
@@ -27,9 +24,6 @@ services:
         condition: service_healthy
       tasmap_session:
         condition: service_started
-    build:
-      context: .
-      dockerfile: ./docker/api/DockerfileForProvision
     env_file: .env
     tty:
       true
@@ -42,9 +36,6 @@ services:
     depends_on:
       tasmap_postgres:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/migration/DockerfileForProvision
     env_file: .env
     tty:
       true
@@ -54,9 +45,6 @@ services:
   tasmap_session:
     image: laurensia/tasmap-session
     container_name: tasmap_session
-    build:
-      context: .
-      dockerfile: ./docker/session/Dockerfile
     env_file: .env
     networks:
       - tasmap-network
@@ -69,12 +57,22 @@ services:
         condition: service_started
     ports:
       - "80:80"
-    build:
-      context: .
-      dockerfile: ./docker/web/Dockerfile
     env_file: .env
     networks:
       - tasmap-network
+
+  tasmap_db_init:
+    image: laurensia/tasmap-init-data
+    container_name: tasmap-init-data
+    depends_on:
+      tasmap_postgres:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - tasmap-network
+    profiles:
+      - init
+
 volumes:
   dbdata_tasmap:
     external: true

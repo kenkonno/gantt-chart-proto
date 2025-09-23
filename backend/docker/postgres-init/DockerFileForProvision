@@ -1,0 +1,12 @@
+# docker/db-init/Dockerfile
+FROM postgres:16
+
+# 初期化用のSQLファイルをコピー
+COPY ./docker/postgres-init/init-data/init.sql /init-data/init.sql
+
+# 初期化スクリプトをコピー
+COPY ./docker/postgres-init/init-db.sh /usr/local/bin/init-db.sh
+RUN chmod +x /usr/local/bin/init-db.sh
+
+# エントリーポイントを設定
+ENTRYPOINT ["/usr/local/bin/init-db.sh"]

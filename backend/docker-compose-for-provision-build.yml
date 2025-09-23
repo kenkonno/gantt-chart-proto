@@ -79,6 +79,19 @@ services:
     env_file: .env
     networks:
       - tasmap-network
+
+  tasmap_init_data:
+    image: laurensia/tasmap-init-data
+    container_name: tasmap_init_data
+    build:
+      context: .
+      dockerfile: ./docker/postgres-init/DockerFileForProvision
+    ports:
+      - "80:80"
+    env_file: .env
+    networks:
+      - tasmap-network
+
 volumes:
   dbdata_gantt:
     external: true

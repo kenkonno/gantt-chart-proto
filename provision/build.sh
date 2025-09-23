@@ -9,7 +9,7 @@
 #
 # 使用方法: ./build.sh <出力ディレクトリ名>
 # 例: ./build.sh production
-# 出力先: provision/<出力ディレクトリ名>/images/
+# 出力先: provision/<出力ディレクトリ名>/
 
 set -e  # エラーが発生した場合は即座に終了
 
@@ -19,7 +19,7 @@ if [ $# -eq 0 ]; then
     echo ""
     echo "使用方法: $0 <出力ディレクトリ名>"
     echo "例: $0 production"
-    echo "出力先: \$(pwd からの相対パス)/provision/<出力ディレクトリ名>/images/"
+    echo "出力先: \$(pwd からの相対パス)/provision/<出力ディレクトリ名>/"
     echo ""
     exit 1
 fi
@@ -84,23 +84,23 @@ echo ""
 echo "=== 3. Dockerイメージのtar保存 ==="
 cd "$PROJECT_ROOT"
 
-# 保存先ディレクトリを作成
-mkdir -p "$OUTPUT_DIR/images"
-
 echo "PostgreSQLイメージを保存中..."
-docker save -o "$OUTPUT_DIR/images/tasmap_postgres.tar" laurensia/tasmap-postgres
+docker save -o "$OUTPUT_DIR/tasmap_postgres.tar" laurensia/tasmap-postgres
 
 echo "APIイメージを保存中..."
-docker save -o "$OUTPUT_DIR/images/tasmap_api.tar" laurensia/tasmap-api
+docker save -o "$OUTPUT_DIR/tasmap_api.tar" laurensia/tasmap-api
 
 echo "マイグレーションイメージを保存中..."
-docker save -o "$OUTPUT_DIR/images/tasmap_migration.tar" laurensia/tasmap-migration
+docker save -o "$OUTPUT_DIR/tasmap_migration.tar" laurensia/tasmap-migration
 
 echo "セッションイメージを保存中..."
-docker save -o "$OUTPUT_DIR/images/tasmap_session.tar" laurensia/tasmap-session
+docker save -o "$OUTPUT_DIR/tasmap_session.tar" laurensia/tasmap-session
 
 echo "Webイメージを保存中..."
-docker save -o "$OUTPUT_DIR/images/tasmap_web.tar" laurensia/tasmap-web
+docker save -o "$OUTPUT_DIR/tasmap_web.tar" laurensia/tasmap-web
+
+echo "データ初期化イメージを保存中..."
+docker save -o "$OUTPUT_DIR/tasmap_init_data.tar" laurensia/tasmap-init-data
 
 echo "Dockerイメージ保存完了"
 
@@ -108,9 +108,9 @@ echo "Dockerイメージ保存完了"
 echo ""
 echo "=== ビルド完了 ==="
 if [ "$RELATIVE_PATH" = "." ]; then
-    RELATIVE_OUTPUT_PATH="provision/$OUTPUT_DIR_NAME/images"
+    RELATIVE_OUTPUT_PATH="provision/$OUTPUT_DIR_NAME"
 else
-    RELATIVE_OUTPUT_PATH="$RELATIVE_PATH/provision/$OUTPUT_DIR_NAME/images"
+    RELATIVE_OUTPUT_PATH="$RELATIVE_PATH/provision/$OUTPUT_DIR_NAME"
 fi
 echo "全てのイメージが $RELATIVE_OUTPUT_PATH ディレクトリに保存されました："
 echo "  - tasmap_postgres.tar"
@@ -118,6 +118,7 @@ echo "  - tasmap_api.tar"
 echo "  - tasmap_migration.tar"
 echo "  - tasmap_session.tar"
 echo "  - tasmap_web.tar"
+echo "  - tasmap_init_data.tar"
 echo ""
 echo "=== 次のステップ（デプロイ先で実行） ==="
 echo "1. イメージの読み込み："
@@ -126,6 +127,7 @@ echo "   docker load -i $RELATIVE_OUTPUT_PATH/tasmap_api.tar"
 echo "   docker load -i $RELATIVE_OUTPUT_PATH/tasmap_migration.tar"
 echo "   docker load -i $RELATIVE_OUTPUT_PATH/tasmap_session.tar"
 echo "   docker load -i $RELATIVE_OUTPUT_PATH/tasmap_web.tar"
+echo "   docker load -i $RELATIVE_OUTPUT_PATH/tasmap_init_data.tar"
 echo ""
 echo "2. ボリュームの作成："
 echo "   docker volume create dbdata_tasmap"
