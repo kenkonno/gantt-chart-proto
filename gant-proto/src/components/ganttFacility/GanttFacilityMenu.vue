@@ -49,7 +49,7 @@
       </div>
     </div>
     <div class="d-flex justify-middle mx-1"
-         v-if="available(FeatureOption.WorkloadWeighting) && allowed('VIEW_PILEUPS')">
+         v-if="available(FeatureOption.WorkloadWeighting) && allowed('WORK_LOAD_WEIGHTING')">
       <div class="form-check">
         <label class="form-check-label" for="ticketDailyWeightMode">
           <input class="form-check-input" type="checkbox" name="ticketDailyWeightMode" id="ticketDailyWeightMode"
