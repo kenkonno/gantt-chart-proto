@@ -25,6 +25,7 @@ export type Section =
     | "FORCE_SIMULATE_USER" // シミュレーション操作ユーザー扱いにする。管理者のみ利用。
     | "CSV_UPLOAD"  // CSVアップロード全般
     | "UPDATE_MASTER" // 全体設定にかかるマスタ設定。管理者のみ利用可能とする。
+    | "TICKET_DETAIL_UPDATE" // チケットの詳細を更新できるか？
 
 
 // 大枠の制御のセット。とりあえずつけただけで使わないものが多いかも。
@@ -43,6 +44,7 @@ const Manager = {
     "FORCE_SIMULATE_USER": false,
     "CSV_UPLOAD": true,
     "UPDATE_MASTER": false,
+    "TICKET_DETAIL_UPDATE": true,
 }
 const Viewer = {
     "ALL_SETTINGS": false,
@@ -59,6 +61,7 @@ const Viewer = {
     "FORCE_SIMULATE_USER": false,
     "CSV_UPLOAD": false,
     "UPDATE_MASTER": false,
+    "TICKET_DETAIL_UPDATE": false,
 }
 const Worker = {
     "ALL_SETTINGS": false,
@@ -75,6 +78,7 @@ const Worker = {
     "FORCE_SIMULATE_USER": false,
     "CSV_UPLOAD": false,
     "UPDATE_MASTER": false,
+    "TICKET_DETAIL_UPDATE": true,
 }
 const WorkerWithPileUps = {
     "ALL_SETTINGS": false,
@@ -91,6 +95,7 @@ const WorkerWithPileUps = {
     "FORCE_SIMULATE_USER": false,
     "CSV_UPLOAD": false,
     "UPDATE_MASTER": false,
+    "TICKET_DETAIL_UPDATE": true,
 }
 const Guest = {
     "ALL_SETTINGS": false,
@@ -107,6 +112,7 @@ const Guest = {
     "FORCE_SIMULATE_USER": false,
     "CSV_UPLOAD": false,
     "UPDATE_MASTER": false,
+    "TICKET_DETAIL_UPDATE": false,
 }
 
 export function allowed(section: Section) {

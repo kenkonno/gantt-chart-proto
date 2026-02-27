@@ -90,7 +90,7 @@
     <div class="editor mt-2">
       <tiptap-editor v-model="ticket.memo"/>
     </div>
-    <div class="buttons mt-2" v-if="allowed('UPDATE_TICKET')">
+    <div class="buttons mt-2" v-if="allowed('TICKET_DETAIL_UPDATE')">
       <button type="submit" class="btn btn-primary" @click="updateTicketMemo()">更新</button>
     </div>
   </div>
